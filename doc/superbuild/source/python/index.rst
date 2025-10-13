@@ -1,5 +1,4 @@
 ..
-   Author(s): Daniel R. Reynolds @ UMBC and David J. Gardner @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
    Copyright (c) 2025, Lawrence Livermore National Security,
@@ -15,14 +14,19 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-.. _CommandLineOptions:
+.. _PYTHON:
 
-Command Line Options
-=================================================
+***************
+Getting Started
+***************
 
-This chapter discusses how to enable command-line control over SUNDIALS options.
+.. only:: html
+
+   This is the documentation for the sundials4py Python package which provides a Python interface to much of the SUNDIALS C/C++ API.
 
 .. toctree::
    :maxdepth: 1
 
-   Options
+   installation.rst
+   usage.rst
+   api.rst

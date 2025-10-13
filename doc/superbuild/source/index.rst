@@ -210,6 +210,13 @@ SUNDIALS License and Notices
    fortran/index.rst
 
 .. toctree::
+   :caption: PYTHON
+   :maxdepth: 1
+   :hidden:
+
+   python/index.rst
+
+.. toctree::
    :caption: EXAMPLES
    :maxdepth: 1
    :hidden:

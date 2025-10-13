@@ -31,6 +31,10 @@ m.def(
   nb::arg("check_scheme"), nb::arg("step_num"), nb::arg("stage_num"),
   nb::arg("t"));
 
+m.def("SUNAdjointCheckpointScheme_InsertVector",
+      SUNAdjointCheckpointScheme_InsertVector, nb::arg("check_scheme"),
+      nb::arg("step_num"), nb::arg("stage_num"), nb::arg("t"), nb::arg("state"));
+
 m.def(
   "SUNAdjointCheckpointScheme_LoadVector",
   [](SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,

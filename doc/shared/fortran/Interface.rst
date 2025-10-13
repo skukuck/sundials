@@ -13,7 +13,7 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. _SUNDIALS.Fortran:
+.. _Fortran.Interface:
 
 Fortran Interface
 =================

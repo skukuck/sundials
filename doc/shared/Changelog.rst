@@ -2676,7 +2676,7 @@ evaluation function when the attached linear solver has type
 Added new Fortran 2003 interfaces to all of the SUNDIALS packages (ARKODE,
 CVODE(S), IDA(S), and KINSOL as well as most of the :c:type:`N_Vector`,
 :c:type:`SUNMatrix`, :c:type:`SUNLinearSolver`, and :c:type:`SUNNonlinearSolver`
-implementations. See :numref:`SUNDIALS.Fortran` section for more details.
+implementations. See :numref:`Fortran` section for more details.
 These new interfaces were generated with SWIG-Fortran and provide a user an
 idiomatic Fortran 2003 interface to most of the SUNDIALS C API.
 

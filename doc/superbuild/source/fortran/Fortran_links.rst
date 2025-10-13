@@ -13,27 +13,4 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. _SUNDIALS:
-
-***************
-Getting Started
-***************
-
-The packages that make up SUNDIALS are built upon shared classes for vectors,
-matrices, and algebraic solvers. In addition, the packages all leverage some
-other common infrastructure, which we discuss in this section.
-
-.. _Organization.Sundials.HighLevelDiagram:
-.. figure:: ../figs/sunorg1.png
-   :align: center
-
-   High-level diagram of the SUNDIALS suite.
-
-.. toctree::
-   Types_link
-   SUNContext_link
-   Errors_link
-   Logging_link
-   Profiling_link
-   version_information_link
-   GPU_link
+.. include:: ../../../shared/fortran/Interface.rst

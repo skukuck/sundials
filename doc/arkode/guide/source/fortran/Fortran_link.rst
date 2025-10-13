@@ -13,4 +13,4 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. include:: ../../../../shared/sundials/Fortran.rst
+.. include:: ../../../../shared/Fortran/Interface.rst

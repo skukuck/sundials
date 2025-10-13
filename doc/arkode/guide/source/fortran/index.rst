@@ -13,4 +13,13 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. include:: ../../../shared/sundials/Fortran.rst
+.. _Fortran:
+
+##################
+Fortran User Guide
+##################
+
+.. toctree::
+   :maxdepth: 1
+
+   Fortran_link.rst

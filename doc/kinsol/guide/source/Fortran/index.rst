@@ -13,37 +13,13 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-*****************
-IDA Documentation
-*****************
+.. _Fortran:
 
-.. include:: Landing.rst
-
-.. only:: html
-
-   **Table of Contents**
-
+##################
+Fortran Interfaces
+##################
 
 .. toctree::
-   :numbered:
    :maxdepth: 1
 
-   Introduction
-   Mathematics
-   Organization
-   sundials/index.rst
-   Usage/index.rst
-   nvectors/index.rst
-   sunmatrix/index.rst
-   sunlinsol/index.rst
-   sunnonlinsol/index.rst
-   sunmemory/index.rst
-   sundials/Install_link.rst
-   Constants
-   Fortran/index.rst
-   History_link.rst
-   Changelog_link.rst
-   References
-.. only:: html
-
-   * :ref:`genindex`
+   Fortran_links.rst

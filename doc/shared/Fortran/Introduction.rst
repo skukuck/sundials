@@ -19,42 +19,13 @@ Introduction
 ============
 
 SUNDIALS provides modern, Fortran 2003 based, interfaces as Fortran modules to
-most of the C API including:
+most of the C API (see :numref:`Fortran.Table`).
 
-- The SUNDIALS core types, utilities, and data structures via the ``fsundials_core_mod`` module.
+.. note::
 
-- All of the time-stepping modules in ARKODE:
-
-  * The ``farkode_arkstep_mod``, ``farkode_erkstep_mod``,
-    ``farkode_mristep_mod``, and ``farkode_sprkstep_mod`` modules provide interfaces
-    to the ARKStep, ERKStep, MRIStep, and SPRKStep integrators respectively.
-
-  * The ``farkode_mod`` module interfaces to the components of ARKODE which are
-    shared by the time-stepping modules.
-
-- CVODE via the ``fcvode_mod`` module.
-
-- CVODES via the ``fcvodes_mod`` module.
-
-- IDA via the ``fida_mod`` module.
-
-- IDAS via the ``fidas_mod`` module.
-
-- KINSOL via the ``fkinsol_mod`` module.
-
-.. ifconfig:: package_name == 'kinsol'
-
-   Additionally, all of the SUNDIALS base classes (:c:type:`N_Vector`, :c:type:`SUNMatrix`, and
-   :c:type:`SUNLinearSolver`) include Fortran interface modules.  A complete list of class
-   implementations with Fortran 2003 interface modules is given in :numref:`Fortran.Table`.
-
-.. ifconfig:: package_name != 'kinsol'
-
-   Additionally, all of the SUNDIALS base classes (:c:type:`N_Vector`, :c:type:`SUNMatrix`,
-   :c:type:`SUNLinearSolver`, and :c:type:`SUNNonlinearSolver`) include Fortran interface modules.
-   A complete list of class implementations with Fortran 2003 interface modules is given in
-   :numref:`Fortran.Table`.
-
+   Fortran users should first read the :ref:`General User Guide <SUNDIALS>`.
+   The Fortran interfaces closely follow the C/C++ usage of SUNDIALS, so the
+   Fortran User Guide primarily covers differences.
 
 An interface module can be accessed with the ``use`` statement, e.g.
 
@@ -70,7 +41,6 @@ and by linking to the Fortran 2003 library in addition to the C library, e.g.
 ``libsundials_fcvode_mod.<so|a>`` and ``libsundials_cvode.<so|a>``.
 The ``use`` statements mirror the ``#include`` statements needed when using the
 C API.
-
 
 The Fortran 2003 interfaces leverage the ``iso_c_binding`` module and the
 ``bind(C)`` attribute to closely follow the SUNDIALS C API (modulo language
@@ -116,6 +86,12 @@ team.
      - ``farkode_mristep_mod``
    * - ARKODE::SPRKSTEP
      - ``farkode_sprkstep_mod``
+   * - ARKODE::LSRKSTEP
+     - ``farkode_lsrkstep_mod``
+   * - ARKODE::SPLITTINGSTEP
+     - ``farkode_splittingstep_mod``
+   * - ARKODE::FORCINGSTEP
+     - ``farkode_forcingstep_mod``
    * - CVODE
      - ``fcvode_mod``
    * - CVODES
@@ -206,6 +182,17 @@ team.
      - ``fsunnonlinsol_newton_mod``
    * - SUNNONLINSOL_PETSCSNES
      - Not interfaced
+
+
+.. _Fortran.Installation:
+
+Installation
+------------
+
+The installation procedure for the Fortran interfaces is the same as for the C/C++ core of SUNDIALS, refer
+to :numref:`Installation`.
+The CMake option to turn on the Fortran interfaces in a SUNDIALS build is :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`.\
+The Spack variant is ``+fortran``.
 
 .. _Fortran.Portability:
 

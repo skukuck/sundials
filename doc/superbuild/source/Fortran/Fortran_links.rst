@@ -13,4 +13,7 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. include:: ../../../../shared/sundials/Fortran.rst
+.. include:: ../../../shared/Fortran/Introduction.rst
+.. include:: ../../../shared/Fortran/Types.rst
+.. include:: ../../../shared/Fortran/Differences.rst
+.. include:: ../../../shared/Fortran/Issues.rst

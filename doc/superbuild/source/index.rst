@@ -176,7 +176,11 @@ SUNDIALS License and Notices
 
 
 .. toctree::
+<<<<<<< HEAD
    :caption: USER GUIDE
+=======
+   :caption: GENERAL USER GUIDE
+>>>>>>> feature/python-interfaces
    :maxdepth: 1
    :numbered:
    :hidden:
@@ -203,18 +207,20 @@ SUNDIALS License and Notices
 
 
 .. toctree::
-   :caption: FORTRAN
+   :caption: FORTRAN USER GUIDE
    :maxdepth: 1
+   :numbered:
    :hidden:
 
-   fortran/index.rst
+   Fortran/Fortran_links.rst
 
 .. toctree::
-   :caption: PYTHON
+   :caption: PYTHON USER GUIDE
    :maxdepth: 1
+   :numbered:
    :hidden:
 
-   python/index.rst
+   Python/index.rst
 
 .. toctree::
    :caption: EXAMPLES

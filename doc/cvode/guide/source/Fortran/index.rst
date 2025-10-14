@@ -13,4 +13,17 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. include:: ../../../../shared/Fortran/Interface.rst
+<<<<<<<< HEAD:doc/superbuild/source/fortran/Fortran_links.rst
+.. include:: ../../../shared/fortran/Interface.rst
+========
+.. _Fortran:
+
+##################
+Fortran Interfaces
+##################
+
+.. toctree::
+   :maxdepth: 1
+
+   Fortran_links.rst
+>>>>>>>> feature/python-interfaces:doc/cvode/guide/source/Fortran/index.rst

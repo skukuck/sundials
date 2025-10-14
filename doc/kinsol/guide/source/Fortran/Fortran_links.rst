@@ -1,5 +1,4 @@
-..
-   -----------------------------------------------------------------------------
+.. ----------------------------------------------------------------
    SUNDIALS Copyright Start
    Copyright (c) 2025, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -12,19 +11,9 @@
 
    SPDX-License-Identifier: BSD-3-Clause
    SUNDIALS Copyright End
-   -----------------------------------------------------------------------------
+   ----------------------------------------------------------------
 
-.. _Fortran:
-
-***************
-Getting Started
-***************
-
-.. only:: html
-
-   This is the documentation for the Fortran interfaces to SUNDIALS, which cover much of the SUNDIALS C/C++ API.
-
-.. toctree::
-   :maxdepth: 1
-
-   Fortran_links.rst
+.. include:: ../../../../shared/Fortran/Introduction.rst
+.. include:: ../../../../shared/Fortran/Types.rst
+.. include:: ../../../../shared/Fortran/Differences.rst
+.. include:: ../../../../shared/Fortran/Issues.rst

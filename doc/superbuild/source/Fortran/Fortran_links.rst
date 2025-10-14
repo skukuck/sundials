@@ -13,13 +13,7 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. _Fortran:
-
-##################
-Fortran User Guide
-##################
-
-.. toctree::
-   :maxdepth: 1
-
-   Fortran_link.rst
+.. include:: ../../../shared/Fortran/Introduction.rst
+.. include:: ../../../shared/Fortran/Types.rst
+.. include:: ../../../shared/Fortran/Differences.rst
+.. include:: ../../../shared/Fortran/Issues.rst

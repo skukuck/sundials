@@ -1585,7 +1585,7 @@ The previously deprecated function ``CVodeSetMaxStepsBetweenJac`` has been
 removed and replaced with :c:func:`CVodeSetJacEvalFrequency`.
 
 The ARKODE, CVODE, IDA, and KINSOL Fortran 77 interfaces has been removed. See
-:numref:`SUNDIALS.Fortran` and the F2003 example programs for more details using
+:numref:`Fortran` and the F2003 example programs for more details using
 the SUNDIALS Fortran 2003 module interfaces.
 
 *Namespace Changes*

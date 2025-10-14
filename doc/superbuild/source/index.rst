@@ -176,11 +176,7 @@ SUNDIALS License and Notices
 
 
 .. toctree::
-<<<<<<< HEAD
-   :caption: USER GUIDE
-=======
    :caption: GENERAL USER GUIDE
->>>>>>> feature/python-interfaces
    :maxdepth: 1
    :numbered:
    :hidden:

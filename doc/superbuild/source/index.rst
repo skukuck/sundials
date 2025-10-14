@@ -176,7 +176,7 @@ SUNDIALS License and Notices
 
 
 .. toctree::
-   :caption: USAGE
+   :caption: GENERAL USER GUIDE
    :maxdepth: 1
    :numbered:
    :hidden:
@@ -200,6 +200,15 @@ SUNDIALS License and Notices
    History_link.rst
    Changelog_link.rst
    FAQ_link.rst
+
+
+.. toctree::
+   :caption: FORTRAN USER GUIDE
+   :maxdepth: 1
+   :numbered:
+   :hidden:
+
+   Fortran/Fortran_links.rst
 
 .. toctree::
    :caption: EXAMPLES

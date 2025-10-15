@@ -18,6 +18,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
 #include <nanobind/stl/function.h>
+#include <nanobind/stl/tuple.h>
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_lsrkstep.h>

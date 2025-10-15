@@ -22,6 +22,7 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/tuple.h>
 
 #include <sundials/sundials_adjointstepper.hpp>
 
@@ -38,6 +39,8 @@ namespace pysundials {
 void bind_sunadjointstepper(nb::module_& m)
 {
 #include "sundials_adjointstepper_generated.hpp"
+
+  nb::class_<SUNAdjointStepper_>(m, "SUNAdjointStepper_");
 
   nb::class_<SUNAdjointStepperView>(m, "SUNAdjointStepperView")
     .def("get", nb::overload_cast<>(&SUNAdjointStepperView::get, nb::const_),

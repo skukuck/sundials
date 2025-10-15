@@ -99,6 +99,7 @@ set(sundials_SOURCES
     sunmatrix/sunmatrix_band.cpp
     sunmatrix/sunmatrix_dense.cpp
     sunmatrix/sunmatrix_sparse.cpp
+    sunmemory/sunmemory_system.cpp
     sunnonlinsol/sunnonlinsol_fixedpoint.cpp
     sunnonlinsol/sunnonlinsol_newton.cpp)
 

@@ -29,6 +29,7 @@ namespace pysundials {
 //
 
 void bind_core(nb::module_& m);
+
 void bind_arkode(nb::module_& m);
 void bind_cvodes(nb::module_& m);
 void bind_idas(nb::module_& m);
@@ -36,31 +37,30 @@ void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
 
-void bind_sunlinsol_spgmr(nb::module_& m);
-void bind_sunlinsol_dense(nb::module_& m);
+void bind_sumemoryhelper_sys(nb::module_& m);
+
+void bind_sunadaptcontroller_imexgus(nb::module_& m);
+void bind_sunadaptcontroller_mrihtol(nb::module_& m);
+void bind_sunadaptcontroller_soderlind(nb::module_& m);
+
+void bind_sunadjointcheckpointscheme_fixed(nb::module_& m);
+
+void bind_sundomeigest_power(nb::module_& m);
+
 void bind_sunlinsol_band(nb::module_& m);
+void bind_sunlinsol_dense(nb::module_& m);
+void bind_sunlinsol_pcg(nb::module_& m);
 void bind_sunlinsol_spbcgs(nb::module_& m);
 void bind_sunlinsol_spfgmr(nb::module_& m);
+void bind_sunlinsol_spgmr(nb::module_& m);
 void bind_sunlinsol_sptfqmr(nb::module_& m);
-void bind_sunlinsol_pcg(nb::module_& m);
 
 void bind_sunmatrix_band(nb::module_& m);
 void bind_sunmatrix_dense(nb::module_& m);
 void bind_sunmatrix_sparse(nb::module_& m);
 
-void bind_sunnonlinsol_newton(nb::module_& m);
 void bind_sunnonlinsol_fixedpoint(nb::module_& m);
-
-void bind_sunadaptcontroller_mrihtol(nb::module_& m);
-void bind_sunadaptcontroller_soderlind(nb::module_& m);
-void bind_sunadaptcontroller_imexgus(nb::module_& m);
-
-// SUNDomEigEst bindings
-void bind_sundomeigest_arnoldi(nb::module_& m);
-void bind_sundomeigest_power(nb::module_& m);
-
-// SUNAdjointCheckpointScheme bindings
-void bind_sunadjointcheckpointscheme_fixed(nb::module_& m);
+void bind_sunnonlinsol_newton(nb::module_& m);
 
 } // namespace pysundials
 
@@ -72,6 +72,10 @@ NB_MODULE(pysundials, m)
 {
   nb::module_ core_m = m.def_submodule("core", "A submodule of 'pysundials'");
   pysundials::bind_core(core_m);
+
+  //
+  // Create submodules for each package
+  //
 
   nb::module_ arkode_m = m.def_submodule("arkode",
                                          "A submodule of 'pysundials'");
@@ -88,28 +92,34 @@ NB_MODULE(pysundials, m)
                                          "A submodule of 'pysundials'");
   pysundials::bind_kinsol(kinsol_m);
 
+  //
   // Bind all implementation modules directly to core_m
+  //
+
   pysundials::bind_nvector_serial(core_m);
-  pysundials::bind_sunlinsol_spgmr(core_m);
-  pysundials::bind_sunlinsol_dense(core_m);
-  pysundials::bind_sunlinsol_band(core_m);
-  pysundials::bind_sunlinsol_spbcgs(core_m);
-  pysundials::bind_sunlinsol_spfgmr(core_m);
-  pysundials::bind_sunlinsol_sptfqmr(core_m);
-  pysundials::bind_sunlinsol_pcg(core_m);
 
-  pysundials::bind_sunmatrix_dense(core_m);
-  pysundials::bind_sunmatrix_band(core_m);
-  pysundials::bind_sunmatrix_sparse(core_m);
-
-  pysundials::bind_sunnonlinsol_newton(core_m);
-  pysundials::bind_sunnonlinsol_fixedpoint(core_m);
-
+  pysundials::bind_sunadaptcontroller_imexgus(core_m);
   pysundials::bind_sunadaptcontroller_mrihtol(core_m);
   pysundials::bind_sunadaptcontroller_soderlind(core_m);
-  pysundials::bind_sunadaptcontroller_imexgus(core_m);
+
+  pysundials::bind_sunadjointcheckpointscheme_fixed(core_m);
 
   pysundials::bind_sundomeigest_power(core_m);
 
-  pysundials::bind_sunadjointcheckpointscheme_fixed(core_m);
+  pysundials::bind_sunlinsol_band(core_m);
+  pysundials::bind_sunlinsol_dense(core_m);
+  pysundials::bind_sunlinsol_pcg(core_m);
+  pysundials::bind_sunlinsol_spbcgs(core_m);
+  pysundials::bind_sunlinsol_spfgmr(core_m);
+  pysundials::bind_sunlinsol_spgmr(core_m);
+  pysundials::bind_sunlinsol_sptfqmr(core_m);
+
+  pysundials::bind_sunmatrix_band(core_m);
+  pysundials::bind_sunmatrix_dense(core_m);
+  pysundials::bind_sunmatrix_sparse(core_m);
+
+  pysundials::bind_sumemoryhelper_sys(core_m);
+
+  pysundials::bind_sunnonlinsol_fixedpoint(core_m);
+  pysundials::bind_sunnonlinsol_newton(core_m);
 }

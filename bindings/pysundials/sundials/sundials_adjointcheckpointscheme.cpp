@@ -22,6 +22,7 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/tuple.h>
 #include <nanobind/stl/vector.h>
 
 #include <sundials/sundials_adjointcheckpointscheme.hpp>
@@ -37,6 +38,8 @@ namespace pysundials {
 void bind_sunadjointcheckpointscheme(nb::module_& m)
 {
 #include "sundials_adjointcheckpointscheme_generated.hpp"
+
+  nb::class_<SUNAdjointCheckpointScheme_>(m, "SUNAdjointCheckpointScheme_");
 
   nb::class_<SUNAdjointCheckpointSchemeView>(m,
                                              "SUNAdjointCheckpointSchemeView")

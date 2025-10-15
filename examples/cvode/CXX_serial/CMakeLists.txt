@@ -25,7 +25,7 @@
 
 # Examples using SUNDIALS linear solvers
 set(CVODE_examples
-    "cv_heat2D.cpp\;\;\;\;exclude-single" "cv_kpr.cpp\;\;\;\;develop\;real"
+    "cv_heat2D.cpp\;\;\;\;exclude-single\;real" "cv_kpr.cpp\;\;\;\;develop\;real"
     "cv_kpr.cpp\;cvode.init_step 0.01\;\;\;develop\;real")
 
 # Add the build and install targets for each example

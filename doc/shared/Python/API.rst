@@ -15,6 +15,58 @@
 
 .. _Python.API:
 
-Python API
-==========
+sundials4py API
+===============
 
+This section lists the Python API for the ``pysundials`` module and  submodules.
+
+Core Module
+-----------
+
+.. automodule:: pysundials.core
+   :members:
+   :undoc-members:
+   :private-members:
+
+.. include:: ../../../shared/Python/pysundials-core-functions.rst
+
+
+ARKODE Module
+--------------
+
+.. automodule:: pysundials.arkode
+   :members:
+   :undoc-members:
+   :private-members:
+
+.. include:: ../../../shared/Python/pysundials-arkode-functions.rst
+
+CVODES Module
+-------------
+
+.. automodule:: pysundials.cvodes
+   :members:
+   :undoc-members:
+   :private-members:
+
+.. include:: ../../../shared/Python/pysundials-cvodes-functions.rst
+
+IDAS Module
+-----------
+
+.. automodule:: pysundials.idas
+   :members:
+   :undoc-members:
+   :private-members:
+
+.. include:: ../../../shared/Python/pysundials-idas-functions.rst
+
+KINSOL Module
+-------------
+
+.. automodule:: pysundials.kinsol
+   :members:
+   :undoc-members:
+   :private-members:
+
+.. include:: ../../../shared/Python/pysundials-kinsol-functions.rst

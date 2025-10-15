@@ -15,6 +15,6 @@
 
 .. _Python.Usage:
 
-Python Usage
-============
+Using sundials4py
+=================
 

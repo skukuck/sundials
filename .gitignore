@@ -70,6 +70,7 @@ compile_commands.json
 /doc/build/
 /doc/*/build/
 /doc/shared/__pycache__
+/doc/shared/Python/pysundials-*-functions.rst
 
 # PDFs of user guides and example docs
 /doc/*/*_guide.pdf

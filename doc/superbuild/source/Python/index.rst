@@ -14,5 +14,5 @@
    ----------------------------------------------------------------
 
 .. include:: ../../../shared/Python/Introduction.rst
-.. include:: ../../../shared/Python/API.rst
 .. include:: ../../../shared/Python/Usage.rst
+.. include:: ../../../shared/Python/API.rst

@@ -105,4 +105,4 @@ system, etc. developers should adhere to the following checklist.
 
    * If you added a new user-supplied function, or new module, then there will be manual
      changes to make in the ``bindings/pysundials/`` directory. See the
-     `Python`_ section for more details.
+     :ref:`Python` section for more details.

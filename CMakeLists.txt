@@ -244,7 +244,7 @@ if(SUNDIALS_ENABLE_EXTERNAL_ADDONS)
 endif()
 
 if(SUNDIALS_ENABLE_PYTHON)
-  add_subdirectory(bindings/pysundials)
+  add_subdirectory(bindings/sundials4py)
 endif()
 
 # ===============================================================

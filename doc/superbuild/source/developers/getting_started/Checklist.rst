@@ -100,9 +100,9 @@ system, etc. developers should adhere to the following checklist.
    to the Fortran).
 
 #. Similarly, re-run the Python interface generator to generate updated Python
-   interfaces. This is done by navigating to the ``bindings/pysundials/``
+   interfaces. This is done by navigating to the ``bindings/sundials4py/``
    directory and running ``python generate.py``. 
 
    * If you added a new user-supplied function, or new module, then there will be manual
-     changes to make in the ``bindings/pysundials/`` directory. See the
+     changes to make in the ``bindings/sundials4py/`` directory. See the
      :ref:`Python` section for more details.

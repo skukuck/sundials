@@ -58,11 +58,11 @@ The recommended method for development is to use a typical Python development wo
    python -m venv .venv  # create python virtual environment
    . .venv/bin/activate  # activate the python virtual environment
    pip install scikit-build-core[pyproject] hatchling # this is a prerequisite for the next step
-   MAKEFLAGS="-j$(nproc)" pip install --no-build-isolation -Ceditable.rebuild=true -ve .[dev] # install pysundials into the virtual environment
+   MAKEFLAGS="-j$(nproc)" pip install --no-build-isolation -Ceditable.rebuild=true -ve .[dev] # install sundials4py into the virtual environment
 
 The last ``pip install`` command will allow automatic incremental builds. It will invoke the SUNDIALS `CMake` build system with the
 ``-DSUNDIALS_ENABLE_PYTHON=ON`` option through `scikit-build-core <https://scikit-build-core.readthedocs.io/en/latest/index.html>`__.
-After the initial build, if you make any changes within SUNDIALS a rebuild will be triggered when you import the ``pysundials``
+After the initial build, if you make any changes within SUNDIALS a rebuild will be triggered when you import the ``sundials4py``
 module wihtin a Python script. 
 
 Different CMake options can be controlled by passing them through the ``--config-settings`` (or ``-C`` for short) option of ``pip install``.
@@ -82,7 +82,7 @@ This is done by smuggling in a "function table" -- a struct of ``std::function``
 The upshot is that everytime we add a user-supplied function, we need to add a new member to the function table struct, and add a wrapper for it.
 We also have to add a wrapper for the "Set" function that takes the user-supplied function. Here is an example for ARKODE:
 
-In ``bindings/pysundials/arkode/pysundials_arkode_usersupplied.hpp``, the function table struct is defined:
+In ``bindings/sundials4py/arkode/sundials4py_arkode_usersupplied.hpp``, the function table struct is defined:
 
 .. code-block:: cpp
 
@@ -130,13 +130,13 @@ Then each one of the functions in the table has a wrapper function defined below
 
    inline int arkode_postprocessfn_wrapper(sunrealtype t, N_Vector y, void* user_data)
    {
-      return pysundials::user_supplied_fn_caller<
+      return sundials4py::user_supplied_fn_caller<
          std::remove_pointer_t<ARKPostProcessFn>,
          arkode_user_supplied_fn_table>(&arkode_user_supplied_fn_table::postprocessfn,
                                        t, y, user_data);
    }
 
-Finally, in ``bindings/pysundials/arkode/pysundials_arkode.cpp``, the Set function is registered with nanobind:
+Finally, in ``bindings/sundials4py/arkode/sundials4py_arkode.cpp``, the Set function is registered with nanobind:
 
 .. code-block:: cpp
 

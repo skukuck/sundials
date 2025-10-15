@@ -19,7 +19,7 @@ sys.path.append(os.path.dirname(os.path.abspath("../../shared/sundials_vars.py")
 from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../shared/generate_autofunctions.py")))
-from generate_autofunctions import generate_autofunctions_for_pysundials
+from generate_autofunctions import generate_autofunctions_for_sundials4py
 
 sys.path.append(os.path.dirname(os.path.abspath("../../shared")))
 
@@ -261,5 +261,5 @@ htmlhelp_basename = "SUNDIALSdoc"
 # This prevents numpydoc from showing too much detail of the Enum classes
 numpydoc_show_class_members = False
 
-# Generate rst files with autofunction directives for pysundials functions
-generate_autofunctions_for_pysundials()
+# Generate rst files with autofunction directives for sundials4py functions
+generate_autofunctions_for_sundials4py()

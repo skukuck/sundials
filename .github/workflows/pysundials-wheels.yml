@@ -1,4 +1,4 @@
-name: pysundials-official wheels
+name: sundials4py wheels
 
 on:
   push:

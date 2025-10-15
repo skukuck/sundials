@@ -18,55 +18,55 @@
 sundials4py API
 ===============
 
-This section lists the Python API for the ``pysundials`` module and  submodules.
+This section lists the Python API for the ``sundials4py`` module and  submodules.
 
 Core Module
 -----------
 
-.. automodule:: pysundials.core
+.. automodule:: sundials4py.core
    :members:
    :undoc-members:
    :private-members:
 
-.. include:: ../../../shared/Python/pysundials-core-functions.rst
+.. include:: ../../../shared/Python/sundials4py-core-functions.rst
 
 
 ARKODE Module
 --------------
 
-.. automodule:: pysundials.arkode
+.. automodule:: sundials4py.arkode
    :members:
    :undoc-members:
    :private-members:
 
-.. include:: ../../../shared/Python/pysundials-arkode-functions.rst
+.. include:: ../../../shared/Python/sundials4py-arkode-functions.rst
 
 CVODES Module
 -------------
 
-.. automodule:: pysundials.cvodes
+.. automodule:: sundials4py.cvodes
    :members:
    :undoc-members:
    :private-members:
 
-.. include:: ../../../shared/Python/pysundials-cvodes-functions.rst
+.. include:: ../../../shared/Python/sundials4py-cvodes-functions.rst
 
 IDAS Module
 -----------
 
-.. automodule:: pysundials.idas
+.. automodule:: sundials4py.idas
    :members:
    :undoc-members:
    :private-members:
 
-.. include:: ../../../shared/Python/pysundials-idas-functions.rst
+.. include:: ../../../shared/Python/sundials4py-idas-functions.rst
 
 KINSOL Module
 -------------
 
-.. automodule:: pysundials.kinsol
+.. automodule:: sundials4py.kinsol
    :members:
    :undoc-members:
    :private-members:
 
-.. include:: ../../../shared/Python/pysundials-kinsol-functions.rst
+.. include:: ../../../shared/Python/sundials4py-kinsol-functions.rst

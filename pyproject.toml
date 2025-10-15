@@ -3,7 +3,7 @@ requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "pysundials-official"
+name = "sundials4py"
 version = "0.1.0"
 description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
@@ -64,7 +64,7 @@ addopts = [
     "--import-mode=importlib"
 ]
 pythonpath = [
-  ".", "bindings/pysundials/test"
+  ".", "bindings/sundials4py/test"
 ]
 
 [tool.cibuildwheel]
@@ -72,7 +72,7 @@ pythonpath = [
 build-verbosity = 1
 
 # Optional: run pytest to ensure that the package was correctly built
-test-command = "pytest bindings/pysundials/test"
+test-command = "pytest bindings/sundials4py/test"
 test-requires = "pytest"
 
 # Needed for full C++17 support on macOS

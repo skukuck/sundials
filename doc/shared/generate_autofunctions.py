@@ -20,24 +20,24 @@
 
 import os
 import importlib
-import pysundials
+import sundials4py
 
 
 def generate_autofunctions_for_submodule(module_name: str):
-    module = importlib.import_module(f'pysundials.{module_name}')
-    autogen_file = os.path.join(os.path.dirname(__file__), f'./Python/pysundials-{module_name}-functions.rst')
+    module = importlib.import_module(f'sundials4py.{module_name}')
+    autogen_file = os.path.join(os.path.dirname(__file__), f'./Python/sundials4py-{module_name}-functions.rst')
     with open(autogen_file, 'w') as f:
         f.write('Functions\n')
         f.write('^^^^^^^^^\n\n')
         for func_name in dir(module):
             obj = getattr(module, func_name)
             if type(obj).__name__ == 'nb_func':
-                f.write(f'.. autofunction:: pysundials.{module_name}.{func_name}\n')
+                f.write(f'.. autofunction:: sundials4py.{module_name}.{func_name}\n')
                 f.write('  :no-index:\n\n')
                 f.write(f'  See :c:func:`{func_name}`.\n\n')
 
 
-def generate_autofunctions_for_pysundials():
+def generate_autofunctions_for_sundials4py():
     generate_autofunctions_for_submodule('core')
     generate_autofunctions_for_submodule('arkode')
     generate_autofunctions_for_submodule('cvodes')

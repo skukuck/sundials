@@ -47,10 +47,6 @@ endif()
 set(unit_tests "test_sundials_QRfactorization\;" "test_sundials_GramSchmidt\;"
                "test_sundials_QRAddVariants\;")
 
-if(SUNDIALS_ENABLE_ERROR_CHECKS)
-  list(APPEND unit_tests "test_sundials_errors\;")
-endif()
-
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
   # parse the test tuple

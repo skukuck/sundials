@@ -122,7 +122,7 @@ foreach(example_tuple ${CVODES_examples})
 
       # libraries to link against
       target_link_libraries(${example} PRIVATE ${SUNDIALS_LIBS})
-    else()
+    endif()
   endif()
 
   if(TARGET ${example})

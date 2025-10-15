@@ -13,7 +13,7 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. _Fortran.Interface:
+.. _Fortran:
 
 Introduction
 ============

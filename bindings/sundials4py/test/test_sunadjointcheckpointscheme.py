@@ -21,13 +21,16 @@ import pytest
 from fixtures import *
 from sundials4py.core import *
 
+
 def make_fixed_scheme(sunctx):
     io_mode = SUNDATAIOMODE_INMEM
     mem_helper = SUNMemoryHelperView.Create(SUNMemoryHelper_Sys(sunctx.get()))
     interval = 1
     estimate = 1
     keep = 0
-    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(io_mode, mem_helper.get(), interval, estimate, keep, sunctx.get())
+    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(
+        io_mode, mem_helper.get(), interval, estimate, keep, sunctx.get()
+    )
     scheme = SUNAdjointCheckpointSchemeView.Create(scheme)
     # must return mem_helper or it will get cleaned up
     return status, scheme, mem_helper
@@ -48,7 +51,9 @@ def test_insert_vector(sunctx, nvec):
     step_num = 0
     stage_num = 0
     t = 0.0
-    status = SUNAdjointCheckpointScheme_InsertVector(scheme.get(), step_num, stage_num, t, nvec.get())
+    status = SUNAdjointCheckpointScheme_InsertVector(
+        scheme.get(), step_num, stage_num, t, nvec.get()
+    )
     assert status == 0
 
 
@@ -57,7 +62,9 @@ def test_load_vector(sunctx):
     step_num = 0
     stage_num = 0
     peek = False
-    status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(scheme.get(), step_num, stage_num, peek)
+    status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(
+        scheme.get(), step_num, stage_num, peek
+    )
     assert status != 0
 
 

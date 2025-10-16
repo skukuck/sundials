@@ -19,6 +19,7 @@ import numpy as np
 from sundials4py.core import *
 from .problem import ODEProblem
 
+
 class HarmonicOscillatorODE(ODEProblem):
     def __init__(self, A=10.0, phi=0.0, omega=1.0):
         self.A = A

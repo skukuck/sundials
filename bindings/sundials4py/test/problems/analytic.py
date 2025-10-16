@@ -19,6 +19,7 @@ import numpy as np
 from sundials4py.core import *
 from .problem import ODEProblem
 
+
 class AnalyticODE(ODEProblem):
     """
     * The following is a simple example problem with analytical
@@ -31,6 +32,7 @@ class AnalyticODE(ODEProblem):
     * result in a well-posed ODE; for values with magnitude larger
     * than 100 the problem becomes quite stiff.
     """
+
     def __init__(self, lamb=1.0):
         self.lamb = lamb
 
@@ -129,7 +131,13 @@ class AnalyticDAE:
         # System residual function:
         #   0 = (1-alpha)/(t-2)*x1 - x1 + (alpha-1)*x2 + 2*exp(t) - x1'(t)
         #   0 = (t+2)*x1 - (t+2)*exp(t)
-        res[0] = (1.0 - alpha) / (t - 2.0) * yy[0] - yy[0] + (alpha - 1.0) * yy[1] + 2.0 * np.exp(t) - yp[0]
+        res[0] = (
+            (1.0 - alpha) / (t - 2.0) * yy[0]
+            - yy[0]
+            + (alpha - 1.0) * yy[1]
+            + 2.0 * np.exp(t)
+            - yp[0]
+        )
         res[1] = (t + 2.0) * yy[0] - (t + 2.0) * np.exp(t)
         return 0
 
@@ -165,7 +173,7 @@ class AnalyticDAE:
         a12 = alpha - 1.0
         a21 = t + 2.0
         z[0] = r[1] / a21
-        z[1] = -(a11 * r[1] - a21 * r[0]) / (a12 * a21);
+        z[1] = -(a11 * r[1] - a21 * r[0]) / (a12 * a21)
         return 0
 
 

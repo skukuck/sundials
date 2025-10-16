@@ -32,8 +32,7 @@ def main():
     # The pointer types that are specific to a package are defined in the respective generate.yaml files.
     options.sundials_pointer_types = [
         "N_Vector",
-        "SUNAdaptController"
-        "SUNAdjointCheckpointScheme",
+        "SUNAdaptController" "SUNAdjointCheckpointScheme",
         "SUNAdjointStepper",
         "SUNContext",
         "SUNDomEigEstimator",
@@ -44,7 +43,7 @@ def main():
         "SUNMemoryHelper",
         "SUNNonlinearSolver",
         "SUNProfiler",
-        "SUNStepper"
+        "SUNStepper",
     ]
 
     # Don't capture comments from the source for generating Python doc strings
@@ -63,7 +62,9 @@ def main():
     # Litgen original option is fn_params_output_modifiable_immutable_to_return__regex, but we use fn_params_output_modifiable_immutable_to_return__regex_custom
     # since we override the adapt_modifiable_immutable_to_return function adapter
     options.fn_params_output_modifiable_immutable_to_return__regex_custom = r".*"
-    options.fn_return_force_policy_reference__callback = ensure_return_policy_reference_for_pointers
+    options.fn_return_force_policy_reference__callback = (
+        ensure_return_policy_reference_for_pointers
+    )
 
     # Force the functions that return pointers to use `nb::rv_policy::reference`
     options.fn_return_force_policy_reference_for_pointers__regex = r".*"
@@ -76,7 +77,7 @@ def main():
 
     # Our own custom function adapters
     options.fn_custom_adapters = [
-        adapt_array_pointer_to_std_vector, # this must go first!
+        adapt_array_pointer_to_std_vector,  # this must go first!
         adapt_modifiable_immutable_to_return,
         adapt_default_arg_pointer_with_default_null,
     ]
@@ -103,9 +104,9 @@ def main():
 
         module = config_object.get(module_name)
 
-        options.sundials_pointer_types.extend(load_pointer_types_from_yaml(
-            config_object, module_name
-        ))
+        options.sundials_pointer_types.extend(
+            load_pointer_types_from_yaml(config_object, module_name)
+        )
 
         options.fn_params_optional_with_default_null = load_nullable_params_from_yaml(
             config_object, module_name

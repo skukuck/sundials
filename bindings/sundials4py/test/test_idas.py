@@ -23,6 +23,7 @@ from sundials4py.idas import *
 from problems import AnalyticDAE
 from fixtures import *
 
+
 def test_bdf_idas(sunctx):
     ode_problem = AnalyticDAE()
 

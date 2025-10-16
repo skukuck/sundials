@@ -61,13 +61,14 @@ def adapt_array_pointer_to_std_vector(
                     )
                 dimensions = "***"
 
-
             if is_float_type(base_type):
                 new_param = copy.deepcopy(old_param.cpp_element())
                 new_decl = new_param.decl
                 new_decl.cpp_type.modifiers = []
                 new_decl.cpp_type.specifiers = []
-                new_decl.cpp_type.typenames = [f"nb::ndarray<{base_type}, nb::numpy, nb::ndim<1>, nb::c_contig>"]
+                new_decl.cpp_type.typenames = [
+                    f"nb::ndarray<{base_type}, nb::numpy, nb::ndim<1>, nb::c_contig>"
+                ]
                 new_decl.initial_value_code = ""
                 new_function_params.append(new_param)
 
@@ -98,6 +99,7 @@ def adapt_array_pointer_to_std_vector(
 
 def is_float_type(cpp_type: str):
     return cpp_type in ["float", "double", "sunrealtype"]
+
 
 def count_stars(cpp_type: str):
     """

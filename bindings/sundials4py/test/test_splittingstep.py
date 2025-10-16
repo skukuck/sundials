@@ -43,9 +43,7 @@ def test_splittingstep(sunctx):
     status = ARKodeSetFixedStep(linear_ark.get(), 5e-3)
     assert status == 0
 
-    nonlinear_ark = ARKodeView.Create(
-        ARKStepCreate(f_nonlinear, None, t0, y.get(), sunctx.get())
-    )
+    nonlinear_ark = ARKodeView.Create(ARKStepCreate(f_nonlinear, None, t0, y.get(), sunctx.get()))
     status = ARKodeSetFixedStep(nonlinear_ark.get(), 1e-3)
     assert status == 0
 

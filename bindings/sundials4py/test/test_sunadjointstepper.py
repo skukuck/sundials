@@ -21,21 +21,28 @@ import pytest
 from fixtures import *
 from sundials4py.core import *
 
+
 def make_adjoint_stepper(sunctx, sunstepper, nvec):
     mem_helper = SUNMemoryHelperView.Create(SUNMemoryHelper_Sys(sunctx.get()))
-    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(0, mem_helper.get(), 1, 1, 0, sunctx.get())
+    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(
+        0, mem_helper.get(), 1, 1, 0, sunctx.get()
+    )
     scheme = SUNAdjointCheckpointSchemeView.Create(scheme)
     b1 = 0
     b2 = 0
     nsteps = 1
     t0 = 0.0
     y0 = nvec.get()
-    adj_view = SUNAdjointStepperView.Create(sunstepper.get(), b1, sunstepper.get(), b2, nsteps, t0, y0, scheme.get(), sunctx.get())
+    adj_view = SUNAdjointStepperView.Create(
+        sunstepper.get(), b1, sunstepper.get(), b2, nsteps, t0, y0, scheme.get(), sunctx.get()
+    )
     return adj_view, scheme, mem_helper
+
 
 def test_create_adjoint_stepper(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
     assert adj_view.get() is not None
+
 
 def test_adjointstepper_reinit(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
@@ -45,6 +52,7 @@ def test_adjointstepper_reinit(sunctx, nvec, sunstepper):
     err = SUNAdjointStepper_ReInit(adj_view.get(), t0, y0, tf, nvec.get())
     assert isinstance(err, int)
 
+
 def test_adjointstepper_evolve(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
     tout = 1.0
@@ -53,6 +61,7 @@ def test_adjointstepper_evolve(sunctx, nvec, sunstepper):
     assert isinstance(err, int)
     assert isinstance(tret, float)
 
+
 def test_adjointstepper_onestep(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
     tout = 1.0
@@ -60,6 +69,7 @@ def test_adjointstepper_onestep(sunctx, nvec, sunstepper):
     err, tret = SUNAdjointStepper_OneStep(adj_view.get(), tout, sens)
     assert isinstance(err, int)
     assert isinstance(tret, float)
+
 
 def test_adjointstepper_recomputefwd(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
@@ -70,11 +80,13 @@ def test_adjointstepper_recomputefwd(sunctx, nvec, sunstepper):
     err = SUNAdjointStepper_RecomputeFwd(adj_view.get(), start_idx, t0, y0, tf)
     assert isinstance(err, int)
 
+
 def test_adjointstepper_getnumsteps(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
     err, num_steps = SUNAdjointStepper_GetNumSteps(adj_view.get())
     assert isinstance(err, int)
     assert isinstance(num_steps, int)
+
 
 def test_adjointstepper_getnumrecompute(sunctx, nvec, sunstepper):
     adj_view, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)

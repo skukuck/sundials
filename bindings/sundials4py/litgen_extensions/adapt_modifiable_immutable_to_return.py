@@ -64,10 +64,13 @@ def adapt_modifiable_immutable_to_return(
     # is_modifiable_python_immutable_ref_or_pointer only recognizes some built in types
     # but we would like to also transform functions that return SUNDIALS objects as outputs,
     # e.g., SUNErrCode SUNSparseMatrix_ToCSC(SUNMatrix A, SUNMatrix* Bout) becomes
-    # std::tuple<SUNErrCode, SUNMatrix> SUNSparseMatrix_ToCSC(SUNMatrix A, SUNMatrix B); . 
+    # std::tuple<SUNErrCode, SUNMatrix> SUNSparseMatrix_ToCSC(SUNMatrix A, SUNMatrix B); .
     def is_immutable_ref_or_pointer(param):
-        a = param.is_modifiable_python_immutable_ref_or_pointer() 
-        b = param.cpp_element().decl.cpp_type.name_without_modifier_specifier() in options.sundials_pointer_types
+        a = param.is_modifiable_python_immutable_ref_or_pointer()
+        b = (
+            param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
+            in options.sundials_pointer_types
+        )
         c = param.cpp_element().decl.cpp_type.modifiers == ["*"]
         if a or (b and c):
             return True, b and c

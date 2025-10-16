@@ -24,6 +24,7 @@ from sundials4py.arkode import *
 from problems import AnalyticMultiscaleODE
 from fixtures import sunctx
 
+
 def test_multirate(sunctx):
     ode_problem = AnalyticMultiscaleODE()
 

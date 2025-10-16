@@ -44,9 +44,7 @@ def test_forcingstep(sunctx):
     status = ARKodeSetFixedStep(linear_ark.get(), 5e-3)
     assert status == 0
 
-    nonlinear_ark = ARKodeView.Create(
-        ARKStepCreate(f_nonlinear, None, t0, y.get(), sunctx.get())
-    )
+    nonlinear_ark = ARKodeView.Create(ARKStepCreate(f_nonlinear, None, t0, y.get(), sunctx.get()))
     status = ARKodeSetFixedStep(nonlinear_ark.get(), 1e-3)
     assert status == 0
 
@@ -56,9 +54,7 @@ def test_forcingstep(sunctx):
     nonlinear_stepper = SUNStepperView.Create(nonlinear_stepper)
 
     ark = ARKodeView.Create(
-        ForcingStepCreate(
-            linear_stepper.get(), nonlinear_stepper.get(), t0, y.get(), sunctx.get()
-        )
+        ForcingStepCreate(linear_stepper.get(), nonlinear_stepper.get(), t0, y.get(), sunctx.get())
     )
     status = ARKodeSetFixedStep(ark.get(), 1e-2)
     assert status == 0

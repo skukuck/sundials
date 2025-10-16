@@ -63,4 +63,3 @@ def test_cvodes_fsa(sunctx):
 def test_cvodes_adjoint(sunctx):
     # TODO(CJB): implement
     pass
-

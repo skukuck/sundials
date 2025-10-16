@@ -5,6 +5,7 @@
 
 import re
 
+
 def strip_sundials_export(code):
     return code.replace("SUNDIALS_EXPORT", "")
 

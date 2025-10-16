@@ -20,6 +20,7 @@ import numpy as np
 from fixtures import *
 from sundials4py.core import *
 
+
 def test_create_band_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
     A = SUNMatrixView.Create(SUNBandMatrix(rows, mu, ml, sunctx.get()))
@@ -30,11 +31,13 @@ def test_create_band_matrix(sunctx):
     ldata = SUNBandMatrix_LData(A.get())
     assert dataA.shape[0] == ldata
 
+
 def test_clone_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
     A = SUNMatrixView.Create(SUNBandMatrix(rows, mu, ml, sunctx.get()))
     B = SUNMatClone(A.get())
     assert B is not None
+
 
 def test_zero_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
@@ -42,17 +45,19 @@ def test_zero_matrix(sunctx):
     ret = SUNMatZero(A.get())
     assert ret == 0
 
+
 def test_copy_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
     A = SUNMatrixView.Create(SUNBandMatrix(rows, mu, ml, sunctx.get()))
     B = SUNMatrixView.Create(SUNBandMatrix(rows, mu, ml, sunctx.get()))
     smu = SUNBandMatrix_StoredUpperBandwidth(A.get())
     dataA = SUNBandMatrix_Data(A.get())
-    dataA[smu-mu] = 1.0
+    dataA[smu - mu] = 1.0
     ret = SUNMatCopy(A.get(), B.get())
     assert ret == 0
     dataB = SUNBandMatrix_Data(B.get())
-    assert dataB[smu-mu] == 1.0
+    assert dataB[smu - mu] == 1.0
+
 
 def test_scale_add_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
@@ -61,12 +66,13 @@ def test_scale_add_matrix(sunctx):
     smu = SUNBandMatrix_StoredUpperBandwidth(A.get())
     dataA = SUNBandMatrix_Data(A.get())
     dataB = SUNBandMatrix_Data(B.get())
-    dataA[smu-mu:smu+ml] = 1.0 # column 0 set to 1.0
-    dataB[smu-mu:smu+ml] = 2.0
+    dataA[smu - mu : smu + ml] = 1.0  # column 0 set to 1.0
+    dataB[smu - mu : smu + ml] = 2.0
     ret = SUNMatScaleAdd(3.0, A.get(), B.get())
     assert ret == 0
     # A should now be 3*A + B = 3*1 + 2 = 5
-    assert np.allclose(dataA[smu-mu:smu+ml], 5.0)
+    assert np.allclose(dataA[smu - mu : smu + ml], 5.0)
+
 
 def test_scale_add_identity(sunctx):
     rows, mu, ml = 4, 1, 1
@@ -79,6 +85,7 @@ def test_scale_add_identity(sunctx):
     # A should now be I
     diag = np.array([dataA[smu + i * ldim] for i in range(rows)])
     assert np.allclose(diag, 1.0)
+
 
 def test_matvec(sunctx):
     rows, mu, ml = 4, 1, 1
@@ -105,8 +112,8 @@ def test_matvec(sunctx):
         # Upper diagonal
         if j < rows - 1:
             dataA[smu + 1 + j * ldim] = 1.0
-    
+
     ret = SUNMatMatvec(A.get(), x.get(), y.get())
     assert ret == 0
 
-    assert np.allclose(N_VGetArrayPointer(y.get()), [5.0, 6.0, 6.0, 4.0])  
+    assert np.allclose(N_VGetArrayPointer(y.get()), [5.0, 6.0, 6.0, 4.0])

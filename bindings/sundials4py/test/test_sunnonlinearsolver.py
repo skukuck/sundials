@@ -44,10 +44,10 @@ def make_solver(solver_type, sunctx, nvec):
         raise ValueError("Unknown solver type")
 
 
-@pytest.mark.parametrize("solver_type, expected_type", [
-    ("newton", SUNNONLINEARSOLVER_ROOTFIND),
-    ("fixedpoint", SUNNONLINEARSOLVER_FIXEDPOINT)
-])
+@pytest.mark.parametrize(
+    "solver_type, expected_type",
+    [("newton", SUNNONLINEARSOLVER_ROOTFIND), ("fixedpoint", SUNNONLINEARSOLVER_FIXEDPOINT)],
+)
 def test_gettype(solver_type, expected_type, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     typ = SUNNonlinSolGetType(nls.get())
@@ -61,10 +61,7 @@ def test_initialize(solver_type, sunctx, nvec):
     assert ret == 0
 
 
-@pytest.mark.parametrize("solver_type,max_iters", [
-    ("newton", 5),
-    ("fixedpoint", 10)
-])
+@pytest.mark.parametrize("solver_type,max_iters", [("newton", 5), ("fixedpoint", 10)])
 def test_set_max_iters_and_get_num_iters(solver_type, max_iters, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     ret = SUNNonlinSolSetMaxIters(nls.get(), max_iters)

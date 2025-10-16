@@ -88,8 +88,8 @@ inline int hamiltonian(N_Vector y_vec, sunrealtype* H)
   const sunscalartype p1 = y_data[2];
   const sunscalartype p2 = y_data[3];
 
-  const sunscalartype qTq = q1 * q1 + q2 * q2;
-  const sunscalartype pTp = p1 * p1 + p2 * p2;
+  const sunrealtype qTq = SUNSQR(q1) + SUNSQR(q2);
+  const sunrealtype pTp = SUNSQR(p1) + SUNSQR(p2);
 
   *H = half * pTp - one / std::sqrt(qTq);
 
@@ -108,7 +108,7 @@ inline int angular_momentum(N_Vector y_vec, sunrealtype* L)
   const sunscalartype p1 = y_data[2];
   const sunscalartype p2 = y_data[3];
 
-  *L = q1 * p2 - q2 * p1;
+  *L = SUN_REAL(q1 * p2 - q2 * p1);
 
   return 0;
 }
@@ -143,7 +143,7 @@ inline int ode_rhs_force(sunrealtype t, N_Vector y_vec, N_Vector f_vec,
   const sunscalartype q1 = y_data[0];
   const sunscalartype q2 = y_data[1];
 
-  const sunrealtype sqrt_qTq = std::sqrt(q1 * q1 + q2 * q2);
+  const sunscalartype sqrt_qTq = std::sqrt(SUNSQR(q1) + SUNSQR(q2));
 
   f_data[2] = -q1 / std::pow(sqrt_qTq, 3);
   f_data[3] = -q2 / std::pow(sqrt_qTq, 3);

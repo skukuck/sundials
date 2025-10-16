@@ -25,8 +25,8 @@
 
 static bool compare_vectors(N_Vector expected, N_Vector actual)
 {
-  sunrealtype* adata = N_VGetArrayPointer(actual);
-  sunrealtype* edata = N_VGetArrayPointer(expected);
+  sunscalartype* adata = N_VGetArrayPointer(actual);
+  sunscalartype* edata = N_VGetArrayPointer(expected);
   for (sunindextype i = 0; i < N_VGetLength(expected); ++i)
   {
     if (edata[i] != adata[i])

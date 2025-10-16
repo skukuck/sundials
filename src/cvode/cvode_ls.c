@@ -389,7 +389,8 @@ int CVodeSetLSNormFactor(void* cvode_mem, sunrealtype nrmfac)
     /* compute factor for WRMS norm with dot product */
     N_VConst(ONE, cvls_mem->ytemp);
     sunscalartype dot = ZERO;
-    SUNCheckCall(N_VDotProdComplex(cvls_mem->ytemp, cvls_mem->ytemp, &dot));
+    retval = N_VDotProdComplex(cvls_mem->ytemp, cvls_mem->ytemp, &dot);
+    if (retval) { return (CV_VECTOROP_ERR); }
     cvls_mem->nrmfac = SUNRsqrt(SUN_REAL(dot));
   }
   else

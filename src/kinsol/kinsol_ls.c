@@ -975,11 +975,13 @@ int kinLsDQJtimes(N_Vector v, N_Vector Jv, N_Vector u,
   N_VProd(u, kin_mem->kin_uscale, Jv);
 
   /* compute dot product (Du*u).(Du*v) */
-  SUNCheckCall(N_VDotProdComplex(Jv, kin_mem->kin_vtemp1, &sutsv));
+  retval = N_VDotProdComplex(Jv, kin_mem->kin_vtemp1, &sutsv);
+  if (retval) { return KIN_VECTOROP_ERR; }
 
   /* compute dot product (Du*v).(Du*v) */
   sunscalartype dot = ZERO;
-  SUNCheckCall(N_VDotProdComplex(kin_mem->kin_vtemp1, kin_mem->kin_vtemp1, &dot));
+  retval = N_VDotProdComplex(kin_mem->kin_vtemp1, kin_mem->kin_vtemp1, &dot);
+  if (retval) { return KIN_VECTOROP_ERR; }
   vtv = SUN_REAL(dot);
 
   /* compute differencing factor -- this is from p. 469, Brown and Saad paper */

@@ -12,19 +12,19 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * This example solves the nonlinear system
- *  
+ *
  * 4x    - sin(y) - zi     - 1  = 0
  * -x^2  + 5y     - cos(z) - 2i = 0
  * -e^-x - y      + 6z     - 3  = 0
- * 
+ *
  * using the accelerated fixed pointer solver in KINSOL. The nonlinear fixed point function is
- * 
+ *
  * g1(x,y,z) = (1/4)*(sin(y) + zi + 1)
  * g2(x,y,z) = (1/5)*(x^2 + cos(z) + 2i)
  * g3(x,y,z) = (1/6)*(exp(-x) + y + 3)
- * 
- *  This system has the analytic solution: 
- *                                        x = 0.28443101049565 + 0.27031686078054i 
+ *
+ *  This system has the analytic solution:
+ *                                        x = 0.28443101049565 + 0.27031686078054i
  *                                        y = 0.16117132843381 + 0.42622240595676i
  *                                        z = 0.64771494226506 + 0.03754877135588i
  * ---------------------------------------------------------------------------*/
@@ -80,8 +80,8 @@
 #define TEN          SUN_RCONST(10.0)            /* real 10.0 */
 
 /* analytic solution */
-#define XTRUE SUN_CCONST(0.28443101049565, 0.27031686078054) 
-#define YTRUE SUN_CCONST(0.16117132843381, 0.42622240595676) 
+#define XTRUE SUN_CCONST(0.28443101049565, 0.27031686078054)
+#define YTRUE SUN_CCONST(0.16117132843381, 0.42622240595676)
 #define ZTRUE SUN_CCONST(0.64771494226506, 0.03754877135588)
 
 /* problem options */
@@ -259,10 +259,10 @@ int main(int argc, char* argv[])
   /* Get vector data array */
   data = N_VGetArrayPointer(u);
   if (check_retval((void*)data, "N_VGetArrayPointer", 0)) { return (1); }
-  
-  data[0] = SUN_CCONST(ZERO, ZERO); 
-  data[1] = SUN_CCONST(ZERO, ZERO); 
-  data[2] = SUN_CCONST(ZERO, ZERO); 
+
+  data[0] = SUN_CCONST(0.0, 0.0);
+  data[1] = SUN_CCONST(0.0, 0.0);
+  data[2] = SUN_CCONST(0.0, 0.0);
 
   /* ----------------------------
     * Call KINSol to solve problem
@@ -346,9 +346,9 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
   y = udata[1];
   z = udata[2];
 
-  gdata[0] = (ONE/FOUR)*(SIN(y) + SUN_CCONST(ZERO, ONE)*z + ONE); 
-  gdata[1] = (ONE/FIVE)*(x*x + COS(z) + SUN_CCONST(ZERO, TWO));  
-  gdata[2] = (ONE/SIX)*(EXP(-x) + y + THREE); 
+  gdata[0] = (ONE/FOUR)*(SIN(y) + SUN_CCONST(0.0, 1.0)*z + ONE);
+  gdata[1] = (ONE/FIVE)*(x*x + COS(z) + SUN_CCONST(0.0, 2.0));
+  gdata[2] = (ONE/SIX)*(EXP(-x) + y + THREE);
 
   return (0);
 }

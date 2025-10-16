@@ -235,14 +235,14 @@ extern "C" {
 #endif
 
 #ifndef SUNCSQR
-#define SUNCSQR(A) ((sunrealtype)((A) * SUNCCONJ(A)))
+#define SUNCSQR(A) SUN_REAL((A) * SUNCCONJ(A))
 #endif
 
 #ifndef SUNSQR
 #if defined(SUNDIALS_SCALAR_TYPE_REAL)
 #define SUNSQR(A) SUNRSQR(A)
 #else
-#define SUNSQR(A) SUNCSQR(A)
+#define SUNSQR(A) SUN_REAL(SUNCSQR(A))
 #endif
 #endif
 
@@ -353,7 +353,7 @@ extern "C" {
 #if defined(SUNDIALS_SCALAR_TYPE_REAL)
 #define SUNabs(x) SUNRabs(x)
 #else
-#define SUNabs(x) SUNCabs(x)
+#define SUNabs(x) SUN_REAL(SUNCabs(x))
 #endif
 #endif
 

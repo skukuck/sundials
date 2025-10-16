@@ -151,6 +151,9 @@ int Test_N_VBufSize_Z(N_Vector x, sunindextype local_length, int myid);
 int Test_N_VBufPack_Z(N_Vector x, sunindextype local_length, int myid);
 int Test_N_VBufUnpack_Z(N_Vector x, sunindextype local_length, int myid);
 
+/* Enabled/disable operation timing */
+void SetTiming_Z(int onoff, int myid);
+
 #ifdef __cplusplus
 }
 #endif

@@ -372,7 +372,8 @@ int IDASetLSNormFactor(void* ida_mem, sunrealtype nrmfac)
     /* compute factor for WRMS norm with dot product */
     N_VConst(ONE, idals_mem->ytemp);
     sunscalartype dot = ZERO;
-    SUNCheckCall(N_VDotProdComplex(idals_mem->ytemp, idals_mem->ytemp, &dot));
+    retval = N_VDotProdComplex(idals_mem->ytemp, idals_mem->ytemp, &dot);
+    if (retval) { return (IDA_VECTOROP_ERR); }
     idals_mem->nrmfac = SUNRsqrt(SUN_REAL(dot));
   }
   else

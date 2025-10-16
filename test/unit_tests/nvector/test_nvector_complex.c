@@ -5056,8 +5056,8 @@ int Test_N_VDotProdLocal_Z(N_Vector X, N_Vector Y, sunindextype local_length,
   if (failure)
   {
     printf(">>> FAILED test -- N_VDotProdLocal, Proc %d\n", myid);
-    printf("ans = %" FSYM " expected = %" FSYM "+ " FSYM "i\n", SUN_REAL(ans),
-           SUN_IMAG(ans), rmyid);
+    printf("ans = %" FSYM " expected = %" FSYM "+ %" FSYM "i\n", SUN_REAL(ans),
+           SUN_IMAG(ans), SUN_REAL(rmyid));
     fails++;
   }
   else if (myid == 0) { printf("PASSED test -- N_VDotProdLocal\n"); }
@@ -6026,6 +6026,29 @@ int Test_N_VBufUnpack_Z(N_Vector x, sunindextype local_length, int myid)
   free(buf);
 
   return (0);
+}
+
+/* ======================================================================
+ * Private functions
+ * ====================================================================*/
+
+void SetTiming_Z(int onoff, int myid)
+{
+#if defined(SUNDIALS_HAVE_POSIX_TIMERS)
+  struct timespec spec;
+  clock_gettime(CLOCK_MONOTONIC, &spec);
+  base_time_tv_sec = spec.tv_sec;
+
+  clock_getres(CLOCK_MONOTONIC, &spec);
+  if (myid == 0)
+  {
+    printf("Timer resolution: %ld ns = %g s\n", spec.tv_nsec,
+           ((double)(spec.tv_nsec) / 1E9));
+  }
+#endif
+
+  /* only print from the root process */
+  print_time = (myid == 0) ? onoff : 0;
 }
 
 /* ----------------------------------------------------------------------

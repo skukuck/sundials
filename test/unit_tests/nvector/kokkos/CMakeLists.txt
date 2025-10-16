@@ -19,7 +19,12 @@
 
 # Example lists are tuples "name\;args\;type" where the type is develop for
 # examples excluded from 'make test' in releases
-set(examples_list "test_nvector_kokkos.cpp\;1000 0\;")
+# Examples using SUNDIALS serial nvector
+if(SUNDIALS_SCALAR_TYPE MATCHES "REAL")
+  set(examples_list "test_nvector_kokkos.cpp\;1000 0\;")
+elseif(SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
+  set(examples_list "test_nvector_kokkos_Z.cpp\;1000 0\;")
+endif()
 
 include_directories(..)
 
@@ -41,6 +46,9 @@ foreach(example_tuple ${examples_list})
     if(NOT TARGET ${example_target})
       # example source files
       sundials_add_executable(${example_target} ${example})
+
+      # link vector test utilities
+      target_link_libraries(${example_target} PRIVATE test_nvector_obj)
 
       # Organize examples for IDEs
       set_target_properties(${example_target} PROPERTIES FOLDER "Examples")

@@ -23,7 +23,7 @@
 #include <sundials/sundials_math.h>
 #include <sundials/sundials_types.h>
 
-#include "test_nvector.h"
+#include "test_nvector_complex.h"
 
 #if defined(USE_CUDA)
 using ExecSpace = Kokkos::Cuda;
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   sunindextype length; /* vector length             */
   int print_timing;    /* turn timing on/off        */
 
-  Test_Init(SUN_COMM_NULL);
+  Test_Init_Z(SUN_COMM_NULL);
 
   /* check input and set vector length */
   if (argc < 3)
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   }
 
   print_timing = atoi(argv[2]);
-  SetTiming(print_timing, 0);
+  SetTiming_Z(print_timing, 0);
 
   printf("Testing KOKKOS N_Vector \n");
 
@@ -79,17 +79,17 @@ int main(int argc, char* argv[])
     VecType X{static_cast<SizeType>(length), sunctx};
 
     /* Check vector ID */
-    fails += Test_N_VGetVectorID(X, SUNDIALS_NVEC_KOKKOS, 0);
+    fails += Test_N_VGetVectorID_Z(X, SUNDIALS_NVEC_KOKKOS, 0);
 
     /* Test clone functions */
-    fails += Test_N_VClone(X, length, 0);
-    fails += Test_N_VCloneVectorArray(5, X, length, 0);
+    fails += Test_N_VClone_Z(X, length, 0);
+    fails += Test_N_VCloneVectorArray_Z(5, X, length, 0);
 
     /* Check vector length */
-    fails += Test_N_VGetLength(X, 0);
+    fails += Test_N_VGetLength_Z(X, 0);
 
     /* Check vector communicator */
-    fails += Test_N_VGetCommunicator(X, SUN_COMM_NULL, 0);
+    fails += Test_N_VGetCommunicator_Z(X, SUN_COMM_NULL, 0);
 
     /* Clone additional vectors for testing */
     VecType Y{X};
@@ -98,25 +98,25 @@ int main(int argc, char* argv[])
     /* Standard vector operation tests */
     printf("\nTesting standard vector operations:\n\n");
 
-    fails += Test_N_VAbs(X, Z, length, 0);
-    fails += Test_N_VAddConst(X, Z, length, 0);
-    fails += Test_N_VCompare(X, Z, length, 0);
-    fails += Test_N_VConst(X, length, 0);
-    fails += Test_N_VConstrMask(X, Y, Z, length, 0);
-    fails += Test_N_VDiv(X, Y, Z, length, 0);
-    fails += Test_N_VDotProd(X, Y, length, 0);
-    fails += Test_N_VInv(X, Z, length, 0);
-    fails += Test_N_VInvTest(X, Z, length, 0);
-    fails += Test_N_VL1Norm(X, length, 0);
-    fails += Test_N_VLinearSum(X, Y, Z, length, 0);
-    fails += Test_N_VMaxNorm(X, length, 0);
-    fails += Test_N_VMin(X, length, 0);
-    fails += Test_N_VMinQuotient(X, Y, length, 0);
-    fails += Test_N_VProd(X, Y, Z, length, 0);
-    fails += Test_N_VScale(X, Z, length, 0);
-    fails += Test_N_VWL2Norm(X, Y, length, 0);
-    fails += Test_N_VWrmsNorm(X, Y, length, 0);
-    fails += Test_N_VWrmsNormMask(X, Y, Z, length, 0);
+    fails += Test_N_VAbs_Z(X, Z, length, 0);
+    fails += Test_N_VAddConst_Z(X, Z, length, 0);
+    fails += Test_N_VCompare_Z(X, Z, length, 0);
+    fails += Test_N_VConst_Z(X, length, 0);
+    fails += Test_N_VConstrMask_Z(X, Y, Z, length, 0);
+    fails += Test_N_VDiv_Z(X, Y, Z, length, 0);
+    fails += Test_N_VDotProd_Z(X, Y, length, 0);
+    fails += Test_N_VInv_Z(X, Z, length, 0);
+    fails += Test_N_VInvTest_Z(X, Z, length, 0);
+    fails += Test_N_VL1Norm_Z(X, length, 0);
+    fails += Test_N_VLinearSum_Z(X, Y, Z, length, 0);
+    fails += Test_N_VMaxNorm_Z(X, length, 0);
+    fails += Test_N_VMin_Z(X, length, 0);
+    fails += Test_N_VMinQuotient_Z(X, Y, length, 0);
+    fails += Test_N_VProd_Z(X, Y, Z, length, 0);
+    fails += Test_N_VScale_Z(X, Z, length, 0);
+    fails += Test_N_VWL2Norm_Z(X, Y, length, 0);
+    fails += Test_N_VWrmsNorm_Z(X, Y, length, 0);
+    fails += Test_N_VWrmsNormMask_Z(X, Y, Z, length, 0);
 
     /* Fused and vector array operations tests (disabled) */
     printf("\nTesting fused and vector array operations (disabled):\n\n");
@@ -125,31 +125,31 @@ int main(int argc, char* argv[])
     VecType U{X};
 
     /* fused operations */
-    fails += Test_N_VLinearCombination(U, length, 0);
-    fails += Test_N_VScaleAddMulti(U, length, 0);
-    fails += Test_N_VDotProdMulti(U, length, 0);
+    fails += Test_N_VLinearCombination_Z(U, length, 0);
+    fails += Test_N_VScaleAddMulti_Z(U, length, 0);
+    fails += Test_N_VDotProdMulti_Z(U, length, 0);
 
     /* vector array operations */
-    fails += Test_N_VLinearSumVectorArray(U, length, 0);
-    fails += Test_N_VScaleVectorArray(U, length, 0);
-    fails += Test_N_VConstVectorArray(U, length, 0);
-    fails += Test_N_VWrmsNormVectorArray(U, length, 0);
-    fails += Test_N_VWrmsNormMaskVectorArray(U, length, 0);
-    fails += Test_N_VScaleAddMultiVectorArray(U, length, 0);
-    fails += Test_N_VLinearCombinationVectorArray(U, length, 0);
+    fails += Test_N_VLinearSumVectorArray_Z(U, length, 0);
+    fails += Test_N_VScaleVectorArray_Z(U, length, 0);
+    fails += Test_N_VConstVectorArray_Z(U, length, 0);
+    fails += Test_N_VWrmsNormVectorArray_Z(U, length, 0);
+    fails += Test_N_VWrmsNormMaskVectorArray_Z(U, length, 0);
+    fails += Test_N_VScaleAddMultiVectorArray_Z(U, length, 0);
+    fails += Test_N_VLinearCombinationVectorArray_Z(U, length, 0);
 
     /* local reduction operations */
     printf("\nTesting local reduction operations:\n\n");
 
-    fails += Test_N_VDotProdLocal(X, Y, length, 0);
-    fails += Test_N_VMaxNormLocal(X, length, 0);
-    fails += Test_N_VMinLocal(X, length, 0);
-    fails += Test_N_VL1NormLocal(X, length, 0);
-    fails += Test_N_VWSqrSumLocal(X, Y, length, 0);
-    fails += Test_N_VWSqrSumMaskLocal(X, Y, Z, length, 0);
-    fails += Test_N_VInvTestLocal(X, Z, length, 0);
-    fails += Test_N_VConstrMaskLocal(X, Y, Z, length, 0);
-    fails += Test_N_VMinQuotientLocal(X, Y, length, 0);
+    fails += Test_N_VDotProdLocal_Z(X, Y, length, 0);
+    fails += Test_N_VMaxNormLocal_Z(X, length, 0);
+    fails += Test_N_VMinLocal_Z(X, length, 0);
+    fails += Test_N_VL1NormLocal_Z(X, length, 0);
+    fails += Test_N_VWSqrSumLocal_Z(X, Y, length, 0);
+    fails += Test_N_VWSqrSumMaskLocal_Z(X, Y, Z, length, 0);
+    fails += Test_N_VInvTestLocal_Z(X, Z, length, 0);
+    fails += Test_N_VConstrMaskLocal_Z(X, Y, Z, length, 0);
+    fails += Test_N_VMinQuotientLocal_Z(X, Y, length, 0);
   }
   Kokkos::finalize();
 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
   if (fails) { printf("FAIL: NVector module failed %i tests \n\n", fails); }
   else { printf("SUCCESS: NVector module passed all tests \n\n"); }
 
-  Test_Finalize();
+  Test_Finalize_Z();
 
   return (fails);
 }
@@ -167,6 +167,11 @@ int main(int argc, char* argv[])
  * --------------------------------------------------------------------*/
 
 int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
+{
+  return check_ans_Z(ans, X, local_length);
+}
+
+int check_ans_Z(sunscalartype ans, N_Vector X, sunindextype local_length)
 {
   int failure{0};
   auto Xvec{static_cast<VecType*>(X->content)};
@@ -181,20 +186,20 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
   return (failure > ZERO) ? (1) : (0);
 }
 
-sunbooleantype has_data(N_Vector X)
+sunbooleantype has_data_Z(N_Vector X)
 {
   /* check if vector data is non-null */
   return SUNTRUE;
 }
 
-void set_element(N_Vector X, sunindextype i, sunrealtype val)
+void set_element_Z(N_Vector X, sunindextype i, sunscalartype val)
 {
   /* set i-th element of data array */
-  set_element_range(X, i, i, val);
+  set_element_range_Z(X, i, i, val);
 }
 
-void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
-                       sunrealtype val)
+void set_element_range_Z(N_Vector X, sunindextype is, sunindextype ie,
+                         sunscalartype val)
 {
   auto Xvec{static_cast<VecType*>(X->content)};
   auto Xdata{Xvec->HostView()};
@@ -205,7 +210,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   sundials::kokkos::CopyToDevice<VecType>(X);
 }
 
-sunscalartype get_element(N_Vector X, sunindextype i)
+sunscalartype get_element_Z(N_Vector X, sunindextype i)
 {
   /* get i-th element of data array */
   auto Xvec{static_cast<VecType*>(X->content)};
@@ -214,13 +219,13 @@ sunscalartype get_element(N_Vector X, sunindextype i)
   return Xdata[i];
 }
 
-double max_time(N_Vector X, double time)
+double max_time_Z(N_Vector X, double time)
 {
   /* not running in parallel, just return input time */
   return time;
 }
 
-void sync_device(N_Vector x)
+void sync_device_Z(N_Vector x)
 {
   /* sync with GPU */
   Kokkos::fence();

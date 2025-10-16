@@ -419,7 +419,7 @@ SUNErrCode N_VDotProdComplex_SensWrapper(N_Vector x, N_Vector y,
   int i;
   sunscalartype contrib;
 
-  *sum = SUN_CCONST(ZERO, ZERO);
+  *sum = SUN_CCONST(0.0, 0.0);
 
   for (i = 0; i < NV_NVECS_SW(x); i++)
   {

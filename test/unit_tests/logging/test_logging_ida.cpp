@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   flag = true_sol(zero, &utrue, &vtrue);
   if (check_flag(flag, "true_sol")) { return 1; }
 
-  sunrealtype* ydata = N_VGetArrayPointer(y);
+  sunscalartype* ydata = N_VGetArrayPointer(y);
   ydata[0]           = utrue;
   ydata[1]           = vtrue;
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   flag = true_sol_p(zero, &uptrue, &vptrue);
   if (check_flag(flag, "true_sol")) { return 1; }
 
-  sunrealtype* ypdata = N_VGetArrayPointer(yp);
+  sunscalartype* ypdata = N_VGetArrayPointer(yp);
   ypdata[0]           = uptrue;
   ypdata[1]           = vptrue;
 

@@ -1571,9 +1571,14 @@ int erkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     if (J_relax->ops->nvdotprodlocalcomplex &&
         J_relax->ops->nvdotprodmultiallreduce)
     {
-      SUNCheckCall(N_VDotProdLocalComplex(J_relax, step_mem->F[i], &dot));
+      retval = N_VDotProdLocalComplex(J_relax, step_mem->F[i], &dot);
+      if (retval) { return ARK_VECTOROP_ERR; }
     }
-    else { SUNCheckCall(N_VDotProdComplex(J_relax, step_mem->F[i], &dot)); }
+    else
+    {
+      retval = N_VDotProdComplex(J_relax, step_mem->F[i], &dot);
+      if (retval) { return ARK_VECTOROP_ERR; }
+    }
     // TODO DRR: verify what to do with complex-valued contributions to delta_e_out
     *delta_e_out += step_mem->B->b[i] * SUN_REAL(dot);
   }

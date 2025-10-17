@@ -35,29 +35,56 @@ jobs:
 
 
   build_wheels:
-    name: Wheels on ${{ matrix.os }}
+    name: Build wheels (default double/64) on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-13, macos-14, windows-latest]
-
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: true
-
     - uses: pypa/cibuildwheel@v2.22
-
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=DOUBLE -DSUNDIALS_INDEX_SIZE=64"
     - name: Verify clean directory
       run: git diff --exit-code
       shell: bash
-
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
         path: wheelhouse/*.whl
-        name: dist-${{ matrix.os }}
+        name: dist-default-${{ matrix.os }}
+
+  build_wheels_extra:
+    name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
+        precision: [DOUBLE, SINGLE, SINGLE]
+        index: [32, 64, 32]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.22
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+    - name: Rename wheels to include config
+      run: |
+        for whl in wheelhouse/*.whl; do
+          mv "$whl" "wheelhouse/$(echo $whl | sed 's/\.whl$/-${{ matrix.precision }}-${{ matrix.index }}.whl/')"
+        done
+      shell: bash
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        path: wheelhouse/*.whl
+        name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
 
   # upload_all:
   #   name: Upload if release

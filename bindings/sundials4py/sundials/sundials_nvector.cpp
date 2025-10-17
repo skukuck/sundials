@@ -52,21 +52,21 @@ void bind_nvector(nb::module_& m)
           if (!ptr) { throw std::runtime_error("Failed to get array pointer"); }
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-          return sundials4py::array1d(ptr, 1, shape, owner);
+          return sundials4py::Array1d(ptr, 1, shape, owner);
         });
 
   m.def("N_VGetDeviceArrayPointer",
-        [](N_Vector v) -> sundials4py::array1d
+        [](N_Vector v)
         {
           auto ptr = N_VGetDeviceArrayPointer(v);
           if (!ptr) { throw std::runtime_error("Failed to get array pointer"); }
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-          return sundials4py::array1d(ptr, 1, shape, owner);
+          return sundials4py::Array1d(ptr, 1, shape, owner);
         });
 
   m.def("N_VSetArrayPointer",
-        [](sundials4py::array1d arr, N_Vector v)
+        [](sundials4py::Array1d arr, N_Vector v)
         {
           if (arr.shape(0) != N_VGetLength(v))
           {
@@ -75,6 +75,19 @@ void bind_nvector(nb::module_& m)
           }
           N_VSetArrayPointer(arr.data(), v);
         });
+  
+
+  // TODO(CJB): we may need to add a SetDeviceArrayPointer op to the N_Vector class
+  // m.def("N_VSetDeviceArrayPointer",
+  //       [](sundials4py::GpuArray1d arr, N_Vector v)
+  //       {
+  //         if (arr.shape(0) != N_VGetLength(v))
+  //         {
+  //           throw std::runtime_error(
+  //             "Array shape does not match vector length");
+  //         }
+  //         N_VSetDeviceArrayPointer(arr.data(), v);
+  //       });
 }
 
 } // namespace sundials4py

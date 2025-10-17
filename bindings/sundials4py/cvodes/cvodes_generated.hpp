@@ -81,14 +81,12 @@ m.def("CVodeReInit", CVodeReInit, nb::arg("cvode_mem"), nb::arg("t0"),
 
 m.def(
   "CVodeResizeHistory",
-  [](void* cvode_mem,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> t_hist_1d,
+  [](void* cvode_mem, sundials4py::Array1d t_hist_1d,
      std::vector<N_Vector> y_hist_1d, std::vector<N_Vector> f_hist_1d,
      int num_y_hist, int num_f_hist) -> int
   {
     auto CVodeResizeHistory_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> t_hist_1d,
+      [](void* cvode_mem, sundials4py::Array1d t_hist_1d,
          std::vector<N_Vector> y_hist_1d, std::vector<N_Vector> f_hist_1d,
          int num_y_hist, int num_f_hist) -> int
     {
@@ -781,13 +779,11 @@ m.def(
 
 m.def(
   "CVodeSensSStolerances",
-  [](void* cvode_mem, sunrealtype reltolS,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> abstolS_1d) -> int
+  [](void* cvode_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
   {
     auto CVodeSensSStolerances_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, sunrealtype reltolS,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> abstolS_1d)
-      -> int
+         sundials4py::Array1d abstolS_1d) -> int
     {
       sunrealtype* abstolS_1d_ptr =
         reinterpret_cast<sunrealtype*>(abstolS_1d.data());
@@ -836,16 +832,12 @@ m.def("CVodeSetSensMaxNonlinIters", CVodeSetSensMaxNonlinIters,
 
 m.def(
   "CVodeSetSensParams",
-  [](void* cvode_mem,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> p_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> pbar_1d,
+  [](void* cvode_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
      std::vector<int> plist_1d) -> int
   {
     auto CVodeSetSensParams_adapt_arr_ptr_to_std_vector =
-      [](void* cvode_mem,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> p_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> pbar_1d,
-         std::vector<int> plist_1d) -> int
+      [](void* cvode_mem, sundials4py::Array1d p_1d,
+         sundials4py::Array1d pbar_1d, std::vector<int> plist_1d) -> int
     {
       sunrealtype* p_1d_ptr    = reinterpret_cast<sunrealtype*>(p_1d.data());
       sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(pbar_1d.data());
@@ -1238,13 +1230,11 @@ m.def(
 
 m.def(
   "CVodeQuadSensSStolerances",
-  [](void* cvode_mem, sunrealtype reltolQS,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> abstolQS_1d) -> int
+  [](void* cvode_mem, sunrealtype reltolQS, sundials4py::Array1d abstolQS_1d) -> int
   {
     auto CVodeQuadSensSStolerances_adapt_arr_ptr_to_std_vector =
       [](void* cvode_mem, sunrealtype reltolQS,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> abstolQS_1d)
-      -> int
+         sundials4py::Array1d abstolQS_1d) -> int
     {
       sunrealtype* abstolQS_1d_ptr =
         reinterpret_cast<sunrealtype*>(abstolQS_1d.data());

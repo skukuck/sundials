@@ -31,6 +31,7 @@
 #include "idas/idas_impl.h"
 
 #include "idas_usersupplied.hpp"
+#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
 

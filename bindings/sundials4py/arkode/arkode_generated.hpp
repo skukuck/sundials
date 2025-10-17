@@ -1429,19 +1429,13 @@ auto pyClassARKodeButcherTableMem =
 
 m.def(
   "ARKodeButcherTable_Create",
-  [](int s, int q, int p,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> c_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> A_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> b_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> d_1d) -> ARKodeButcherTable
+  [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
+     sundials4py::Array1d b_1d, sundials4py::Array1d d_1d) -> ARKodeButcherTable
   {
     auto ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector =
-      [](int s, int q, int p,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> c_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> A_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> b_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> d_1d)
-      -> ARKodeButcherTable
+      [](int s, int q, int p, sundials4py::Array1d c_1d,
+         sundials4py::Array1d A_1d, sundials4py::Array1d b_1d,
+         sundials4py::Array1d d_1d) -> ARKodeButcherTable
     {
       sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
       sunrealtype* A_1d_ptr = reinterpret_cast<sunrealtype*>(A_1d.data());
@@ -1670,15 +1664,12 @@ auto pyClassARKodeSPRKTableMem =
 
 m.def(
   "ARKodeSPRKTable_Create",
-  [](int s, int q,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> a_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> ahat_1d) -> ARKodeSPRKTable
+  [](int s, int q, sundials4py::Array1d a_1d,
+     sundials4py::Array1d ahat_1d) -> ARKodeSPRKTable
   {
     auto ARKodeSPRKTable_Create_adapt_arr_ptr_to_std_vector =
-      [](int s, int q,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> a_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> ahat_1d)
-      -> ARKodeSPRKTable
+      [](int s, int q, sundials4py::Array1d a_1d,
+         sundials4py::Array1d ahat_1d) -> ARKodeSPRKTable
     {
       sunrealtype* a_1d_ptr    = reinterpret_cast<sunrealtype*>(a_1d.data());
       sunrealtype* ahat_1d_ptr = reinterpret_cast<sunrealtype*>(ahat_1d.data());

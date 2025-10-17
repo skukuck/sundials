@@ -27,6 +27,8 @@
 
 #include "arkode_mristep_impl.h"
 
+#include "sundials4py_types.hpp"
+
 namespace nb = nanobind;
 
 namespace sundials4py {

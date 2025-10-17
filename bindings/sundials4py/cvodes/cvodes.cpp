@@ -32,9 +32,11 @@
 #include <cvodes/cvodes_proj.h>
 
 #include "cvodes/cvodes_impl.h"
+#include "cvodes_usersupplied.hpp"
+
 #include "sundials_adjointcheckpointscheme_impl.h"
 
-#include "cvodes_usersupplied.hpp"
+#include "sundials4py_types.hpp"
 
 namespace sundials4py {
 using namespace sundials::experimental;

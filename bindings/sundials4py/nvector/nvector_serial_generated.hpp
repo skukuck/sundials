@@ -17,13 +17,11 @@ m.def("N_VNew_Serial", N_VNew_Serial, nb::arg("vec_length"), nb::arg("sunctx"),
 
 m.def(
   "N_VMake_Serial",
-  [](sunindextype vec_length,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> v_data_1d,
+  [](sunindextype vec_length, sundials4py::Array1d v_data_1d,
      SUNContext sunctx) -> N_Vector
   {
     auto N_VMake_Serial_adapt_arr_ptr_to_std_vector =
-      [](sunindextype vec_length,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> v_data_1d,
+      [](sunindextype vec_length, sundials4py::Array1d v_data_1d,
          SUNContext sunctx) -> N_Vector
     {
       sunrealtype* v_data_1d_ptr =

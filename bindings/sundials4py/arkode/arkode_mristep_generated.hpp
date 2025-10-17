@@ -69,17 +69,12 @@ m.def("MRIStepCoupling_LoadTableByName", MRIStepCoupling_LoadTableByName,
 
 m.def(
   "MRIStepCoupling_Create",
-  [](int nmat, int stages, int q, int p,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> W_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> G_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> c_1d) -> MRIStepCoupling
+  [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
+     sundials4py::Array1d G_1d, sundials4py::Array1d c_1d) -> MRIStepCoupling
   {
     auto MRIStepCoupling_Create_adapt_arr_ptr_to_std_vector =
-      [](int nmat, int stages, int q, int p,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> W_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> G_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> c_1d)
-      -> MRIStepCoupling
+      [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
+         sundials4py::Array1d G_1d, sundials4py::Array1d c_1d) -> MRIStepCoupling
     {
       sunrealtype* W_1d_ptr = reinterpret_cast<sunrealtype*>(W_1d.data());
       sunrealtype* G_1d_ptr = reinterpret_cast<sunrealtype*>(G_1d.data());

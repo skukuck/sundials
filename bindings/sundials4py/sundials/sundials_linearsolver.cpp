@@ -26,6 +26,8 @@
 
 #include <sundials/sundials_linearsolver.hpp>
 
+#include "sundials4py_types.hpp"
+
 namespace nb = nanobind;
 using namespace sundials::experimental;
 

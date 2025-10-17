@@ -33,9 +33,9 @@ class SUNStepperView;
 
 #include "arkode/arkode_impl.h"
 
-#include "sundials_adjointcheckpointscheme_impl.h"
-
 #include "arkode_usersupplied.hpp"
+#include "sundials4py_types.hpp"
+#include "sundials_adjointcheckpointscheme_impl.h"
 
 namespace nb = nanobind;
 
@@ -218,73 +218,6 @@ void bind_arkode(nb::module_& m)
   m.def("ARKodeSetMassLinearSolver", ARKodeSetMassLinearSolver,
         nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),
         nb::arg("time_dep"));
-
-  // m.def(
-  //   "ARKodeCreateSUNStepper",
-  //   [](void* ark_mem)
-  //   {
-  //     SUNStepper stepper = nullptr;
-
-  //     int status = ARKodeCreateSUNStepper(ark_mem, &stepper);
-
-  //     return std::make_tuple(status, stepper);
-  //   },
-  //   nb::rv_policy::reference);
-
-  // m.def(
-  //   "ARKodeGetJac",
-  //   [](void* ark_mem)
-  //   {
-  //     SUNMatrix J = nullptr;
-
-  //     int status = ARKodeGetJac(ark_mem, &J);
-
-  //     return std::make_tuple(status, J);
-  //   },
-  //   "WARNING: this function returns a SUNMatrix reference, DO NOT WRAP IT IN A "
-  //   "`SUNMatrixView`. Doing so will result in a double free or worse.",
-  //   nb::rv_policy::reference);
-
-  // m.def(
-  //   "ARKodeGetCurrentMassMatrix",
-  //   [](void* ark_mem)
-  //   {
-  //     SUNMatrix M = nullptr;
-
-  //     int status = ARKodeGetJac(ark_mem, &M);
-
-  //     return std::make_tuple(status, M);
-  //   },
-  //   "WARNING: this function returns a SUNMatrix reference, DO NOT WRAP IT IN A "
-  //   "`SUNMatrixView`. Doing so will result in a double free or worse.",
-  //   nb::rv_policy::reference);
-
-  // m.def(
-  //   "ARKodeGetCurrentState",
-  //   [](void* ark_mem)
-  //   {
-  //     N_Vector state = nullptr;
-
-  //     int status = ARKodeGetCurrentState(ark_mem, &state);
-
-  //     return std::make_tuple(status, state);
-  //   },
-  //   "WARNING: this function returns a N_Vector reference, DO NOT WRAP IT IN A "
-  //   "`NVectorView`. Doing so will result in a double free or worse.",
-  //   nb::rv_policy::reference);
-
-  // m.def(
-  //   "ARKodeSPRKTable_ToButcher",
-  //   [](ARKodeSPRKTable sprk_table)
-  //   {
-  //     ARKodeButcherTable a = nullptr;
-  //     ARKodeButcherTable b = nullptr;
-
-  //     int status = ARKodeSPRKTable_ToButcher(sprk_table, &a, &b);
-
-  //     return std::make_tuple(status, a, b);
-  //   },
-  //   nb::rv_policy::reference);
 
   bind_arkode_arkstep(m);
   bind_arkode_erkstep(m);

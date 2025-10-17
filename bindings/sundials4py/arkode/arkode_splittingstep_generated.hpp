@@ -32,15 +32,13 @@ auto pyEnumARKODE_SplittingCoefficientsID =
 m.def(
   "SplittingStepCoefficients_Create",
   [](int sequential_methods, int stages, int partitions, int order,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> alpha_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> beta_1d)
-    -> SplittingStepCoefficients
+     sundials4py::Array1d alpha_1d,
+     sundials4py::Array1d beta_1d) -> SplittingStepCoefficients
   {
     auto SplittingStepCoefficients_Create_adapt_arr_ptr_to_std_vector =
       [](int sequential_methods, int stages, int partitions, int order,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> alpha_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> beta_1d)
-      -> SplittingStepCoefficients
+         sundials4py::Array1d alpha_1d,
+         sundials4py::Array1d beta_1d) -> SplittingStepCoefficients
     {
       sunrealtype* alpha_1d_ptr = reinterpret_cast<sunrealtype*>(alpha_1d.data());
       sunrealtype* beta_1d_ptr = reinterpret_cast<sunrealtype*>(beta_1d.data());

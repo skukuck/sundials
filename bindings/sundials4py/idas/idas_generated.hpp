@@ -857,15 +857,11 @@ m.def("IDASetSensMaxNonlinIters", IDASetSensMaxNonlinIters, nb::arg("ida_mem"),
 
 m.def(
   "IDASetSensParams",
-  [](void* ida_mem,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> p_1d,
-     nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> pbar_1d,
+  [](void* ida_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
      std::vector<int> plist_1d) -> int
   {
     auto IDASetSensParams_adapt_arr_ptr_to_std_vector =
-      [](void* ida_mem,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> p_1d,
-         nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig> pbar_1d,
+      [](void* ida_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
          std::vector<int> plist_1d) -> int
     {
       sunrealtype* p_1d_ptr    = reinterpret_cast<sunrealtype*>(p_1d.data());

@@ -95,7 +95,7 @@ class BrusselatorODE:
 
 
 def main():
-    # Problem parameters for test 2
+    # Problem parameters for Test 2
     u0 = 1.2
     v0 = 3.1
     w0 = 3.0
@@ -155,7 +155,7 @@ def main():
     status = ARKodeSetAutonomous(ark.get(), 1)
     assert status == ARK_SUCCESS
 
-    # Output
+    # Initial problem output
     yarr = N_VGetArrayPointer(y.get())
     print("\nBrusselator ODE test problem:")
     print(f"    initial conditions:  u0 = {u0},  v0 = {v0},  w0 = {w0}")
@@ -165,6 +165,9 @@ def main():
     print("   -------------------------------------------")
     print(f"  {T0:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}  {yarr[2]:10.6f}")
 
+    # Main time-stepping loop: calls ARKodeEvolve to perform the integration,
+    # then prints results.  Stops when the final time has been reached. The
+    # solution is written out to a file.
     with open("solution.txt", "w") as UFID:
         UFID.write("# t u v w\n")
         UFID.write(f" {T0:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")

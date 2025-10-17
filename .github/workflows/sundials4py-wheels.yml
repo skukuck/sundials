@@ -46,21 +46,24 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: true
+
+    - name: Git Status
+      run: git status
+      shell: bash
+
+    - name: Git Clean
       run: |
         git clean -fdx
         git reset --hard HEAD
+      shell: bash
 
-    - name: Git Status
+    - name: Git Status 2
       run: git status
       shell: bash
 
     - uses: pypa/cibuildwheel@v2.22
       env:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
-
-    - name: Git Status 2
-      run: git status
-      shell: bash
 
     - name: Verify clean directory
       run: git diff --exit-code

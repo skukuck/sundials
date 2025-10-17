@@ -77,7 +77,6 @@ void bind_core(nb::module_& m)
   bind_sunprofiler(m);
   bind_sunstepper(m);
 
-
   //
   // Expose sunrealtye and sunindextype as the corresponding numpy types
   //
@@ -92,7 +91,7 @@ void bind_core(nb::module_& m)
 #else
 #error Unknown sunrealtype, email sundials-users@llnl.gov
 #endif
-  
+
 #if defined(SUNDIALS_INT64_T)
   m.attr("sunindextype") = np.attr("int64");
 #elif defined(SUNDIALS_INT32_T)
@@ -100,7 +99,6 @@ void bind_core(nb::module_& m)
 #else
 #error Unknown sunindextype, email sundials-users@llnl.gov
 #endif
-
 }
 
 } // namespace sundials4py

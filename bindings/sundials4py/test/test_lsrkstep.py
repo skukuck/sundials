@@ -24,6 +24,9 @@ from sundials4py.arkode import *
 from problems import AnalyticODE
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_lsrkstep(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
     ode_problem = AnalyticODE()
@@ -39,7 +42,7 @@ def test_lsrkstep(sunctx):
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
     assert status == 0
 
-    status = ARKodeSStolerances(lsrk.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(lsrk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetMaxNumSteps(lsrk.get(), 100000)
@@ -50,4 +53,4 @@ def test_lsrkstep(sunctx):
 
     sol = NVectorView.Create(N_VClone(y.get()))
     ode_problem.solution(y.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
+    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-1)

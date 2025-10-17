@@ -24,6 +24,9 @@ from sundials4py.arkode import *
 from problems import AnalyticODE, AnalyticMultiscaleODE
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_explicit(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
 
@@ -37,7 +40,7 @@ def test_explicit(sunctx):
         )
     )
 
-    status = ARKodeSStolerances(ark.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     tout = 10.0
@@ -50,6 +53,9 @@ def test_explicit(sunctx):
     assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_implicit(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
     ls = SUNLinearSolverView.Create(SUNLinSol_SPGMR(y.get(), 0, 0, sunctx.get()))
@@ -64,7 +70,7 @@ def test_implicit(sunctx):
         )
     )
 
-    status = ARKodeSStolerances(ark.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetLinearSolver(ark.get(), ls.get(), None)
@@ -80,6 +86,9 @@ def test_implicit(sunctx):
     assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_imex(sunctx):
     sunctx = SUNContextView.Create()
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
@@ -99,7 +108,7 @@ def test_imex(sunctx):
         )
     )
 
-    status = ARKodeSStolerances(ark.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetLinearSolver(ark.get(), ls.get(), None)

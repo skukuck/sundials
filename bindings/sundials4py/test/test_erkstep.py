@@ -24,6 +24,9 @@ from sundials4py.arkode import *
 from problems import AnalyticODE
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_erkstep_with_postprocess(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
     ode_problem = AnalyticODE()
@@ -38,9 +41,12 @@ def test_erkstep_with_postprocess(sunctx):
         postprocess_called["count"] += 1
         return 0  # success
 
+    print(SUNREALTYPE_RTOL)
+    print(SUNREALTYPE_ATOL)
+
     erk = ARKodeView.Create(ERKStepCreate(rhs, 0, y.get(), sunctx.get()))
     ARKodeSetPostprocessStepFn(erk.get(), postprocess_fn)
-    status = ARKodeSStolerances(erk.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(erk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     tout = 10.0
@@ -53,6 +59,9 @@ def test_erkstep_with_postprocess(sunctx):
     assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
 
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
 def test_erkstep(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
     ode_problem = AnalyticODE()
@@ -62,7 +71,7 @@ def test_erkstep(sunctx):
         return ode_problem.f(t, y, ydot)
 
     erk = ARKodeView.Create(ERKStepCreate(rhs, 0, y.get(), sunctx.get()))
-    status = ARKodeSStolerances(erk.get(), 1e-10, 1e-10)
+    status = ARKodeSStolerances(erk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     tout = 10.0

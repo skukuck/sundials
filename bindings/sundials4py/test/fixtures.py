@@ -16,8 +16,11 @@
 # -----------------------------------------------------------------
 
 import pytest
-
+from numpy import sqrt, finfo
 from sundials4py.core import *
+
+SUNREALTYPE_RTOL = sqrt(finfo(sunrealtype).eps)
+SUNREALTYPE_ATOL = sqrt(finfo(sunrealtype).eps)
 
 
 @pytest.fixture

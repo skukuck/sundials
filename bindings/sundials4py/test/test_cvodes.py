@@ -24,7 +24,10 @@ from sundials4py.cvodes import *
 from problems import AnalyticODE
 
 
-def test_bdf(sunctx):
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
+def test_cvodes_ivp(sunctx):
     y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
     ls = SUNLinearSolverView.Create(SUNLinSol_SPGMR(y.get(), 0, 0, sunctx.get()))
 
@@ -36,7 +39,7 @@ def test_bdf(sunctx):
     status = CVodeInit(solver.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y.get())
     assert status == CV_SUCCESS
 
-    status = CVodeSStolerances(solver.get(), 1e-10, 1e-10)
+    status = CVodeSStolerances(solver.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == CV_SUCCESS
 
     status = CVodeSetLinearSolver(solver.get(), ls.get(), None)

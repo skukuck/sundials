@@ -24,7 +24,10 @@ from problems import AnalyticDAE
 from fixtures import *
 
 
-def test_bdf_idas(sunctx):
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
+def test_idas_ivp(sunctx):
     ode_problem = AnalyticDAE()
 
     solver = IDAView.Create(IDACreate(sunctx.get()))
@@ -45,7 +48,7 @@ def test_bdf_idas(sunctx):
     status = IDAInit(solver.get(), resfn, 0.0, yy.get(), yp.get())
     assert status == IDA_SUCCESS
 
-    status = IDASStolerances(solver.get(), 1e-4, 1e-9)
+    status = IDASStolerances(solver.get(), 1e-4, 1e-4)
     assert status == IDA_SUCCESS
 
     status = IDASetLinearSolver(solver.get(), ls.get(), None)

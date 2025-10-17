@@ -51,7 +51,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinxcontrib.bibtex",
-    "sphinxfortran.fortran_domain"
+    "sphinxfortran.fortran_domain",
 ]
 
 extlinks = {
@@ -64,9 +64,9 @@ extlinks = {
 # Where to find cross-references to the Sphinx documentation.
 intersphinx_mapping = {
     "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None)),
-    "python": ('https://docs.python.org/3', None),
-    "numpy": ('https://numpy.org/doc/stable/', None),
-    "scipy": ('https://docs.scipy.org/doc/scipy/', None),
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).
@@ -100,7 +100,9 @@ project = "Documentation for SUNDIALS"
 copyright = """\
     2025, Lawrence Livermore National Security, University of Maryland Baltimore County, and the SUNDIALS contributors.
     Copyright (c) 2013-{year}, Lawrence Livermore National Security and Southern Methodist University.
-    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(year=year)
+    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(
+    year=year
+)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

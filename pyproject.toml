@@ -54,9 +54,7 @@ cmake.args = [
     "-DBUILD_IDA:BOOL=OFF",
     "-DEXAMPLES_ENABLE_C:BOOL=OFF",
     "-DEXAMPLES_ENABLE_CXX:BOOL=OFF",
-    "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON",
-    "-DCMAKE_C_FLAGS=-Wno-deprecated-declarations",
-    "-DCMAKE_CXX_FLAGS=-Wno-deprecated-declarations"
+    "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON"
 ]
 
 cmake.build-type = "RelWithDebInfo"

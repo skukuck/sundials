@@ -28,6 +28,7 @@ To that end, it supports:
 - Zero-copy exchange of arrays (CPU and Device) through DLPack protocol and numpy's ndarray
 
 sundials4py is built using `nanobind <https://nanobind.readthedocs.io/en/latest/index.html#>`__ and `litgen <https://pthom.github.io/litgen/litgen_book/00_00_intro.html>`__.
+**It requires Python 3.12+**.
 
 .. note::
 

@@ -15,8 +15,34 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# This is a direct port of the C example, 
-#   examples/arkode/C_serial/ark_brusselator.c.
+# This is a direct port of the C example,
+#   examples/arkode/C_serial/ark_brusselator.c,
+# specifically with the parameters from Test 2.
+#
+# The following test simulates a brusselator problem from chemical
+# kinetics.  This is an ODE system with 3 components, Y = [u,v,w],
+# satisfying the equations,
+#    du/dt = a - (w+1)*u + v*u^2
+#    dv/dt = w*u - v*u^2
+#    dw/dt = (b-w)/ep - w*u
+# for t in the interval [0.0, 10.0], with initial conditions
+# Y0 = [u0,v0,w0].
+#
+#    u0=1.2,  v0=3.1,  w0=3,  a=1,  b=3.5,  ep=5.0e-6
+#    Here, w experiences a fast initial transient, jumping 0.5
+#    within a few steps.  All values proceed smoothly until
+#    around t=6.5, when both u and v undergo a sharp transition,
+#    with u increaseing from around 0.5 to 5 and v decreasing
+#    from around 6 to 1 in less than 0.5 time units.  After this
+#    transition, both u and v continue to evolve somewhat
+#    rapidly for another 1.4 time units, and finish off smoothly.
+#
+# This program solves the problem with the DIRK method, using a
+# Newton iteration with the SUNDIALS dense linear solver, and a
+# user-supplied Jacobian routine.
+#
+# 100 outputs are printed at equal intervals, and run statistics
+# are printed at the end.
 # -----------------------------------------------------------------
 
 import numpy as np
@@ -117,7 +143,12 @@ def main():
     status = ARKodeSetLinearSolver(ark.get(), LS.get(), A.get())
     assert status == ARK_SUCCESS
 
-    status = ARKodeSetJacFn(ark.get(), lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode_problem.jac(t, yvec, fyvec, J, tmp1, tmp2, tmp3))
+    status = ARKodeSetJacFn(
+        ark.get(),
+        lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode_problem.jac(
+            t, yvec, fyvec, J, tmp1, tmp2, tmp3
+        ),
+    )
     assert status == ARK_SUCCESS
 
     # Signal that this problem does not explicitly depend on time

@@ -172,27 +172,27 @@ def main():
 
     # Print statistics
     status, nst = ARKodeGetNumSteps(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nst_a = ARKodeGetNumStepAttempts(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nfe = ARKodeGetNumRhsEvals(ark.get(), 0)
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nfi = ARKodeGetNumRhsEvals(ark.get(), 1)
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nsetups = ARKodeGetNumLinSolvSetups(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nli = ARKodeGetNumLinIters(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nJv = ARKodeGetNumJtimesEvals(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nlcf = ARKodeGetNumLinConvFails(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, nni = ARKodeGetNumNonlinSolvIters(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, ncfn = ARKodeGetNumNonlinSolvConvFails(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
     status, netf = ARKodeGetNumErrTestFails(ark.get())
-    ssert status == ARK_SUCCESS
+    assert status == ARK_SUCCESS
 
     print("\nFinal Solver Statistics:")
     print(f"   Internal solver steps = {nst} (attempted = {nst_a})")

@@ -32,7 +32,7 @@
 #    Here, w experiences a fast initial transient, jumping 0.5
 #    within a few steps.  All values proceed smoothly until
 #    around t=6.5, when both u and v undergo a sharp transition,
-#    with u increaseing from around 0.5 to 5 and v decreasing
+#    with u increasing from around 0.5 to 5 and v decreasing
 #    from around 6 to 1 in less than 0.5 time units.  After this
 #    transition, both u and v continue to evolve somewhat
 #    rapidly for another 1.4 time units, and finish off smoothly.

@@ -83,7 +83,7 @@ def test_scale_add_identity(sunctx):
     ret = SUNMatScaleAddI(0.0, A.get())
     assert ret == 0
     # A should now be I
-    diag = np.array([dataA[smu + i * ldim] for i in range(rows)])
+    diag = np.array([dataA[smu + i * ldim] for i in range(rows)], dtype=sunrealtype)
     assert np.allclose(diag, 1.0)
 
 

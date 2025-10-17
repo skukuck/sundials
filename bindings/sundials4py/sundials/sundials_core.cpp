@@ -49,6 +49,7 @@ void bind_core(nb::module_& m)
 #include "sundials_errors.hpp"
 #include "sundials_types_generated.hpp"
 
+  // TODO(CJB): fix this
   // handle opening and closing C files
   nb::class_<FILE>(m, "FILE");
   m.def("SUNFileOpen",
@@ -75,6 +76,31 @@ void bind_core(nb::module_& m)
   bind_sunnonlinearsolver(m);
   bind_sunprofiler(m);
   bind_sunstepper(m);
+
+
+  //
+  // Expose sunrealtye and sunindextype as the corresponding numpy types
+  //
+
+  nb::object np = nb::module_::import_("numpy");
+#if defined(SUNDIALS_SINGLE_PRECISION)
+  m.attr("sunrealtype") = np.attr("float32");
+#elif defined(SUNDIALS_DOUBLE_PRECISION)
+  m.attr("sunrealtype") = np.attr("float64");
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+  m.attr("sunrealtype") = np.attr("longdouble");
+#else
+#error Unknown sunrealtype, email sundials-users@llnl.gov
+#endif
+  
+#if defined(SUNDIALS_INT64_T)
+  m.attr("sunindextype") = np.attr("int64");
+#elif defined(SUNDIALS_INT32_T)
+  m.attr("sunindextype") = np.attr("int32");
+#else
+#error Unknown sunindextype, email sundials-users@llnl.gov
+#endif
+
 }
 
 } // namespace sundials4py

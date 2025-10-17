@@ -32,7 +32,7 @@ def test_create_nvector(vector_type, sunctx):
     arr = N_VGetArrayPointer(nvec.get())
     assert arr.shape[0] == 5
 
-    arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=np.float64)
+    arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
     assert np.allclose(N_VGetArrayPointer(nvec.get()), [5.0, 4.0, 3.0, 2.0, 1.0])
 
     N_VConst(2.0, nvec.get())
@@ -41,7 +41,7 @@ def test_create_nvector(vector_type, sunctx):
 
 @pytest.mark.parametrize("vector_type", ["serial"])
 def test_make_nvector(vector_type, sunctx):
-    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float64)
+    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
     if vector_type == "serial":
         nvec = NVectorView.Create(N_VMake_Serial(5, arr, sunctx.get()))
     else:
@@ -51,7 +51,7 @@ def test_make_nvector(vector_type, sunctx):
     N_VConst(2.0, nvec.get())
     assert np.allclose(arr, 2.0)
 
-    arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=np.float64)
+    arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
     assert np.allclose(N_VGetArrayPointer(nvec.get()), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
@@ -63,7 +63,7 @@ def test_setarraypointer(vector_type, sunctx):
         raise ValueError("Unknown vector type")
     assert nvec.get() is not None
 
-    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=np.float64)
+    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
     N_VSetArrayPointer(arr, nvec.get())
 
     assert np.allclose(N_VGetArrayPointer(nvec.get()), arr)
@@ -88,7 +88,7 @@ def test_nvlinearcombination(vector_type, sunctx):
     arr2 = N_VGetArrayPointer(nvec2.get())
     arr2[:] = [10.0, 20.0, 30.0, 40.0, 50.0]
 
-    c = np.array([1.0, 0.1], dtype=np.float64)
+    c = np.array([1.0, 0.1], dtype=sunrealtype)
     X = [nvec1.get(), nvec2.get()]
 
     z = NVectorView.Create(N_VNew_Serial(5, sunctx.get()))

@@ -23,6 +23,7 @@ from sundials4py.core import *
 
 pytestmark = pytest.mark.skip("debug segfault")
 
+
 def make_fixed_scheme(sunctx):
     io_mode = SUNDATAIOMODE_INMEM
     mem_helper = SUNMemoryHelperView.Create(SUNMemoryHelper_Sys(sunctx.get()))

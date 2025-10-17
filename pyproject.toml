@@ -4,14 +4,14 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "sundials4py"
-version = "0.1.0"
+version = "X.Y.Z"
 description = "Official Python bindings for the SUNDIALS suite of nonlinear and differential/algebraic equation solvers."
 authors = [
     { name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",

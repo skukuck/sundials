@@ -111,6 +111,25 @@ m.def("ARKodeResize", ARKodeResize, nb::arg("arkode_mem"), nb::arg("ynew"),
 m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
       nb::arg("yR"));
 
+m.def(
+  "ARKodeCreateMRIStepInnerStepper",
+  [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
+  {
+    auto ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
+    {
+      MRIStepInnerStepper stepper_adapt_modifiable;
+
+      int r = ARKodeCreateMRIStepInnerStepper(arkode_mem,
+                                              &stepper_adapt_modifiable);
+      return std::make_tuple(r, stepper_adapt_modifiable);
+    };
+
+    return ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return(
+      arkode_mem);
+  },
+  nb::arg("arkode_mem"), nb::rv_policy::reference);
+
 m.def("ARKodeSStolerances", ARKodeSStolerances, nb::arg("arkode_mem"),
       nb::arg("reltol"), nb::arg("abstol"));
 
@@ -662,6 +681,23 @@ m.def(
   nb::arg("arkode_mem"));
 
 m.def(
+  "ARKodeGetCurrentState",
+  [](void* arkode_mem) -> std::tuple<int, N_Vector>
+  {
+    auto ARKodeGetCurrentState_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, N_Vector>
+    {
+      N_Vector state_adapt_modifiable;
+
+      int r = ARKodeGetCurrentState(arkode_mem, &state_adapt_modifiable);
+      return std::make_tuple(r, state_adapt_modifiable);
+    };
+
+    return ARKodeGetCurrentState_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"), nb::rv_policy::reference);
+
+m.def(
   "ARKodeGetCurrentGamma",
   [](void* arkode_mem) -> std::tuple<int, sunrealtype>
   {
@@ -753,6 +789,23 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetJac",
+  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+  {
+    auto ARKodeGetJac_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+    {
+      SUNMatrix J_adapt_modifiable;
+
+      int r = ARKodeGetJac(arkode_mem, &J_adapt_modifiable);
+      return std::make_tuple(r, J_adapt_modifiable);
+    };
+
+    return ARKodeGetJac_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"), nb::rv_policy::reference);
 
 m.def(
   "ARKodeGetJacTime",
@@ -947,6 +1000,24 @@ m.def(
 
 m.def("ARKodeGetLinReturnFlagName", ARKodeGetLinReturnFlagName, nb::arg("flag"),
       nb::rv_policy::reference);
+
+m.def(
+  "ARKodeGetCurrentMassMatrix",
+  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+  {
+    auto ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+    {
+      SUNMatrix M_adapt_modifiable;
+
+      int r = ARKodeGetCurrentMassMatrix(arkode_mem, &M_adapt_modifiable);
+      return std::make_tuple(r, M_adapt_modifiable);
+    };
+
+    return ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return(
+      arkode_mem);
+  },
+  nb::arg("arkode_mem"), nb::rv_policy::reference);
 
 m.def("ARKodeGetResWeights", ARKodeGetResWeights, nb::arg("arkode_mem"),
       nb::arg("rweight"));
@@ -1258,6 +1329,23 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeCreateSUNStepper",
+  [](void* arkode_mem) -> std::tuple<int, SUNStepper>
+  {
+    auto ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, SUNStepper>
+    {
+      SUNStepper stepper_adapt_modifiable;
+
+      int r = ARKodeCreateSUNStepper(arkode_mem, &stepper_adapt_modifiable);
+      return std::make_tuple(r, stepper_adapt_modifiable);
+    };
+
+    return ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"), nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif
@@ -1616,6 +1704,28 @@ m.def("ARKodeSPRKTable_Copy", ARKodeSPRKTable_Copy,
 
 m.def("ARKodeSPRKTable_Write", ARKodeSPRKTable_Write, nb::arg("sprk_table"),
       nb::arg("outfile"));
+
+m.def(
+  "ARKodeSPRKTable_ToButcher",
+  [](ARKodeSPRKTable sprk_storage)
+    -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
+  {
+    auto ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return =
+      [](ARKodeSPRKTable sprk_storage)
+      -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
+    {
+      ARKodeButcherTable a_ptr_adapt_modifiable;
+      ARKodeButcherTable b_ptr_adapt_modifiable;
+
+      int r = ARKodeSPRKTable_ToButcher(sprk_storage, &a_ptr_adapt_modifiable,
+                                        &b_ptr_adapt_modifiable);
+      return std::make_tuple(r, a_ptr_adapt_modifiable, b_ptr_adapt_modifiable);
+    };
+
+    return ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return(
+      sprk_storage);
+  },
+  nb::arg("sprk_storage"), nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif

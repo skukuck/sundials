@@ -32,7 +32,9 @@ def main():
     # The pointer types that are specific to a package are defined in the respective generate.yaml files.
     options.sundials_pointer_types = [
         "N_Vector",
-        "SUNAdaptController" "SUNAdjointCheckpointScheme",
+        "SUNAdaptController",
+        "SUNAdjointCheckpointScheme",
+        "MRIStepInnerStepper",
         "SUNAdjointStepper",
         "SUNContext",
         "SUNDomEigEstimator",

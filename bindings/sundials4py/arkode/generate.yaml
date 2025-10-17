@@ -46,13 +46,6 @@ modules:
     - "ARKodeButcherTable"
     - "ARKodeSPRKTable"
     fn_exclude_by_name__regex:
-    # we don't bind the alloc or create functions as we need to do something custom
-    #- "^ARKodeGetJac$"
-    #- "^ARKodeGetCurrentMassMatrix$"
-    #- "^ARKodeGetCurrentState$"
-    #- "^ARKodeCreateMRIStepInnerStepper$" 
-    #- "^ARKodeCreateSUNStepper$"
-    #- "^ARKodeSPRKTable_ToButcher$"
     # we dont interface the Alloc functions as they are not needed from Python
     - "^ARKodeButcherTable_Alloc$"
     - "^ARKodeSPRKTable_Alloc$"

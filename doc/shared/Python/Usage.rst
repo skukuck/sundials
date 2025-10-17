@@ -79,10 +79,10 @@ Python:
 Arrays
 ------
 
-`N_Vector` objects in sundials4py are compatible with numpy's `ndarray`. Each `N_Vector` can work on a numpy arrays without copies, and you can access 
-and modify the underlying data directly using `N_VGetArrayPointer(nvector)`, which returns a numpy `ndarray` view of the data.
+``N_Vector`` objects in sundials4py are compatible with numpy's `ndarray`. Each ``N_Vector`` can work on a numpy arrays without copies, and you can access 
+and modify the underlying data directly using :py:func:`N_VGetArrayPointer`, which returns a numpy `ndarray` view of the data.
 
-- SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects that provide access to their underlying data as numpy arrays (e.g., via `SUNDenseMatrix_Data`).
+- SUNDIALS matrix types (dense, banded, sparse) are also exposed as Python objects that provide access to their underlying data as numpy arrays (e.g., via :py:func:`SUNDenseMatrix_Data`).
 - Arrays of scalars (e.g., scaling factors passed to :py:func:`N_VLinearCombination`) are also represented as numpy arrays.
 
 **Example: Accessing and modifying an N_Vector**

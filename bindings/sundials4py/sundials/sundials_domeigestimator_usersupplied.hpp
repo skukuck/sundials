@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _sundials4py_SUNDOMEIGESTIMATOR_USERSUPPLIED_HPP
-#define _sundials4py_SUNDOMEIGESTIMATOR_USERSUPPLIED_HPP
+#ifndef _SUNDIALS4PY_SUNDOMEIGESTIMATOR_USERSUPPLIED_HPP
+#define _SUNDIALS4PY_SUNDOMEIGESTIMATOR_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>

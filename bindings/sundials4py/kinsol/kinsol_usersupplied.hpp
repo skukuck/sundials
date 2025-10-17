@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _sundials4py_KINSOL_USERSUPPLIED_HPP
-#define _sundials4py_KINSOL_USERSUPPLIED_HPP
+#ifndef _SUNDIALS4PY_KINSOL_USERSUPPLIED_HPP
+#define _SUNDIALS4PY_KINSOL_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -130,4 +130,4 @@ inline int kinsol_lsjtvsysfn_wrapper(Args... args)
     1>(&kinsol_user_supplied_fn_table::lsjtvsysfn, std::forward<Args>(args)...);
 }
 
-#endif // _sundials4py_KINSOL_USERSUPPLIED_HPP
+#endif // _SUNDIALS4PY_KINSOL_USERSUPPLIED_HPP

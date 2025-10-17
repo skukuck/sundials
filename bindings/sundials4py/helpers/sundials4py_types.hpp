@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _sundials4py_TYPES_HPP
-#define _sundials4py_TYPES_HPP
+#ifndef _SUNDIALS4PY_TYPES_HPP
+#define _SUNDIALS4PY_TYPES_HPP
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
@@ -26,8 +26,9 @@ namespace nb = nanobind;
 namespace sundials4py {
 
 using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
-using CpuArray1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig, nb::device::cpu>;
+using CpuArray1d =
+  nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig, nb::device::cpu>;
 
-}
+} // namespace sundials4py
 
 #endif

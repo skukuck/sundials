@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _sundials4py_HELPERS_HPP
-#define _sundials4py_HELPERS_HPP
+#ifndef _SUNDIALS4PY_HELPERS_HPP
+#define _SUNDIALS4PY_HELPERS_HPP
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/function.h>

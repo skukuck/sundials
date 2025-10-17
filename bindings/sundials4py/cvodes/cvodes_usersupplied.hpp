@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _sundials4py_CVODE_USERSUPPLIED_HPP
-#define _sundials4py_CVODE_USERSUPPLIED_HPP
+#ifndef _SUNDIALS4PY_CVODE_USERSUPPLIED_HPP
+#define _SUNDIALS4PY_CVODE_USERSUPPLIED_HPP
 
 #include <cvodes/cvodes.h>
 #include <cvodes/cvodes_ls.h>

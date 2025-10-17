@@ -44,7 +44,6 @@ void bind_nvector(nb::module_& m)
     .def("get", nb::overload_cast<>(&NVectorView::get, nb::const_),
          nb::rv_policy::reference);
 
-  // TODO(CJB): allow for nb::numpy to also be other things, in particular nb::dlpack or maybe nb::cupy and nb::pytorch.
   m.def("N_VGetArrayPointer",
         [](N_Vector v)
         {
@@ -75,7 +74,6 @@ void bind_nvector(nb::module_& m)
           }
           N_VSetArrayPointer(arr.data(), v);
         });
-  
 
   // TODO(CJB): we may need to add a SetDeviceArrayPointer op to the N_Vector class
   // m.def("N_VSetDeviceArrayPointer",

@@ -44,6 +44,7 @@ import numpy as np
 from sundials4py.core import *
 from sundials4py.arkode import *
 
+
 class Heat1DProblem:
     def __init__(self, N, k):
         self.N = N
@@ -84,6 +85,7 @@ class Heat1DProblem:
         JV[0] = 0.0
         JV[-1] = 0.0
         return 0
+
 
 def main():
     # Problem parameters
@@ -130,7 +132,9 @@ def main():
     status = ARKodeSetLinearSolver(ark.get(), LS.get(), None)
     assert status == ARK_SUCCESS
 
-    status = ARKodeSetJacTimes(ark.get(), None, lambda v, Jv, t, y, fy, tmp, _: problem.jtv(v, Jv, t, y, fy, tmp))
+    status = ARKodeSetJacTimes(
+        ark.get(), None, lambda v, Jv, t, y, fy, tmp, _: problem.jtv(v, Jv, t, y, fy, tmp)
+    )
     assert status == ARK_SUCCESS
 
     status = ARKodeSetLinear(ark.get(), 0)
@@ -200,6 +204,7 @@ def main():
     print(f"   Total number of Newton iterations = {nni}")
     print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
     print(f"   Total number of error test failures = {netf}")
+
 
 if __name__ == "__main__":
     main()

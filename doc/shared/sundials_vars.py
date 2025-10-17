@@ -138,6 +138,7 @@ nitpick_ignore = [
     ("c:identifier", "SUNHipExecPolicy"),
     # Python
     ('py:class', 'typing_extensions.CapsuleType'),
+    ('py:class', 'types.CapsuleType'),
     ('py:class', 'collections.abc.Callable'),
     ('py:class', 'collections.abc.Sequence')
 ]

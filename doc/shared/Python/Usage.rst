@@ -145,3 +145,9 @@ Somethings to note:
 .. warning::
 
    The ``user_data`` argument is almost always ``None`` on the Python side, but if it is not it should be ignored to avoid causing catastrophic errors.
+
+
+Examples
+--------
+
+Examples can be found in ``bindings/sundials4py/examples``.

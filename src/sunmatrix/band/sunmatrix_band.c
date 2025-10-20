@@ -417,7 +417,7 @@ SUNErrCode SUNMatHermitianTransposeVec_Band(SUNMatrix A, N_Vector x, N_Vector y)
 {
   SUNFunctionBegin(A->sunctx);
   sunindextype i, j, is, ie;
-  sunrealtype *col_j, *xd, *yd;
+  sunscalartype *col_j, *xd, *yd;
 
   SUNCheck(compatibleMatrixAndVectors(A, y, x), SUN_ERR_ARG_DIMSMISMATCH);
 
@@ -437,7 +437,7 @@ SUNErrCode SUNMatHermitianTransposeVec_Band(SUNMatrix A, N_Vector x, N_Vector y)
     col_j = SM_COLUMN_B(A, j);
     is    = SUNMAX(0, j - SM_UBAND_B(A));
     ie    = SUNMIN(SM_ROWS_B(A) - 1, j + SM_LBAND_B(A));
-    for (i = is; i <= ie; i++) { yd[j] += col_j[i - j] * xd[i]; }
+    for (i = is; i <= ie; i++) { yd[j] += SUNCONJ(col_j[i - j]) * xd[i]; }
   }
   return SUN_SUCCESS;
 }

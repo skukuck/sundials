@@ -28,15 +28,25 @@
 #include "sundials_lapack_defs.h"
 #include "sundials_macros.h"
 
-/* Interfaces to match 'sunrealtype' with the correct LAPACK functions */
+/* Interfaces to match 'sunscalartype' with the correct LAPACK functions */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#define xgbtrf_f77 zgbtrf_f77
+#define xgbtrs_f77 zgbtrs_f77
+#else
 #define xgbtrf_f77 dgbtrf_f77
 #define xgbtrs_f77 dgbtrs_f77
+#endif
 #elif defined(SUNDIALS_SINGLE_PRECISION)
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+#define xgbtrf_f77 cgbtrf_f77
+#define xgbtrs_f77 cgbtrs_f77
+#else
 #define xgbtrf_f77 sgbtrf_f77
 #define xgbtrs_f77 sgbtrs_f77
+#endif
 #else
-#error Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild
+#error Incompatible sunscalartype for LAPACK; disable LAPACK and rebuild
 #endif
 
 #define ONE SUN_RCONST(1.0)
@@ -181,7 +191,7 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                               N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   sunindextype n, ml, mu, ldim, one, ier;
-  sunrealtype* xdata;
+  sunscalartype* xdata;
 
   /* check for valid inputs */
   if ((A == NULL) || (S == NULL) || (x == NULL) || (b == NULL))

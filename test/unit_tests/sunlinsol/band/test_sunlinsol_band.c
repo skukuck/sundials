@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   N_Vector x, y, b;                /* test vectors               */
   int print_timing;
   sunindextype j, k, kstart, kend;
-  sunrealtype *colj, *xdata;
+  sunscalartype *colj, *xdata;
   SUNContext sunctx;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
@@ -102,6 +102,7 @@ int main(int argc, char* argv[])
   b = N_VNew_Serial(cols, sunctx);
 
   /* Fill matrix and x vector with uniform random data in [0,1] */
+  /* (if complex-valued, then add [0,1/cols]*i) */
   xdata = N_VGetArrayPointer(x);
   for (j = 0; j < cols; j++)
   {
@@ -112,10 +113,16 @@ int main(int argc, char* argv[])
     for (k = kstart; k <= kend; k++)
     {
       colj[k] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+      colj[k] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#endif
     }
 
     /* x entry */
     xdata[j] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    xdata[j] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#endif
   }
 
   /* Scale/shift matrix to ensure diagonal dominance */
@@ -214,7 +221,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 {
   int failure = 0;
   sunindextype i, local_length;
-  sunrealtype *Xdata, *Ydata, maxerr;
+  sunrealtype maxerr;
+  sunscalartype *Xdata, *Ydata;
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
@@ -223,7 +231,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   /* check vector data */
   for (i = 0; i < local_length; i++)
   {
-    failure += SUNRCompareTol(Xdata[i], Ydata[i], tol);
+    failure += SUNCompareTol(Xdata[i], Ydata[i], tol);
   }
 
   if (failure > ZERO)
@@ -231,7 +239,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
     maxerr = ZERO;
     for (i = 0; i < local_length; i++)
     {
-      maxerr = SUNMAX(SUNRabs(Xdata[i] - Ydata[i]), maxerr);
+      maxerr = SUNMAX(SUNabs(Xdata[i] - Ydata[i]), maxerr);
     }
     printf("check err failure: maxerr = %" GSYM " (tol = %" GSYM ")\n", maxerr,
            tol);

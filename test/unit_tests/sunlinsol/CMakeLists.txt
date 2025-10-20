@@ -23,8 +23,8 @@ if(ENABLE_CALIPER AND SUNDIALS_BUILD_WITH_PROFILING)
 endif()
 
 # TODO(CJB): fix the band and dense linear solver tests for complex
-# add_subdirectory(band)
-# add_subdirectory(dense)
+add_subdirectory(band)
+add_subdirectory(dense)
 
 # Always add serial sunlinearsolver iterative examples
 add_subdirectory(spgmr/serial)

@@ -38,11 +38,11 @@ int main(int argc, char* argv[])
   int fails = 0;           /* counter for test failures  */
   sunindextype cols, rows; /* matrix columns, rows       */
   SUNLinearSolver LS;      /* solver object              */
-  SUNMatrix A, B, I;       /* test matrices              */
+  SUNMatrix A, B, K;       /* test matrices              */
   N_Vector x, y, b;        /* test vectors               */
   int print_timing, print_matrix_on_fail;
   sunindextype j, k;
-  sunrealtype *colj, *xdata, *colIj;
+  sunscalartype *colj, *xdata, *colIj;
   SUNContext sunctx;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
@@ -78,18 +78,22 @@ int main(int argc, char* argv[])
   /* Create matrices and vectors */
   A = SUNDenseMatrix(rows, cols, sunctx);
   B = SUNDenseMatrix(rows, cols, sunctx);
-  I = SUNDenseMatrix(rows, cols, sunctx);
+  K = SUNDenseMatrix(rows, cols, sunctx);
   x = N_VNew_Serial(cols, sunctx);
   y = N_VNew_Serial(cols, sunctx);
   b = N_VNew_Serial(cols, sunctx);
 
   /* Fill A matrix with uniform random data in [0,1/cols] */
+  /* (if complex-valued, then add [0,1/cols]*i) */
   for (j = 0; j < cols; j++)
   {
     colj = SUNDenseMatrix_Column(A, j);
     for (k = 0; k < rows; k++)
     {
       colj[k] = (sunrealtype)rand() / (sunrealtype)RAND_MAX / cols;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+      colj[k] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX / cols;
+#endif
     }
   }
 
@@ -97,7 +101,7 @@ int main(int argc, char* argv[])
   j = cols - 1;
   for (k = 0; k < rows; k++)
   {
-    colj    = SUNDenseMatrix_Column(I, j);
+    colj    = SUNDenseMatrix_Column(K, j);
     colj[k] = 1;
     j       = j - 1;
   }
@@ -108,16 +112,20 @@ int main(int argc, char* argv[])
     for (j = 0; j < cols; j++)
     {
       colj    = SUNDenseMatrix_Column(A, j);
-      colIj   = SUNDenseMatrix_Column(I, j);
+      colIj   = SUNDenseMatrix_Column(K, j);
       colj[k] = colj[k] + colIj[k];
     }
   }
 
   /* Fill x vector with uniform random data in [0,1] */
+  /* (if complex-valued, then add [0,1/cols]*i) */
   xdata = N_VGetArrayPointer(x);
   for (j = 0; j < cols; j++)
   {
     xdata[j] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    xdata[j] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#endif
   }
 
   /* copy A and x into B and y to print in case of solver failure */
@@ -170,7 +178,7 @@ int main(int argc, char* argv[])
   SUNLinSolFree(LS);
   SUNMatDestroy(A);
   SUNMatDestroy(B);
-  SUNMatDestroy(I);
+  SUNMatDestroy(K);
   N_VDestroy(x);
   N_VDestroy(y);
   N_VDestroy(b);
@@ -187,7 +195,8 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 {
   int failure = 0;
   sunindextype i, local_length;
-  sunrealtype *Xdata, *Ydata, maxerr;
+  sunrealtype maxerr;
+  sunscalartype *Xdata, *Ydata;
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
@@ -196,7 +205,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   /* check vector data */
   for (i = 0; i < local_length; i++)
   {
-    failure += SUNRCompareTol(Xdata[i], Ydata[i], tol);
+    failure += SUNCompareTol(Xdata[i], Ydata[i], tol);
   }
 
   if (failure)
@@ -204,7 +213,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
     maxerr = ZERO;
     for (i = 0; i < local_length; i++)
     {
-      maxerr = SUNMAX(SUNRabs(Xdata[i] - Ydata[i]), maxerr);
+      maxerr = SUNMAX(SUNabs(Xdata[i] - Ydata[i]), maxerr);
     }
     printf("check err failure: maxerr = %g (tol = %g)\n", maxerr, tol);
     return failure;

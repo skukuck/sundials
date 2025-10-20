@@ -108,10 +108,16 @@ int main(int argc, char* argv[])
     for (k = kstart; k <= kend; k++)
     {
       colj[k] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+      colj[k] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#endif
     }
 
     /* x entry */
     xdata[j] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+    xdata[j] += SUN_I * (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+#endif
   }
 
   /* Scale/shift matrix to ensure diagonal dominance */

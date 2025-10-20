@@ -36,6 +36,7 @@ void bind_idas(nb::module_& m);
 void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
+void bind_nvector_manyvector(nb::module_& m);
 
 void bind_sumemoryhelper_sys(nb::module_& m);
 
@@ -97,6 +98,7 @@ NB_MODULE(sundials4py, m)
   //
 
   sundials4py::bind_nvector_serial(core_m);
+  sundials4py::bind_nvector_manyvector(core_m);
 
   sundials4py::bind_sunadaptcontroller_imexgus(core_m);
   sundials4py::bind_sunadaptcontroller_mrihtol(core_m);

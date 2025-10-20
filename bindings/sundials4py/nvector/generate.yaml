@@ -88,3 +88,11 @@ modules:
     path: nvector/nvector_serial_generated.hpp
     headers:
     - ../../include/nvector/nvector_serial.h
+  nvector_serial:
+    path: nvector/nvector_manyvector_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_manyvector.h
+    fn_exclude_by_name__regex:
+    # Getting and setting array pointers requires us to do something custom
+    - "^N_VGetSubvectorArrayPointer_ManyVector$"
+    - "^N_VSetSubvectorArrayPointer_ManyVector$"

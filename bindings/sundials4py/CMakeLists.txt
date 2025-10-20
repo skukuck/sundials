@@ -69,6 +69,7 @@ set(sundials_SOURCES
     idas/idas.cpp
     kinsol/kinsol.cpp
     nvector/nvector_serial.cpp
+    nvector/nvector_manyvector.cpp
     sundials4py.cpp
     sunadaptcontroller/sunadaptcontroller_imexgus.cpp
     sunadaptcontroller/sunadaptcontroller_mrihtol.cpp

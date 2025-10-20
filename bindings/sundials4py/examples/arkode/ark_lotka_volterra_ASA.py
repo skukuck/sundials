@@ -56,10 +56,12 @@ class LotkaVolterraODE:
     def dgdp(self, yvec):
         return np.zeros(self.NP, dtype=sun.sunrealtype)
 
-    def adj_rhs(self, t, yvec, lvec, ldotvec):
-        self.vjp(lvec, ldotvec, t, yvec)
-        ldot = sun.N_VGetArrayPointer(ldotvec)
-        ldot *= -1.0
+    def adj_rhs(self, t, y, sens, sens_dot):
+        l = sun.N_VGetSubvector_ManyVector(sens, 0)
+        ldot = sun.N_VGetSubvector_ManyVector(sens_dot, 0)
+        nu = sun.N_VGetSubvector_ManyVector(sens_dot, 1)
+        self.vjp(l, ldot, t, y)
+        self.parameter_vjp(l, nu, t, y)
         return 0
 
     def quad_rhs(self, t, yvec, muvec, qBdotvec):
@@ -141,43 +143,43 @@ def main():
     # Create the adjoint stepper
     #
 
-    # # Adjoint terminal condition
-    # uB = sun.NVectorView.Create(sun.N_VNew_Serial(NEQ, sunctx.get()))
-    # arr_uB = ode.dgdu(y.get())
-    # uB_arr = sun.N_VGetArrayPointer(uB.get())
-    # uB_arr[:] = arr_uB
-    # qB = sun.NVectorView.Create(sun.N_VNew_Serial(NP, sunctx.get()))
-    # qB_arr = sun.N_VGetArrayPointer(qB.get())
-    # qB_arr[:] = ode.dgdp(y.get())
+    # Adjoint terminal condition
+    uB = sun.NVectorView.Create(sun.N_VNew_Serial(NEQ, sunctx.get()))
+    arr_uB = ode.dgdu(y.get())
+    uB_arr = sun.N_VGetArrayPointer(uB.get())
+    uB_arr[:] = arr_uB
+    qB = sun.NVectorView.Create(sun.N_VNew_Serial(NP, sunctx.get()))
+    qB_arr = sun.N_VGetArrayPointer(qB.get())
+    qB_arr[:] = ode.dgdp(y.get())
 
-    # # Combine adjoint vectors into a ManyVector
-    # sens = [uB.get(), qB.get()]
-    # sf = sun.NVectorView.Create(sun.N_VNew_ManyVector(2, sens, sunctx.get()))
-    # print("Adjoint terminal condition:")
-    # print(sun.N_VGetArrayPointer(uB.get()))
-    # print(sun.N_VGetArrayPointer(qB.get()))
+    # Combine adjoint vectors into a ManyVector
+    sens = [uB.get(), qB.get()]
+    sf = sun.NVectorView.Create(sun.N_VNew_ManyVector(2, sens, sunctx.get()))
+    print("Adjoint terminal condition:")
+    print(sun.N_VGetArrayPointer(uB.get()))
+    print(sun.N_VGetArrayPointer(qB.get()))
 
-    # # Create ARKStep adjoint stepper
-    # status, adj_stepper = ark.ARKStepCreateAdjointStepper(
-    #     arkode.get(),
-    #     lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
-    #     None,
-    #     tf,
-    #     sf.get(),
-    #     sunctx.get(),
-    # )
+    # Create ARKStep adjoint stepper
+    status, adj_stepper = ark.ARKStepCreateAdjointStepper(
+        arkode.get(),
+        lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
+        None,
+        tf,
+        sf.get(),
+        sunctx.get(),
+    )
     # adj_stepper = sun.SUNAdjointStepperView.Create(adj_stepper)
 
     #
     # Now compute the adjoint solution
     #
 
-    # status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper.get(), t0, sf.get())
-    # assert status == ark.ARK_SUCCESS
+    status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf.get())
+    assert status == ark.ARK_SUCCESS
 
-    # print("Adjoint Solution:")
-    # print(sun.N_VGetArrayPointer(uB.get()))
-    # print(sun.N_VGetArrayPointer(qB.get()))
+    print("Adjoint Solution:")
+    print(sun.N_VGetArrayPointer(uB.get()))
+    print(sun.N_VGetArrayPointer(qB.get()))
 
     # print("\nARKStep Adjoint Stats:")
     # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)

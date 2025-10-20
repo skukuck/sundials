@@ -72,7 +72,7 @@ class Laplace2D:
         u = N_VGetArrayPointer(uvec)
         f = N_VGetArrayPointer(fvec)
         # Reshape to 2D for vectorized operations
-        u2d = np.zeros((self.NX + 2, self.NY + 2), dtype=np.float64)
+        u2d = np.zeros((self.NX + 2, self.NY + 2), dtype=sunrealtype)
         # Fill interior points
         for i in range(1, self.NX + 1):
             for j in range(1, self.NY + 1):

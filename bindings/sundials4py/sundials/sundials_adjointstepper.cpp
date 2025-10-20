@@ -45,6 +45,7 @@ void bind_sunadjointstepper(nb::module_& m)
   nb::class_<SUNAdjointStepperView>(m, "SUNAdjointStepperView")
     .def("get", nb::overload_cast<>(&SUNAdjointStepperView::get, nb::const_),
          nb::rv_policy::reference)
+    .def_static("Create", &SUNAdjointStepperView::Create<SUNAdjointStepper>)
     .def_static("Create",
                 &SUNAdjointStepperView::Create<
                   SUNStepper, sunbooleantype, SUNStepper, sunbooleantype, suncountertype,

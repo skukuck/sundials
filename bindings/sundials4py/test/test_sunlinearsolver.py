@@ -22,6 +22,7 @@ from sundials4py.core import *
 # Note: some of these tests will fail if SUNDIALS error checks are turned on because
 # we dont properly mock some of the requirements
 
+
 def test_smoke_create_dense(sunctx, nvec):
     A = SUNMatrixView.Create(SUNDenseMatrix(2, 2, sunctx.get()))
     LS = SUNLinearSolverView.Create(SUNLinSol_Dense(nvec.get(), A.get(), sunctx.get()))

@@ -25,6 +25,7 @@ from sundials4py.core import *
 # Note: some of these tests will fail if SUNDIALS error checks are turned on because
 # we dont properly mock some of the requirements
 
+
 @pytest.mark.parametrize("solver_type", ["fixedpoint", "newton"])
 def test_create_solver(solver_type, sunctx, nvec):
     if solver_type == "fixedpoint":

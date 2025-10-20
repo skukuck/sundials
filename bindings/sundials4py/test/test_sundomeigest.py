@@ -24,6 +24,7 @@ from sundials4py.core import *
 # Note: some of these tests will fail if SUNDIALS error checks are turned on because
 # we dont properly mock some of the requirements
 
+
 def make_estimator(estimator_type, sunctx):
     if estimator_type == "power":
         nv_view = NVectorView.Create(N_VNew_Serial(5, sunctx.get()))

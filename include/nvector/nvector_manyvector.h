@@ -77,7 +77,8 @@ sunrealtype* N_VGetSubvectorArrayPointer_ManyVector(N_Vector v,
                                                     sunindextype vec_num);
 
 SUNDIALS_EXPORT
-SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunrealtype* v_data_1d, N_Vector v,
+SUNErrCode N_VSetSubvectorArrayPointer_ManyVector(sunrealtype* v_data_1d,
+                                                  N_Vector v,
                                                   sunindextype vec_num);
 
 SUNDIALS_EXPORT

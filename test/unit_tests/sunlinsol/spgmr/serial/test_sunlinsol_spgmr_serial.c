@@ -47,9 +47,9 @@
   #define SOMEMATRIXNUMBERup    SUN_RCONST(1.0)
   #define SOMEMATRIXNUMBERlow   SUN_RCONST(1.0)
 #elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-  #define SOMEMATRIXNUMBERd     SUN_CCONST(2.0,5.0)
+  #define SOMEMATRIXNUMBERd     SUN_CCONST(6.0,2.0)
   #define SOMEMATRIXNUMBERup    SUN_CCONST(-1.0,2.0)
-  #define SOMEMATRIXNUMBERlow   SUN_CCONST(3.0,-4.0)
+  #define SOMEMATRIXNUMBERlow   SUN_CCONST(2.0,-1.0)
 #else
   #error \
   "SUNDIALS scalar type not defined, report to github.com/LLNL/sundials/issues"

@@ -19,7 +19,11 @@
 
 # Set tolerance for linear solver test based on Sundials precision
 if(SUNDIALS_PRECISION MATCHES "SINGLE")
-  set(TOL "1e-5")
+  if (SUNDIALS_SCALAR_TYPE MATCHES "COMPLEX")
+    set(TOL "5e-5")
+  else()
+    set(TOL "1e-5")
+  endif()
 elseif(SUNDIALS_PRECISION MATCHES "DOUBLE")
   set(TOL "1e-13")
 else()

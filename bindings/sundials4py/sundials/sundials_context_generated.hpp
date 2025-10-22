@@ -4,6 +4,23 @@
 // #endif
 //
 
+m.def(
+  "SUNContext_Create",
+  [](SUNComm comm) -> std::tuple<SUNErrCode, SUNContext>
+  {
+    auto SUNContext_Create_adapt_modifiable_immutable_to_return =
+      [](SUNComm comm) -> std::tuple<SUNErrCode, SUNContext>
+    {
+      SUNContext sunctx_out_adapt_modifiable;
+
+      SUNErrCode r = SUNContext_Create(comm, &sunctx_out_adapt_modifiable);
+      return std::make_tuple(r, sunctx_out_adapt_modifiable);
+    };
+
+    return SUNContext_Create_adapt_modifiable_immutable_to_return(comm);
+  },
+  nb::arg("comm"), nb::rv_policy::reference);
+
 m.def("SUNContext_GetLastError", SUNContext_GetLastError, nb::arg("sunctx"));
 
 m.def("SUNContext_PeekLastError", SUNContext_PeekLastError, nb::arg("sunctx"));

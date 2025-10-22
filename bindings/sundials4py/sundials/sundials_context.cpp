@@ -22,6 +22,7 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/tuple.h>
 
 #include <sundials/sundials_context.hpp>
@@ -42,12 +43,13 @@ void bind_suncontext(nb::module_& m)
 
   nb::class_<SUNContext_>(m, "SUNContext_");
 
+  m.def("SUNContextCreate", &sundials::SUNContextCreate<>);
+
   nb::class_<SUNContextView>(m, "SUNContextView")
-    .def("get", nb::overload_cast<>(&SUNContextView::get, nb::const_),
-         nb::rv_policy::reference)
     .def_static("Create", &SUNContextView::Create<>)
     .def_static("Create", &SUNContextView::Create<SUNContext>)
-    .def_static("Create", &SUNContextView::Create<SUNComm>);
+    .def_static("Create", &SUNContextView::Create<SUNComm>)
+    .def("get", nb::overload_cast<>(&SUNContextView::get, nb::const_));
 }
 
 } // namespace sundials4py

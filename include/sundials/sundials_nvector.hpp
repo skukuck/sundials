@@ -20,11 +20,13 @@
 #ifndef _SUNDIALS_NVECTOR_HPP
 #define _SUNDIALS_NVECTOR_HPP
 
+#include <memory>
 #include <utility>
 
 #include <sundials/sundials_base.hpp>
 #include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_nvector.h>
+#include "sundials/priv/sundials_context_impl.h"
 
 namespace sundials {
 namespace impl {
@@ -35,8 +37,17 @@ namespace experimental {
 
 struct NVectorDeleter
 {
-  void operator()(N_Vector v) { N_VDestroy(v); }
+  void operator()(N_Vector v)
+  {
+    fprintf(stderr, ">>>> deleter nvector:%p\n", v);
+    N_VDestroy(v);
+  }
 };
+
+// std::shared_ptr<_generic_N_Vector> make_nvector_shared(N_Vector v)
+// {
+//   return make_our_shared<_generic_N_Vector, NVectorDeleter>(v);
+// }
 
 class NVectorView : public ClassView<N_Vector, NVectorDeleter>
 {

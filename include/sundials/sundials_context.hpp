@@ -20,6 +20,9 @@
 #ifndef _SUNDIALS_CONTEXT_HPP
 #define _SUNDIALS_CONTEXT_HPP
 
+#include <memory>
+#include <type_traits>
+
 #include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_convertibleto.hpp>
@@ -29,8 +32,25 @@ namespace sundials {
 
 struct SUNContextDeleter
 {
-  void operator()(SUNContext sunctx) { SUNContext_Free(&sunctx); }
+  void operator()(SUNContext sunctx)
+  {
+    fprintf(stderr, ">>>> deleter sunctx:%p\n", sunctx);
+    SUNContext_Free(&sunctx);
+  }
 };
+
+struct SUNContextCreator
+{
+  SUNContext operator()() { SUNContext sunctx; SUNContext_Create(SUN_COMM_NULL, &sunctx); return sunctx; }
+};
+
+
+template<typename... Args>
+std::shared_ptr<SUNContext_> SUNContextCreate(Args&&... args)
+{
+  return sundials::experimental::make_our_shared<SUNContext_, SUNContextCreator, SUNContextDeleter>(std::forward<Args>(args)...);
+}
+
 
 class SUNContextView
   : public sundials::experimental::ClassView<SUNContext, SUNContextDeleter>
@@ -40,7 +60,9 @@ public:
 
   SUNContextView(SUNComm comm = SUN_COMM_NULL)
   {
-    SUNContext_Create(comm, &object_);
+    SUNContext sunctx = nullptr;
+    SUNContext_Create(comm, &sunctx);
+    object_.reset(sunctx);
   }
 
   template<typename... Args>

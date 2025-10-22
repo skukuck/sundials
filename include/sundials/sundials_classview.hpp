@@ -20,21 +20,90 @@
 #ifndef _SUNDIALS_CLASSVIEW_HPP
 #define _SUNDIALS_CLASSVIEW_HPP
 
-#include <sundials/sundials_convertibleto.hpp>
+#include <memory>
+#include <type_traits>
 #include <utility>
+
+#include <sundials/sundials_convertibleto.hpp>
 
 namespace sundials {
 namespace experimental {
+
+
+template<class T, class Creator, class Deleter, class... Args>
+std::shared_ptr<T> make_our_shared(Args&&... args)
+{
+  return std::shared_ptr<T>(Creator{}(std::forward<Args>(args)...), Deleter{});
+}
+
+template<class T, class Deleter>
+std::shared_ptr<T> make_our_shared(T* ptr)
+{
+  return std::shared_ptr<T>(ptr, Deleter{});
+}
 
 template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>
 {
 public:
+  ClassView() : object_(nullptr, Deleter{})
+  {
+    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
+            this, object_.get());
+  }
+
+  ClassView(T& object) : object_(std::forward<T>(object), Deleter{})
+  {
+    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
+            this, object_.get());
+  }
+
+  ClassView(T&& object) : object_(std::forward<T>(object), Deleter{})
+  {
+    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
+            this, object_.get());
+  }
+
+  ClassView(const ClassView&) = delete;
+
+  ClassView(ClassView&& other)
+  {
+    fprintf(stderr, ">>>> Move creating ClassView:%p holding object.get()=%p\n",
+            this, other.object_.get());
+    this->object_ = std::move(other.object_);
+  };
+
+  ClassView& operator=(const ClassView&) = delete;
+
+  ClassView& operator=(ClassView&& rhs) = default;
+
+  ~ClassView()
+  {
+    fprintf(stderr, ">>>> deleting ClassView:%p holding object.get()=%p with use count = %lu\n",
+            this, object_.get(), object_.use_count());
+    object_.reset();
+  };
+
+  // Override ConvertibleTo functions
+  T get() override { return object_.get(); }
+
+  T get() const override { return object_.get(); }
+
+  operator T() override { return object_.get(); }
+
+  operator T() const override { return object_.get(); }
+
+protected:
+  std::shared_ptr<std::remove_pointer_t<T>> object_;
+};
+
+template<class Deleter>
+class ClassView<void*, Deleter> : public sundials::ConvertibleTo<void*>
+{
+public:
   ClassView() : object_(nullptr) {}
 
-  ClassView(T& object) : object_(object) {}
-
-  ClassView(T&& object) : object_(std::forward<T>(object)) {}
+  ClassView(void* object) : object_(object) {}
 
   ClassView(const ClassView&) = delete;
 
@@ -56,17 +125,16 @@ public:
     if (object_) { Deleter{}(this->get()); }
   };
 
-  // Override ConvertibleTo functions
-  T get() override { return object_; }
+  void* get() override { return object_; }
 
-  T get() const override { return object_; }
+  void* get() const override { return object_; }
 
-  operator T() override { return object_; }
+  operator void*() override { return object_; }
 
-  operator T() const override { return object_; }
+  operator void*() const override { return object_; }
 
 protected:
-  T object_;
+  void* object_;
 };
 
 } // namespace experimental

@@ -12,8 +12,9 @@ auto pyClass_N_VectorContent_Serial =
 m.def("N_VNewEmpty_Serial", N_VNewEmpty_Serial, nb::arg("vec_length"),
       nb::arg("sunctx"), nb::rv_policy::reference);
 
-m.def("N_VNew_Serial", N_VNew_Serial, nb::arg("vec_length"), nb::arg("sunctx"),
-      nb::rv_policy::reference);
+// m.def("N_VNew_Serial", [](sunindextype length, std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx) {
+//   return std::shared_ptr<std::remove_pointer_t<N_Vector>>(N_VNew_Serial(length, sunctx.get()));
+// }, nb::arg("vec_length"), nb::arg("sunctx"),  nb::keep_alive<0, 2>());
 
 m.def(
   "N_VMake_Serial",

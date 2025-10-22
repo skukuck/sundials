@@ -20,8 +20,12 @@
  * produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
+#include <memory>
+#include <type_traits>
+
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/tuple.h>
 #include <nanobind/stl/vector.h>
 
@@ -41,8 +45,7 @@ void bind_nvector(nb::module_& m)
 
   nb::class_<NVectorView>(m, "NVectorView")
     .def_static("Create", &NVectorView::Create<N_Vector>)
-    .def("get", nb::overload_cast<>(&NVectorView::get, nb::const_),
-         nb::rv_policy::reference);
+    .def("get", nb::overload_cast<>(&NVectorView::get, nb::const_));
 
   m.def("N_VGetArrayPointer",
         [](N_Vector v)

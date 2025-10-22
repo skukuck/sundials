@@ -89,15 +89,16 @@ def main():
     #
     # Create the initial conditions vector
     #
-    sunctx = sun.SUNContextView.Create()
-    y = sun.NVectorView.Create(sun.N_VNew_Serial(NEQ, sunctx.get()))
-    ode.set_init_cond(y.get())
+    # sunctx = sun.SUNContextView.Create(sun.SUNContext_Create(sun.SUN_COMM_NULL)[1])
+    sunctx = sun.SUNContextCreate()
+    y = sun.N_VNew_Serial(NEQ, sunctx)
+    ode.set_init_cond(y)
 
     #
     # Create the ARKODE stepper that will be used for the forward evolution.
     #
     arkode = ark.ARKodeView.Create(
-        ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y.get(), sunctx.get())
+        ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
     )
     status = ark.ARKodeSetOrder(arkode.get(), 4)
     assert status == ark.ARK_SUCCESS
@@ -114,27 +115,27 @@ def main():
     # Enable checkpointing during the forward run
     nsteps = int(np.ceil((tf - t0) / dt))
     ncheck = nsteps * order
-    mem_helper = sun.SUNMemoryHelper_Sys(sunctx.get())
+    mem_helper = sun.SUNMemoryHelperView.Create(sun.SUNMemoryHelper_Sys(sunctx))
     status, checkpoint_scheme = sun.SUNAdjointCheckpointScheme_Create_Fixed(
-        sun.SUNDATAIOMODE_INMEM, mem_helper, check_freq, ncheck, keep_checks, sunctx.get()
+        sun.SUNDATAIOMODE_INMEM, mem_helper.get(), check_freq, ncheck, keep_checks, sunctx
     )
-    checkpoint_scheme = sun.SUNAdjointCheckpointSchemeView.Create(checkpoint_scheme)
-    status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), checkpoint_scheme.get())
-    assert status == ark.ARK_SUCCESS
+    cs_view = sun.SUNAdjointCheckpointSchemeView.Create(checkpoint_scheme)
+    # status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), cs_view.get())
+    # assert status == ark.ARK_SUCCESS
 
     #
     # Compute the forward solution
     #
 
     print("Initial condition:")
-    yarr = sun.N_VGetArrayPointer(y.get())
+    yarr = sun.N_VGetArrayPointer(y)
     print(yarr)
 
     tret = t0
-    status, tret = ark.ARKodeEvolve(arkode.get(), tf, y.get(), ark.ARK_NORMAL)
+    status, tret = ark.ARKodeEvolve(arkode.get(), tf, y, ark.ARK_NORMAL)
     assert status == ark.ARK_SUCCESS
     print("Forward Solution:")
-    print(sun.N_VGetArrayPointer(y.get()))
+    print(sun.N_VGetArrayPointer(y))
     # print("ARKODE Stats for Forward Solution:")
     # ARKodePrintAllStats(arkode.get(), None, 0)
     # print()
@@ -144,20 +145,20 @@ def main():
     #
 
     # Adjoint terminal condition
-    uB = sun.NVectorView.Create(sun.N_VNew_Serial(NEQ, sunctx.get()))
-    arr_uB = ode.dgdu(y.get())
-    uB_arr = sun.N_VGetArrayPointer(uB.get())
+    uB = sun.N_VNew_Serial(NEQ, sunctx)
+    arr_uB = ode.dgdu(y)
+    uB_arr = sun.N_VGetArrayPointer(uB)
     uB_arr[:] = arr_uB
-    qB = sun.NVectorView.Create(sun.N_VNew_Serial(NP, sunctx.get()))
-    qB_arr = sun.N_VGetArrayPointer(qB.get())
-    qB_arr[:] = ode.dgdp(y.get())
+    qB = sun.N_VNew_Serial(NP, sunctx)
+    qB_arr = sun.N_VGetArrayPointer(qB)
+    qB_arr[:] = ode.dgdp(y)
 
     # Combine adjoint vectors into a ManyVector
-    sens = [uB.get(), qB.get()]
-    sf = sun.NVectorView.Create(sun.N_VNew_ManyVector(2, sens, sunctx.get()))
+    sens = [uB, qB]
+    sf = sun.N_VNew_ManyVector(2, sens, sunctx)
     print("Adjoint terminal condition:")
-    print(sun.N_VGetArrayPointer(uB.get()))
-    print(sun.N_VGetArrayPointer(qB.get()))
+    print(sun.N_VGetArrayPointer(uB))
+    print(sun.N_VGetArrayPointer(qB))
 
     # Create ARKStep adjoint stepper
     status, adj_stepper = ark.ARKStepCreateAdjointStepper(
@@ -165,8 +166,8 @@ def main():
         lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
         None,
         tf,
-        sf.get(),
-        sunctx.get(),
+        sf,
+        sunctx,
     )
     # adj_stepper = sun.SUNAdjointStepperView.Create(adj_stepper)
 
@@ -174,15 +175,17 @@ def main():
     # Now compute the adjoint solution
     #
 
-    status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf.get())
-    assert status == ark.ARK_SUCCESS
+    # status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf)
+    # assert status == ark.ARK_SUCCESS
 
-    print("Adjoint Solution:")
-    print(sun.N_VGetArrayPointer(uB.get()))
-    print(sun.N_VGetArrayPointer(qB.get()))
+    # print("Adjoint Solution:")
+    # print(sun.N_VGetArrayPointer(uB))
+    # print(sun.N_VGetArrayPointer(qB))
 
     # print("\nARKStep Adjoint Stats:")
     # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)
+
+    # # print(type(cs_view))
 
 
 if __name__ == "__main__":

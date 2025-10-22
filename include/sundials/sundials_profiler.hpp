@@ -34,6 +34,8 @@
 #define SUNDIALS_CXX_MARK_FUNCTION(profobj)
 #endif
 
+#include "sundials_profiler_impl.h"
+
 namespace sundials {
 /* Convenience class for C++ codes.
    Allows for simpler profiler statements using C++ scoping rules. */
@@ -69,7 +71,9 @@ public:
 
   SUNProfilerView(SUNComm comm, const char* title)
   {
-    SUNProfiler_Create(comm, title, &object_);
+    SUNProfiler profiler;
+    SUNProfiler_Create(comm, title, &profiler);
+    object_.reset(profiler);
   }
 
   template<typename... Args>

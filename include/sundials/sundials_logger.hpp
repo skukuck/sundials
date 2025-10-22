@@ -39,10 +39,17 @@ public:
 
   SUNLoggerView(SUNComm comm, int output_rank)
   {
-    SUNLogger_Create(comm, output_rank, &object_);
+    SUNLogger logger;
+    SUNLogger_Create(comm, output_rank, &logger);
+    object_.reset(logger);
   }
 
-  SUNLoggerView(SUNComm comm) { SUNLogger_CreateFromEnv(comm, &object_); }
+  SUNLoggerView(SUNComm comm)
+  {
+    SUNLogger logger;
+    SUNLogger_CreateFromEnv(comm, &logger);
+    object_.reset(logger);
+  }
 
   template<typename... Args>
   static SUNLoggerView Create(Args&&... args)

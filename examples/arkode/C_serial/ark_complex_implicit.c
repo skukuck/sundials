@@ -35,7 +35,14 @@
  * This program solves the problem with a DIRK method.  Based on
  * a command-line input, it uses either a dense or banded
  * Jacobian matrix and solver, where the Jacobian is computed
- * internally by ARKODE using finite differences.
+ * internally by ARKODE using finite differences, or it will use
+ * the GMRES iterative solver without preconditioning.
+ *
+ * Specifically, the first command-line argument following the
+ * executable name should be an integer:
+ *   0 => dense linear solver
+ *   1 => banded linear solver (default)
+ *   2 => GMRES iterative linear solver
  *
  * 5 outputs are printed at equal intervals, and run statistics
  * are printed at the end.
@@ -49,8 +56,9 @@
 #include <sundials/sundials_types.h> /* def. of type sunscalartype */
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
-#include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver      */
-#include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix            */
+#include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver     */
+#include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix           */
+#include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
@@ -89,7 +97,11 @@ int main(int argc, char* argv[])
   sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
   sunrealtype dTout  = SUN_RCONST(1.0);       /* time between outputs */
   int Nt             = (int)ceil(Tf / dTout); /* number of output times */
-  sunrealtype reltol = SUN_RCONST(1.0e-6);    /* tolerances */
+    #if defined(SUNDIALS_SINGLE_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-3);                /* tolerances */
+  #else
+  sunrealtype reltol = SUN_RCONST(1.0e-6);
+  #endif
   sunrealtype abstol = SUN_RCONST(1.0e-10);
   int maxl           = 10; /* max linear solver iterations */
 
@@ -105,11 +117,22 @@ int main(int argc, char* argv[])
   int iout;
 
   /* Retrieve the command-line option specifying the linear solver type:
-     0 => dense, 1 => banded (default) */
+     0 => dense, 1 => banded (default), 2 => GMRES */
   int linear_solver_type = 1;
   if (argc > 1)
   {
     linear_solver_type = atoi(argv[1]);
+  }
+  if (linear_solver_type < 0 || linear_solver_type > 2)
+  {
+    fprintf(
+      stderr,
+      "ERROR: Unrecognized linear solver type %d. Valid options are:\n"
+      "  0 => dense linear solver\n"
+      "  1 => banded linear solver (default)\n"
+      "  2 => GMRES iterative linear solver\n",
+      linear_solver_type);
+    return 1;
   }
 
   /* Create the SUNDIALS context object for this testing */
@@ -135,9 +158,14 @@ int main(int argc, char* argv[])
   {
     printf("\nAnalytic ODE test in complex arithmetic with dense linear solver:\n");
   }
-  else
+  else if (linear_solver_type == 1)
   {
     printf("\nAnalytic ODE test in complex arithmetic with banded linear solver:\n");
+  }
+  else
+  {
+    printf("\nAnalytic ODE test in complex arithmetic with GMRES iterative linear solver:\n");
+    printf("    maxl = %i\n", maxl);
   }
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
@@ -157,6 +185,11 @@ int main(int argc, char* argv[])
     LS = SUNLinSol_Dense(y, A, ctx);
     if (check_flag((void*)LS, "SUNLinSol_Dense", 0)) { return 1; }
   }
+  else if (linear_solver_type == 2)
+  {
+    LS = SUNLinSol_SPGMR(y, SUN_PREC_NONE, maxl, ctx);
+    if (check_flag((void*)LS, "SUNLinSol_SPGMR", 0)) { return 1; }
+  }
   else
   {
     A = SUNBandMatrix(NEQ, 2, 2, ctx);
@@ -169,10 +202,6 @@ int main(int argc, char* argv[])
   flag = ARKodeSetLinearSolver(arkode_mem, LS,
                                A); /* Attach matrix and linear solver */
   if (check_flag(&flag, "ARKodeSetLinearSolver", 1)) { return 1; }
-
-  /* Specify linearly implicit RHS, with time-dependent Jacobian */
-  flag = ARKodeSetLinear(arkode_mem, 1);
-  if (check_flag(&flag, "ARKodeSetLinear", 1)) { return 1; }
 
   /* Override any current settings with command-line options */
   flag = ARKodeSetOptions(arkode_mem, NULL, NULL, argc, argv);

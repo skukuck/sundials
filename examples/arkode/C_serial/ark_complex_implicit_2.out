@@ -1,5 +1,6 @@
 
-Analytic ODE test in complex arithmetic with dense linear solver:
+Analytic ODE test in complex arithmetic with GMRES iterative linear solver:
+  maxl = 10
     reltol = 1.0e-06,  abstol = 1.0e-10
 
 ARKODE solver parameters:
@@ -48,14 +49,14 @@ ARKStep time step module parameters:
     1.000 |  0.54030 +  0.84147i | -0.84147 +  0.54030i |  0.15853 +  0.54030i
     2.000 | -0.83230 +  1.81860i | -1.81859 + -0.83229i |  1.09070 + -0.41615i
     3.000 | -2.96998 +  0.42336i | -0.42336 + -2.96998i |  2.85888 + -0.98999i
-    4.000 | -2.61457 + -3.02721i |  3.02721 + -2.61458i |  4.75680 + -0.65364i
-    5.000 |  1.41831 + -4.79462i |  4.79462 +  1.41830i |  5.95892 +  0.28366i
+    4.000 | -2.61457 + -3.02721i |  3.02721 + -2.61457i |  4.75680 + -0.65364i
+    5.000 |  1.41831 + -4.79462i |  4.79462 +  1.41831i |  5.95892 +  0.28366i
    ----------------------------------------------------------------------------
-    Max-norm of the error is 8.83236e-06
+    Max-norm of the error is 4.48377e-06
    ----------------------------------------------------------------------------
 
 Final Solver Statistics:
-Current time                  = 5.07247840424109
+Current time                  = 5.07229606229708
 Steps                         = 95
 Step attempts                 = 95
 Stability limited steps       = 0
@@ -64,22 +65,22 @@ Error test fails              = 0
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 6.103515625e-12
-Last step size                = 0.092502598625326
-Current step size             = 0.0927166045825335
+Last step size                = 0.0925222615325572
+Current step size             = 0.0926758565325816
 Explicit RHS fn evals         = 0
-Implicit RHS fn evals         = 1807
-NLS iters                     = 1329
-NLS fails                     = 50
-NLS iters per step            = 13.9894736842105
-LS setups                     = 56
-Jac fn evals                  = 51
-LS RHS fn evals               = 15300
+Implicit RHS fn evals         = 1462
+NLS iters                     = 984
+NLS fails                     = 0
+NLS iters per step            = 10.3578947368421
+LS setups                     = 0
+Jac fn evals                  = 0
+LS RHS fn evals               = 5551
 Prec setup evals              = 0
 Prec solves                   = 0
-LS iters                      = 0
-LS fails                      = 0
+LS iters                      = 5551
+LS fails                      = 311
 Jac-times setups              = 0
-Jac-times evals               = 0
-LS iters per NLS iter         = 0
-Jac evals per NLS iter        = 0.0383747178329571
+Jac-times evals               = 5551
+LS iters per NLS iter         = 5.64126016260163
+Jac evals per NLS iter        = 0
 Prec evals per NLS iter       = 0

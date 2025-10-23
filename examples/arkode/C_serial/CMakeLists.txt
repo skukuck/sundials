@@ -31,6 +31,7 @@ set(ARKODE_examples
     "ark_complex_explicit.c\;\;\;complex"
     "ark_complex_implicit.c\;0\;\;complex"
     "ark_complex_implicit.c\;1\;\;complex"
+    "ark_complex_implicit.c\;2\;\;complex"
     # develop tests
     "ark_analytic.c\;arkode.scalar_tolerances 1e-6 1e-8 arkode.table_names ARKODE_ESDIRK547L2SA_7_4_5 ARKODE_ERK_NONE\;\;real"
     "ark_advection_diffusion_reaction_splitting.c\;\;develop\;real"

@@ -72,8 +72,12 @@ int main(void)
   sunrealtype dTout  = SUN_RCONST(1.0);       /* time between outputs */
   sunindextype NEQ   = 3;                     /* number of dependent vars. */
   int Nt             = (int)ceil(Tf / dTout); /* number of output times */
-  sunrealtype reltol = 1.0e-6;                /* tolerances */
-  sunrealtype abstol = 1.0e-10;
+  #if defined(SUNDIALS_SINGLE_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-3);                /* tolerances */
+  #else
+  sunrealtype reltol = SUN_RCONST(1.0e-6);
+  #endif
+  sunrealtype abstol = SUN_RCONST(1.0e-10);
 
   /* general problem variables */
   int flag;                 /* reusable error-checking flag */

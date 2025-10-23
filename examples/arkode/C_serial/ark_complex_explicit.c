@@ -13,7 +13,7 @@
  *---------------------------------------------------------------
  * Example problem:
  *
- * The following test employees a manufactured true solution to
+ * The following test employs a manufactured true solution to
  * find the accuracy of numerical solution. The ODE system with
  * 3 components, X = [u,v,w], satisfies the equations,
  *
@@ -55,10 +55,10 @@
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
 
 // Compute the true solution
-static int Solution(sunrealtype t, N_Vector u, void* user_data);
+static int Solution(sunrealtype t, N_Vector u);
 
 // Compute the numerical solution error
-static int SolutionError(sunrealtype t, N_Vector u, N_Vector e, void* user_data);
+static int SolutionError(sunrealtype t, N_Vector u, N_Vector e);
 
 /* Private function to check function return values */
 static int check_flag(void* flagvalue, const char* funcname, int opt);
@@ -74,7 +74,6 @@ int main(void)
   int Nt             = (int)ceil(Tf / dTout); /* number of output times */
   sunrealtype reltol = 1.0e-6;                /* tolerances */
   sunrealtype abstol = 1.0e-10;
-  int maxl           = 10; /* max linear solver iterations */
 
   /* general problem variables */
   int flag;                 /* reusable error-checking flag */
@@ -82,7 +81,6 @@ int main(void)
   N_Vector True_Sol = NULL; // vector for storing true solution
   N_Vector Error    = NULL; // vector for storing the error */
   void* arkode_mem  = NULL; /* empty ARKODE memory structure */
-  sunscalartype rdata[3];
   sunrealtype t, tout;
   int iout;
 
@@ -99,22 +97,13 @@ int main(void)
   True_Sol = N_VClone(y);
   Error    = N_VClone(y);
 
-  // set up the problem data (unused in this case)
-  rdata[0] = SUN_CCONST(1.0, 0.0);
-  rdata[1] = SUN_CCONST(1.0, 0.0);
-  rdata[2] = SUN_CCONST(1.0, 0.0);
-
   // Set initial condition
-  flag = Solution(0.0, True_Sol, (void*)rdata);
+  flag = Solution(0.0, True_Sol);
   if (check_flag(&flag, "Solution", 1)) { return 1; }
   N_VScale(1.0, True_Sol, y); /* Set initial conditions */
 
   /* Initial problem output */
   printf("\nAnalytic ODE test problem:\n");
-  printf("    problem parameters:  a = %" GSYM " + %" GSYM "i,  b = %" GSYM
-         " + %" GSYM "i,  c = %" GSYM " + %" GSYM "i\n",
-         SUN_REAL(rdata[0]), SUN_IMAG(rdata[0]), SUN_REAL(rdata[1]),
-         SUN_IMAG(rdata[2]), SUN_REAL(rdata[2]), SUN_IMAG(rdata[2]));
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
   /* Call ERKStepCreate to initialize the ERK method */
@@ -122,10 +111,6 @@ int main(void)
   if (check_flag((void*)arkode_mem, "ERKStepCreate", 0)) { return 1; }
 
   /* Set routines */
-  flag = ARKodeSetUserData(arkode_mem,
-                           (void*)rdata); /* Pass rdata to user functions */
-  if (check_flag(&flag, "ARKodeSetUserData", 1)) { return 1; }
-
   flag = ARKodeSStolerances(arkode_mem, reltol, abstol); /* Specify tolerances */
   if (check_flag(&flag, "ARKodeSStolerances", 1)) { return 1; }
 
@@ -176,7 +161,7 @@ int main(void)
   printf("   "
          "---------------------------------------------------------------------"
          "-------\n");
-  SolutionError(Tf, y, Error, (void*)rdata);
+  SolutionError(Tf, y, Error);
   printf("   "
          "---------------------------------------------------------------------"
          "-------\n");
@@ -203,13 +188,8 @@ int main(void)
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunscalartype* rdata =
-    (sunscalartype*)user_data; /* cast user_data to sunscalartype */
   sunscalartype* yvals  = N_VGetArrayPointer(y);
   sunscalartype* dyvals = N_VGetArrayPointer(ydot);
-  sunscalartype a       = rdata[0]; /* access data entries (unused) */
-  sunscalartype b       = rdata[1];
-  sunscalartype c       = rdata[2];
   sunscalartype u       = yvals[0]; /* access solution values */
   sunscalartype v       = yvals[1];
   sunscalartype w       = yvals[2];
@@ -271,13 +251,8 @@ static int check_flag(void* flagvalue, const char* funcname, int opt)
 }
 
 /* Compute the exact solution */
-static int Solution(sunrealtype t, N_Vector u, void* user_data)
+static int Solution(sunrealtype t, N_Vector u)
 {
-  sunscalartype* rdata =
-    (sunscalartype*)user_data;      /* cast user_data to sunscalartype */
-  sunscalartype a       = rdata[0]; /* access data entries */
-  sunscalartype b       = rdata[1];
-  sunscalartype c       = rdata[2];
   sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
@@ -289,10 +264,10 @@ static int Solution(sunrealtype t, N_Vector u, void* user_data)
 }
 
 /* Compute the solution error */
-static int SolutionError(sunrealtype t, N_Vector u, N_Vector e, void* user_data)
+static int SolutionError(sunrealtype t, N_Vector u, N_Vector e)
 {
   /* Compute true solution */
-  int flag = Solution(t, e, (void*)user_data);
+  int flag = Solution(t, e);
   if (flag != 0) { return -1; }
 
   /* Compute max-norm of the error */

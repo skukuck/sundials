@@ -1,6 +1,5 @@
 
 Analytic ODE test in complex arithmetic with dense linear solver:
-    problem parameters:  a = 1 + 0i,  b = 1 + 0i,  c = 1 + 0i
     reltol = 1.0e-06,  abstol = 1.0e-10
 
 ARKODE solver parameters:
@@ -44,38 +43,38 @@ ARKStep time step module parameters:
   Gamma factor LSetup tolerance = 2.22044604925031e-14
   Number of steps between LSetup calls = 20
 
-     t               u                      v                      w
+     t               u_90                   v_90                   w_90
    ----------------------------------------------------------------------------
-    0.000 |  0.00000 +  2.00000i | -0.00000 + -0.00000i |  0.00000 +  1.00000i
-    1.000 | -0.36788 +  2.00000i |  0.00000 + -0.36788i |  1.00000 +  0.36788i
-    2.000 | -0.27067 +  2.00000i |  0.00000 + -0.54134i |  2.00000 +  0.13533i
-    3.000 | -0.14936 +  2.00000i |  0.00000 + -0.44808i |  3.00000 +  0.04979i
-    4.000 | -0.07327 +  1.99999i |  0.00001 + -0.29306i |  4.00001 +  0.01831i
-    5.000 | -0.03373 +  1.99992i |  0.00006 + -0.16848i |  5.00004 +  0.00672i
+    0.000 |  1.00000 +  0.00000i |  0.00000 +  0.00000i |  0.00000 +  1.00000i
+    1.000 |  0.54030 +  0.84147i | -0.84147 +  0.54030i |  0.15853 +  0.54030i
+    2.000 | -0.83230 +  1.81860i | -1.81859 + -0.83229i |  1.09070 + -0.41615i
+    3.000 | -2.96998 +  0.42336i | -0.42336 + -2.96998i |  2.85888 + -0.98999i
+    4.000 | -2.61457 + -3.02721i |  3.02721 + -2.61457i |  4.75680 + -0.65364i
+    5.000 |  1.41831 + -4.79462i |  4.79462 +  1.41831i |  5.95892 +  0.28366i
    ----------------------------------------------------------------------------
-    Max-norm of the error is 8.57526e-05
+    Max-norm of the error is 4.48390e-06
    ----------------------------------------------------------------------------
 
 Final Solver Statistics:
-Current time                  = 5.03103278729458
-Steps                         = 74
-Step attempts                 = 75
+Current time                  = 5.07228482358823
+Steps                         = 95
+Step attempts                 = 95
 Stability limited steps       = 0
-Accuracy limited steps        = 75
-Error test fails              = 1
+Accuracy limited steps        = 95
+Error test fails              = 0
 NLS step fails                = 0
 Inequality constraint fails   = 0
-Initial step size             = 6.58037005653823e-06
-Last step size                = 0.0676607610728959
-Current step size             = 0.0669713422268324
+Initial step size             = 6.103515625e-12
+Last step size                = 0.092522252115414
+Current step size             = 0.0926758473763021
 Explicit RHS fn evals         = 0
-Implicit RHS fn evals         = 753
-NLS iters                     = 375
+Implicit RHS fn evals         = 953
+NLS iters                     = 475
 NLS fails                     = 0
-NLS iters per step            = 5.06756756756757
-LS setups                     = 375
-Jac fn evals                  = 302
-LS RHS fn evals               = 906
+NLS iters per step            = 5
+LS setups                     = 475
+Jac fn evals                  = 381
+LS RHS fn evals               = 114300
 Prec setup evals              = 0
 Prec solves                   = 0
 LS iters                      = 0
@@ -83,5 +82,5 @@ LS fails                      = 0
 Jac-times setups              = 0
 Jac-times evals               = 0
 LS iters per NLS iter         = 0
-Jac evals per NLS iter        = 0.805333333333333
+Jac evals per NLS iter        = 0.802105263157895
 Prec evals per NLS iter       = 0

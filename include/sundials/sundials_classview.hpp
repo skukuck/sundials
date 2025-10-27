@@ -31,13 +31,13 @@ namespace experimental {
 
 
 template<class T, class Creator, class Deleter, class... Args>
-std::shared_ptr<T> make_our_shared(Args&&... args)
+std::shared_ptr<T> our_make_shared(Args&&... args)
 {
   return std::shared_ptr<T>(Creator{}(std::forward<Args>(args)...), Deleter{});
 }
 
 template<class T, class Deleter>
-std::shared_ptr<T> make_our_shared(T* ptr)
+std::shared_ptr<T> our_make_shared(T* ptr)
 {
   return std::shared_ptr<T>(ptr, Deleter{});
 }

@@ -12,7 +12,7 @@
 
 namespace nb = nanobind;
 using sundials::experimental::NVectorDeleter;
-using sundials::experimental::make_our_shared;
+using sundials::experimental::our_make_shared;
 
 namespace sundials4py {
 
@@ -25,7 +25,7 @@ void bind_nvector_serial(nb::module_& m)
     [](sunindextype length,
        std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx)
     {
-      return make_our_shared<std::remove_pointer_t<N_Vector>, NVectorDeleter>(N_VNew_Serial(length, sunctx.get()));
+      return our_make_shared<std::remove_pointer_t<N_Vector>, NVectorDeleter>(N_VNew_Serial(length, sunctx.get()));
     },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 }

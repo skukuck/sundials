@@ -44,11 +44,6 @@ struct NVectorDeleter
   }
 };
 
-// std::shared_ptr<_generic_N_Vector> make_nvector_shared(N_Vector v)
-// {
-//   return make_our_shared<_generic_N_Vector, NVectorDeleter>(v);
-// }
-
 class NVectorView : public ClassView<N_Vector, NVectorDeleter>
 {
 public:

@@ -48,7 +48,7 @@ struct SUNContextCreator
 template<typename... Args>
 std::shared_ptr<SUNContext_> SUNContextCreate(Args&&... args)
 {
-  return sundials::experimental::make_our_shared<SUNContext_, SUNContextCreator, SUNContextDeleter>(std::forward<Args>(args)...);
+  return sundials::experimental::our_make_shared<SUNContext_, SUNContextCreator, SUNContextDeleter>(std::forward<Args>(args)...);
 }
 
 

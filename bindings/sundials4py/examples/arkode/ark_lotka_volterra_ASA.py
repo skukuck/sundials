@@ -89,7 +89,6 @@ def main():
     #
     # Create the initial conditions vector
     #
-    # sunctx = sun.SUNContextView.Create(sun.SUNContext_Create(sun.SUN_COMM_NULL)[1])
     sunctx = sun.SUNContextCreate()
     y = sun.N_VNew_Serial(NEQ, sunctx)
     ode.set_init_cond(y)
@@ -115,13 +114,12 @@ def main():
     # Enable checkpointing during the forward run
     nsteps = int(np.ceil((tf - t0) / dt))
     ncheck = nsteps * order
-    mem_helper = sun.SUNMemoryHelperView.Create(sun.SUNMemoryHelper_Sys(sunctx))
+    mem_helper = sun.SUNMemoryHelper_Sys(sunctx)
     status, checkpoint_scheme = sun.SUNAdjointCheckpointScheme_Create_Fixed(
-        sun.SUNDATAIOMODE_INMEM, mem_helper.get(), check_freq, ncheck, keep_checks, sunctx
+        sun.SUNDATAIOMODE_INMEM, mem_helper, check_freq, ncheck, keep_checks, sunctx
     )
-    cs_view = sun.SUNAdjointCheckpointSchemeView.Create(checkpoint_scheme)
-    # status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), cs_view.get())
-    # assert status == ark.ARK_SUCCESS
+    status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), checkpoint_scheme)
+    assert status == ark.ARK_SUCCESS
 
     #
     # Compute the forward solution
@@ -160,20 +158,20 @@ def main():
     print(sun.N_VGetArrayPointer(uB))
     print(sun.N_VGetArrayPointer(qB))
 
-    # Create ARKStep adjoint stepper
-    status, adj_stepper = ark.ARKStepCreateAdjointStepper(
-        arkode.get(),
-        lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
-        None,
-        tf,
-        sf,
-        sunctx,
-    )
+    # # Create ARKStep adjoint stepper
+    # status, adj_stepper = ark.ARKStepCreateAdjointStepper(
+    #     arkode.get(),
+    #     lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
+    #     None,
+    #     tf,
+    #     sf,
+    #     sunctx,
+    # )
     # adj_stepper = sun.SUNAdjointStepperView.Create(adj_stepper)
 
-    #
-    # Now compute the adjoint solution
-    #
+    # #
+    # # Now compute the adjoint solution
+    # #
 
     # status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf)
     # assert status == ark.ARK_SUCCESS

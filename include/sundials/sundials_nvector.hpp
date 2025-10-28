@@ -35,7 +35,7 @@ using BaseNVector = BaseObject<_generic_N_Vector, _generic_N_Vector_Ops>;
 
 namespace experimental {
 
-struct NVectorDeleter
+struct N_VectorDeleter
 {
   void operator()(N_Vector v)
   {
@@ -44,10 +44,10 @@ struct NVectorDeleter
   }
 };
 
-class NVectorView : public ClassView<N_Vector, NVectorDeleter>
+class NVectorView : public ClassView<N_Vector, N_VectorDeleter>
 {
 public:
-  using ClassView<N_Vector, NVectorDeleter>::ClassView;
+  using ClassView<N_Vector, N_VectorDeleter>::ClassView;
 
   template<typename... Args>
   static NVectorView Create(Args&&... args)

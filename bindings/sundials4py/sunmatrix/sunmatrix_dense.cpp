@@ -17,11 +17,13 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/shared_ptr.h>
 
 #include <sundials/sundials_core.hpp>
 #include <sunmatrix/sunmatrix_dense.h>
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

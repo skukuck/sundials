@@ -88,7 +88,7 @@ modules:
     path: nvector/nvector_serial_generated.hpp
     headers:
     - ../../include/nvector/nvector_serial.h
-  nvector_serial:
+  nvector_manyvector:
     path: nvector/nvector_manyvector_generated.hpp
     headers:
     - ../../include/nvector/nvector_manyvector.h

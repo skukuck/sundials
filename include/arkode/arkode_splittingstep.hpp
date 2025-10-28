@@ -22,5 +22,20 @@
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_splittingstep.h>
+#include "arkode_splittingstep.h"
+
+namespace sundials {
+namespace experimental {
+
+struct SplittingStepCoefficientsDeleter
+{
+  void operator()(SplittingStepCoefficients s)
+  {
+    SplittingStepCoefficients_Destroy(&s);
+  }
+};
+
+}
+}
 
 #endif

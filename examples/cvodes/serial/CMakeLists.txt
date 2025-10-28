@@ -30,6 +30,7 @@ set(CVODES_examples
     "cvsAdvDiff_FSA_non\;-sensi stg t\;exclude-single\;real"
     "cvsAdvDiff_bnd\;\;develop\;real"
     "cvsAnalytic_mels\;\;develop\;real"
+    "cvsComplex_implicit\;\;develop\;complex"
     "cvsAnalytic_mels\;cvodes.max_order 3\;develop\;real"
     "cvsDirectDemo_ls\;\;develop\;real"
     "cvsDiurnal_FSA_kry\;-sensi sim t\;exclude-single\;real"

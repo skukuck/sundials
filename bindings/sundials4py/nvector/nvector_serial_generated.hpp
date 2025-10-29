@@ -22,7 +22,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return N_VNewEmpty_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
@@ -43,7 +42,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return N_VNew_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
@@ -77,7 +75,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return N_VMake_Serial_adapt_return_type_to_shared_ptr(vec_length, v_data_1d,

@@ -22,7 +22,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return SUNDenseMatrix_adapt_return_type_to_shared_ptr(M, N, sunctx);

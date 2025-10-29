@@ -39,7 +39,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMemoryHelper>,
                              SUNMemoryHelperDeleter>(lambda_result);
-      return lambda_result;
     };
 
     return SUNMemoryHelper_Clone_adapt_return_type_to_shared_ptr(param_0);

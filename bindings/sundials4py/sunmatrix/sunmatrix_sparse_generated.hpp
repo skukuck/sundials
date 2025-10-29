@@ -24,7 +24,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return SUNSparseMatrix_adapt_return_type_to_shared_ptr(M, N, NNZ,
@@ -47,7 +46,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return SUNSparseFromDenseMatrix_adapt_return_type_to_shared_ptr(A, droptol,
@@ -69,7 +67,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return SUNSparseFromBandMatrix_adapt_return_type_to_shared_ptr(A, droptol,

@@ -177,39 +177,10 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetFuncNorm",
-  [](void* kinmem) -> std::tuple<int, sunrealtype>
-  {
-    auto KINGetFuncNorm_adapt_modifiable_immutable_to_return =
-      [](void* kinmem) -> std::tuple<int, sunrealtype>
-    {
-      sunrealtype fnorm_adapt_modifiable;
+m.def("KINGetFuncNorm", KINGetFuncNorm, nb::arg("kinmem"), nb::arg("fnorm"));
 
-      int r = KINGetFuncNorm(kinmem, &fnorm_adapt_modifiable);
-      return std::make_tuple(r, fnorm_adapt_modifiable);
-    };
-
-    return KINGetFuncNorm_adapt_modifiable_immutable_to_return(kinmem);
-  },
-  nb::arg("kinmem"));
-
-m.def(
-  "KINGetStepLength",
-  [](void* kinmem) -> std::tuple<int, sunrealtype>
-  {
-    auto KINGetStepLength_adapt_modifiable_immutable_to_return =
-      [](void* kinmem) -> std::tuple<int, sunrealtype>
-    {
-      sunrealtype steplength_adapt_modifiable;
-
-      int r = KINGetStepLength(kinmem, &steplength_adapt_modifiable);
-      return std::make_tuple(r, steplength_adapt_modifiable);
-    };
-
-    return KINGetStepLength_adapt_modifiable_immutable_to_return(kinmem);
-  },
-  nb::arg("kinmem"));
+m.def("KINGetStepLength", KINGetStepLength, nb::arg("kinmem"),
+      nb::arg("steplength"));
 
 m.def("KINPrintAllStats", KINPrintAllStats, nb::arg("kinmem"),
       nb::arg("outfile"), nb::arg("fmt"));

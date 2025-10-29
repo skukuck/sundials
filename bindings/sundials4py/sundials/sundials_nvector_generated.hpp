@@ -52,7 +52,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return N_VClone_adapt_return_type_to_shared_ptr(w);
@@ -70,7 +69,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return N_VCloneEmpty_adapt_return_type_to_shared_ptr(w);

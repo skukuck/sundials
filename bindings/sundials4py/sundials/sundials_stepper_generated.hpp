@@ -33,47 +33,11 @@ m.def(
   },
   nb::arg("sunctx"), nb::rv_policy::reference);
 
-m.def(
-  "SUNStepper_Evolve",
-  [](SUNStepper stepper, sunrealtype tout,
-     N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNStepper_Evolve_adapt_modifiable_immutable_to_return =
-      [](SUNStepper stepper, sunrealtype tout,
-         N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype tret_adapt_modifiable;
+m.def("SUNStepper_Evolve", SUNStepper_Evolve, nb::arg("stepper"),
+      nb::arg("tout"), nb::arg("vret"), nb::arg("tret"));
 
-      SUNErrCode r = SUNStepper_Evolve(stepper, tout, vret,
-                                       &tret_adapt_modifiable);
-      return std::make_tuple(r, tret_adapt_modifiable);
-    };
-
-    return SUNStepper_Evolve_adapt_modifiable_immutable_to_return(stepper, tout,
-                                                                  vret);
-  },
-  nb::arg("stepper"), nb::arg("tout"), nb::arg("vret"));
-
-m.def(
-  "SUNStepper_OneStep",
-  [](SUNStepper stepper, sunrealtype tout,
-     N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
-  {
-    auto SUNStepper_OneStep_adapt_modifiable_immutable_to_return =
-      [](SUNStepper stepper, sunrealtype tout,
-         N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
-    {
-      sunrealtype tret_adapt_modifiable;
-
-      SUNErrCode r = SUNStepper_OneStep(stepper, tout, vret,
-                                        &tret_adapt_modifiable);
-      return std::make_tuple(r, tret_adapt_modifiable);
-    };
-
-    return SUNStepper_OneStep_adapt_modifiable_immutable_to_return(stepper,
-                                                                   tout, vret);
-  },
-  nb::arg("stepper"), nb::arg("tout"), nb::arg("vret"));
+m.def("SUNStepper_OneStep", SUNStepper_OneStep, nb::arg("stepper"),
+      nb::arg("tout"), nb::arg("vret"), nb::arg("tret"));
 
 m.def("SUNStepper_FullRhs", SUNStepper_FullRhs, nb::arg("stepper"),
       nb::arg("t"), nb::arg("v"), nb::arg("f"), nb::arg("mode"));
@@ -137,22 +101,8 @@ m.def(
   },
   nb::arg("stepper"));
 
-m.def(
-  "SUNStepper_GetNumSteps",
-  [](SUNStepper stepper) -> std::tuple<SUNErrCode, suncountertype>
-  {
-    auto SUNStepper_GetNumSteps_adapt_modifiable_immutable_to_return =
-      [](SUNStepper stepper) -> std::tuple<SUNErrCode, suncountertype>
-    {
-      suncountertype nst_adapt_modifiable;
-
-      SUNErrCode r = SUNStepper_GetNumSteps(stepper, &nst_adapt_modifiable);
-      return std::make_tuple(r, nst_adapt_modifiable);
-    };
-
-    return SUNStepper_GetNumSteps_adapt_modifiable_immutable_to_return(stepper);
-  },
-  nb::arg("stepper"));
+m.def("SUNStepper_GetNumSteps", SUNStepper_GetNumSteps, nb::arg("stepper"),
+      nb::arg("nst"));
 // #ifdef __cplusplus
 //
 // #endif

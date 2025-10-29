@@ -46,7 +46,6 @@ m.def(
 
       return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
         lambda_result);
-      return lambda_result;
     };
 
     return SUNMatClone_adapt_return_type_to_shared_ptr(A);

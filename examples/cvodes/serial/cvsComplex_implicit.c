@@ -42,7 +42,9 @@
  * executable name should be an integer:
  *   0 => dense linear solver
  *   1 => banded linear solver (default)
- *   2 => GMRES iterative linear solver
+ *   2 => GMRES iterative linear solver (no preconditioning)
+ *   3 => GMRES iterative linear solver with CVBANDPRE
+ *   4 => GMRES iterative linear solver with CVBBDPRE
  *
  * 5 outputs are printed at equal intervals, and run statistics
  * are printed at the end.
@@ -53,13 +55,14 @@
 #include <math.h>
 #include <nvector/nvector_serial.h> /* serial N_Vector types, fcts., macros */
 #include <stdio.h>
-#include <string.h>
 #include <sundials/sundials_types.h> /* def. of type sunscalartype */
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 #include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver     */
 #include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix           */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
+#include <cvodes/cvodes_bandpre.h>     /* prototypes for CVSBANDPRE module     */
+#include <cvodes/cvodes_bbdpre.h>      /* prototypes for CVSBBDPRE module      */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
@@ -80,6 +83,7 @@
 
 /* User-supplied Functions Called by the Solver */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
+static int floc(sunindextype Nloc, sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
 
 // Compute the true solution
 static int Solution(sunrealtype t, N_Vector u);
@@ -118,20 +122,23 @@ int main(int argc, char* argv[])
   int iout;
 
   /* Retrieve the command-line option specifying the linear solver type:
-     0 => dense, 1 => banded (default), 2 => GMRES */
+     0 => dense, 1 => banded (default), 2 => GMRES (no preconditioning),
+     3 => GMRES (BANDPRE), 4 => GMRES (BBDPRE) */
   int linear_solver_type = 1;
   if (argc > 1)
   {
     linear_solver_type = atoi(argv[1]);
   }
-  if (linear_solver_type < 0 || linear_solver_type > 2)
+  if (linear_solver_type < 0 || linear_solver_type > 4)
   {
     fprintf(
       stderr,
       "ERROR: Unrecognized linear solver type %d. Valid options are:\n"
       "  0 => dense linear solver\n"
       "  1 => banded linear solver (default)\n"
-      "  2 => GMRES iterative linear solver\n",
+      "  2 => GMRES iterative linear solver (no preconditioning)\n"
+      "  3 => GMRES iterative linear solver (BANDPRE)\n"
+      "  4 => GMRES iterative linear solver (BBDPRE)\n",
       linear_solver_type);
     return 1;
   }
@@ -167,6 +174,18 @@ int main(int argc, char* argv[])
   {
     printf("\nAnalytic ODE test in complex arithmetic with GMRES iterative linear solver:\n");
     printf("    maxl = %i\n", maxl);
+    if (linear_solver_type == 3)
+    {
+      printf("    preconditioning: CVSBANDPRE\n");
+    }
+    else if (linear_solver_type == 4)
+    {
+      printf("    preconditioning: CVSBBDPRE\n");
+    }
+    else
+    {
+      printf("    no preconditioning\n");
+    }
   }
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
@@ -192,6 +211,13 @@ int main(int argc, char* argv[])
     LS = SUNLinSol_Dense(y, A, ctx);
     if (check_flag((void*)LS, "SUNLinSol_Dense", 0)) { return 1; }
   }
+  else if (linear_solver_type == 1)
+  {
+    A = SUNBandMatrix(NEQ, 2, 2, ctx);
+    if (check_flag((void*)A, "SUNBandMatrix", 0)) { return 1; }
+    LS = SUNLinSol_Band(y, A, ctx);
+    if (check_flag((void*)LS, "SUNLinSol_Band", 0)) { return 1; }
+  }
   else if (linear_solver_type == 2)
   {
     LS = SUNLinSol_SPGMR(y, SUN_PREC_NONE, maxl, ctx);
@@ -199,16 +225,26 @@ int main(int argc, char* argv[])
   }
   else
   {
-    A = SUNBandMatrix(NEQ, 2, 2, ctx);
-    if (check_flag((void*)A, "SUNBandMatrix", 0)) { return 1; }
-    LS = SUNLinSol_Band(y, A, ctx);
-    if (check_flag((void*)LS, "SUNLinSol_Band", 0)) { return 1; }
+        LS = SUNLinSol_SPGMR(y, SUN_PREC_RIGHT, maxl, ctx);
+    if (check_flag((void*)LS, "SUNLinSol_SPGMR", 0)) { return 1; }
   }
 
   /* Linear solver interface */
   flag = CVodeSetLinearSolver(cvode_mem, LS,
                                A); /* Attach matrix and linear solver */
   if (check_flag(&flag, "CVodeSetLinearSolver", 1)) { return 1; }
+
+  /* Set preconditioner if requested */
+  if (linear_solver_type == 3)
+  {
+    flag = CVBandPrecInit(cvode_mem, NEQ, 2, 2);
+    if (check_flag(&flag, "CVBandPrecInit", 1)) { return 1; }
+  }
+  else if (linear_solver_type == 4)
+  {
+    flag = CVBBDPrecInit(cvode_mem, NEQ, 2, 2, 2, 2, SUN_RCONST(0.0), floc, NULL);
+    if (check_flag(&flag, "CVBBDPrecInit", 1)) { return 1; }
+  }
 
   /* Override any current settings with command-line options */
   flag = CVodeSetOptions(cvode_mem, NULL, NULL, argc, argv);
@@ -310,6 +346,13 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   }
 
   return 0; /* Return with success */
+}
+
+/* f routine to compute the "local" portion of the ODE RHS function f(t,y)
+   (for use by the CVSBBDPRE module) */
+static int floc(sunindextype Nlocal, sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
+{
+  return f(t, y, ydot, user_data);
 }
 
 /*-------------------------------

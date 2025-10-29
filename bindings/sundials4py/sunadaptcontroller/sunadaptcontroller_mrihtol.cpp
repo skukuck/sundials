@@ -16,16 +16,21 @@
  * -----------------------------------------------------------------*/
 
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/shared_ptr.h>
+#include <nanobind/stl/tuple.h>
+#include <nanobind/stl/vector.h>
+
+#include <sundials/sundials_adaptcontroller.hpp>
 #include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 
 void bind_sunadaptcontroller_mrihtol(nb::module_& m)
 {
-  m.def("SUNAdaptController_MRIHTol", &SUNAdaptController_MRIHTol,
-        nb::rv_policy::reference);
+#include "sunadaptcontroller_mrihtol_generated.hpp"
 }
 
 } // namespace sundials4py

@@ -1,0 +1,46 @@
+
+Analytic ODE test in complex arithmetic with GMRES iterative linear solver:
+    maxl = 10
+    preconditioning: CVSBANDPRE
+    reltol = 1.0e-06,  abstol = 1.0e-10
+
+     t               u_90                   v_90                   w_90
+   ----------------------------------------------------------------------------
+    0.000 |  1.00000 +  0.00000i |  0.00000 +  0.00000i |  0.00000 +  1.00000i
+    1.000 |  0.54030 +  0.84147i | -0.84147 +  0.54030i |  0.15853 +  0.54030i
+    2.000 | -0.83229 +  1.81859i | -1.81859 + -0.83229i |  1.09070 + -0.41615i
+    3.000 | -2.96998 +  0.42336i | -0.42335 + -2.96998i |  2.85888 + -0.98999i
+    4.000 | -2.61457 + -3.02721i |  3.02722 + -2.61456i |  4.75680 + -0.65364i
+    5.000 |  1.41831 + -4.79462i |  4.79460 +  1.41834i |  5.95892 +  0.28366i
+   ----------------------------------------------------------------------------
+    Max-norm of the error is 3.60832e-05
+   ----------------------------------------------------------------------------
+
+Final Solver Statistics:
+Current time                  = 5.01784736323699
+Steps                         = 182
+Error test fails              = 3
+NLS step fails                = 0
+Initial step size             = 6.103515625e-12
+Last step size                = 0.101818459358039
+Current step size             = 0.101818459358039
+Last method order             = 5
+Current method order          = 5
+Stab. lim. order reductions   = 0
+RHS fn evals                  = 213
+NLS iters                     = 210
+NLS fails                     = 0
+NLS iters per step            = 1.15384615384615
+LS setups                     = 29
+Jac fn evals                  = 0
+LS RHS fn evals               = 181
+Prec setup evals              = 4
+Prec solves                   = 362
+LS iters                      = 181
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 181
+LS iters per NLS iter         = 0.861904761904762
+Jac evals per NLS iter        = 0
+Prec evals per NLS iter       = 0.019047619047619
+Root fn evals                 = 0

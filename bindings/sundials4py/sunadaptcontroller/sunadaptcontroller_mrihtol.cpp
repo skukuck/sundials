@@ -20,8 +20,8 @@
 #include <nanobind/stl/tuple.h>
 #include <nanobind/stl/vector.h>
 
-#include <sundials/sundials_adaptcontroller.hpp>
 #include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
+#include <sundials/sundials_adaptcontroller.hpp>
 
 namespace nb = nanobind;
 using namespace sundials::experimental;

@@ -31,7 +31,9 @@ def adapt_sundials_types_returns_to_shared_ptr(
     # keep_alive statement as a comment.
     for idx, param in enumerate(adapted_function.adapted_parameters()):
         if "SUNContext" in param.cpp_element().decl.cpp_type.typenames:
-            adapted_function.cpp_element().cpp_element_comments.add_eol_comment(f"nb::keep_alive<0, {idx+1}>()")
+            adapted_function.cpp_element().cpp_element_comments.add_eol_comment(
+                f"nb::keep_alive<0, {idx+1}>()"
+            )
 
     # Wrap return type in shared_ptr
     lambda_adapter = LambdaAdapter()

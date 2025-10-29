@@ -3,9 +3,9 @@
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include <sundials/sundials_nvector.hpp>
 #include <nvector/nvector_manyvector.h>
 #include <sundials/sundials_core.h>
+#include <sundials/sundials_nvector.hpp>
 
 #include "sundials4py_types.hpp"
 

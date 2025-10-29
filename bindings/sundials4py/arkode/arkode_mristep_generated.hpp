@@ -61,16 +61,50 @@ auto pyClassMRIStepCouplingMem =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("MRIStepCoupling_LoadTable", MRIStepCoupling_LoadTable, nb::arg("method"),
-      nb::rv_policy::reference);
+m.def(
+  "MRIStepCoupling_LoadTable",
+  [](ARKODE_MRITableID method)
+    -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+  {
+    auto MRIStepCoupling_LoadTable_adapt_return_type_to_shared_ptr =
+      [](ARKODE_MRITableID method)
+      -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+    {
+      auto lambda_result = MRIStepCoupling_LoadTable(method);
 
-m.def("MRIStepCoupling_LoadTableByName", MRIStepCoupling_LoadTableByName,
-      nb::arg("method"), nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
+                             MRIStepCouplingDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return MRIStepCoupling_LoadTable_adapt_return_type_to_shared_ptr(method);
+  },
+  nb::arg("method"), nb::rv_policy::reference);
+
+m.def(
+  "MRIStepCoupling_LoadTableByName",
+  [](const char* method) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+  {
+    auto MRIStepCoupling_LoadTableByName_adapt_return_type_to_shared_ptr =
+      [](const char* method)
+      -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+    {
+      auto lambda_result = MRIStepCoupling_LoadTableByName(method);
+
+      return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
+                             MRIStepCouplingDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return MRIStepCoupling_LoadTableByName_adapt_return_type_to_shared_ptr(method);
+  },
+  nb::arg("method"), nb::rv_policy::reference);
 
 m.def(
   "MRIStepCoupling_Create",
   [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
-     sundials4py::Array1d G_1d, sundials4py::Array1d c_1d) -> MRIStepCoupling
+     sundials4py::Array1d G_1d, sundials4py::Array1d c_1d)
+    -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
   {
     auto MRIStepCoupling_Create_adapt_arr_ptr_to_std_vector =
       [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
@@ -84,18 +118,68 @@ m.def(
                                                   G_1d_ptr, c_1d_ptr);
       return lambda_result;
     };
+    auto MRIStepCoupling_Create_adapt_return_type_to_shared_ptr =
+      [&MRIStepCoupling_Create_adapt_arr_ptr_to_std_vector](int nmat, int stages,
+                                                            int q, int p,
+                                                            sundials4py::Array1d W_1d,
+                                                            sundials4py::Array1d G_1d,
+                                                            sundials4py::Array1d c_1d)
+      -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+    {
+      auto lambda_result =
+        MRIStepCoupling_Create_adapt_arr_ptr_to_std_vector(nmat, stages, q, p,
+                                                           W_1d, G_1d, c_1d);
 
-    return MRIStepCoupling_Create_adapt_arr_ptr_to_std_vector(nmat, stages, q, p,
-                                                              W_1d, G_1d, c_1d);
+      return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
+                             MRIStepCouplingDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return MRIStepCoupling_Create_adapt_return_type_to_shared_ptr(nmat, stages,
+                                                                  q, p, W_1d,
+                                                                  G_1d, c_1d);
   },
   nb::arg("nmat"), nb::arg("stages"), nb::arg("q"), nb::arg("p"),
   nb::arg("W_1d"), nb::arg("G_1d"), nb::arg("c_1d"), nb::rv_policy::reference);
 
-m.def("MRIStepCoupling_MIStoMRI", MRIStepCoupling_MIStoMRI, nb::arg("B"),
-      nb::arg("q"), nb::arg("p"), nb::rv_policy::reference);
+m.def(
+  "MRIStepCoupling_MIStoMRI",
+  [](ARKodeButcherTable B, int q,
+     int p) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+  {
+    auto MRIStepCoupling_MIStoMRI_adapt_return_type_to_shared_ptr =
+      [](ARKodeButcherTable B, int q,
+         int p) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+    {
+      auto lambda_result = MRIStepCoupling_MIStoMRI(B, q, p);
 
-m.def("MRIStepCoupling_Copy", MRIStepCoupling_Copy, nb::arg("MRIC"),
-      nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
+                             MRIStepCouplingDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return MRIStepCoupling_MIStoMRI_adapt_return_type_to_shared_ptr(B, q, p);
+  },
+  nb::arg("B"), nb::arg("q"), nb::arg("p"), nb::rv_policy::reference);
+
+m.def(
+  "MRIStepCoupling_Copy",
+  [](MRIStepCoupling MRIC) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+  {
+    auto MRIStepCoupling_Copy_adapt_return_type_to_shared_ptr =
+      [](MRIStepCoupling MRIC)
+      -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
+    {
+      auto lambda_result = MRIStepCoupling_Copy(MRIC);
+
+      return our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
+                             MRIStepCouplingDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return MRIStepCoupling_Copy_adapt_return_type_to_shared_ptr(MRIC);
+  },
+  nb::arg("MRIC"), nb::rv_policy::reference);
 
 m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
       nb::arg("outfile"));

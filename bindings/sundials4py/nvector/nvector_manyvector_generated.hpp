@@ -12,7 +12,7 @@ auto pyClass_N_VectorContent_ManyVector =
 m.def(
   "N_VNew_ManyVector",
   [](sunindextype num_subvectors, std::vector<N_Vector> vec_array_1d,
-     SUNContext sunctx) -> N_Vector
+     SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
   {
     auto N_VNew_ManyVector_adapt_arr_ptr_to_std_vector =
       [](sunindextype num_subvectors, std::vector<N_Vector> vec_array_1d,
@@ -25,15 +25,47 @@ m.def(
                                              sunctx);
       return lambda_result;
     };
+    auto N_VNew_ManyVector_adapt_return_type_to_shared_ptr =
+      [&N_VNew_ManyVector_adapt_arr_ptr_to_std_vector](sunindextype num_subvectors,
+                                                       std::vector<N_Vector> vec_array_1d,
+                                                       SUNContext sunctx)
+      -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result =
+        N_VNew_ManyVector_adapt_arr_ptr_to_std_vector(num_subvectors,
+                                                      vec_array_1d, sunctx);
 
-    return N_VNew_ManyVector_adapt_arr_ptr_to_std_vector(num_subvectors,
-                                                         vec_array_1d, sunctx);
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return N_VNew_ManyVector_adapt_return_type_to_shared_ptr(num_subvectors,
+                                                             vec_array_1d,
+                                                             sunctx);
   },
   nb::arg("num_subvectors"), nb::arg("vec_array_1d"), nb::arg("sunctx"),
-  nb::rv_policy::reference);
+  "nb::keep_alive<0, 3>()", nb::rv_policy::reference, nb::keep_alive<0, 3>());
 
-m.def("N_VGetSubvector_ManyVector", N_VGetSubvector_ManyVector, nb::arg("v"),
-      nb::arg("vec_num"), nb::rv_policy::reference);
+m.def(
+  "N_VGetSubvector_ManyVector",
+  [](N_Vector v,
+     sunindextype vec_num) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+  {
+    auto N_VGetSubvector_ManyVector_adapt_return_type_to_shared_ptr =
+      [](N_Vector v,
+         sunindextype vec_num) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result = N_VGetSubvector_ManyVector(v, vec_num);
+
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return N_VGetSubvector_ManyVector_adapt_return_type_to_shared_ptr(v, vec_num);
+  },
+  nb::arg("v"), nb::arg("vec_num"), nb::rv_policy::reference);
 
 m.def("N_VGetNumSubvectors_ManyVector", N_VGetNumSubvectors_ManyVector,
       nb::arg("v"));

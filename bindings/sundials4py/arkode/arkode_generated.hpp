@@ -1430,7 +1430,8 @@ auto pyClassARKodeButcherTableMem =
 m.def(
   "ARKodeButcherTable_Create",
   [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
-     sundials4py::Array1d b_1d, sundials4py::Array1d d_1d) -> ARKodeButcherTable
+     sundials4py::Array1d b_1d, sundials4py::Array1d d_1d)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
   {
     auto ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector =
       [](int s, int q, int p, sundials4py::Array1d c_1d,
@@ -1446,16 +1447,50 @@ m.def(
                                                      b_1d_ptr, d_1d_ptr);
       return lambda_result;
     };
+    auto ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr =
+      [&ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector](int s, int q,
+                                                               int p,
+                                                               sundials4py::Array1d c_1d,
+                                                               sundials4py::Array1d A_1d,
+                                                               sundials4py::Array1d b_1d,
+                                                               sundials4py::Array1d d_1d)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result =
+        ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector(s, q, p, c_1d,
+                                                              A_1d, b_1d, d_1d);
 
-    return ARKodeButcherTable_Create_adapt_arr_ptr_to_std_vector(s, q, p, c_1d,
-                                                                 A_1d, b_1d,
-                                                                 d_1d);
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_Create_adapt_return_type_to_shared_ptr(s, q, p,
+                                                                     c_1d, A_1d,
+                                                                     b_1d, d_1d);
   },
   nb::arg("s"), nb::arg("q"), nb::arg("p"), nb::arg("c_1d"), nb::arg("A_1d"),
   nb::arg("b_1d"), nb::arg("d_1d"), nb::rv_policy::reference);
 
-m.def("ARKodeButcherTable_Copy", ARKodeButcherTable_Copy, nb::arg("B"),
-      nb::rv_policy::reference);
+m.def(
+  "ARKodeButcherTable_Copy",
+  [](ARKodeButcherTable B)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+  {
+    auto ARKodeButcherTable_Copy_adapt_return_type_to_shared_ptr =
+      [](ARKodeButcherTable B)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result = ARKodeButcherTable_Copy(B);
+
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_Copy_adapt_return_type_to_shared_ptr(B);
+  },
+  nb::arg("B"), nb::rv_policy::reference);
 
 m.def("ARKodeButcherTable_Write", ARKodeButcherTable_Write, nb::arg("B"),
       nb::arg("outfile"));
@@ -1556,11 +1591,46 @@ auto pyEnumARKODE_ERKTableID =
 // #endif
 //
 
-m.def("ARKodeButcherTable_LoadERK", ARKodeButcherTable_LoadERK,
-      nb::arg("emethod"), nb::rv_policy::reference);
+m.def(
+  "ARKodeButcherTable_LoadERK",
+  [](ARKODE_ERKTableID emethod)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+  {
+    auto ARKodeButcherTable_LoadERK_adapt_return_type_to_shared_ptr =
+      [](ARKODE_ERKTableID emethod)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result = ARKodeButcherTable_LoadERK(emethod);
 
-m.def("ARKodeButcherTable_LoadERKByName", ARKodeButcherTable_LoadERKByName,
-      nb::arg("emethod"), nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_LoadERK_adapt_return_type_to_shared_ptr(emethod);
+  },
+  nb::arg("emethod"), nb::rv_policy::reference);
+
+m.def(
+  "ARKodeButcherTable_LoadERKByName",
+  [](const char* emethod)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+  {
+    auto ARKodeButcherTable_LoadERKByName_adapt_return_type_to_shared_ptr =
+      [](const char* emethod)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result = ARKodeButcherTable_LoadERKByName(emethod);
+
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_LoadERKByName_adapt_return_type_to_shared_ptr(
+      emethod);
+  },
+  nb::arg("emethod"), nb::rv_policy::reference);
 
 m.def("ARKodeButcherTable_ERKIDToName", ARKodeButcherTable_ERKIDToName,
       nb::arg("emethod"), nb::rv_policy::reference);
@@ -1614,11 +1684,46 @@ auto pyEnumARKODE_DIRKTableID =
 // #endif
 //
 
-m.def("ARKodeButcherTable_LoadDIRK", ARKodeButcherTable_LoadDIRK,
-      nb::arg("imethod"), nb::rv_policy::reference);
+m.def(
+  "ARKodeButcherTable_LoadDIRK",
+  [](ARKODE_DIRKTableID imethod)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+  {
+    auto ARKodeButcherTable_LoadDIRK_adapt_return_type_to_shared_ptr =
+      [](ARKODE_DIRKTableID imethod)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result = ARKodeButcherTable_LoadDIRK(imethod);
 
-m.def("ARKodeButcherTable_LoadDIRKByName", ARKodeButcherTable_LoadDIRKByName,
-      nb::arg("imethod"), nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_LoadDIRK_adapt_return_type_to_shared_ptr(imethod);
+  },
+  nb::arg("imethod"), nb::rv_policy::reference);
+
+m.def(
+  "ARKodeButcherTable_LoadDIRKByName",
+  [](const char* imethod)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+  {
+    auto ARKodeButcherTable_LoadDIRKByName_adapt_return_type_to_shared_ptr =
+      [](const char* imethod)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>
+    {
+      auto lambda_result = ARKodeButcherTable_LoadDIRKByName(imethod);
+
+      return our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                             ARKodeButcherTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeButcherTable_LoadDIRKByName_adapt_return_type_to_shared_ptr(
+      imethod);
+  },
+  nb::arg("imethod"), nb::rv_policy::reference);
 
 m.def("ARKodeButcherTable_DIRKIDToName", ARKodeButcherTable_DIRKIDToName,
       nb::arg("imethod"), nb::rv_policy::reference);
@@ -1664,8 +1769,8 @@ auto pyClassARKodeSPRKTableMem =
 
 m.def(
   "ARKodeSPRKTable_Create",
-  [](int s, int q, sundials4py::Array1d a_1d,
-     sundials4py::Array1d ahat_1d) -> ARKodeSPRKTable
+  [](int s, int q, sundials4py::Array1d a_1d, sundials4py::Array1d ahat_1d)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
   {
     auto ARKodeSPRKTable_Create_adapt_arr_ptr_to_std_vector =
       [](int s, int q, sundials4py::Array1d a_1d,
@@ -1677,21 +1782,84 @@ m.def(
       auto lambda_result = ARKodeSPRKTable_Create(s, q, a_1d_ptr, ahat_1d_ptr);
       return lambda_result;
     };
+    auto ARKodeSPRKTable_Create_adapt_return_type_to_shared_ptr =
+      [&ARKodeSPRKTable_Create_adapt_arr_ptr_to_std_vector](int s, int q,
+                                                            sundials4py::Array1d a_1d,
+                                                            sundials4py::Array1d ahat_1d)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+    {
+      auto lambda_result =
+        ARKodeSPRKTable_Create_adapt_arr_ptr_to_std_vector(s, q, a_1d, ahat_1d);
 
-    return ARKodeSPRKTable_Create_adapt_arr_ptr_to_std_vector(s, q, a_1d,
-                                                              ahat_1d);
+      return our_make_shared<std::remove_pointer_t<ARKodeSPRKTable>,
+                             ARKodeSPRKTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeSPRKTable_Create_adapt_return_type_to_shared_ptr(s, q, a_1d,
+                                                                  ahat_1d);
   },
   nb::arg("s"), nb::arg("q"), nb::arg("a_1d"), nb::arg("ahat_1d"),
   nb::rv_policy::reference);
 
-m.def("ARKodeSPRKTable_Load", ARKodeSPRKTable_Load, nb::arg("id"),
-      nb::rv_policy::reference);
+m.def(
+  "ARKodeSPRKTable_Load",
+  [](ARKODE_SPRKMethodID id)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+  {
+    auto ARKodeSPRKTable_Load_adapt_return_type_to_shared_ptr =
+      [](ARKODE_SPRKMethodID id)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+    {
+      auto lambda_result = ARKodeSPRKTable_Load(id);
 
-m.def("ARKodeSPRKTable_LoadByName", ARKodeSPRKTable_LoadByName,
-      nb::arg("method"), nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<ARKodeSPRKTable>,
+                             ARKodeSPRKTableDeleter>(lambda_result);
+      return lambda_result;
+    };
 
-m.def("ARKodeSPRKTable_Copy", ARKodeSPRKTable_Copy,
-      nb::arg("that_sprk_storage"), nb::rv_policy::reference);
+    return ARKodeSPRKTable_Load_adapt_return_type_to_shared_ptr(id);
+  },
+  nb::arg("id"), nb::rv_policy::reference);
+
+m.def(
+  "ARKodeSPRKTable_LoadByName",
+  [](const char* method) -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+  {
+    auto ARKodeSPRKTable_LoadByName_adapt_return_type_to_shared_ptr =
+      [](const char* method)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+    {
+      auto lambda_result = ARKodeSPRKTable_LoadByName(method);
+
+      return our_make_shared<std::remove_pointer_t<ARKodeSPRKTable>,
+                             ARKodeSPRKTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeSPRKTable_LoadByName_adapt_return_type_to_shared_ptr(method);
+  },
+  nb::arg("method"), nb::rv_policy::reference);
+
+m.def(
+  "ARKodeSPRKTable_Copy",
+  [](ARKodeSPRKTable that_sprk_storage)
+    -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+  {
+    auto ARKodeSPRKTable_Copy_adapt_return_type_to_shared_ptr =
+      [](ARKodeSPRKTable that_sprk_storage)
+      -> std::shared_ptr<std::remove_pointer_t<ARKodeSPRKTable>>
+    {
+      auto lambda_result = ARKodeSPRKTable_Copy(that_sprk_storage);
+
+      return our_make_shared<std::remove_pointer_t<ARKodeSPRKTable>,
+                             ARKodeSPRKTableDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return ARKodeSPRKTable_Copy_adapt_return_type_to_shared_ptr(that_sprk_storage);
+  },
+  nb::arg("that_sprk_storage"), nb::rv_policy::reference);
 
 m.def("ARKodeSPRKTable_Write", ARKodeSPRKTable_Write, nb::arg("sprk_table"),
       nb::arg("outfile"));

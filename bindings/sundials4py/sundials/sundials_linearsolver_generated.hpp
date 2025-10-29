@@ -249,7 +249,23 @@ m.def("SUNLinSolNumIters", SUNLinSolNumIters, nb::arg("S"));
 
 m.def("SUNLinSolResNorm", SUNLinSolResNorm, nb::arg("S"));
 
-m.def("SUNLinSolResid", SUNLinSolResid, nb::arg("S"), nb::rv_policy::reference);
+m.def(
+  "SUNLinSolResid",
+  [](SUNLinearSolver S) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+  {
+    auto SUNLinSolResid_adapt_return_type_to_shared_ptr =
+      [](SUNLinearSolver S) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result = SUNLinSolResid(S);
+
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return SUNLinSolResid_adapt_return_type_to_shared_ptr(S);
+  },
+  nb::arg("S"), nb::rv_policy::reference);
 
 m.def("SUNLinSolLastFlag", SUNLinSolLastFlag, nb::arg("S"));
 // #ifdef __cplusplus

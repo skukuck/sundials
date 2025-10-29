@@ -11,15 +11,72 @@ auto pyClass_SUNMatrixContent_Sparse =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNSparseMatrix", SUNSparseMatrix, nb::arg("M"), nb::arg("N"),
-      nb::arg("NNZ"), nb::arg("sparsetype"), nb::arg("sunctx"),
-      nb::rv_policy::reference);
+m.def(
+  "SUNSparseMatrix",
+  [](sunindextype M, sunindextype N, sunindextype NNZ, int sparsetype,
+     SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+  {
+    auto SUNSparseMatrix_adapt_return_type_to_shared_ptr =
+      [](sunindextype M, sunindextype N, sunindextype NNZ, int sparsetype,
+         SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+    {
+      auto lambda_result = SUNSparseMatrix(M, N, NNZ, sparsetype, sunctx);
 
-m.def("SUNSparseFromDenseMatrix", SUNSparseFromDenseMatrix, nb::arg("A"),
-      nb::arg("droptol"), nb::arg("sparsetype"), nb::rv_policy::reference);
+      return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
 
-m.def("SUNSparseFromBandMatrix", SUNSparseFromBandMatrix, nb::arg("A"),
-      nb::arg("droptol"), nb::arg("sparsetype"), nb::rv_policy::reference);
+    return SUNSparseMatrix_adapt_return_type_to_shared_ptr(M, N, NNZ,
+                                                           sparsetype, sunctx);
+  },
+  nb::arg("M"), nb::arg("N"), nb::arg("NNZ"), nb::arg("sparsetype"),
+  nb::arg("sunctx"), "nb::keep_alive<0, 5>()", nb::rv_policy::reference,
+  nb::keep_alive<0, 5>());
+
+m.def(
+  "SUNSparseFromDenseMatrix",
+  [](SUNMatrix A, sunrealtype droptol,
+     int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+  {
+    auto SUNSparseFromDenseMatrix_adapt_return_type_to_shared_ptr =
+      [](SUNMatrix A, sunrealtype droptol,
+         int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+    {
+      auto lambda_result = SUNSparseFromDenseMatrix(A, droptol, sparsetype);
+
+      return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return SUNSparseFromDenseMatrix_adapt_return_type_to_shared_ptr(A, droptol,
+                                                                    sparsetype);
+  },
+  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"),
+  nb::rv_policy::reference);
+
+m.def(
+  "SUNSparseFromBandMatrix",
+  [](SUNMatrix A, sunrealtype droptol,
+     int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+  {
+    auto SUNSparseFromBandMatrix_adapt_return_type_to_shared_ptr =
+      [](SUNMatrix A, sunrealtype droptol,
+         int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
+    {
+      auto lambda_result = SUNSparseFromBandMatrix(A, droptol, sparsetype);
+
+      return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return SUNSparseFromBandMatrix_adapt_return_type_to_shared_ptr(A, droptol,
+                                                                   sparsetype);
+  },
+  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"),
+  nb::rv_policy::reference);
 
 m.def("SUNSparseMatrix_Realloc", SUNSparseMatrix_Realloc, nb::arg("A"));
 

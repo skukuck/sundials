@@ -3,8 +3,8 @@
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include <sundials/sundials_nvector.hpp>
 #include <nvector/nvector_serial.h>
+#include <sundials/sundials_nvector.hpp>
 
 #include "sundials/sundials_classview.hpp"
 #include "sundials4py_types.hpp"

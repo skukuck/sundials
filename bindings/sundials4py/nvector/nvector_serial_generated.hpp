@@ -9,17 +9,52 @@ auto pyClass_N_VectorContent_Serial =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("N_VNewEmpty_Serial", N_VNewEmpty_Serial, nb::arg("vec_length"),
-      nb::arg("sunctx"), nb::rv_policy::reference);
+m.def(
+  "N_VNewEmpty_Serial",
+  [](sunindextype vec_length,
+     SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+  {
+    auto N_VNewEmpty_Serial_adapt_return_type_to_shared_ptr =
+      [](sunindextype vec_length,
+         SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result = N_VNewEmpty_Serial(vec_length, sunctx);
 
-// m.def("N_VNew_Serial", [](sunindextype length, std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx) {
-//   return std::shared_ptr<std::remove_pointer_t<N_Vector>>(N_VNew_Serial(length, sunctx.get()));
-// }, nb::arg("vec_length"), nb::arg("sunctx"),  nb::keep_alive<0, 2>());
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return N_VNewEmpty_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
+  },
+  nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
+  nb::rv_policy::reference, nb::keep_alive<0, 2>());
+
+m.def(
+  "N_VNew_Serial",
+  [](sunindextype vec_length,
+     SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+  {
+    auto N_VNew_Serial_adapt_return_type_to_shared_ptr =
+      [](sunindextype vec_length,
+         SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result = N_VNew_Serial(vec_length, sunctx);
+
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return N_VNew_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
+  },
+  nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
+  nb::rv_policy::reference, nb::keep_alive<0, 2>());
 
 m.def(
   "N_VMake_Serial",
   [](sunindextype vec_length, sundials4py::Array1d v_data_1d,
-     SUNContext sunctx) -> N_Vector
+     SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
   {
     auto N_VMake_Serial_adapt_arr_ptr_to_std_vector =
       [](sunindextype vec_length, sundials4py::Array1d v_data_1d,
@@ -31,12 +66,25 @@ m.def(
       auto lambda_result = N_VMake_Serial(vec_length, v_data_1d_ptr, sunctx);
       return lambda_result;
     };
+    auto N_VMake_Serial_adapt_return_type_to_shared_ptr =
+      [&N_VMake_Serial_adapt_arr_ptr_to_std_vector](sunindextype vec_length,
+                                                    sundials4py::Array1d v_data_1d,
+                                                    SUNContext sunctx)
+      -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
+    {
+      auto lambda_result =
+        N_VMake_Serial_adapt_arr_ptr_to_std_vector(vec_length, v_data_1d, sunctx);
 
-    return N_VMake_Serial_adapt_arr_ptr_to_std_vector(vec_length, v_data_1d,
-                                                      sunctx);
+      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
+        lambda_result);
+      return lambda_result;
+    };
+
+    return N_VMake_Serial_adapt_return_type_to_shared_ptr(vec_length, v_data_1d,
+                                                          sunctx);
   },
   nb::arg("vec_length"), nb::arg("v_data_1d"), nb::arg("sunctx"),
-  nb::rv_policy::reference);
+  "nb::keep_alive<0, 3>()", nb::rv_policy::reference, nb::keep_alive<0, 3>());
 
 m.def("N_VEnableFusedOps_Serial", N_VEnableFusedOps_Serial, nb::arg("v"),
       nb::arg("tf"));

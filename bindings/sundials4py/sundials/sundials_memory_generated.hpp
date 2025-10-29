@@ -26,8 +26,25 @@ auto pyClassSUNMemoryHelper_Ops_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNMemoryHelper_Clone", SUNMemoryHelper_Clone, nb::arg("param_0"),
-      nb::rv_policy::reference);
+m.def(
+  "SUNMemoryHelper_Clone",
+  [](SUNMemoryHelper param_0)
+    -> std::shared_ptr<std::remove_pointer_t<SUNMemoryHelper>>
+  {
+    auto SUNMemoryHelper_Clone_adapt_return_type_to_shared_ptr =
+      [](SUNMemoryHelper param_0)
+      -> std::shared_ptr<std::remove_pointer_t<SUNMemoryHelper>>
+    {
+      auto lambda_result = SUNMemoryHelper_Clone(param_0);
+
+      return our_make_shared<std::remove_pointer_t<SUNMemoryHelper>,
+                             SUNMemoryHelperDeleter>(lambda_result);
+      return lambda_result;
+    };
+
+    return SUNMemoryHelper_Clone_adapt_return_type_to_shared_ptr(param_0);
+  },
+  nb::arg("param_0"), nb::rv_policy::reference);
 
 m.def("SUNMemoryHelper_SetDefaultQueue", SUNMemoryHelper_SetDefaultQueue,
       nb::arg("param_0"), nb::arg("queue"));

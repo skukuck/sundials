@@ -6,20 +6,20 @@
 
 m.def(
   "SUNContext_Create",
-  [](SUNComm comm) -> std::tuple<SUNErrCode, SUNContext>
+  [](SUNComm comm) -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
   {
     auto SUNContext_Create_adapt_modifiable_immutable_to_return =
-      [](SUNComm comm) -> std::tuple<SUNErrCode, SUNContext>
+      [](SUNComm comm) -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
     {
       SUNContext sunctx_out_adapt_modifiable;
 
       SUNErrCode r = SUNContext_Create(comm, &sunctx_out_adapt_modifiable);
-      return std::make_tuple(r, sunctx_out_adapt_modifiable);
+      return std::make_tuple(r, our_make_shared<std::remove_pointer_t<SUNContext>, sundials::SUNContextDeleter>(sunctx_out_adapt_modifiable));
     };
 
     return SUNContext_Create_adapt_modifiable_immutable_to_return(comm);
   },
-  nb::arg("comm"), nb::rv_policy::reference);
+  nb::arg("comm"));
 
 m.def("SUNContext_GetLastError", SUNContext_GetLastError, nb::arg("sunctx"));
 
@@ -48,7 +48,8 @@ m.def(
 
     return SUNContext_GetProfiler_adapt_modifiable_immutable_to_return(sunctx);
   },
-  nb::arg("sunctx"), nb::rv_policy::reference);
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
+  nb::keep_alive<0, 1>());
 
 m.def("SUNContext_SetProfiler", SUNContext_SetProfiler, nb::arg("sunctx"),
       nb::arg("profiler"));
@@ -68,7 +69,8 @@ m.def(
 
     return SUNContext_GetLogger_adapt_modifiable_immutable_to_return(sunctx);
   },
-  nb::arg("sunctx"), nb::rv_policy::reference);
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
+  nb::keep_alive<0, 1>());
 
 m.def("SUNContext_SetLogger", SUNContext_SetLogger, nb::arg("sunctx"),
       nb::arg("logger"));

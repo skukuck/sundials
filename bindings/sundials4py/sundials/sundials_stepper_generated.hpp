@@ -31,7 +31,8 @@ m.def(
 
     return SUNStepper_Create_adapt_modifiable_immutable_to_return(sunctx);
   },
-  nb::arg("sunctx"), nb::rv_policy::reference);
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
+  nb::keep_alive<0, 1>());
 
 m.def(
   "SUNStepper_Evolve",

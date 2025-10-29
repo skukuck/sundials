@@ -16,14 +16,20 @@
  *----------------------------------------------------------------------------*/
 
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/tuple.h>
 
-#include <sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h>
 #include <sundials/sundials_core.hpp>
+#include <sundials/sundials_adjointcheckpointscheme.hpp>
+#include <sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h>
 
+#include "sundials/sundials_adjointcheckpointscheme.h"
 #include "sundials_adjointcheckpointscheme_impl.h"
 
+#include "sundials4py_helpers.hpp"
+
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 
@@ -41,9 +47,9 @@ void bind_sunadjointcheckpointscheme_fixed(nb::module_& m)
                                                            keep, sunctx,
                                                            &check_scheme);
 
-      return std::make_tuple(status, check_scheme);
+      return std::make_tuple(status, our_make_shared<std::remove_pointer_t<SUNAdjointCheckpointScheme>, SUNAdjointCheckpointSchemeDeleter>(check_scheme));
     },
-    nb::rv_policy::reference);
+    sundials4py::keep_alive_tuple<1, 5>());
 }
 
 } // namespace sundials4py

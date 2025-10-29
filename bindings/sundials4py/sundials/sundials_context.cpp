@@ -36,6 +36,8 @@ namespace nb = nanobind;
 namespace sundials4py {
 
 using SUNContextView = sundials::SUNContextView;
+using namespace sundials::experimental;
+
 
 void bind_suncontext(nb::module_& m)
 {

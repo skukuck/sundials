@@ -95,6 +95,43 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
                     args_tuple);
 }
 
+
+/**
+ * @brief Helper struct to manage reference lifetimes for function return values in Python bindings.
+ *
+ * Enables the nb::keep_alive<Nurse, Patient> paradigm when the function returns a sequence where an
+ * element of the sequence (e.g., a tuple) is a Nurse.
+ *
+ * @tparam IN Index of the return value in the returned sequence whose lifetime should be managed.
+ * @tparam IP Index of the input argument whose lifetime the return value should be tied to.
+ *
+ * See https://nanobind.readthedocs.io/en/latest/api_core.html#_CPPv4I0EN8nanobind11call_policyE. 
+ */
+template<size_t IN, size_t IP>
+struct returns_references_to
+{
+  static void precall(PyObject**, size_t, nb::detail::cleanup_list*) {}
+
+  template<size_t N>
+  static void postcall(PyObject** args, std::integral_constant<size_t, N>,
+                       nb::handle ret)
+  {
+    static_assert(IP > 0 && IP <= N,
+                  "IP in returns_references_to<IP> must be in the "
+                  "range [1, number of C++ function arguments]");
+   
+    if (!nb::isinstance<nb::sequence>(ret))
+    {
+      throw std::runtime_error("return value should be a sequence");
+    }
+    
+    nb::detail::keep_alive(ret[IN].ptr(), args[IP]);
+  }
+};
+
+template<size_t IN, size_t IP>
+using keep_alive_tuple = nb::call_policy<returns_references_to<IN, IP>>;
+
 // TODO(CJB): implement custom exception type so all messages follow a specific format
 
 } // namespace sundials4py

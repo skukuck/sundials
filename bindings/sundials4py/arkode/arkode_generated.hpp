@@ -311,8 +311,25 @@ m.def("ARKodeSetAccumulatedErrorType", ARKodeSetAccumulatedErrorType,
 m.def("ARKodeResetAccumulatedError", ARKodeResetAccumulatedError,
       nb::arg("arkode_mem"));
 
-m.def("ARKodeEvolve", ARKodeEvolve, nb::arg("arkode_mem"), nb::arg("tout"),
-      nb::arg("yout"), nb::arg("tret"), nb::arg("itask"));
+m.def(
+  "ARKodeEvolve",
+  [](void* arkode_mem, sunrealtype tout, N_Vector yout,
+     int itask) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeEvolve_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem, sunrealtype tout, N_Vector yout,
+         int itask) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype tret_adapt_modifiable;
+
+      int r = ARKodeEvolve(arkode_mem, tout, yout, &tret_adapt_modifiable, itask);
+      return std::make_tuple(r, tret_adapt_modifiable);
+    };
+
+    return ARKodeEvolve_adapt_modifiable_immutable_to_return(arkode_mem, tout,
+                                                             yout, itask);
+  },
+  nb::arg("arkode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"));
 
 m.def("ARKodeGetDky", ARKodeGetDky, nb::arg("arkode_mem"), nb::arg("t"),
       nb::arg("k"), nb::arg("dky"));
@@ -375,14 +392,56 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("ARKodeGetLastStep", ARKodeGetLastStep, nb::arg("arkode_mem"),
-      nb::arg("hlast"));
+m.def(
+  "ARKodeGetLastStep",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetLastStep_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype hlast_adapt_modifiable;
 
-m.def("ARKodeGetCurrentStep", ARKodeGetCurrentStep, nb::arg("arkode_mem"),
-      nb::arg("hcur"));
+      int r = ARKodeGetLastStep(arkode_mem, &hlast_adapt_modifiable);
+      return std::make_tuple(r, hlast_adapt_modifiable);
+    };
 
-m.def("ARKodeGetStepDirection", ARKodeGetStepDirection, nb::arg("arkode_mem"),
-      nb::arg("stepdir"));
+    return ARKodeGetLastStep_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetCurrentStep",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetCurrentStep_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype hcur_adapt_modifiable;
+
+      int r = ARKodeGetCurrentStep(arkode_mem, &hcur_adapt_modifiable);
+      return std::make_tuple(r, hcur_adapt_modifiable);
+    };
+
+    return ARKodeGetCurrentStep_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetStepDirection",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetStepDirection_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype stepdir_adapt_modifiable;
+
+      int r = ARKodeGetStepDirection(arkode_mem, &stepdir_adapt_modifiable);
+      return std::make_tuple(r, stepdir_adapt_modifiable);
+    };
+
+    return ARKodeGetStepDirection_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def("ARKodeGetErrWeights", ARKodeGetErrWeights, nb::arg("arkode_mem"),
       nb::arg("eweight"));
@@ -485,11 +544,41 @@ m.def(
 m.def("ARKodeGetEstLocalErrors", ARKodeGetEstLocalErrors, nb::arg("arkode_mem"),
       nb::arg("ele"));
 
-m.def("ARKodeGetActualInitStep", ARKodeGetActualInitStep, nb::arg("arkode_mem"),
-      nb::arg("hinused"));
+m.def(
+  "ARKodeGetActualInitStep",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetActualInitStep_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype hinused_adapt_modifiable;
 
-m.def("ARKodeGetTolScaleFactor", ARKodeGetTolScaleFactor, nb::arg("arkode_mem"),
-      nb::arg("tolsfac"));
+      int r = ARKodeGetActualInitStep(arkode_mem, &hinused_adapt_modifiable);
+      return std::make_tuple(r, hinused_adapt_modifiable);
+    };
+
+    return ARKodeGetActualInitStep_adapt_modifiable_immutable_to_return(
+      arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetTolScaleFactor",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetTolScaleFactor_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype tolsfac_adapt_modifiable;
+
+      int r = ARKodeGetTolScaleFactor(arkode_mem, &tolsfac_adapt_modifiable);
+      return std::make_tuple(r, tolsfac_adapt_modifiable);
+    };
+
+    return ARKodeGetTolScaleFactor_adapt_modifiable_immutable_to_return(
+      arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def(
   "ARKodeGetNumConstrFails",
@@ -511,29 +600,50 @@ m.def(
 
 m.def(
   "ARKodeGetStepStats",
-  [](void* arkode_mem, sunrealtype* hinused, sunrealtype* hlast,
-     sunrealtype* hcur, sunrealtype* tcur) -> std::tuple<int, long>
+  [](void* arkode_mem)
+    -> std::tuple<int, long, sunrealtype, sunrealtype, sunrealtype, sunrealtype>
   {
     auto ARKodeGetStepStats_adapt_modifiable_immutable_to_return =
-      [](void* arkode_mem, sunrealtype* hinused, sunrealtype* hlast,
-         sunrealtype* hcur, sunrealtype* tcur) -> std::tuple<int, long>
+      [](void* arkode_mem)
+      -> std::tuple<int, long, sunrealtype, sunrealtype, sunrealtype, sunrealtype>
     {
       long nsteps_adapt_modifiable;
+      sunrealtype hinused_adapt_modifiable;
+      sunrealtype hlast_adapt_modifiable;
+      sunrealtype hcur_adapt_modifiable;
+      sunrealtype tcur_adapt_modifiable;
 
-      int r = ARKodeGetStepStats(arkode_mem, &nsteps_adapt_modifiable, hinused,
-                                 hlast, hcur, tcur);
-      return std::make_tuple(r, nsteps_adapt_modifiable);
+      int r = ARKodeGetStepStats(arkode_mem, &nsteps_adapt_modifiable,
+                                 &hinused_adapt_modifiable,
+                                 &hlast_adapt_modifiable,
+                                 &hcur_adapt_modifiable, &tcur_adapt_modifiable);
+      return std::make_tuple(r, nsteps_adapt_modifiable,
+                             hinused_adapt_modifiable, hlast_adapt_modifiable,
+                             hcur_adapt_modifiable, tcur_adapt_modifiable);
     };
 
-    return ARKodeGetStepStats_adapt_modifiable_immutable_to_return(arkode_mem,
-                                                                   hinused, hlast,
-                                                                   hcur, tcur);
+    return ARKodeGetStepStats_adapt_modifiable_immutable_to_return(arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::arg("hinused"), nb::arg("hlast"), nb::arg("hcur"),
-  nb::arg("tcur"));
+  nb::arg("arkode_mem"));
 
-m.def("ARKodeGetAccumulatedError", ARKodeGetAccumulatedError,
-      nb::arg("arkode_mem"), nb::arg("accum_error"));
+m.def(
+  "ARKodeGetAccumulatedError",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetAccumulatedError_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype accum_error_adapt_modifiable;
+
+      int r = ARKodeGetAccumulatedError(arkode_mem,
+                                        &accum_error_adapt_modifiable);
+      return std::make_tuple(r, accum_error_adapt_modifiable);
+    };
+
+    return ARKodeGetAccumulatedError_adapt_modifiable_immutable_to_return(
+      arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def(
   "ARKodeGetNumLinSolvSetups",
@@ -553,8 +663,22 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("ARKodeGetCurrentTime", ARKodeGetCurrentTime, nb::arg("arkode_mem"),
-      nb::arg("tcur"));
+m.def(
+  "ARKodeGetCurrentTime",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetCurrentTime_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype tcur_adapt_modifiable;
+
+      int r = ARKodeGetCurrentTime(arkode_mem, &tcur_adapt_modifiable);
+      return std::make_tuple(r, tcur_adapt_modifiable);
+    };
+
+    return ARKodeGetCurrentTime_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def(
   "ARKodeGetCurrentState",
@@ -573,8 +697,22 @@ m.def(
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 
-m.def("ARKodeGetCurrentGamma", ARKodeGetCurrentGamma, nb::arg("arkode_mem"),
-      nb::arg("gamma"));
+m.def(
+  "ARKodeGetCurrentGamma",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetCurrentGamma_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype gamma_adapt_modifiable;
+
+      int r = ARKodeGetCurrentGamma(arkode_mem, &gamma_adapt_modifiable);
+      return std::make_tuple(r, gamma_adapt_modifiable);
+    };
+
+    return ARKodeGetCurrentGamma_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def(
   "ARKodeGetNumNonlinSolvIters",
@@ -669,8 +807,22 @@ m.def(
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 
-m.def("ARKodeGetJacTime", ARKodeGetJacTime, nb::arg("arkode_mem"),
-      nb::arg("t_J"));
+m.def(
+  "ARKodeGetJacTime",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetJacTime_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype t_J_adapt_modifiable;
+
+      int r = ARKodeGetJacTime(arkode_mem, &t_J_adapt_modifiable);
+      return std::make_tuple(r, t_J_adapt_modifiable);
+    };
+
+    return ARKodeGetJacTime_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
 
 m.def(
   "ARKodeGetJacNumSteps",

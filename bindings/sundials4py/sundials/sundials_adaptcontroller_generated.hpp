@@ -30,12 +30,60 @@ auto pyClass_generic_SUNAdaptController =
 
 m.def("SUNAdaptController_GetType", SUNAdaptController_GetType, nb::arg("C"));
 
-m.def("SUNAdaptController_EstimateStep", SUNAdaptController_EstimateStep,
-      nb::arg("C"), nb::arg("h"), nb::arg("p"), nb::arg("dsm"), nb::arg("hnew"));
+m.def(
+  "SUNAdaptController_EstimateStep",
+  [](SUNAdaptController C, sunrealtype h, int p,
+     sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype>
+  {
+    auto SUNAdaptController_EstimateStep_adapt_modifiable_immutable_to_return =
+      [](SUNAdaptController C, sunrealtype h, int p,
+         sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype>
+    {
+      sunrealtype hnew_adapt_modifiable;
 
-m.def("SUNAdaptController_EstimateStepTol", SUNAdaptController_EstimateStepTol,
-      nb::arg("C"), nb::arg("H"), nb::arg("tolfac"), nb::arg("P"),
-      nb::arg("DSM"), nb::arg("dsm"), nb::arg("Hnew"), nb::arg("tolfacnew"));
+      SUNErrCode r = SUNAdaptController_EstimateStep(C, h, p, dsm,
+                                                     &hnew_adapt_modifiable);
+      return std::make_tuple(r, hnew_adapt_modifiable);
+    };
+
+    return SUNAdaptController_EstimateStep_adapt_modifiable_immutable_to_return(C,
+                                                                                h,
+                                                                                p,
+                                                                                dsm);
+  },
+  nb::arg("C"), nb::arg("h"), nb::arg("p"), nb::arg("dsm"));
+
+m.def(
+  "SUNAdaptController_EstimateStepTol",
+  [](SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
+     sunrealtype DSM,
+     sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype, sunrealtype>
+  {
+    auto SUNAdaptController_EstimateStepTol_adapt_modifiable_immutable_to_return =
+      [](SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
+         sunrealtype DSM,
+         sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype, sunrealtype>
+    {
+      sunrealtype Hnew_adapt_modifiable;
+      sunrealtype tolfacnew_adapt_modifiable;
+
+      SUNErrCode r =
+        SUNAdaptController_EstimateStepTol(C, H, tolfac, P, DSM, dsm,
+                                           &Hnew_adapt_modifiable,
+                                           &tolfacnew_adapt_modifiable);
+      return std::make_tuple(r, Hnew_adapt_modifiable,
+                             tolfacnew_adapt_modifiable);
+    };
+
+    return SUNAdaptController_EstimateStepTol_adapt_modifiable_immutable_to_return(C,
+                                                                                   H,
+                                                                                   tolfac,
+                                                                                   P,
+                                                                                   DSM,
+                                                                                   dsm);
+  },
+  nb::arg("C"), nb::arg("H"), nb::arg("tolfac"), nb::arg("P"), nb::arg("DSM"),
+  nb::arg("dsm"));
 
 m.def("SUNAdaptController_Reset", SUNAdaptController_Reset, nb::arg("C"));
 

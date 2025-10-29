@@ -35,21 +35,24 @@ namespace sundials4py {
 
 void bind_sunadjointcheckpointscheme_fixed(nb::module_& m)
 {
-  m.def(
-    "SUNAdjointCheckpointScheme_Create_Fixed",
-    [](SUNDataIOMode io_mode, SUNMemoryHelper mem_helper, suncountertype interval,
-       suncountertype estimate, sunbooleantype keep, SUNContext sunctx)
-    {
-      SUNAdjointCheckpointScheme check_scheme = nullptr;
 
-      int status = SUNAdjointCheckpointScheme_Create_Fixed(io_mode, mem_helper,
-                                                           interval, estimate,
-                                                           keep, sunctx,
-                                                           &check_scheme);
+#include "sunadjointcheckpointscheme_fixed_generated.hpp"
 
-      return std::make_tuple(status, our_make_shared<std::remove_pointer_t<SUNAdjointCheckpointScheme>, SUNAdjointCheckpointSchemeDeleter>(check_scheme));
-    },
-    sundials4py::keep_alive_tuple<1, 5>());
+  // m.def(
+  //   "SUNAdjointCheckpointScheme_Create_Fixed",
+  //   [](SUNDataIOMode io_mode, SUNMemoryHelper mem_helper, suncountertype interval,
+  //      suncountertype estimate, sunbooleantype keep, SUNContext sunctx)
+  //   {
+  //     SUNAdjointCheckpointScheme check_scheme = nullptr;
+
+  //     int status = SUNAdjointCheckpointScheme_Create_Fixed(io_mode, mem_helper,
+  //                                                          interval, estimate,
+  //                                                          keep, sunctx,
+  //                                                          &check_scheme);
+
+  //     return std::make_tuple(status, our_make_shared<std::remove_pointer_t<SUNAdjointCheckpointScheme>, SUNAdjointCheckpointSchemeDeleter>(check_scheme));
+  //   },
+  //   sundials4py::keep_alive_tuple<1, 6>());
 }
 
 } // namespace sundials4py

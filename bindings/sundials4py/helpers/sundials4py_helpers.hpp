@@ -125,7 +125,7 @@ struct returns_references_to
       throw std::runtime_error("return value should be a sequence");
     }
     
-    nb::detail::keep_alive(ret[IN].ptr(), args[IP]);
+    nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]);
   }
 };
 

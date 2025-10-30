@@ -19,7 +19,7 @@
 modules:
   all:
     fn_exclude_by_name__regex:
-    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII ClassView objects
+    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII objects
     - "Destroy"
     - "NewEmpty" # No need to call NewEmpty functions in Python
     - "CopyOps" # No need to call CopyOps functions in Python

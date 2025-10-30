@@ -63,26 +63,6 @@ struct SUNProfilerDeleter
   void operator()(SUNProfiler profiler) { SUNProfiler_Free(&profiler); }
 };
 
-class SUNProfilerView
-  : public sundials::experimental::ClassView<SUNProfiler, SUNProfilerDeleter>
-{
-public:
-  using sundials::experimental::ClassView<SUNProfiler, SUNProfilerDeleter>::ClassView;
-
-  SUNProfilerView(SUNComm comm, const char* title)
-  {
-    SUNProfiler profiler;
-    SUNProfiler_Create(comm, title, &profiler);
-    object_.reset(profiler);
-  }
-
-  template<typename... Args>
-  static SUNProfilerView Create(Args&&... args)
-  {
-    return SUNProfilerView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

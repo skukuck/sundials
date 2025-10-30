@@ -31,18 +31,12 @@
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
-using namespace sundials::experimental;
 
 namespace sundials4py {
 
 void bind_sundomeigestimator(nb::module_& m)
 {
 #include "sundials_domeigestimator_generated.hpp"
-
-  nb::class_<SUNDomEigEstimatorView>(m, "SUNDomEigEstimatorView")
-    .def_static("Create", &SUNDomEigEstimatorView::Create<SUNDomEigEstimator>)
-    .def("get", nb::overload_cast<>(&SUNDomEigEstimatorView::get, nb::const_),
-         nb::rv_policy::reference);
 
   m.def(
     "SUNDomEigEstimator_SetATimes",

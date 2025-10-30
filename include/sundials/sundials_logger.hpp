@@ -31,33 +31,6 @@ struct SUNLoggerDeleter
   void operator()(SUNLogger logger) { SUNLogger_Destroy(&logger); }
 };
 
-class SUNLoggerView
-  : public sundials::experimental::ClassView<SUNLogger, SUNLoggerDeleter>
-{
-public:
-  using sundials::experimental::ClassView<SUNLogger, SUNLoggerDeleter>::ClassView;
-
-  SUNLoggerView(SUNComm comm, int output_rank)
-  {
-    SUNLogger logger;
-    SUNLogger_Create(comm, output_rank, &logger);
-    object_.reset(logger);
-  }
-
-  SUNLoggerView(SUNComm comm)
-  {
-    SUNLogger logger;
-    SUNLogger_CreateFromEnv(comm, &logger);
-    object_.reset(logger);
-  }
-
-  template<typename... Args>
-  static SUNLoggerView Create(Args&&... args)
-  {
-    return SUNLoggerView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

@@ -37,18 +37,6 @@ struct SUNMatrixDeleter
   void operator()(SUNMatrix A) { SUNMatDestroy(A); }
 };
 
-class SUNMatrixView : public ClassView<SUNMatrix, SUNMatrixDeleter>
-{
-public:
-  using ClassView<SUNMatrix, SUNMatrixDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNMatrixView Create(Args&&... args)
-  {
-    return SUNMatrixView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

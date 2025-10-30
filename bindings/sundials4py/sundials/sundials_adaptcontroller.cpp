@@ -33,11 +33,6 @@ namespace sundials4py {
 void bind_sunadaptcontroller(nb::module_& m)
 {
 #include "sundials_adaptcontroller_generated.hpp"
-
-  nb::class_<SUNAdaptControllerView>(m, "SUNAdaptControllerView")
-    .def_static("Create", &SUNAdaptControllerView::Create<SUNAdaptController>)
-    .def("get", nb::overload_cast<>(&SUNAdaptControllerView::get, nb::const_),
-         nb::rv_policy::reference);
 }
 
 } // namespace sundials4py

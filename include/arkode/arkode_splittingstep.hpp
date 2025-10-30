@@ -35,7 +35,7 @@ struct SplittingStepCoefficientsDeleter
   }
 };
 
-}
-}
+} // namespace experimental
+} // namespace sundials
 
 #endif

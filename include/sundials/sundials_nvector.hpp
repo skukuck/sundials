@@ -37,22 +37,7 @@ namespace experimental {
 
 struct N_VectorDeleter
 {
-  void operator()(N_Vector v)
-  {
-    N_VDestroy(v);
-  }
-};
-
-class NVectorView : public ClassView<N_Vector, N_VectorDeleter>
-{
-public:
-  using ClassView<N_Vector, N_VectorDeleter>::ClassView;
-
-  template<typename... Args>
-  static NVectorView Create(Args&&... args)
-  {
-    return NVectorView(std::forward<Args>(args)...);
-  }
+  void operator()(N_Vector v) { N_VDestroy(v); }
 };
 
 } // namespace experimental

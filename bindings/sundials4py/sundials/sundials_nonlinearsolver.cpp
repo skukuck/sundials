@@ -29,18 +29,11 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 namespace sundials4py {
 
 void bind_sunnonlinearsolver(nb::module_& m)
 {
 #include "sundials_nonlinearsolver_generated.hpp"
-
-  nb::class_<SUNNonlinearSolverView>(m, "SUNNonlinearSolverView")
-    .def_static("Create", &SUNNonlinearSolverView::Create<SUNNonlinearSolver>)
-    .def("get", nb::overload_cast<>(&SUNNonlinearSolverView::get, nb::const_),
-         nb::rv_policy::reference);
 
   m.def(
     "SUNNonlinSolSetup",

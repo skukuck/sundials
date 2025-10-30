@@ -34,19 +34,6 @@ struct SUNDomEigEstimatorDeleter
   void operator()(SUNDomEigEstimator DEE) { SUNDomEigEstimator_Destroy(&DEE); }
 };
 
-class SUNDomEigEstimatorView
-  : public ClassView<SUNDomEigEstimator, SUNDomEigEstimatorDeleter>
-{
-public:
-  using ClassView<SUNDomEigEstimator, SUNDomEigEstimatorDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNDomEigEstimatorView Create(Args&&... args)
-  {
-    return SUNDomEigEstimatorView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

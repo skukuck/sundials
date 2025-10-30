@@ -36,20 +36,10 @@ void bind_arkode_mristep(nb::module_& m)
 {
 #include "arkode_mristep_generated.hpp"
 
-  nb::class_<MRIStepCouplingView>(m, "MRIStepCouplingView")
-    .def_static("Create", &MRIStepCouplingView::Create<MRIStepCouplingView>)
-    .def("get", nb::overload_cast<>(&MRIStepCouplingView::get, nb::const_),
-         nb::rv_policy::reference);
-
   // _MRIStepInnerStepper is a opaque/private class forward declared in a public header but
   // defined in a source file elsewhere. As such, we need to declare it here since its
   // not picked up in any header files by the generator.
   nb::class_<_MRIStepInnerStepper>(m, "_MRIStepInnerStepper");
-
-  nb::class_<MRIStepInnerStepperView>(m, "MRIStepInnerStepperView")
-    .def_static("Create", &MRIStepInnerStepperView::Create<MRIStepInnerStepper>)
-    .def("get", nb::overload_cast<>(&MRIStepInnerStepperView::get, nb::const_),
-         nb::rv_policy::reference);
 
   m.def(
     "MRIStepInnerStepper_Create",

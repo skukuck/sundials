@@ -39,14 +39,6 @@ void bind_sunadjointcheckpointscheme(nb::module_& m)
 #include "sundials_adjointcheckpointscheme_generated.hpp"
 
   nb::class_<SUNAdjointCheckpointScheme_>(m, "SUNAdjointCheckpointScheme_");
-
-  nb::class_<SUNAdjointCheckpointSchemeView>(m,
-                                             "SUNAdjointCheckpointSchemeView")
-    .def_static("Create",
-                &SUNAdjointCheckpointSchemeView::Create<SUNAdjointCheckpointScheme>)
-    .def("get",
-         nb::overload_cast<>(&SUNAdjointCheckpointSchemeView::get, nb::const_),
-         nb::rv_policy::reference);
 }
 
 } // namespace sundials4py

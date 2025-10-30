@@ -30,17 +30,11 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 namespace sundials4py {
 
 void bind_nvector(nb::module_& m)
 {
 #include "sundials_nvector_generated.hpp"
-
-  nb::class_<NVectorView>(m, "NVectorView")
-    .def_static("Create", &NVectorView::Create<N_Vector>)
-    .def("get", nb::overload_cast<>(&NVectorView::get, nb::const_));
 
   m.def("N_VGetArrayPointer",
         [](N_Vector v)

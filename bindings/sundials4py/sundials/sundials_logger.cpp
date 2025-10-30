@@ -30,20 +30,12 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using SUNLoggerView = sundials::experimental::SUNLoggerView;
-
 namespace sundials4py {
 
 void bind_sunlogger(nb::module_& m)
 {
 #include "sundials_logger_generated.hpp"
   nb::class_<SUNLogger_>(m, "SUNLogger_");
-
-  nb::class_<SUNLoggerView>(m, "SUNLoggerView")
-    .def("get", nb::overload_cast<>(&SUNLoggerView::get, nb::const_),
-         nb::rv_policy::reference)
-    .def_static("Create", &SUNLoggerView::Create<SUNComm>)
-    .def_static("Create", &SUNLoggerView::Create<SUNComm, int>);
 }
 
 } // namespace sundials4py

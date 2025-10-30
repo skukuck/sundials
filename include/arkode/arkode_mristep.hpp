@@ -32,35 +32,9 @@ struct MRIStepCouplingDeleter
   void operator()(MRIStepCoupling t) { MRIStepCoupling_Free(t); }
 };
 
-class MRIStepCouplingView
-  : public ClassView<MRIStepCoupling, MRIStepCouplingDeleter>
-{
-public:
-  using ClassView<MRIStepCoupling, MRIStepCouplingDeleter>::ClassView;
-
-  template<typename... Args>
-  static MRIStepCouplingView Create(Args&&... args)
-  {
-    return MRIStepCouplingView(std::forward<Args>(args)...);
-  }
-};
-
 struct MRIStepInnerStepperDeleter
 {
   void operator()(MRIStepInnerStepper s) { MRIStepInnerStepper_Free(&s); }
-};
-
-class MRIStepInnerStepperView
-  : public ClassView<MRIStepInnerStepper, MRIStepInnerStepperDeleter>
-{
-public:
-  using ClassView<MRIStepInnerStepper, MRIStepInnerStepperDeleter>::ClassView;
-
-  template<typename... Args>
-  static MRIStepInnerStepperView Create(Args&&... args)
-  {
-    return MRIStepInnerStepperView(std::forward<Args>(args)...);
-  }
 };
 
 } // namespace experimental

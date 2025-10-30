@@ -19,7 +19,7 @@
 modules:
   all:
     fn_exclude_by_name__regex:
-    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII ClassView objects
+    - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII objects
     - "Destroy"
     - "Space" # Space functions are deprecated, so dont expose them in Python
     # TODO(CJB): support SetOptions

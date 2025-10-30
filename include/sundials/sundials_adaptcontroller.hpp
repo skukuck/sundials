@@ -33,19 +33,6 @@ struct SUNAdaptControllerDeleter
   void operator()(SUNAdaptController C) { SUNAdaptController_Destroy(C); }
 };
 
-class SUNAdaptControllerView
-  : public ClassView<SUNAdaptController, SUNAdaptControllerDeleter>
-{
-public:
-  using ClassView<SUNAdaptController, SUNAdaptControllerDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNAdaptControllerView Create(Args&&... args)
-  {
-    return SUNAdaptControllerView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

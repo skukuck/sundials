@@ -36,7 +36,6 @@ using sundials::SUNContextDeleter;
 
 namespace sundials4py {
 
-using SUNContextView = sundials::SUNContextView;
 using namespace sundials::experimental;
 
 void bind_suncontext(nb::module_& m)
@@ -44,9 +43,6 @@ void bind_suncontext(nb::module_& m)
 #include "sundials_context_generated.hpp"
 
   nb::class_<SUNContext_>(m, "SUNContext_");
-
-  nb::class_<SUNContextView>(m, "SUNContextView")
-    .def("get", nb::overload_cast<>(&SUNContextView::get, nb::const_));
 }
 
 } // namespace sundials4py

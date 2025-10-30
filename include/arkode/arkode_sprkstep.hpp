@@ -35,19 +35,6 @@ struct ARKodeSPRKTableDeleter
   void operator()(ARKodeSPRKTable t) { ARKodeSPRKTable_Free(t); }
 };
 
-class ARKodeSPRKTableView
-  : public ClassView<ARKodeSPRKTable, ARKodeSPRKTableDeleter>
-{
-public:
-  using ClassView<ARKodeSPRKTable, ARKodeSPRKTableDeleter>::ClassView;
-
-  template<typename... Args>
-  static ARKodeSPRKTableView Create(Args&&... args)
-  {
-    return ARKodeSPRKTableView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

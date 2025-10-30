@@ -32,25 +32,11 @@ struct ARKodeDeleter
   void operator()(void* v) { ARKodeFree(&v); }
 };
 
-
 using ARKodeView = ClassView<void*, ARKodeDeleter>;
 
 struct ARKodeButcherTableDeleter
 {
   void operator()(ARKodeButcherTable t) { ARKodeButcherTable_Free(t); }
-};
-
-class ARKodeButcherTableView
-  : public ClassView<ARKodeButcherTable, ARKodeButcherTableDeleter>
-{
-public:
-  using ClassView<ARKodeButcherTable, ARKodeButcherTableDeleter>::ClassView;
-
-  template<typename... Args>
-  static ARKodeButcherTableView Create(Args&&... args)
-  {
-    return ARKodeButcherTableView(std::forward<Args>(args)...);
-  }
 };
 
 } // namespace experimental

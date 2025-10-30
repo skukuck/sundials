@@ -95,16 +95,6 @@ void bind_arkode(nb::module_& m)
     .def("get", nb::overload_cast<>(&ARKodeView::get, nb::const_),
          nb::rv_policy::reference);
 
-  nb::class_<ARKodeButcherTableView>(m, "ARKodeButcherTableView")
-    .def_static("Create", &ARKodeButcherTableView::Create<ARKodeButcherTable>)
-    .def("get", nb::overload_cast<>(&ARKodeButcherTableView::get, nb::const_),
-         nb::rv_policy::reference);
-
-  nb::class_<ARKodeSPRKTableView>(m, "ARKodeSPRKTableView")
-    .def_static("Create", &ARKodeSPRKTableView::Create<ARKodeSPRKTable>)
-    .def("get", nb::overload_cast<>(&ARKodeSPRKTableView::get, nb::const_),
-         nb::rv_policy::reference);
-
   /////////////////////////////////////////////////////////////////////////////
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////

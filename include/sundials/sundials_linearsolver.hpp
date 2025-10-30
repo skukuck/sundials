@@ -38,19 +38,6 @@ struct SUNLinearSolverDeleter
   void operator()(SUNLinearSolver LS) { SUNLinSolFree(LS); }
 };
 
-class SUNLinearSolverView
-  : public ClassView<SUNLinearSolver, SUNLinearSolverDeleter>
-{
-public:
-  using ClassView<SUNLinearSolver, SUNLinearSolverDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNLinearSolverView Create(Args&&... args)
-  {
-    return SUNLinearSolverView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

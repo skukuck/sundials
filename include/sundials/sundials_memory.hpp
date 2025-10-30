@@ -37,19 +37,6 @@ struct SUNMemoryHelperDeleter
   void operator()(SUNMemoryHelper helper) { SUNMemoryHelper_Destroy(helper); }
 };
 
-class SUNMemoryHelperView
-  : public ClassView<SUNMemoryHelper, SUNMemoryHelperDeleter>
-{
-public:
-  using ClassView<SUNMemoryHelper, SUNMemoryHelperDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNMemoryHelperView Create(Args&&... args)
-  {
-    return SUNMemoryHelperView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

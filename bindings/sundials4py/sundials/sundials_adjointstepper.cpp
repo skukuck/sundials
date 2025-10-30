@@ -31,8 +31,6 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using SUNAdjointStepperView = sundials::experimental::SUNAdjointStepperView;
-
 namespace sundials4py {
 
 void bind_sunadjointstepper(nb::module_& m)
@@ -40,15 +38,6 @@ void bind_sunadjointstepper(nb::module_& m)
 #include "sundials_adjointstepper_generated.hpp"
 
   nb::class_<SUNAdjointStepper_>(m, "SUNAdjointStepper_");
-
-  nb::class_<SUNAdjointStepperView>(m, "SUNAdjointStepperView")
-    .def("get", nb::overload_cast<>(&SUNAdjointStepperView::get, nb::const_),
-         nb::rv_policy::reference)
-    .def_static("Create", &SUNAdjointStepperView::Create<SUNAdjointStepper>)
-    .def_static("Create",
-                &SUNAdjointStepperView::Create<
-                  SUNStepper, sunbooleantype, SUNStepper, sunbooleantype, suncountertype,
-                  sunrealtype, N_Vector, SUNAdjointCheckpointScheme, SUNContext>);
 }
 
 } // namespace sundials4py

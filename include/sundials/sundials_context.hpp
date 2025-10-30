@@ -32,10 +32,7 @@ namespace sundials {
 
 struct SUNContextDeleter
 {
-  void operator()(SUNContext sunctx)
-  {
-    SUNContext_Free(&sunctx);
-  }
+  void operator()(SUNContext sunctx) { SUNContext_Free(&sunctx); }
 };
 
 class SUNContextView

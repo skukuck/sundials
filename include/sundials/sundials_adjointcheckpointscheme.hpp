@@ -37,19 +37,6 @@ struct SUNAdjointCheckpointSchemeDeleter
   }
 };
 
-class SUNAdjointCheckpointSchemeView
-  : public ClassView<SUNAdjointCheckpointScheme, SUNAdjointCheckpointSchemeDeleter>
-{
-public:
-  using ClassView<SUNAdjointCheckpointScheme, SUNAdjointCheckpointSchemeDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNAdjointCheckpointSchemeView Create(Args&&... args)
-  {
-    return SUNAdjointCheckpointSchemeView(std::forward<Args>(args)...);
-  }
-};
-
 } // namespace experimental
 } // namespace sundials
 

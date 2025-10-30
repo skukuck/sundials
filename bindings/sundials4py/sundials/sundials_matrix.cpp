@@ -27,18 +27,11 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 namespace sundials4py {
 
 void bind_sunmatrix(nb::module_& m)
 {
 #include "sundials_matrix_generated.hpp"
-
-  nb::class_<SUNMatrixView>(m, "SUNMatrixView")
-    .def_static("Create", &SUNMatrixView::Create<SUNMatrix>)
-    .def("get", nb::overload_cast<>(&SUNMatrixView::get, nb::const_),
-         nb::rv_policy::reference);
 }
 
 } // namespace sundials4py

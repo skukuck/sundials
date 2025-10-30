@@ -29,7 +29,6 @@
 namespace sundials {
 namespace experimental {
 
-
 template<class T, class Creator, class Deleter, class... Args>
 std::shared_ptr<T> our_make_shared(Args&&... args)
 {
@@ -46,33 +45,21 @@ template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>
 {
 public:
-  ClassView() : object_(nullptr, Deleter{})
-  {
-  }
+  ClassView() : object_(nullptr, Deleter{}) {}
 
-  ClassView(T& object) : object_(std::forward<T>(object), Deleter{})
-  {
-  }
+  ClassView(T& object) : object_(std::forward<T>(object), Deleter{}) {}
 
-  ClassView(T&& object) : object_(std::forward<T>(object), Deleter{})
-  {
-  }
+  ClassView(T&& object) : object_(std::forward<T>(object), Deleter{}) {}
 
   ClassView(const ClassView&) = delete;
 
-  ClassView(ClassView&& other)
-  {
-    this->object_ = std::move(other.object_);
-  };
+  ClassView(ClassView&& other) { this->object_ = std::move(other.object_); };
 
   ClassView& operator=(const ClassView&) = delete;
 
   ClassView& operator=(ClassView&& rhs) = default;
 
-  ~ClassView()
-  {
-    object_.reset();
-  };
+  ~ClassView() { object_.reset(); };
 
   // Override ConvertibleTo functions
   T get() override { return object_.get(); }

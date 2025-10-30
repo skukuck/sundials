@@ -33,33 +33,6 @@ struct SUNAdjointStepperDeleter
   void operator()(SUNAdjointStepper self) { SUNAdjointStepper_Destroy(&self); }
 };
 
-class SUNAdjointStepperView
-  : public ClassView<SUNAdjointStepper, SUNAdjointStepperDeleter>
-{
-public:
-  using ClassView<SUNAdjointStepper, SUNAdjointStepperDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNAdjointStepperView Create(Args&&... args)
-  {
-    SUNAdjointStepper stepper;
-    SUNAdjointStepper_Create(std::forward<Args>(args)..., &stepper);
-    return SUNAdjointStepperView(stepper);
-  }
-};
-
-template<>
-SUNAdjointStepperView SUNAdjointStepperView::Create(SUNAdjointStepper& stepper)
-{
-  return SUNAdjointStepperView(std::forward<SUNAdjointStepper>(stepper));
-}
-
-template<>
-SUNAdjointStepperView SUNAdjointStepperView::Create(SUNAdjointStepper&& stepper)
-{
-  return SUNAdjointStepperView(std::forward<SUNAdjointStepper>(stepper));
-}
-
 } // namespace experimental
 } // namespace sundials
 

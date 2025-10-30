@@ -135,7 +135,7 @@ int main(void)
   // Set initial condition
   retval = Solution(0.0, True_Sol, (void*)rdata);
   if (check_retval(&retval, "Solution", 1)) { return 1; }
-  retval = SolutionDerivative(0.0, y_p, (void*)rdata);
+  retval = SolutionDerivative(0.0, True_Sol_p, (void*)rdata);
   if (check_retval(&retval, "SolutionDerivative", 1)) { return 1; }
 
   N_VScale(1.0, True_Sol, y); /* Set initial conditions */

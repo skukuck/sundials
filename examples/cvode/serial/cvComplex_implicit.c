@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds and Sylvia Amihere @ UMBC
+ * Programmer(s): Sylvia Amihere @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2002-2025, Lawrence Livermore National Security

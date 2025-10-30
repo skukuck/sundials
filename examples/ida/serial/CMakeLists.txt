@@ -27,6 +27,7 @@
 set(IDA_examples
     "idaAnalytic_mels\;\;exclude-single\;real"
     "idaComplex\;\;develop\;complex"
+    "idaComplex_implicit\;\;develop\;complex"
     "idaAnalytic_mels\;ida.scalar_tolerances 1e-3 1e-8\;exclude-single\;real"
     "idaFoodWeb_bnd\;\;develop\;real"
     "idaFoodWeb_kry\;\;develop\;real"

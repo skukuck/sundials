@@ -32,11 +32,16 @@ void bind_arkode_splittingstep(nb::module_& m)
 {
 #include "arkode_splittingstep_generated.hpp"
 
-  m.def("SplittingStepCreate",
-        [](std::vector<SUNStepper> steppers, int partitions, sunrealtype t0,
-           N_Vector y0, SUNContext sunctx) -> void* {
-          return SplittingStepCreate(steppers.data(), partitions, t0, y0, sunctx);
-        });
+  m.def(
+    "SplittingStepCreate",
+    [](std::vector<SUNStepper> steppers, int partitions, sunrealtype t0,
+       N_Vector y0, SUNContext sunctx)
+    {
+      return std::make_shared<ARKodeView>(
+        SplittingStepCreate(steppers.data(), partitions, t0, y0, sunctx));
+    },
+    nb::arg("steppers"), nb::arg("partitions"), nb::arg("t0"), nb::arg("y0"),
+    nb::arg("sunctx"), nb::keep_alive<0, 5>());
 
   m.def("SplittingStepReInit",
         [](void* arkode_mem, std::vector<SUNStepper> steppers, int partitions,

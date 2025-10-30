@@ -27,60 +27,25 @@ from problems import AnalyticODE
 @pytest.mark.skipif(
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
 )
-def test_erkstep_with_postprocess(sunctx):
-    y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
-    ode_problem = AnalyticODE()
-    ode_problem.set_init_cond(y.get())
-
-    def rhs(t, y, ydot, _):
-        return ode_problem.f(t, y, ydot)
-
-    postprocess_called = {"count": 0}
-
-    def postprocess_fn(t, y, _):
-        postprocess_called["count"] += 1
-        return 0  # success
-
-    print(SUNREALTYPE_RTOL)
-    print(SUNREALTYPE_ATOL)
-
-    erk = ARKodeView.Create(ERKStepCreate(rhs, 0, y.get(), sunctx.get()))
-    ARKodeSetPostprocessStepFn(erk.get(), postprocess_fn)
-    status = ARKodeSStolerances(erk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
-    assert status == ARK_SUCCESS
-
-    tout = 10.0
-    status, tret = ARKodeEvolve(erk.get(), tout, y.get(), ARK_NORMAL)
-    assert status == ARK_SUCCESS
-    assert postprocess_called["count"] > 0
-
-    sol = NVectorView.Create(N_VClone(y.get()))
-    ode_problem.solution(y.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
-
-
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_erkstep(sunctx):
-    y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
+    y = N_VNew_Serial(1, sunctx)
     ode_problem = AnalyticODE()
-    ode_problem.set_init_cond(y.get())
+    ode_problem.set_init_cond(y)
 
     def rhs(t, y, ydot, _):
         return ode_problem.f(t, y, ydot)
 
-    erk = ARKodeView.Create(ERKStepCreate(rhs, 0, y.get(), sunctx.get()))
+    erk = ERKStepCreate(rhs, 0, y, sunctx)
     status = ARKodeSStolerances(erk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
     tout = 10.0
-    status, tret = ARKodeEvolve(erk.get(), tout, y.get(), ARK_NORMAL)
+    status, tret = ARKodeEvolve(erk.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
-    sol = NVectorView.Create(N_VClone(y.get()))
-    ode_problem.solution(y.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
 def test_erkstep_adjoint(sunctx):

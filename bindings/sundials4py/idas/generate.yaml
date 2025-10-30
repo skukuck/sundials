@@ -40,6 +40,8 @@ modules:
       "SetLinearSolver":
       - "A" 
     fn_exclude_by_name__regex:
+    # We do custom handling of Create so we can wrap the void* in a CVodeView
+    - "^IDACreate$"
     # we use user_data for sneaking in python contexts, users can instead capture their states in a class
     - "^IDAGetUserData$" 
     - "^IDASetUserData$" 

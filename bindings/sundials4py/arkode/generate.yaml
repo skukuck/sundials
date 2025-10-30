@@ -127,6 +127,8 @@ modules:
     path: arkode/arkode_forcingstep_generated.hpp
     headers:
     - ../../include/arkode/arkode_forcingstep.h
+    fn_exclude_by_name__regex:
+    - "^ForcingStepCreate$"
   splittingstep:
     path: arkode/arkode_splittingstep_generated.hpp
     headers:

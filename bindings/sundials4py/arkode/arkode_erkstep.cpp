@@ -34,42 +34,44 @@ void bind_arkode_erkstep(nb::module_& m)
 {
 #include "arkode_erkstep_generated.hpp"
 
-  m.def("ERKStepCreate",
-        [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
-           N_Vector y0, SUNContext sunctx)
-        {
-          void* ark_mem = ERKStepCreate(erkstep_f_wrapper, t0, y0, sunctx);
-          if (ark_mem == nullptr)
-          {
-            throw std::runtime_error("Failed to create ARKODE memory");
-          }
+  m.def(
+    "ERKStepCreate",
+    [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
+       N_Vector y0, SUNContext sunctx)
+    {
+      void* ark_mem = ERKStepCreate(erkstep_f_wrapper, t0, y0, sunctx);
+      if (ark_mem == nullptr)
+      {
+        throw std::runtime_error("Failed to create ARKODE memory");
+      }
 
-          // Create the user-supplied function table to store the Python user functions
-          auto cb_fns = arkode_user_supplied_fn_table_alloc();
+      // Create the user-supplied function table to store the Python user functions
+      auto cb_fns = arkode_user_supplied_fn_table_alloc();
 
-          // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
-          int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
-          if (ark_status != ARK_SUCCESS)
-          {
-            free(cb_fns);
-            throw std::runtime_error(
-              "Failed to set user data in ARKODE memory");
-          }
+      // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
+      int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
+      if (ark_status != ARK_SUCCESS)
+      {
+        free(cb_fns);
+        throw std::runtime_error("Failed to set user data in ARKODE memory");
+      }
 
-          // Ensure ARKodeFree will free the user-supplied function table
-          ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
-          if (ark_status != ARK_SUCCESS)
-          {
-            free(cb_fns);
-            throw std::runtime_error(
-              "Failed to set user data ownership in ARKODE memory");
-          }
+      // Ensure ARKodeFree will free the user-supplied function table
+      ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
+      if (ark_status != ARK_SUCCESS)
+      {
+        free(cb_fns);
+        throw std::runtime_error(
+          "Failed to set user data ownership in ARKODE memory");
+      }
 
-          // Finally, set the RHS function
-          cb_fns->erkstep_f = nb::cast(rhs);
+      // Finally, set the RHS function
+      cb_fns->erkstep_f = nb::cast(rhs);
 
-          return ark_mem;
-        });
+      return std::make_shared<ARKodeView>(ark_mem);
+    },
+    nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
+    nb::keep_alive<0, 4>());
 
   m.def(
     "ERKStepCreateAdjointStepper",
@@ -104,21 +106,6 @@ void bind_arkode_erkstep(nb::module_& m)
     },
     nb::arg("arkode_mem"), nb::arg("adj_f").none(), nb::arg("tf"),
     nb::arg("sf"), nb::arg("sunctx"));
-
-  m.def(
-    "ERKStepGetCurrentButcherTable",
-    [](void* ark_mem)
-    {
-      ARKodeButcherTable fe = nullptr;
-
-      int status = ERKStepGetCurrentButcherTable(ark_mem, &fe);
-
-      return std::make_tuple(status, fe);
-    },
-    "WARNING: this function returns ARKodeButcherTable references, DO NOT WRAP "
-    "THEM IN A `ARKodeButcherTableView`. Doing so will result in a double free "
-    "or worse.",
-    nb::rv_policy::reference);
 }
 
 } // namespace sundials4py

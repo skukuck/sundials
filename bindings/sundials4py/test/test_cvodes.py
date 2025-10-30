@@ -28,32 +28,32 @@ from problems import AnalyticODE
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
 )
 def test_cvodes_ivp(sunctx):
-    y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
-    ls = SUNLinearSolverView.Create(SUNLinSol_SPGMR(y.get(), 0, 0, sunctx.get()))
+    y = N_VNew_Serial(1, sunctx)
+    ls = SUNLinSol_SPGMR(y, 0, 0, sunctx)
 
     ode_problem = AnalyticODE()
-    ode_problem.set_init_cond(y.get())
+    ode_problem.set_init_cond(y)
 
-    solver = CVodeView.Create(CVodeCreate(CV_BDF, sunctx.get()))
+    cvode = CVodeCreate(CV_BDF, sunctx)
 
-    status = CVodeInit(solver.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y.get())
+    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y)
     assert status == CV_SUCCESS
 
-    status = CVodeSStolerances(solver.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    status = CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == CV_SUCCESS
 
-    status = CVodeSetLinearSolver(solver.get(), ls.get(), None)
+    status = CVodeSetLinearSolver(cvode.get(), ls, None)
     assert status == CV_SUCCESS
 
     tout = 10.0
-    status, tret = CVode(solver.get(), tout, y.get(), CV_NORMAL)
+    status, tret = CVode(cvode.get(), tout, y, CV_NORMAL)
     assert status == CV_SUCCESS
 
-    sol = NVectorView.Create(N_VClone(y.get()))
-    ode_problem.solution(y.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
-    status, num_steps = CVodeGetNumSteps(solver.get())
+    status, num_steps = CVodeGetNumSteps(cvode.get())
     assert status == CV_SUCCESS
     assert num_steps > 0
 

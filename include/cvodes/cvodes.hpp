@@ -32,20 +32,7 @@ struct CVodeDeleter
   void operator()(void* v) { CVodeFree(&v); }
 };
 
-class CVodeView : public ClassView<void*, CVodeDeleter>
-{
-public:
-  using ClassView<void*, CVodeDeleter>::ClassView;
-
-  template<typename... Args>
-  static CVodeView Create(Args&&... args);
-};
-
-template<typename... Args>
-CVodeView CVodeView::Create(Args&&... args)
-{
-  return CVodeView(std::forward<Args>(args)...);
-}
+using CVodeView = ClassView<void*, CVodeDeleter>;
 
 } // namespace experimental
 } // namespace sundials

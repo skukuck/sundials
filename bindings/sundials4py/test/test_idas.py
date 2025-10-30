@@ -30,14 +30,14 @@ from fixtures import *
 def test_idas_ivp(sunctx):
     ode_problem = AnalyticDAE()
 
-    solver = IDAView.Create(IDACreate(sunctx.get()))
-    yy = NVectorView.Create(N_VNew_Serial(2, sunctx.get()))
-    yp = NVectorView.Create(N_VNew_Serial(2, sunctx.get()))
+    solver = IDACreate(sunctx)
+    yy = N_VNew_Serial(2, sunctx)
+    yp = N_VNew_Serial(2, sunctx)
 
     # y and y' initial conditions
-    ode_problem.set_init_cond(yy.get(), yp.get(), ode_problem.T0)
+    ode_problem.set_init_cond(yy, yp, ode_problem.T0)
 
-    ls = SUNLinearSolverView.Create(SUNLinSol_SPGMR(yy.get(), SUN_PREC_LEFT, 0, sunctx.get()))
+    ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
 
     def resfn(t, yy, yp, rr, _):
         return ode_problem.res(t, yy, yp, rr)
@@ -45,32 +45,32 @@ def test_idas_ivp(sunctx):
     def psolve(t, yy, yp, rr, r, z, cj, delta, _):
         return ode_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
 
-    status = IDAInit(solver.get(), resfn, 0.0, yy.get(), yp.get())
+    status = IDAInit(solver.get(), resfn, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
     status = IDASStolerances(solver.get(), 1e-4, 1e-4)
     assert status == IDA_SUCCESS
 
-    status = IDASetLinearSolver(solver.get(), ls.get(), None)
+    status = IDASetLinearSolver(solver.get(), ls, None)
     assert status == IDA_SUCCESS
 
     status = IDASetPreconditioner(solver.get(), None, psolve)
     assert status == IDA_SUCCESS
 
     tout = ode_problem.TF
-    status, tret = IDASolve(solver.get(), tout, yy.get(), yp.get(), IDA_NORMAL)
+    status, tret = IDASolve(solver.get(), tout, yy, yp, IDA_NORMAL)
     assert status == IDA_SUCCESS
 
     status, num_steps = IDAGetNumSteps(solver.get())
     assert status == IDA_SUCCESS
     print("Number of steps: ", num_steps)
 
-    sol_yy = NVectorView.Create(N_VClone(yy.get()))
-    sol_yp = NVectorView.Create(N_VClone(yp.get()))
+    sol_yy = N_VClone(yy)
+    sol_yp = N_VClone(yp)
 
-    ode_problem.solution(sol_yy.get(), sol_yp.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol_yy.get()), N_VGetArrayPointer(yy.get()), rtol=1e-2)
-    assert np.allclose(N_VGetArrayPointer(sol_yp.get()), N_VGetArrayPointer(yp.get()), rtol=1e-2)
+    ode_problem.solution(sol_yy, sol_yp, tret)
+    assert np.allclose(N_VGetArrayPointer(sol_yy), N_VGetArrayPointer(yy), rtol=1e-2)
+    assert np.allclose(N_VGetArrayPointer(sol_yp), N_VGetArrayPointer(yp), rtol=1e-2)
 
 
 def test_idas_fsa(sunctx):

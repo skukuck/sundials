@@ -32,17 +32,8 @@ struct ARKodeDeleter
   void operator()(void* v) { ARKodeFree(&v); }
 };
 
-class ARKodeView : public ClassView<void*, ARKodeDeleter>
-{
-public:
-  using ClassView<void*, ARKodeDeleter>::ClassView;
 
-  template<typename... Args>
-  static ARKodeView Create(Args&&... args)
-  {
-    return ARKodeView(std::forward<Args>(args)...);
-  }
-};
+using ARKodeView = ClassView<void*, ARKodeDeleter>;
 
 struct ARKodeButcherTableDeleter
 {

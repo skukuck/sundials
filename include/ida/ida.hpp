@@ -32,20 +32,7 @@ struct IDADeleter
   void operator()(void* v) { IDAFree(&v); }
 };
 
-class IDAView : public ClassView<void*, IDADeleter>
-{
-public:
-  using ClassView<void*, IDADeleter>::ClassView;
-
-  template<typename... Args>
-  static IDAView Create(Args&&... args);
-};
-
-template<typename... Args>
-IDAView IDAView::Create(Args&&... args)
-{
-  return IDAView(std::forward<Args>(args)...);
-}
+using IDAView = ClassView<void*, IDADeleter>;
 
 } // namespace experimental
 } // namespace sundials

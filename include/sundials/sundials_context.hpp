@@ -34,23 +34,9 @@ struct SUNContextDeleter
 {
   void operator()(SUNContext sunctx)
   {
-    fprintf(stderr, ">>>> deleter sunctx:%p\n", sunctx);
     SUNContext_Free(&sunctx);
   }
 };
-
-struct SUNContextCreator
-{
-  SUNContext operator()() { SUNContext sunctx; SUNContext_Create(SUN_COMM_NULL, &sunctx); return sunctx; }
-};
-
-
-template<typename... Args>
-std::shared_ptr<SUNContext_> SUNContextCreate(Args&&... args)
-{
-  return sundials::experimental::our_make_shared<SUNContext_, SUNContextCreator, SUNContextDeleter>(std::forward<Args>(args)...);
-}
-
 
 class SUNContextView
   : public sundials::experimental::ClassView<SUNContext, SUNContextDeleter>
@@ -63,12 +49,6 @@ public:
     SUNContext sunctx = nullptr;
     SUNContext_Create(comm, &sunctx);
     object_.reset(sunctx);
-  }
-
-  template<typename... Args>
-  static SUNContextView Create(Args&&... args)
-  {
-    return SUNContextView(std::forward<Args>(args)...);
   }
 };
 

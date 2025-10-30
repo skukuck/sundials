@@ -72,10 +72,10 @@ void bind_arkode_arkstep(nb::module_& m)
       cb_fns->arkstep_fe = nb::cast(fe);
       cb_fns->arkstep_fi = nb::cast(fi);
 
-      return ark_mem;
+      return std::make_shared<ARKodeView>(ark_mem);
     }, // .none() must be added to functions that accept nullptr as a valid argument
     nb::arg("fe").none(), nb::arg("fi").none(), nb::arg("t0"), nb::arg("y0"),
-    nb::arg("sunctx"));
+    nb::arg("sunctx"), nb::keep_alive<0, 5>());
 
   m.def(
     "ARKStepCreateAdjointStepper",
@@ -113,22 +113,6 @@ void bind_arkode_arkstep(nb::module_& m)
     },
     nb::arg("arkode_mem"), nb::arg("adj_fe").none(), nb::arg("adj_fi").none(),
     nb::arg("tf"), nb::arg("sf"), nb::arg("sunctx"));
-
-  m.def(
-    "ARKStepGetCurrentButcherTables",
-    [](void* ark_mem)
-    {
-      ARKodeButcherTable fe = nullptr;
-      ARKodeButcherTable fi = nullptr;
-
-      int status = ARKStepGetCurrentButcherTables(ark_mem, &fi, &fe);
-
-      return std::make_tuple(status, fi, fe);
-    },
-    "WARNING: this function returns ARKodeButcherTable references, DO NOT WRAP "
-    "THEM IN A `ARKodeButcherTableView`. Doing so will result in a double free "
-    "or worse.",
-    nb::rv_policy::reference);
 }
 
 } // namespace sundials4py

@@ -98,9 +98,7 @@ def main():
     #
     # Create the ARKODE stepper that will be used for the forward evolution.
     #
-    arkode = ark.ARKodeView.Create(
-        ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
-    )
+    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
     status = ark.ARKodeSetOrder(arkode.get(), 4)
     assert status == ark.ARK_SUCCESS
     status = ark.ARKodeSStolerances(arkode.get(), reltol, abstol)

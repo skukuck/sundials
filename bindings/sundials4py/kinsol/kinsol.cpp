@@ -76,9 +76,14 @@ void bind_kinsol(nb::module_& m)
 #include "kinsol_generated.hpp"
 
   nb::class_<KINView>(m, "KINView")
-    .def_static("Create", &KINView::Create<void*>)
     .def("get", nb::overload_cast<>(&KINView::get, nb::const_),
          nb::rv_policy::reference);
+
+  m.def(
+    "KINCreate",
+    [](SUNContext sunctx)
+    { return std::make_shared<KINView>(KINCreate(sunctx)); },
+    nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
   m.def("KINInit",
         [](void* kin_mem, std::function<std::remove_pointer_t<KINSysFn>> sysfn,

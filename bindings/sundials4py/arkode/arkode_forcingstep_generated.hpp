@@ -4,10 +4,6 @@
 // #endif
 //
 
-m.def("ForcingStepCreate", ForcingStepCreate, nb::arg("stepper1"),
-      nb::arg("stepper2"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
-      nb::rv_policy::reference);
-
 m.def("ForcingStepReInit", ForcingStepReInit, nb::arg("arkode_mem"),
       nb::arg("stepper1"), nb::arg("stepper2"), nb::arg("t0"), nb::arg("y0"));
 

@@ -73,9 +73,6 @@ m.attr("CV_REIFWD_FAIL")         = -105;
 m.attr("CV_FWD_FAIL")            = -106;
 m.attr("CV_GETY_BADT")           = -107;
 
-m.def("CVodeCreate", CVodeCreate, nb::arg("lmm"), nb::arg("sunctx"),
-      nb::rv_policy::reference);
-
 m.def("CVodeReInit", CVodeReInit, nb::arg("cvode_mem"), nb::arg("t0"),
       nb::arg("y0"));
 

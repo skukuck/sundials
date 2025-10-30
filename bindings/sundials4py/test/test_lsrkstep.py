@@ -28,9 +28,9 @@ from problems import AnalyticODE
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
 )
 def test_lsrkstep(sunctx):
-    y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
+    y = N_VNew_Serial(1, sunctx)
     ode_problem = AnalyticODE()
-    ode_problem.set_init_cond(y.get())
+    ode_problem.set_init_cond(y)
 
     def rhs(t, y, ydot, _):
         return ode_problem.f(t, y, ydot)
@@ -38,7 +38,7 @@ def test_lsrkstep(sunctx):
     def dom_eig(t, yvec, fnvec, lambdaR, lambdaI, _, tempv1, tempv2, tempv3):
         return ode_problem.dom_eig(t, yvec, fnvec, lambdaR, lambdaI, tempv1, tempv2, tempv3)
 
-    lsrk = ARKodeView.Create(LSRKStepCreateSTS(rhs, 0, y.get(), sunctx.get()))
+    lsrk = LSRKStepCreateSTS(rhs, 0, y, sunctx)
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
     assert status == 0
 
@@ -48,9 +48,9 @@ def test_lsrkstep(sunctx):
     status = ARKodeSetMaxNumSteps(lsrk.get(), 100000)
 
     tout = 10.0
-    status, tret = ARKodeEvolve(lsrk.get(), tout, y.get(), ARK_NORMAL)
+    status, tret = ARKodeEvolve(lsrk.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
-    sol = NVectorView.Create(N_VClone(y.get()))
-    ode_problem.solution(y.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-1)
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-1)

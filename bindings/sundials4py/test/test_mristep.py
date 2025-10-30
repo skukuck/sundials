@@ -36,31 +36,29 @@ def test_multirate(sunctx):
     def ffast(t, y, ydot, _):
         return ode_problem.f_nonlinear(t, y, ydot)
 
-    yview = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
-    y0view = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
+    y = N_VNew_Serial(1, sunctx)
+    y0 = N_VClone(y)
 
-    ode_problem.set_init_cond(yview.get())
-    ode_problem.set_init_cond(y0view.get())
+    ode_problem.set_init_cond(y)
+    ode_problem.set_init_cond(y0)
 
     # create fast integrator
-    inner_ark = ARKodeView.Create(ERKStepCreate(ffast, t0, yview.get(), sunctx.get()))
+    inner_ark = ERKStepCreate(ffast, t0, y, sunctx)
     status = ARKodeSetFixedStep(inner_ark.get(), 5e-3)
     assert status == ARK_SUCCESS
 
-    _, inner_stepper = ARKodeCreateMRIStepInnerStepper(inner_ark.get())
-    inner_stepper = MRIStepInnerStepperView.Create(inner_stepper)
+    status, inner_stepper = ARKodeCreateMRIStepInnerStepper(inner_ark.get())
+    assert status == ARK_SUCCESS
 
     # create slow integrator
-    ark = ARKodeView.Create(
-        MRIStepCreate(fslow, None, t0, yview.get(), inner_stepper.get(), sunctx.get())
-    )
+    ark = MRIStepCreate(fslow, None, t0, y, inner_stepper, sunctx)
     status = ARKodeSetFixedStep(ark.get(), 1e-3)
     assert status == ARK_SUCCESS
 
     tout = tf
-    status, tret = ARKodeEvolve(ark.get(), tout, yview.get(), ARK_NORMAL)
+    status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
-    sol = NVectorView.Create(N_VClone(yview.get()))
-    ode_problem.solution(yview.get(), sol.get(), tret)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(yview.get()), atol=1e-2)
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

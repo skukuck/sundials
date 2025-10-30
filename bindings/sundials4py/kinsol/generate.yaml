@@ -41,6 +41,8 @@ modules:
       "SetLinearSolver":
       - "A"
     fn_exclude_by_name__regex:
+    # We do custom handling of Create so we can wrap the void* in a KINView
+    - "^KINCreate$"
     # we use user_data for sneaking in python contexts, users can instead capture their states in a class
     - "^KINGetUserData$"
     # generator cannot handle setting of function pointers, so we do something custom

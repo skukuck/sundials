@@ -15,8 +15,6 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <optional>
-
 #include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
@@ -114,9 +112,14 @@ void bind_cvodes(nb::module_& m)
 #include "cvodes_generated.hpp"
 
   nb::class_<CVodeView>(m, "CVodeView")
-    .def_static("Create", &CVodeView::Create<void*>)
     .def("get", nb::overload_cast<>(&CVodeView::get, nb::const_),
          nb::rv_policy::reference);
+
+  m.def(
+    "CVodeCreate",
+    [](int lmm, SUNContext sunctx)
+    { return std::make_shared<CVodeView>(CVodeCreate(lmm, sunctx)); },
+    nb::arg("lmm"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
   m.def("CVodeInit",
         [](void* cv_mem, std::function<std::remove_pointer_t<CVRhsFn>> rhs,

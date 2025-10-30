@@ -63,10 +63,10 @@ void bind_arkode_sprkstep(nb::module_& m)
       }
       cb_fns->sprkstep_f1 = nb::cast(f1);
       cb_fns->sprkstep_f2 = nb::cast(f2);
-      return ark_mem;
+      return std::make_shared<ARKodeView>(ark_mem);
     },
     nb::arg("f1"), nb::arg("f2"), nb::arg("t0"), nb::arg("y0"),
-    nb::arg("sunctx"));
+    nb::arg("sunctx"), nb::keep_alive<0, 5>());
 }
 
 } // namespace sundials4py

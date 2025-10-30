@@ -48,28 +48,20 @@ class ClassView : public sundials::ConvertibleTo<T>
 public:
   ClassView() : object_(nullptr, Deleter{})
   {
-    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
-            this, object_.get());
   }
 
   ClassView(T& object) : object_(std::forward<T>(object), Deleter{})
   {
-    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
-            this, object_.get());
   }
 
   ClassView(T&& object) : object_(std::forward<T>(object), Deleter{})
   {
-    fprintf(stderr, ">>>> Creating ClassView:%p holding object.get()=%p\n",
-            this, object_.get());
   }
 
   ClassView(const ClassView&) = delete;
 
   ClassView(ClassView&& other)
   {
-    fprintf(stderr, ">>>> Move creating ClassView:%p holding object.get()=%p\n",
-            this, other.object_.get());
     this->object_ = std::move(other.object_);
   };
 
@@ -79,8 +71,6 @@ public:
 
   ~ClassView()
   {
-    fprintf(stderr, ">>>> deleting ClassView:%p holding object.get()=%p with use count = %lu\n",
-            this, object_.get(), object_.use_count());
     object_.reset();
   };
 

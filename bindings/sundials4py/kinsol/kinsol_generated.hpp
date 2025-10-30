@@ -38,8 +38,6 @@ m.attr("KIN_LINESEARCH")          = 1;
 m.attr("KIN_PICARD")              = 2;
 m.attr("KIN_FP")                  = 3;
 
-m.def("KINCreate", KINCreate, nb::arg("sunctx"), nb::rv_policy::reference);
-
 m.def("KINSol", KINSol, nb::arg("kinmem"), nb::arg("uu"), nb::arg("strategy"),
       nb::arg("u_scale"), nb::arg("f_scale"));
 

@@ -38,7 +38,7 @@ def test_sprkstep(sunctx):
 
     ode_problem.set_init_cond(y)
 
-    sprk = ARKodeView.Create(SPRKStepCreate(f1, f2, 0, y, sunctx))
+    sprk = SPRKStepCreate(f1, f2, 0, y, sunctx)
 
     status = ARKodeSetFixedStep(sprk.get(), dt)
     assert status == ARK_SUCCESS

@@ -32,20 +32,7 @@ struct KINDeleter
   void operator()(void* v) { KINFree(&v); }
 };
 
-class KINView : public ClassView<void*, KINDeleter>
-{
-public:
-  using ClassView<void*, KINDeleter>::ClassView;
-
-  template<typename... Args>
-  static KINView Create(Args&&... args);
-};
-
-template<typename... Args>
-KINView KINView::Create(Args&&... args)
-{
-  return KINView(std::forward<Args>(args)...);
-}
+using KINView = ClassView<void*, KINDeleter>;
 
 } // namespace experimental
 } // namespace sundials

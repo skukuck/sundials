@@ -58,9 +58,10 @@ void bind_arkode_lsrkstep(nb::module_& m)
           "Failed to set user data ownership in LSRKStep memory");
       }
       cb_fns->lsrkstep_f = nb::cast(rhs);
-      return ark_mem;
+      return std::make_shared<ARKodeView>(ark_mem);
     },
-    nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"));
+    nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
+    nb::keep_alive<0, 4>());
 
   m.def(
     "LSRKStepCreateSSP",
@@ -88,9 +89,10 @@ void bind_arkode_lsrkstep(nb::module_& m)
           "Failed to set user data ownership in LSRKStep memory");
       }
       cb_fns->lsrkstep_f = nb::cast(rhs);
-      return ark_mem;
+      return std::make_shared<ARKodeView>(ark_mem);
     },
-    nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"));
+    nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
+    nb::keep_alive<0, 4>());
 
   m.def("LSRKStepSetDomEigFn",
         [](void* ark_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)

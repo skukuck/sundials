@@ -114,9 +114,14 @@ void bind_idas(nb::module_& m)
 #include "idas_generated.hpp"
 
   nb::class_<IDAView>(m, "IDAView")
-    .def_static("Create", &IDAView::Create<void*>)
     .def("get", nb::overload_cast<>(&IDAView::get, nb::const_),
          nb::rv_policy::reference);
+
+  m.def(
+    "IDACreate",
+    [](SUNContext sunctx)
+    { return std::make_shared<IDAView>(IDACreate(sunctx)); },
+    nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
   m.def("IDAInit",
         [](void* ida_mem, std::function<std::remove_pointer_t<IDAResFn>> res,

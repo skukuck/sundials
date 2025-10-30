@@ -92,7 +92,6 @@ void bind_arkode(nb::module_& m)
   /////////////////////////////////////////////////////////////////////////////
 
   nb::class_<ARKodeView>(m, "ARKodeView")
-    .def_static("Create", &ARKodeView::Create<void*>)
     .def("get", nb::overload_cast<>(&ARKodeView::get, nb::const_),
          nb::rv_policy::reference);
 

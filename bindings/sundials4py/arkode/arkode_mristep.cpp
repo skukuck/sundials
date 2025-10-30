@@ -15,6 +15,7 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
+#include "arkode/arkode.h"
 #include "sundials4py.hpp"
 
 #include <arkode/arkode.hpp>
@@ -60,7 +61,9 @@ void bind_arkode_mristep(nb::module_& m)
       auto cb_fns     = mristepinnerstepper_user_supplied_fn_table_alloc();
       stepper->python = static_cast<void*>(cb_fns);
 
-      return std::make_tuple(status, stepper);
+      return std::make_tuple(status,
+                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
+                                             MRIStepInnerStepperDeleter>(stepper));
     },
     nb::rv_policy::reference);
 
@@ -73,7 +76,10 @@ void bind_arkode_mristep(nb::module_& m)
       int status = MRIStepInnerStepper_CreateFromSUNStepper(stepper,
                                                             &inner_stepper);
 
-      return std::make_tuple(status, stepper);
+      return std::make_tuple(status,
+                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
+                                             MRIStepInnerStepperDeleter>(
+                               inner_stepper));
     },
     nb::rv_policy::reference);
 
@@ -85,7 +91,9 @@ void bind_arkode_mristep(nb::module_& m)
 
       int status = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
 
-      return std::make_tuple(status, stepper);
+      return std::make_tuple(status,
+                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
+                                             MRIStepInnerStepperDeleter>(stepper));
     },
     nb::rv_policy::reference);
 
@@ -129,25 +137,10 @@ void bind_arkode_mristep(nb::module_& m)
       cb_fns->mristep_fse = nb::cast(fse);
       cb_fns->mristep_fsi = nb::cast(fsi);
 
-      return ark_mem;
+      return std::make_shared<ARKodeView>(ark_mem);
     },
     nb::arg("fse").none(), nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"),
-    nb::arg("inner_stepper"), nb::arg("sunctx"));
-
-  m.def(
-    "MRIStepGetCurrentCoupling",
-    [](void* ark_mem)
-    {
-      MRIStepCoupling C = nullptr;
-
-      int status = MRIStepGetCurrentCoupling(ark_mem, &C);
-
-      return std::make_tuple(status, C);
-    },
-    "WARNING: this function returns a MRIStepCoupling reference, DO NOT WRAP "
-    "IT IN A `MRIStepCouplingView`. Doing so will result in a double free "
-    "or worse.",
-    nb::rv_policy::reference);
+    nb::arg("inner_stepper"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
 }
 
 } // namespace sundials4py

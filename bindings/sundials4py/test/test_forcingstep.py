@@ -35,34 +35,31 @@ def test_forcingstep(sunctx):
     def f_nonlinear(t, y, ydot, _):
         return ode_problem.f_nonlinear(t, y, ydot)
 
-    y = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
-    y0 = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
-    ode_problem.set_init_cond(y.get())
-    ode_problem.set_init_cond(y0.get())
+    y = N_VNew_Serial(1, sunctx)
+    y0 = N_VClone(y)
+    ode_problem.set_init_cond(y)
+    ode_problem.set_init_cond(y0)
 
-    linear_ark = ARKodeView.Create(ERKStepCreate(f_linear, t0, y.get(), sunctx.get()))
+    linear_ark = ERKStepCreate(f_linear, t0, y, sunctx)
     status = ARKodeSetFixedStep(linear_ark.get(), 5e-3)
     assert status == 0
 
-    nonlinear_ark = ARKodeView.Create(ARKStepCreate(f_nonlinear, None, t0, y.get(), sunctx.get()))
+    nonlinear_ark = ARKStepCreate(f_nonlinear, None, t0, y, sunctx)
     status = ARKodeSetFixedStep(nonlinear_ark.get(), 1e-3)
     assert status == 0
 
     status, linear_stepper = ARKodeCreateSUNStepper(linear_ark.get())
-    linear_stepper = SUNStepperView.Create(linear_stepper)
     status, nonlinear_stepper = ARKodeCreateSUNStepper(nonlinear_ark.get())
-    nonlinear_stepper = SUNStepperView.Create(nonlinear_stepper)
 
-    ark = ARKodeView.Create(
-        ForcingStepCreate(linear_stepper.get(), nonlinear_stepper.get(), t0, y.get(), sunctx.get())
-    )
+    ark = ForcingStepCreate(linear_stepper, nonlinear_stepper, t0, y, sunctx)
+
     status = ARKodeSetFixedStep(ark.get(), 1e-2)
     assert status == 0
 
     tout = tf
-    status, tret = ARKodeEvolve(ark.get(), tout, y.get(), ARK_NORMAL)
+    status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == 0
 
-    sol = NVectorView.Create(N_VClone(y.get()))
-    ode_problem.solution(y0.get(), sol.get(), tf)
-    assert np.allclose(N_VGetArrayPointer(sol.get()), N_VGetArrayPointer(y.get()), atol=1e-2)
+    sol = N_VClone(y)
+    ode_problem.solution(y0, sol, tf)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

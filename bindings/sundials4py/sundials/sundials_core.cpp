@@ -17,16 +17,13 @@
  * This file defines the sundials4py.core module. 
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
 #include <sundials/sundials_futils.h>
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

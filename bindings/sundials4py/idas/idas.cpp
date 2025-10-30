@@ -15,12 +15,7 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/optional.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
 
@@ -31,9 +26,9 @@
 #include "idas/idas_impl.h"
 
 #include "idas_usersupplied.hpp"
-#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 using namespace sundials::experimental;
 

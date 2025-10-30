@@ -20,13 +20,12 @@
  * code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_adaptcontroller.hpp>
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 using namespace sundials::experimental;
 
 namespace sundials4py {

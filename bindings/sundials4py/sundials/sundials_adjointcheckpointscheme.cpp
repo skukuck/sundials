@@ -20,17 +20,15 @@
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_adjointcheckpointscheme.hpp>
+#include <sundials/sundials_nvector.hpp>
 
 #include "sundials_adjointcheckpointscheme_impl.h"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 using namespace sundials::experimental;
 

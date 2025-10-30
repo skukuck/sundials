@@ -15,12 +15,13 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
 #include <sunlinsol/sunlinsol_spgmr.h>
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

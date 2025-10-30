@@ -15,20 +15,17 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <arkode/arkode.hpp>
-#include <arkode/arkode_arkstep.h>
+#include <arkode/arkode_arkstep.hpp>
 #include <sundials/sundials_core.hpp>
 
 #include "arkode_usersupplied.hpp"
-
 #include "sundials_adjointstepper_impl.h"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

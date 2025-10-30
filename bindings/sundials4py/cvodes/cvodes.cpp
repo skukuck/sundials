@@ -17,12 +17,7 @@
 
 #include <optional>
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/optional.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
 
@@ -35,8 +30,6 @@
 #include "cvodes_usersupplied.hpp"
 
 #include "sundials_adjointcheckpointscheme_impl.h"
-
-#include "sundials4py_types.hpp"
 
 namespace sundials4py {
 using namespace sundials::experimental;

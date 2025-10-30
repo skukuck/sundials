@@ -1,15 +1,12 @@
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <nvector/nvector_serial.h>
 #include <sundials/sundials_nvector.hpp>
 
 #include "sundials/sundials_classview.hpp"
-#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 using namespace sundials::experimental;
 
 namespace sundials4py {

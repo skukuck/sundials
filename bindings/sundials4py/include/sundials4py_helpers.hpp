@@ -18,8 +18,7 @@
 #ifndef _SUNDIALS4PY_HELPERS_HPP
 #define _SUNDIALS4PY_HELPERS_HPP
 
-#include <nanobind/nanobind.h>
-#include <nanobind/stl/function.h>
+#include "sundials4py.hpp"
 
 namespace nb = nanobind;
 
@@ -95,19 +94,18 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
                     args_tuple);
 }
 
-
-/**
- * @brief Helper struct to manage reference lifetimes for function return values in Python bindings.
- *
- * Enables the nb::keep_alive<Nurse, Patient> paradigm when the function returns a sequence where an
- * element of the sequence (e.g., a tuple) is a Nurse.
- *
- * @tparam IN Index of the return value in the returned sequence whose lifetime should be managed.
- * @tparam IP Index of the input argument whose lifetime the return value should be tied to.
- *
- * See https://nanobind.readthedocs.io/en/latest/api_core.html#_CPPv4I0EN8nanobind11call_policyE. 
- */
-template<size_t IN, size_t IP>
+///
+/// \brief Helper struct to manage reference lifetimes for function return values in Python bindings.
+///
+/// Enables the nb::keep_alive<Nurse, Patient> paradigm when the function returns a sequence where an
+/// element of the sequence (e.g., a tuple) is a Nurse.
+///
+/// \tparam IN Index of the return value in the returned sequence whose lifetime should be managed.
+/// \tparam IP Index of the input argument whose lifetime the return value should be tied to.
+//
+/// See https://nanobind.readthedocs.io/en/latest/api_core.html#_CPPv4I0EN8nanobind11call_policyE.
+///
+template<size_t IP, size_t... IN>
 struct returns_references_to
 {
   static void precall(PyObject**, size_t, nb::detail::cleanup_list*) {}
@@ -119,13 +117,14 @@ struct returns_references_to
     static_assert(IP > 0 && IP <= N,
                   "IP in returns_references_to<IP> must be in the "
                   "range [1, number of C++ function arguments]");
-   
+
     if (!nb::isinstance<nb::sequence>(ret))
     {
       throw std::runtime_error("return value should be a sequence");
     }
-    
-    nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]);
+
+    // Directly apply keep_alive for each IN using a fold expression
+    (nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]), ...);
   }
 };
 

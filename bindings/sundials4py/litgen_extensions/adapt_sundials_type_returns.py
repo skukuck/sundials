@@ -22,11 +22,7 @@ def adapt_sundials_types_returns_to_shared_ptr(
     """
     options = adapted_function.options
     sundials_pointer_types = options.sundials_pointer_types
-    function_name = adapted_function.cpp_adapted_function.function_name
     return_type = adapted_function.cpp_adapted_function.return_type
-
-    print(f"processing {function_name}")
-    print(f"    return type: {return_type}")
 
     needs_adapt = False
     is_tuple = False
@@ -55,17 +51,20 @@ def adapt_sundials_types_returns_to_shared_ptr(
         # The easiest way to do this without modifying litgen is to inject the
         # keep_alive statement as a comment.
 
-        for idx_nurse, arg in enumerate(tuple_args_match.group(1).split(",")):
-            if arg.strip() in sundials_pointer_types:
-                break
+        idx_nurse_list = [
+            idx
+            for idx, arg in enumerate(tuple_args_match.group(1).split(","))
+            if arg.strip() in sundials_pointer_types
+        ]
 
         for idx, param in enumerate(adapted_function.adapted_parameters()):
             if "SUNContext" in param.cpp_element().decl.cpp_type.typenames:
+                idx_nurse_args = ", ".join(str(idx_nurse) for idx_nurse in idx_nurse_list)
                 adapted_function.cpp_element().cpp_element_comments.add_eol_comment(
-                    f"sundials4py::keep_alive_tuple<{idx_nurse}, {idx+1}>()"
+                    f"nb::call_policy<sundials4py::returns_references_to<{idx+1}, {idx_nurse_args}>>()"
                 )
 
-        # Wrap return type in shared_ptr
+        # Wrap return type in shared_ptr for all relevant tuple elements
         lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
         old_function_params: list[AdaptedParameter] = adapted_function.adapted_parameters()
         new_function_params: list[CppParameter] = old_function_params
@@ -75,22 +74,33 @@ def adapt_sundials_types_returns_to_shared_ptr(
         new_return_type.specifiers = []
 
         if len(new_return_type.typenames) > 1:
-            raise RuntimeError("new_return_type.typenames has length > 1, this is not yet supported")
-        
+            raise RuntimeError(
+                "new_return_type.typenames has length > 1, this is not yet supported"
+            )
+
         tuple_args = [arg.strip() for arg in tuple_args_match.group(1).split(",")]
         old_tuple_args = copy.deepcopy(tuple_args)
-        tuple_args[idx_nurse] = f"std::shared_ptr<std::remove_pointer_t<{tuple_args[idx_nurse]}>>"
+        # Replace all relevant tuple elements with shared_ptr
+        for idx_nurse in idx_nurse_list:
+            tuple_args[idx_nurse] = (
+                f"std::shared_ptr<std::remove_pointer_t<{old_tuple_args[idx_nurse]}>>"
+            )
         tuple_type = f"std::tuple<{', '.join(tuple_args)}>"
         new_return_type.typenames = [tuple_type]
 
         lambda_adapter.new_function_infos.return_type = new_return_type
 
-        lambda_output_code = "return std::tuple_cat("
-        for i in range(idx_nurse):
-            lambda_output_code += f"std::get<{i}>(lambda_result), "
-        lambda_output_code += f"our_make_shared<std::remove_pointer_t<{str(old_tuple_args[idx_nurse])}>, {str(old_tuple_args[idx_nurse])}Deleter>(std::get<{idx_nurse}>(lambda_result))"
-        for i in range(idx_nurse+1, len(tuple_args)):
-            lambda_output_code += f", std::get<{i}>(lambda_result)"
+        # Build the return statement, wrapping only the relevant tuple elements
+        lambda_output_code = "return std::make_tuple("
+        tuple_parts = []
+        for i, arg in enumerate(old_tuple_args):
+            if i in idx_nurse_list:
+                tuple_parts.append(
+                    f"our_make_shared<std::remove_pointer_t<{arg}>, {arg}Deleter>(std::get<{i}>(lambda_result))"
+                )
+            else:
+                tuple_parts.append(f"std::get<{i}>(lambda_result)")
+        lambda_output_code += ", ".join(tuple_parts)
         lambda_output_code += ");"
 
         lambda_adapter.lambda_output_code += (
@@ -106,7 +116,6 @@ def adapt_sundials_types_returns_to_shared_ptr(
             adapted_function.cpp_adapted_function.function_name
             + f"_adapt_return_type_to_shared_ptr"
         )
-        # return None
     else:
         # Ensure SUNContext is kept alive while this object is alive
         # The easiest way to do this without modifying litgen is to inject the
@@ -123,7 +132,7 @@ def adapt_sundials_types_returns_to_shared_ptr(
         old_function_params: list[AdaptedParameter] = adapted_function.adapted_parameters()
         new_function_params: list[CppParameter] = old_function_params
         old_return_type = adapted_function.cpp_adapted_function.return_type
-        
+
         new_return_type = copy.deepcopy(old_return_type)
         new_return_type.modifiers = []
         new_return_type.specifiers = []

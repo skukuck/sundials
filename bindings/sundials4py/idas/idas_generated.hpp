@@ -395,7 +395,8 @@ m.def(
 
 m.def(
   "IDAGetCurrentY",
-  [](void* ida_mem) -> std::tuple<int, N_Vector>
+  [](void* ida_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
   {
     auto IDAGetCurrentY_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, N_Vector>
@@ -405,14 +406,27 @@ m.def(
       int r = IDAGetCurrentY(ida_mem, &ycur_adapt_modifiable);
       return std::make_tuple(r, ycur_adapt_modifiable);
     };
+    auto IDAGetCurrentY_adapt_return_type_to_shared_ptr =
+      [&IDAGetCurrentY_adapt_modifiable_immutable_to_return](void* ida_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+    {
+      auto lambda_result =
+        IDAGetCurrentY_adapt_modifiable_immutable_to_return(ida_mem);
 
-    return IDAGetCurrentY_adapt_modifiable_immutable_to_return(ida_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<N_Vector>,
+                                             N_VectorDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return IDAGetCurrentY_adapt_return_type_to_shared_ptr(ida_mem);
   },
   nb::arg("ida_mem"), nb::rv_policy::reference);
 
 m.def(
   "IDAGetCurrentYp",
-  [](void* ida_mem) -> std::tuple<int, N_Vector>
+  [](void* ida_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
   {
     auto IDAGetCurrentYp_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, N_Vector>
@@ -422,8 +436,20 @@ m.def(
       int r = IDAGetCurrentYp(ida_mem, &ypcur_adapt_modifiable);
       return std::make_tuple(r, ypcur_adapt_modifiable);
     };
+    auto IDAGetCurrentYp_adapt_return_type_to_shared_ptr =
+      [&IDAGetCurrentYp_adapt_modifiable_immutable_to_return](void* ida_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+    {
+      auto lambda_result =
+        IDAGetCurrentYp_adapt_modifiable_immutable_to_return(ida_mem);
 
-    return IDAGetCurrentYp_adapt_modifiable_immutable_to_return(ida_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<N_Vector>,
+                                             N_VectorDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return IDAGetCurrentYp_adapt_return_type_to_shared_ptr(ida_mem);
   },
   nb::arg("ida_mem"), nb::rv_policy::reference);
 
@@ -1624,7 +1650,8 @@ m.def("IDASetIncrementFactor", IDASetIncrementFactor, nb::arg("ida_mem"),
 
 m.def(
   "IDAGetJac",
-  [](void* ida_mem) -> std::tuple<int, SUNMatrix>
+  [](void* ida_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
     auto IDAGetJac_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, SUNMatrix>
@@ -1634,8 +1661,19 @@ m.def(
       int r = IDAGetJac(ida_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
+    auto IDAGetJac_adapt_return_type_to_shared_ptr =
+      [&IDAGetJac_adapt_modifiable_immutable_to_return](void* ida_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result = IDAGetJac_adapt_modifiable_immutable_to_return(ida_mem);
 
-    return IDAGetJac_adapt_modifiable_immutable_to_return(ida_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return IDAGetJac_adapt_return_type_to_shared_ptr(ida_mem);
   },
   nb::arg("ida_mem"), nb::rv_policy::reference);
 

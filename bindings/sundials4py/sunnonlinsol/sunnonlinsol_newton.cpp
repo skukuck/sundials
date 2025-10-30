@@ -15,10 +15,12 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
+#include <sundials/sundials_nonlinearsolver.hpp>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
+#include "sundials4py.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

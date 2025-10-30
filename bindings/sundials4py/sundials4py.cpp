@@ -18,7 +18,7 @@
  * of the submodule pieces.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
+#include "sundials4py.hpp"
 
 namespace nb = nanobind;
 

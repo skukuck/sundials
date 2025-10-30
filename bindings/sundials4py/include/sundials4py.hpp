@@ -1,6 +1,6 @@
-/*------------------------------------------------------------------------------
+/* -----------------------------------------------------------------
  * Programmer(s): Cody J. Balos @ LLNL
- *------------------------------------------------------------------------------
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2025, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -13,22 +13,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
- *----------------------------------------------------------------------------*/
-
-#ifndef _SUNDIALS4PY_TYPES_HPP
-#define _SUNDIALS4PY_TYPES_HPP
+ * -----------------------------------------------------------------*/
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/function.h>
+#include <nanobind/stl/optional.h>
+#include <nanobind/stl/shared_ptr.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/tuple.h>
+#include <nanobind/stl/vector.h>
 
-namespace nb = nanobind;
-
-namespace sundials4py {
-
-using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
-using CpuArray1d =
-  nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig, nb::device::cpu>;
-
-} // namespace sundials4py
-
-#endif
+#include "sundials4py_helpers.hpp"
+#include "sundials4py_types.hpp"

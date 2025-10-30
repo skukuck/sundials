@@ -15,13 +15,11 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
-#include <sundials/sundials_core.hpp>
-#include <sundials/sundials_adjointcheckpointscheme.hpp>
 #include <sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h>
+#include <sundials/sundials_adjointcheckpointscheme.hpp>
+#include <sundials/sundials_core.hpp>
 
 #include "sundials/sundials_adjointcheckpointscheme.h"
 #include "sundials_adjointcheckpointscheme_impl.h"
@@ -30,29 +28,13 @@
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 
 void bind_sunadjointcheckpointscheme_fixed(nb::module_& m)
 {
-
 #include "sunadjointcheckpointscheme_fixed_generated.hpp"
-
-  // m.def(
-  //   "SUNAdjointCheckpointScheme_Create_Fixed",
-  //   [](SUNDataIOMode io_mode, SUNMemoryHelper mem_helper, suncountertype interval,
-  //      suncountertype estimate, sunbooleantype keep, SUNContext sunctx)
-  //   {
-  //     SUNAdjointCheckpointScheme check_scheme = nullptr;
-
-  //     int status = SUNAdjointCheckpointScheme_Create_Fixed(io_mode, mem_helper,
-  //                                                          interval, estimate,
-  //                                                          keep, sunctx,
-  //                                                          &check_scheme);
-
-  //     return std::make_tuple(status, our_make_shared<std::remove_pointer_t<SUNAdjointCheckpointScheme>, SUNAdjointCheckpointSchemeDeleter>(check_scheme));
-  //   },
-  //   sundials4py::keep_alive_tuple<1, 6>());
 }
 
 } // namespace sundials4py

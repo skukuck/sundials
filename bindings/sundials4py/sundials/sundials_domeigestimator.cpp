@@ -23,16 +23,14 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_domeigestimator.hpp>
 
 #include "sundials_domeigestimator_usersupplied.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 using namespace sundials::experimental;
 
 namespace sundials4py {

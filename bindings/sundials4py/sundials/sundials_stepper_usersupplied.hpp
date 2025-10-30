@@ -18,15 +18,15 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
+#include "sundials4py.hpp"
+
 #include <sundials/sundials_stepper.hpp>
 
 // If helpers are available, include them
 #include "sundials4py_helpers.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 using namespace sundials::experimental;
 
 struct SUNStepperFunctionTable

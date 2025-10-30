@@ -15,22 +15,21 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
+#ifndef _SUNDIALS4PY_TYPES_HPP
+#define _SUNDIALS4PY_TYPES_HPP
+
+#include <sundials/sundials_types.h>
+
 #include "sundials4py.hpp"
 
-#include <arkode/arkode.hpp>
-#include <arkode/arkode_forcingstep.h>
-#include <sundials/sundials_core.hpp>
-
-#include "arkode_mristep_impl.h"
-
 namespace nb = nanobind;
-using namespace sundials::experimental;
 
 namespace sundials4py {
 
-void bind_arkode_forcingstep(nb::module_& m)
-{
-#include "arkode_forcingstep_generated.hpp"
-}
+using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
+using CpuArray1d =
+  nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig, nb::device::cpu>;
 
 } // namespace sundials4py
+
+#endif

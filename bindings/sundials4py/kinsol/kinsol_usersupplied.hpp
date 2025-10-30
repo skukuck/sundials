@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <nanobind/nanobind.h>
+#include "sundials4py.hpp"
 
 #include <kinsol/kinsol.h>
 #include <kinsol/kinsol_ls.h>
@@ -31,6 +31,7 @@
 #include "sundials4py_helpers.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 ///////////////////////////////////////////////////////////////////////////////
 // KINSOL user-supplied function table

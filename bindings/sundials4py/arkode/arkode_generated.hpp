@@ -113,7 +113,8 @@ m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
 
 m.def(
   "ARKodeCreateMRIStepInnerStepper",
-  [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
   {
     auto ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, MRIStepInnerStepper>
@@ -124,8 +125,22 @@ m.def(
                                               &stepper_adapt_modifiable);
       return std::make_tuple(r, stepper_adapt_modifiable);
     };
+    auto ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr =
+      [&ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return](
+        void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepInnerStepper>>>
+    {
+      auto lambda_result =
+        ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return(
+          arkode_mem);
 
-    return ARKodeCreateMRIStepInnerStepper_adapt_modifiable_immutable_to_return(
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
+                                             MRIStepInnerStepperDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr(
       arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
@@ -682,7 +697,8 @@ m.def(
 
 m.def(
   "ARKodeGetCurrentState",
-  [](void* arkode_mem) -> std::tuple<int, N_Vector>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
   {
     auto ARKodeGetCurrentState_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, N_Vector>
@@ -692,8 +708,21 @@ m.def(
       int r = ARKodeGetCurrentState(arkode_mem, &state_adapt_modifiable);
       return std::make_tuple(r, state_adapt_modifiable);
     };
+    auto ARKodeGetCurrentState_adapt_return_type_to_shared_ptr =
+      [&ARKodeGetCurrentState_adapt_modifiable_immutable_to_return](
+        void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+    {
+      auto lambda_result =
+        ARKodeGetCurrentState_adapt_modifiable_immutable_to_return(arkode_mem);
 
-    return ARKodeGetCurrentState_adapt_modifiable_immutable_to_return(arkode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<N_Vector>,
+                                             N_VectorDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ARKodeGetCurrentState_adapt_return_type_to_shared_ptr(arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 
@@ -792,7 +821,8 @@ m.def(
 
 m.def(
   "ARKodeGetJac",
-  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
     auto ARKodeGetJac_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
@@ -802,8 +832,20 @@ m.def(
       int r = ARKodeGetJac(arkode_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
+    auto ARKodeGetJac_adapt_return_type_to_shared_ptr =
+      [&ARKodeGetJac_adapt_modifiable_immutable_to_return](void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result =
+        ARKodeGetJac_adapt_modifiable_immutable_to_return(arkode_mem);
 
-    return ARKodeGetJac_adapt_modifiable_immutable_to_return(arkode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ARKodeGetJac_adapt_return_type_to_shared_ptr(arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 
@@ -1003,7 +1045,8 @@ m.def("ARKodeGetLinReturnFlagName", ARKodeGetLinReturnFlagName, nb::arg("flag"),
 
 m.def(
   "ARKodeGetCurrentMassMatrix",
-  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
     auto ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
@@ -1013,9 +1056,22 @@ m.def(
       int r = ARKodeGetCurrentMassMatrix(arkode_mem, &M_adapt_modifiable);
       return std::make_tuple(r, M_adapt_modifiable);
     };
+    auto ARKodeGetCurrentMassMatrix_adapt_return_type_to_shared_ptr =
+      [&ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return](
+        void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result =
+        ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return(
+          arkode_mem);
 
-    return ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return(
-      arkode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ARKodeGetCurrentMassMatrix_adapt_return_type_to_shared_ptr(arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 
@@ -1332,7 +1388,8 @@ m.def(
 
 m.def(
   "ARKodeCreateSUNStepper",
-  [](void* arkode_mem) -> std::tuple<int, SUNStepper>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
   {
     auto ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, SUNStepper>
@@ -1342,8 +1399,21 @@ m.def(
       int r = ARKodeCreateSUNStepper(arkode_mem, &stepper_adapt_modifiable);
       return std::make_tuple(r, stepper_adapt_modifiable);
     };
+    auto ARKodeCreateSUNStepper_adapt_return_type_to_shared_ptr =
+      [&ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return](
+        void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
+    {
+      auto lambda_result =
+        ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return(arkode_mem);
 
-    return ARKodeCreateSUNStepper_adapt_modifiable_immutable_to_return(arkode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNStepper>,
+                                             SUNStepperDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ARKodeCreateSUNStepper_adapt_return_type_to_shared_ptr(arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);
 // #ifdef __cplusplus
@@ -1857,7 +1927,8 @@ m.def("ARKodeSPRKTable_Write", ARKodeSPRKTable_Write, nb::arg("sprk_table"),
 m.def(
   "ARKodeSPRKTable_ToButcher",
   [](ARKodeSPRKTable sprk_storage)
-    -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>,
+                  std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
   {
     auto ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return =
       [](ARKodeSPRKTable sprk_storage)
@@ -1870,9 +1941,26 @@ m.def(
                                         &b_ptr_adapt_modifiable);
       return std::make_tuple(r, a_ptr_adapt_modifiable, b_ptr_adapt_modifiable);
     };
+    auto ARKodeSPRKTable_ToButcher_adapt_return_type_to_shared_ptr =
+      [&ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return](
+        ARKodeSPRKTable sprk_storage)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>,
+                    std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
+    {
+      auto lambda_result =
+        ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return(
+          sprk_storage);
 
-    return ARKodeSPRKTable_ToButcher_adapt_modifiable_immutable_to_return(
-      sprk_storage);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                                             ARKodeButcherTableDeleter>(
+                               std::get<1>(lambda_result)),
+                             our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                                             ARKodeButcherTableDeleter>(
+                               std::get<2>(lambda_result)));
+    };
+
+    return ARKodeSPRKTable_ToButcher_adapt_return_type_to_shared_ptr(sprk_storage);
   },
   nb::arg("sprk_storage"), nb::rv_policy::reference);
 // #ifdef __cplusplus

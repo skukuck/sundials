@@ -20,23 +20,18 @@
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_stepper.hpp>
+#include <sundials/sundials_types.h>
 
-#include "sundials/sundials_types.h"
 #include "sundials_stepper_impl.h"
-
 #include "sundials_stepper_usersupplied.hpp"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
-
-using SUNStepperView = sundials::experimental::SUNStepperView;
 
 void bind_sunstepper(nb::module_& m)
 {
@@ -44,10 +39,10 @@ void bind_sunstepper(nb::module_& m)
 
   nb::class_<SUNStepper_>(m, "SUNStepper_");
 
-  nb::class_<SUNStepperView>(m, "SUNStepperView")
-    .def("get", nb::overload_cast<>(&SUNStepperView::get, nb::const_),
-         nb::rv_policy::reference)
-    .def_static("Create", SUNStepperView::Create<SUNStepper>);
+  // nb::class_<SUNStepperView>(m, "SUNStepperView")
+  //   .def("get", nb::overload_cast<>(&SUNStepperView::get, nb::const_),
+  //        nb::rv_policy::reference)
+  //   .def_static("Create", SUNStepperView::Create<SUNStepper>);
 
   m.def(
     "SUNStepper_SetEvolveFn",

@@ -15,10 +15,13 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
+#include <sundials/sundials_domeigestimator.hpp>
 #include <sundomeigest/sundomeigest_power.h>
 
+#include "sundials4py.hpp"
+
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

@@ -37,32 +37,6 @@ struct SUNStepperDeleter
   }
 };
 
-class SUNStepperView : public ClassView<SUNStepper, SUNStepperDeleter>
-{
-public:
-  using ClassView<SUNStepper, SUNStepperDeleter>::ClassView;
-
-  template<typename... Args>
-  static SUNStepperView Create(Args&&... args)
-  {
-    SUNStepper stepper;
-    SUNStepper_Create(std::forward<Args>(args)..., &stepper);
-    return SUNStepperView(std::move(stepper));
-  }
-};
-
-template<>
-SUNStepperView SUNStepperView::Create(SUNStepper& stepper)
-{
-  return SUNStepperView(std::forward<SUNStepper>(stepper));
-}
-
-template<>
-SUNStepperView SUNStepperView::Create(SUNStepper&& stepper)
-{
-  return SUNStepperView(std::forward<SUNStepper>(stepper));
-}
-
 } // namespace experimental
 } // namespace sundials
 

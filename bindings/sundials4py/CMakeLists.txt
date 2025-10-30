@@ -109,7 +109,8 @@ nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
 
 # Include private header locations
 target_include_directories(
-  sundials4py PRIVATE helpers ${SUNDIALS_SOURCE_DIR}/src
+  sundials4py PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include
+                      ${SUNDIALS_SOURCE_DIR}/src
                       ${SUNDIALS_SOURCE_DIR}/src/arkode)
 
 # Link against sundials libraries

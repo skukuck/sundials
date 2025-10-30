@@ -15,12 +15,7 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_splittingstep.hpp>
@@ -28,11 +23,8 @@
 
 #include "arkode_mristep_impl.h"
 
-#include "sundials4py_types.hpp"
-
 namespace nb = nanobind;
-using sundials::experimental::our_make_shared;
-using sundials::experimental::SplittingStepCoefficientsDeleter;
+using namespace sundials::experimental;
 
 namespace sundials4py {
 

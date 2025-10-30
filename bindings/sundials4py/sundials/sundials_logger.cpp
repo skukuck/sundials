@@ -20,9 +20,7 @@
  * code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_logger.hpp>
 #include <sundials/sundials_types.h>
@@ -30,6 +28,7 @@
 #include "sundials_logger_impl.h"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 using SUNLoggerView = sundials::experimental::SUNLoggerView;
 

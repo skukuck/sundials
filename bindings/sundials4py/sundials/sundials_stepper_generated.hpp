@@ -18,7 +18,8 @@ auto pyEnumSUNFullRhsMode = nb::enum_<SUNFullRhsMode>(m, "SUNFullRhsMode",
 
 m.def(
   "SUNStepper_Create",
-  [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNStepper>
+  [](SUNContext sunctx)
+    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
   {
     auto SUNStepper_Create_adapt_modifiable_immutable_to_return =
       [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNStepper>
@@ -28,11 +29,25 @@ m.def(
       SUNErrCode r = SUNStepper_Create(sunctx, &stepper_adapt_modifiable);
       return std::make_tuple(r, stepper_adapt_modifiable);
     };
+    auto SUNStepper_Create_adapt_return_type_to_shared_ptr =
+      [&SUNStepper_Create_adapt_modifiable_immutable_to_return](SUNContext sunctx)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
+    {
+      auto lambda_result =
+        SUNStepper_Create_adapt_modifiable_immutable_to_return(sunctx);
 
-    return SUNStepper_Create_adapt_modifiable_immutable_to_return(sunctx);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNStepper>,
+                                             SUNStepperDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNStepper_Create_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"),
+  "nb::call_policy<sundials4py::returns_references_to<1, 1>>()",
+  nb::rv_policy::reference,
+  nb::call_policy<sundials4py::returns_references_to<1, 1>>());
 
 m.def(
   "SUNStepper_Evolve",

@@ -15,30 +15,23 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/optional.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_core.hpp>
+#include <sundials/sundials_stepper.hpp>
 
-class SUNStepperView;
-
-#include <arkode/arkode.h>
 #include <arkode/arkode.hpp>
+#include <arkode/arkode_arkstep.hpp>
 #include <arkode/arkode_butcher.h>
 #include <arkode/arkode_ls.h>
+#include <arkode/arkode_mristep.hpp>
 #include <arkode/arkode_sprkstep.hpp>
 
 #include "arkode/arkode_impl.h"
-
 #include "arkode_usersupplied.hpp"
-#include "sundials4py_types.hpp"
 #include "sundials_adjointcheckpointscheme_impl.h"
 
 namespace nb = nanobind;
-
 using namespace sundials::experimental;
 
 namespace sundials4py {

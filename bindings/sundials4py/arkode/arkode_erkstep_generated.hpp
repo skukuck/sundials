@@ -14,7 +14,8 @@ m.def("ERKStepSetTableName", ERKStepSetTableName, nb::arg("arkode_mem"),
 
 m.def(
   "ERKStepGetCurrentButcherTable",
-  [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable>
+  [](void* arkode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
   {
     auto ERKStepGetCurrentButcherTable_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable>
@@ -24,8 +25,22 @@ m.def(
       int r = ERKStepGetCurrentButcherTable(arkode_mem, &B_adapt_modifiable);
       return std::make_tuple(r, B_adapt_modifiable);
     };
+    auto ERKStepGetCurrentButcherTable_adapt_return_type_to_shared_ptr =
+      [&ERKStepGetCurrentButcherTable_adapt_modifiable_immutable_to_return](
+        void* arkode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
+    {
+      auto lambda_result =
+        ERKStepGetCurrentButcherTable_adapt_modifiable_immutable_to_return(
+          arkode_mem);
 
-    return ERKStepGetCurrentButcherTable_adapt_modifiable_immutable_to_return(
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
+                                             ARKodeButcherTableDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return ERKStepGetCurrentButcherTable_adapt_return_type_to_shared_ptr(
       arkode_mem);
   },
   nb::arg("arkode_mem"), nb::rv_policy::reference);

@@ -23,17 +23,12 @@
 #include <memory>
 #include <type_traits>
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/vector.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_nvector.hpp>
 
-#include "sundials4py_types.hpp"
-
 namespace nb = nanobind;
+using namespace sundials::experimental;
 
 using namespace sundials::experimental;
 

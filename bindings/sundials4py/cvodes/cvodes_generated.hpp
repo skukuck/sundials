@@ -440,7 +440,8 @@ m.def(
 
 m.def(
   "CVodeGetCurrentState",
-  [](void* cvode_mem) -> std::tuple<int, N_Vector>
+  [](void* cvode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
   {
     auto CVodeGetCurrentState_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem) -> std::tuple<int, N_Vector>
@@ -450,8 +451,20 @@ m.def(
       int r = CVodeGetCurrentState(cvode_mem, &y_adapt_modifiable);
       return std::make_tuple(r, y_adapt_modifiable);
     };
+    auto CVodeGetCurrentState_adapt_return_type_to_shared_ptr =
+      [&CVodeGetCurrentState_adapt_modifiable_immutable_to_return](void* cvode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+    {
+      auto lambda_result =
+        CVodeGetCurrentState_adapt_modifiable_immutable_to_return(cvode_mem);
 
-    return CVodeGetCurrentState_adapt_modifiable_immutable_to_return(cvode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<N_Vector>,
+                                             N_VectorDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return CVodeGetCurrentState_adapt_return_type_to_shared_ptr(cvode_mem);
   },
   nb::arg("cvode_mem"), nb::rv_policy::reference);
 
@@ -1675,7 +1688,8 @@ m.def("CVodeSetLSNormFactor", CVodeSetLSNormFactor, nb::arg("arkode_mem"),
 
 m.def(
   "CVodeGetJac",
-  [](void* cvode_mem) -> std::tuple<int, SUNMatrix>
+  [](void* cvode_mem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
     auto CVodeGetJac_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem) -> std::tuple<int, SUNMatrix>
@@ -1685,8 +1699,20 @@ m.def(
       int r = CVodeGetJac(cvode_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
+    auto CVodeGetJac_adapt_return_type_to_shared_ptr =
+      [&CVodeGetJac_adapt_modifiable_immutable_to_return](void* cvode_mem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result =
+        CVodeGetJac_adapt_modifiable_immutable_to_return(cvode_mem);
 
-    return CVodeGetJac_adapt_modifiable_immutable_to_return(cvode_mem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return CVodeGetJac_adapt_return_type_to_shared_ptr(cvode_mem);
   },
   nb::arg("cvode_mem"), nb::rv_policy::reference);
 

@@ -20,24 +20,24 @@
  * code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/tuple.h>
+#include "sundials4py.hpp"
 
 #include <sundials/sundials_context.hpp>
+#include <sundials/sundials_logger.hpp>
+#include <sundials/sundials_profiler.hpp>
 
 #include "sundials/sundials_types.h"
 #include "sundials_logger_impl.h"
 #include "sundials_profiler_impl.h"
 
 namespace nb = nanobind;
+using namespace sundials::experimental;
+using sundials::SUNContextDeleter;
 
 namespace sundials4py {
 
 using SUNContextView = sundials::SUNContextView;
 using namespace sundials::experimental;
-
 
 void bind_suncontext(nb::module_& m)
 {

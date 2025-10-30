@@ -259,7 +259,8 @@ m.def(
 
 m.def(
   "KINGetJac",
-  [](void* kinmem) -> std::tuple<int, SUNMatrix>
+  [](void* kinmem)
+    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
     auto KINGetJac_adapt_modifiable_immutable_to_return =
       [](void* kinmem) -> std::tuple<int, SUNMatrix>
@@ -269,8 +270,19 @@ m.def(
       int r = KINGetJac(kinmem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
+    auto KINGetJac_adapt_return_type_to_shared_ptr =
+      [&KINGetJac_adapt_modifiable_immutable_to_return](void* kinmem)
+      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result = KINGetJac_adapt_modifiable_immutable_to_return(kinmem);
 
-    return KINGetJac_adapt_modifiable_immutable_to_return(kinmem);
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return KINGetJac_adapt_return_type_to_shared_ptr(kinmem);
   },
   nb::arg("kinmem"), nb::rv_policy::reference);
 

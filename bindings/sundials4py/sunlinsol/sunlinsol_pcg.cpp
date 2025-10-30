@@ -27,7 +27,7 @@ namespace sundials4py {
 
 void bind_sunlinsol_pcg(nb::module_& m)
 {
-  m.def("SUNLinSol_PCG", &SUNLinSol_PCG, nb::rv_policy::reference);
+#include "sunlinsol_pcg_generated.hpp"
 }
 
 } // namespace sundials4py

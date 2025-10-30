@@ -27,8 +27,7 @@ namespace sundials4py {
 
 void bind_sundomeigest_power(nb::module_& m)
 {
-  m.def("SUNDomEigEstimator_Power", &SUNDomEigEstimator_Power,
-        nb::rv_policy::reference);
+#include "sundomeigest_power_generated.hpp"
 }
 
 } // namespace sundials4py

@@ -89,74 +89,77 @@ def main():
     #
     # Create the initial conditions vector
     #
-    sunctx = sun.SUNContextCreate()
-    # y = sun.N_VNew_Serial(NEQ, sunctx)
-    # ode.set_init_cond(y)
+    status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
+    assert status == sun.SUN_SUCCESS
 
-    # #
-    # # Create the ARKODE stepper that will be used for the forward evolution.
-    # #
-    # arkode = ark.ARKodeView.Create(
-    #     ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
-    # )
-    # status = ark.ARKodeSetOrder(arkode.get(), 4)
-    # assert status == ark.ARK_SUCCESS
-    # status = ark.ARKodeSStolerances(arkode.get(), reltol, abstol)
-    # assert status == ark.ARK_SUCCESS
-    # status = ark.ARKodeSetFixedStep(arkode.get(), dt)
-    # assert status == ark.ARK_SUCCESS
+    y = sun.N_VNew_Serial(NEQ, sunctx)
+    ode.set_init_cond(y)
 
-    # # Due to roundoff in the `t` accumulation within the integrator,
-    # # the integrator may actually use nsteps + 1 time steps to reach tf
-    # status = ark.ARKodeSetMaxNumSteps(arkode.get(), int((tf - t0) / dt) + 1)
-    # assert status == ark.ARK_SUCCESS
+    #
+    # Create the ARKODE stepper that will be used for the forward evolution.
+    #
+    arkode = ark.ARKodeView.Create(
+        ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
+    )
+    status = ark.ARKodeSetOrder(arkode.get(), 4)
+    assert status == ark.ARK_SUCCESS
+    status = ark.ARKodeSStolerances(arkode.get(), reltol, abstol)
+    assert status == ark.ARK_SUCCESS
+    status = ark.ARKodeSetFixedStep(arkode.get(), dt)
+    assert status == ark.ARK_SUCCESS
 
-    # Enable checkpointing during the forward run
+    # Due to roundoff in the `t` accumulation within the integrator,
+    # the integrator may actually use nsteps + 1 time steps to reach tf
+    status = ark.ARKodeSetMaxNumSteps(arkode.get(), int((tf - t0) / dt) + 1)
+    assert status == ark.ARK_SUCCESS
+
+    # # Enable checkpointing during the forward run
     nsteps = int(np.ceil((tf - t0) / dt))
     ncheck = nsteps * order
     mem_helper = sun.SUNMemoryHelper_Sys(sunctx)
     status, checkpoint_scheme = sun.SUNAdjointCheckpointScheme_Create_Fixed(
         sun.SUNDATAIOMODE_INMEM, mem_helper, check_freq, ncheck, keep_checks, sunctx
     )
+    assert status == sun.SUN_SUCCESS
     # status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), checkpoint_scheme)
     # assert status == ark.ARK_SUCCESS
 
-    # #
-    # # Compute the forward solution
-    # #
+    #
+    # Compute the forward solution
+    #
 
-    # print("Initial condition:")
-    # yarr = sun.N_VGetArrayPointer(y)
-    # print(yarr)
+    print("Initial condition:")
+    yarr = sun.N_VGetArrayPointer(y)
+    print(yarr)
 
-    # tret = t0
-    # status, tret = ark.ARKodeEvolve(arkode.get(), tf, y, ark.ARK_NORMAL)
-    # assert status == ark.ARK_SUCCESS
-    # print("Forward Solution:")
-    # print(sun.N_VGetArrayPointer(y))
-    # # print("ARKODE Stats for Forward Solution:")
-    # # ARKodePrintAllStats(arkode.get(), None, 0)
-    # # print()
+    tret = t0
+    status, tret = ark.ARKodeEvolve(arkode.get(), tf, y, ark.ARK_NORMAL)
+    assert status == ark.ARK_SUCCESS
+    print("Forward Solution:")
+    print(sun.N_VGetArrayPointer(y))
+    # print("ARKODE Stats for Forward Solution:")
+    # ARKodePrintAllStats(arkode.get(), None, 0)
+    # print()
 
-    # #
-    # # Create the adjoint stepper
-    # #
+    #
+    # Create the adjoint stepper
+    #
 
-    # # Adjoint terminal condition
-    # uB = sun.N_VNew_Serial(NEQ, sunctx)
-    # arr_uB = ode.dgdu(y)
-    # uB_arr = sun.N_VGetArrayPointer(uB)
-    # uB_arr[:] = arr_uB
-    # qB = sun.N_VNew_Serial(NP, sunctx)
-    # qB_arr = sun.N_VGetArrayPointer(qB)
-    # qB_arr[:] = ode.dgdp(y)
+    # Adjoint terminal condition
+    uB = sun.N_VNew_Serial(NEQ, sunctx)
+    arr_uB = ode.dgdu(y)
+    uB_arr = sun.N_VGetArrayPointer(uB)
+    uB_arr[:] = arr_uB
+    qB = sun.N_VNew_Serial(NP, sunctx)
+    qB_arr = sun.N_VGetArrayPointer(qB)
+    qB_arr[:] = ode.dgdp(y)
 
-    # # Combine adjoint vectors into a ManyVector
-    # sens = [uB, qB]
-    # sf = sun.N_VNew_ManyVector(2, sens, sunctx)
-    # print("Adjoint terminal condition:")
-    # print(sun.N_VGetArrayPointer(uB))
-    # print(sun.N_VGetArrayPointer(qB))
+    # Combine adjoint vectors into a ManyVector
+    sens = [uB, qB]
+    sf = sun.N_VNew_ManyVector(2, sens, sunctx)
+    print("Adjoint terminal condition:")
+    print(sun.N_VGetArrayPointer(uB))
+    print(sun.N_VGetArrayPointer(qB))
 
     # # Create ARKStep adjoint stepper
     # status, adj_stepper = ark.ARKStepCreateAdjointStepper(

@@ -45,8 +45,6 @@ void bind_suncontext(nb::module_& m)
 
   nb::class_<SUNContext_>(m, "SUNContext_");
 
-  m.def("SUNContextCreate", &sundials::SUNContextCreate<>);
-
   nb::class_<SUNContextView>(m, "SUNContextView")
     .def_static("Create", &SUNContextView::Create<>)
     .def_static("Create", &SUNContextView::Create<SUNContext>)

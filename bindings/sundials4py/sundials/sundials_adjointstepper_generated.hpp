@@ -5,6 +5,78 @@
 // #endif
 //
 
+m.def(
+  "SUNAdjointStepper_Create",
+  [](SUNStepper fwd_sunstepper, sunbooleantype own_fwd, SUNStepper adj_sunstepper,
+     sunbooleantype own_adj, suncountertype final_step_idx, sunrealtype tf,
+     N_Vector sf, SUNAdjointCheckpointScheme checkpoint_scheme, SUNContext sunctx)
+    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNAdjointStepper>>>
+  {
+    auto SUNAdjointStepper_Create_adapt_modifiable_immutable_to_return =
+      [](SUNStepper fwd_sunstepper, sunbooleantype own_fwd,
+         SUNStepper adj_sunstepper, sunbooleantype own_adj,
+         suncountertype final_step_idx, sunrealtype tf, N_Vector sf,
+         SUNAdjointCheckpointScheme checkpoint_scheme,
+         SUNContext sunctx) -> std::tuple<SUNErrCode, SUNAdjointStepper>
+    {
+      SUNAdjointStepper adj_stepper_adapt_modifiable;
+
+      SUNErrCode r = SUNAdjointStepper_Create(fwd_sunstepper, own_fwd,
+                                              adj_sunstepper, own_adj,
+                                              final_step_idx, tf, sf,
+                                              checkpoint_scheme, sunctx,
+                                              &adj_stepper_adapt_modifiable);
+      return std::make_tuple(r, adj_stepper_adapt_modifiable);
+    };
+    auto SUNAdjointStepper_Create_adapt_return_type_to_shared_ptr =
+      [&SUNAdjointStepper_Create_adapt_modifiable_immutable_to_return](SUNStepper fwd_sunstepper,
+                                                                       sunbooleantype
+                                                                         own_fwd,
+                                                                       SUNStepper adj_sunstepper,
+                                                                       sunbooleantype
+                                                                         own_adj,
+                                                                       suncountertype
+                                                                         final_step_idx,
+                                                                       sunrealtype tf,
+                                                                       N_Vector sf,
+                                                                       SUNAdjointCheckpointScheme
+                                                                         checkpoint_scheme,
+                                                                       SUNContext sunctx)
+      -> std::tuple<SUNErrCode,
+                    std::shared_ptr<std::remove_pointer_t<SUNAdjointStepper>>>
+    {
+      auto lambda_result =
+        SUNAdjointStepper_Create_adapt_modifiable_immutable_to_return(fwd_sunstepper,
+                                                                      own_fwd,
+                                                                      adj_sunstepper,
+                                                                      own_adj,
+                                                                      final_step_idx,
+                                                                      tf, sf,
+                                                                      checkpoint_scheme,
+                                                                      sunctx);
+
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNAdjointStepper>,
+                                             SUNAdjointStepperDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNAdjointStepper_Create_adapt_return_type_to_shared_ptr(fwd_sunstepper,
+                                                                    own_fwd,
+                                                                    adj_sunstepper,
+                                                                    own_adj,
+                                                                    final_step_idx,
+                                                                    tf, sf,
+                                                                    checkpoint_scheme,
+                                                                    sunctx);
+  },
+  nb::arg("fwd_sunstepper"), nb::arg("own_fwd"), nb::arg("adj_sunstepper"),
+  nb::arg("own_adj"), nb::arg("final_step_idx"), nb::arg("tf"), nb::arg("sf"),
+  nb::arg("checkpoint_scheme"), nb::arg("sunctx"),
+  "nb::call_policy<sundials4py::returns_references_to<9, 1>>()",
+  nb::rv_policy::reference,
+  nb::call_policy<sundials4py::returns_references_to<9, 1>>());
+
 m.def("SUNAdjointStepper_ReInit", SUNAdjointStepper_ReInit, nb::arg("adj"),
       nb::arg("t0"), nb::arg("y0"), nb::arg("tf"), nb::arg("sf"));
 

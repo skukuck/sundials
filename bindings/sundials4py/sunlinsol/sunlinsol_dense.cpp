@@ -27,7 +27,7 @@ namespace sundials4py {
 
 void bind_sunlinsol_dense(nb::module_& m)
 {
-  m.def("SUNLinSol_Dense", &SUNLinSol_Dense, nb::rv_policy::reference);
+#include "sunlinsol_dense_generated.hpp"
 }
 
 } // namespace sundials4py

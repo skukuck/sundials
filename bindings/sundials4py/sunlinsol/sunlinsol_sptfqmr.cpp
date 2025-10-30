@@ -27,7 +27,7 @@ namespace sundials4py {
 
 void bind_sunlinsol_sptfqmr(nb::module_& m)
 {
-  m.def("SUNLinSol_SPTFQMR", &SUNLinSol_SPTFQMR, nb::rv_policy::reference);
+#include "sunlinsol_sptfqmr_generated.hpp"
 }
 
 } // namespace sundials4py

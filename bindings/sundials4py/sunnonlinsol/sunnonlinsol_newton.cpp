@@ -17,6 +17,7 @@
 
 #include <sundials/sundials_nonlinearsolver.hpp>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
+
 #include "sundials4py.hpp"
 
 namespace nb = nanobind;
@@ -26,7 +27,7 @@ namespace sundials4py {
 
 void bind_sunnonlinsol_newton(nb::module_& m)
 {
-  m.def("SUNNonlinSol_Newton", &SUNNonlinSol_Newton, nb::rv_policy::reference);
+#include "sunnonlinsol_newton_generated.hpp"
 }
 
 } // namespace sundials4py

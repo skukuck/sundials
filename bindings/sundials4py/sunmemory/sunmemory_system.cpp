@@ -27,7 +27,7 @@ namespace sundials4py {
 
 void bind_sumemoryhelper_sys(nb::module_& m)
 {
-  m.def("SUNMemoryHelper_Sys", &SUNMemoryHelper_Sys, nb::rv_policy::reference);
+#include "sunmemory_system_generated.hpp"
 }
 
 } // namespace sundials4py

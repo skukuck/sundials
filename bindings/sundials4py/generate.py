@@ -1,7 +1,31 @@
-# TODO(CJB): Since litgen is GPLv3, this script might have to be GPLv3.
-# Will need to determine if this is the case or not.
-# The outputs of the script, i.e. the generated code, are definitely
-# not subject to GPLv3 though, and can use our standard license.
+"""
+Author: Cody J. Balos @ LLNL
+
+This script generates Python bindings for the SUNDIALS library using litgen and nanobind.
+
+Overview:
+---------
+- Parses a YAML configuration file (generate.yaml) describing modules and header files to process.
+- Configures litgen options for SUNDIALS-specific pointer types, enum handling, function adapters, and other binding behaviors.
+- Reads C/C++ header files, optionally dumps their srcML XML representation, or generates Python binding code.
+- Writes the generated binding code to specified output files.
+
+Key Features:
+-------------
+- Customizes binding generation for SUNDIALS pointer types and function signatures.
+- Excludes comments from docstrings, exports enum values with prefixes, and handles nullable pointer parameters.
+- Supports custom adapters for array pointers, modifiable output parameters, and shared pointer returns.
+- Allows per-module configuration for pointer types, nullable parameters, enum/class/function exclusions, and macro defines.
+- Can process a single YAML file or recursively process all generate.yaml files in a directory.
+
+Usage:
+------
+    python generate.py <config_yaml_path> [--dump-srcml]
+
+Note:
+-----
+- The script is licensed under GPLv3 due to its use of litgen, but the generated code is not subject to GPLv3.
+"""
 
 import argparse
 import srcmlcpp
@@ -9,19 +33,12 @@ import litgen
 from codemanip import code_utils
 import yaml
 from litgen_extensions import *
+import os
+import glob
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Generate Python bindings for SUNDIALS using litgen and nanobind."
-    )
-    parser.add_argument("config_yaml_path", type=str, help="Path to the generate.yaml config file")
-    parser.add_argument(
-        "--dump-srcml",
-        action="store_true",
-        help="Dump the srcML XML for the parsed headers and exit",
-    )
-    args = parser.parse_args()
+def generate(config_yaml_path, dump_srcml=False):
+    print(f"generating from {config_yaml_path}")
 
     options = litgen.LitgenOptions()
     options.bind_library = litgen.BindLibraryType.nanobind
@@ -95,7 +112,6 @@ def main():
         "__cplusplus|_h_$|_h$|_H$|_H_$|hpp$|HPP$|hxx$|HXX$|SWIG$"
     )
 
-    config_yaml_path = args.config_yaml_path
     with open(config_yaml_path, "r") as yaml_file:
         config_object = yaml.safe_load(yaml_file).get("modules", [])
     if not config_object:
@@ -137,7 +153,7 @@ def main():
                 source_code = source_code + file.read()
             source_code = source_code + "\n"
 
-        if args.dump_srcml:
+        if dump_srcml:
             srcmlcpp_options = options.srcmlcpp_options
             cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, source_code)
             with open(f'{module["path"]}.xml', "w") as file:
@@ -156,6 +172,34 @@ def main():
         else:
             print(generated_code.glue_code)
             print(generated_code.pydef_code)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate Python bindings for SUNDIALS using litgen and nanobind."
+    )
+    parser.add_argument("config_yaml_path", type=str, help="Path to the generate.yaml config file")
+    parser.add_argument(
+        "--dump-srcml",
+        action="store_true",
+        help="Dump the srcML XML for the parsed headers and exit",
+    )
+    args = parser.parse_args()
+
+    config_yaml_paths = []
+    if os.path.isdir(args.config_yaml_path):
+        config_yaml_paths = glob.glob(
+            os.path.join(args.config_yaml_path, "**", "generate.yaml"), recursive=True
+        )
+        if not config_yaml_paths:
+            raise RuntimeError(
+                f"No generate.yaml files found in directory {args.config_yaml_path}"
+            )
+    else:
+        config_yaml_paths = [args.config_yaml_path]
+
+    for path in config_yaml_paths:
+        generate(path, args.dump_srcml)
 
 
 if __name__ == "__main__":

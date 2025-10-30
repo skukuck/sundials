@@ -27,7 +27,7 @@ namespace sundials4py {
 
 void bind_sunlinsol_band(nb::module_& m)
 {
-  m.def("SUNLinSol_Band", &SUNLinSol_Band, nb::rv_policy::reference);
+#include "sunlinsol_band_generated.hpp"
 }
 
 } // namespace sundials4py

@@ -26,8 +26,7 @@ namespace sundials4py {
 
 void bind_sunnonlinsol_fixedpoint(nb::module_& m)
 {
-  m.def("SUNNonlinSol_FixedPoint", &SUNNonlinSol_FixedPoint,
-        nb::rv_policy::reference);
+#include "sunnonlinsol_fixedpoint_generated.hpp"
 }
 
 } // namespace sundials4py

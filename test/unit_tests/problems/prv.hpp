@@ -84,7 +84,7 @@ inline int ode_rhs(sunrealtype t, N_Vector y_vec, N_Vector f_vec, void* user_dat
     return 1;
   }
 
-  sunrealtype* u_data = static_cast<sunrealtype*>(user_data);
+  sunrealtype* u_data   = static_cast<sunrealtype*>(user_data);
   sunscalartype* y_data = N_VGetArrayPointer(y_vec);
   sunscalartype* f_data = N_VGetArrayPointer(f_vec);
   if (y_data == nullptr || f_data == nullptr) { return 1; }

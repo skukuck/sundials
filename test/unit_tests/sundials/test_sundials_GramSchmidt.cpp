@@ -153,14 +153,22 @@ int main(int argc, char* argv[])
       //unit vectors
       if ((k == l) &&
           (SUNabs(SUNabs(SUN_REAL(dprodNorm)) - SUN_RCONST(1.0))) > tolerance)
-      {unit_vectorsReal = 1;} 
+      {
+        unit_vectorsReal = 1;
+      }
       if ((k == l) && (SUNabs(SUN_IMAG(dprodNorm)) > tolerance))
-      {unit_vectorsImag = 1;}
+      {
+        unit_vectorsImag = 1;
+      }
       //orthogonal vectors
       if ((k != l) && (SUNabs(SUN_REAL(dprodNorm)) > tolerance))
-      {orthogonalReal = 1;} 
+      {
+        orthogonalReal = 1;
+      }
       if ((k != l) && (SUNabs(SUN_IMAG(dprodNorm)) > tolerance))
-      {orthogonalImag = 1;}
+      {
+        orthogonalImag = 1;
+      }
     }
   }
 
@@ -271,14 +279,22 @@ int main(int argc, char* argv[])
       //unit vectors
       if ((k == l) &&
           (SUNabs(SUNabs(SUN_REAL(dprodNorm)) - SUN_RCONST(1.0))) > tolerance)
-      {unit_vectorsReal = 1;} 
+      {
+        unit_vectorsReal = 1;
+      }
       if ((k == l) && (SUNabs(SUN_IMAG(dprodNorm)) > tolerance))
-      {unit_vectorsImag = 1;}
+      {
+        unit_vectorsImag = 1;
+      }
       //orthogonal vectors
       if ((k != l) && (SUNabs(SUN_REAL(dprodNorm)) > tolerance))
-      {orthogonalReal = 1;} 
+      {
+        orthogonalReal = 1;
+      }
       if ((k != l) && (SUNabs(SUN_IMAG(dprodNorm)) > tolerance))
-      {orthogonalImag = 1;}
+      {
+        orthogonalImag = 1;
+      }
     }
   }
 

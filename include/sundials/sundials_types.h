@@ -196,7 +196,6 @@ typedef double _Complex suncomplexdouble;
 
 #endif /* !__cplusplus */
 
-
 /*
  *------------------------------------------------------------------
  * Type sunscalartype

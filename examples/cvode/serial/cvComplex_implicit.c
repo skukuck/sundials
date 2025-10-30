@@ -51,18 +51,18 @@
  *-----------------------------------------------------------------*/
 
 /* Header files */
-#include <cvode/cvode.h> /* prototypes for CVODE fcts., consts */
+#include <cvode/cvode.h>         /* prototypes for CVODE fcts., consts */
+#include <cvode/cvode_bandpre.h> /* prototypes for CVBANDPRE module     */
+#include <cvode/cvode_bbdpre.h>  /* prototypes for CVBBDPRE module      */
 #include <math.h>
 #include <nvector/nvector_serial.h> /* serial N_Vector types, fcts., macros */
 #include <stdio.h>
-#include <sundials/sundials_types.h> /* def. of type sunscalartype */
+#include <sundials/sundials_types.h>  /* def. of type sunscalartype */
+#include <sunlinsol/sunlinsol_band.h> /* access to banded SUNLinearSolver     */
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
-#include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver     */
-#include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix           */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
-#include <cvode/cvode_bandpre.h>     /* prototypes for CVBANDPRE module     */
-#include <cvode/cvode_bbdpre.h>      /* prototypes for CVBBDPRE module      */
+#include <sunmatrix/sunmatrix_band.h> /* access to banded SUNMatrix           */
+#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
@@ -75,15 +75,16 @@
 #endif
 
 /* Problem parameters */
-#define NX 100               /* number of locations */
-#define NEQ (3 * NX)         /* number of equations */
+#define NX  100      /* number of locations */
+#define NEQ (3 * NX) /* number of equations */
 
 /* Macro to access variables at a specific location */
-#define IDX(v,x) ((v) + 3*(x))
+#define IDX(v, x) ((v) + 3 * (x))
 
 /* User-supplied Functions Called by the Solver */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
-static int floc(sunindextype Nloc, sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
+static int floc(sunindextype Nloc, sunrealtype t, N_Vector y, N_Vector ydot,
+                void* user_data);
 
 // Compute the true solution
 static int Solution(sunrealtype t, N_Vector u);
@@ -98,15 +99,15 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 int main(int argc, char* argv[])
 {
   /* general problem parameters */
-  sunrealtype T0     = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
-  sunrealtype dTout  = SUN_RCONST(1.0);       /* time between outputs */
-  int Nt             = (int)ceil(Tf / dTout); /* number of output times */
-    #if defined(SUNDIALS_SINGLE_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-3);                /* tolerances */
-  #else
+  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
+  sunrealtype Tf    = SUN_RCONST(5.0);       /* final time */
+  sunrealtype dTout = SUN_RCONST(1.0);       /* time between outputs */
+  int Nt            = (int)ceil(Tf / dTout); /* number of output times */
+#if defined(SUNDIALS_SINGLE_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-3); /* tolerances */
+#else
   sunrealtype reltol = SUN_RCONST(1.0e-6);
-  #endif
+#endif
   sunrealtype abstol = SUN_RCONST(1.0e-10);
   int maxl           = 10; /* max linear solver iterations */
 
@@ -125,21 +126,17 @@ int main(int argc, char* argv[])
      0 => dense, 1 => banded (default), 2 => GMRES (no preconditioning),
      3 => GMRES (BANDPRE), 4 => GMRES (BBDPRE) */
   int linear_solver_type = 1;
-  if (argc > 1)
-  {
-    linear_solver_type = atoi(argv[1]);
-  }
+  if (argc > 1) { linear_solver_type = atoi(argv[1]); }
   if (linear_solver_type < 0 || linear_solver_type > 4)
   {
-    fprintf(
-      stderr,
-      "ERROR: Unrecognized linear solver type %d. Valid options are:\n"
-      "  0 => dense linear solver\n"
-      "  1 => banded linear solver (default)\n"
-      "  2 => GMRES iterative linear solver (no preconditioning)\n"
-      "  3 => GMRES iterative linear solver (BANDPRE)\n"
-      "  4 => GMRES iterative linear solver (BBDPRE)\n",
-      linear_solver_type);
+    fprintf(stderr,
+            "ERROR: Unrecognized linear solver type %d. Valid options are:\n"
+            "  0 => dense linear solver\n"
+            "  1 => banded linear solver (default)\n"
+            "  2 => GMRES iterative linear solver (no preconditioning)\n"
+            "  3 => GMRES iterative linear solver (BANDPRE)\n"
+            "  4 => GMRES iterative linear solver (BBDPRE)\n",
+            linear_solver_type);
     return 1;
   }
 
@@ -164,28 +161,25 @@ int main(int argc, char* argv[])
   /* Initial problem output */
   if (linear_solver_type == 0)
   {
-    printf("\nAnalytic ODE test in complex arithmetic with dense linear solver:\n");
+    printf(
+      "\nAnalytic ODE test in complex arithmetic with dense linear solver:\n");
   }
   else if (linear_solver_type == 1)
   {
-    printf("\nAnalytic ODE test in complex arithmetic with banded linear solver:\n");
+    printf(
+      "\nAnalytic ODE test in complex arithmetic with banded linear solver:\n");
   }
   else
   {
-    printf("\nAnalytic ODE test in complex arithmetic with GMRES iterative linear solver:\n");
+    printf("\nAnalytic ODE test in complex arithmetic with GMRES iterative "
+           "linear solver:\n");
     printf("    maxl = %i\n", maxl);
-    if (linear_solver_type == 3)
-    {
-      printf("    preconditioning: CVBANDPRE\n");
-    }
+    if (linear_solver_type == 3) { printf("    preconditioning: CVBANDPRE\n"); }
     else if (linear_solver_type == 4)
     {
       printf("    preconditioning: CVBBDPRE\n");
     }
-    else
-    {
-      printf("    no preconditioning\n");
-    }
+    else { printf("    no preconditioning\n"); }
   }
   printf("    reltol = %.1" ESYM ",  abstol = %.1" ESYM "\n\n", reltol, abstol);
 
@@ -231,10 +225,10 @@ int main(int argc, char* argv[])
 
   /* Linear solver interface */
   flag = CVodeSetLinearSolver(cvode_mem, LS,
-                               A); /* Attach matrix and linear solver */
+                              A); /* Attach matrix and linear solver */
   if (check_flag(&flag, "CVodeSetLinearSolver", 1)) { return 1; }
 
-   /* Set preconditioner if requested */
+  /* Set preconditioner if requested */
   if (linear_solver_type == 3)
   {
     flag = CVBandPrecInit(cvode_mem, NEQ, 2, 2);
@@ -254,8 +248,8 @@ int main(int argc, char* argv[])
      prints results.  Stops when the final time has been reached */
   t    = T0;
   tout = T0 + dTout;
-  printf(
-    "     t               u_90                   v_90                   w_90\n");
+  printf("     t               u_90                   v_90                   "
+         "w_90\n");
   printf("   "
          "---------------------------------------------------------------------"
          "-------\n");
@@ -266,8 +260,9 @@ int main(int argc, char* argv[])
          "%8.5" FSYM "i | "
          "%8.5" FSYM " + "
          "%8.5" FSYM "i\n",
-         t, SUN_REAL(yvals[IDX(0,90)]), SUN_IMAG(yvals[IDX(0,90)]), SUN_REAL(yvals[IDX(1,90)]),
-         SUN_IMAG(yvals[IDX(1,90)]), SUN_REAL(yvals[IDX(2,90)]), SUN_IMAG(yvals[IDX(2,90)]));
+         t, SUN_REAL(yvals[IDX(0, 90)]), SUN_IMAG(yvals[IDX(0, 90)]),
+         SUN_REAL(yvals[IDX(1, 90)]), SUN_IMAG(yvals[IDX(1, 90)]),
+         SUN_REAL(yvals[IDX(2, 90)]), SUN_IMAG(yvals[IDX(2, 90)]));
 
   for (iout = 0; iout < Nt; iout++)
   {
@@ -280,8 +275,9 @@ int main(int argc, char* argv[])
            "%8.5" FSYM "i | "
            "%8.5" FSYM " + "
            "%8.5" FSYM "i\n",
-           t, SUN_REAL(yvals[IDX(0,90)]), SUN_IMAG(yvals[IDX(0,90)]), SUN_REAL(yvals[IDX(1,90)]),
-           SUN_IMAG(yvals[IDX(1,90)]), SUN_REAL(yvals[IDX(2,90)]), SUN_IMAG(yvals[IDX(2,90)]));
+           t, SUN_REAL(yvals[IDX(0, 90)]), SUN_IMAG(yvals[IDX(0, 90)]),
+           SUN_REAL(yvals[IDX(1, 90)]), SUN_IMAG(yvals[IDX(1, 90)]),
+           SUN_REAL(yvals[IDX(2, 90)]), SUN_IMAG(yvals[IDX(2, 90)]));
 
     if (flag >= 0)
     { /* successful solve: update time */
@@ -312,9 +308,9 @@ int main(int argc, char* argv[])
   N_VDestroy(True_Sol);
   N_VDestroy(Error);
   CVodeFree(&cvode_mem); /* Free integrator memory */
-  SUNLinSolFree(LS);       /* Free linear solver */
-  SUNMatDestroy(A);        /* Free A matrix */
-  SUNContext_Free(&ctx);   /* Free context */
+  SUNLinSolFree(LS);     /* Free linear solver */
+  SUNMatDestroy(A);      /* Free A matrix */
+  SUNContext_Free(&ctx); /* Free context */
 
   return 0;
 }
@@ -331,18 +327,19 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunscalartype* yvals  = N_VGetArrayPointer(y);
   sunscalartype* dyvals = N_VGetArrayPointer(ydot);
-  for (sunindextype k=0; k<NX; k++) {
-    sunscalartype u = yvals[IDX(0,k)]; /* access solution values */
-    sunscalartype v = yvals[IDX(1,k)];
-    sunscalartype w = yvals[IDX(2,k)];
+  for (sunindextype k = 0; k < NX; k++)
+  {
+    sunscalartype u         = yvals[IDX(0, k)]; /* access solution values */
+    sunscalartype v         = yvals[IDX(1, k)];
+    sunscalartype w         = yvals[IDX(2, k)];
     const sunscalartype ONE = SUN_RCONST(1.0);
     const sunscalartype TWO = SUN_RCONST(2.0);
-    const sunscalartype K = (sunscalartype)k;
+    const sunscalartype K   = (sunscalartype)k;
 
     /* fill in the RHS function */
-    dyvals[IDX(0,k)] = v - k * u + (ONE + K * t)*SUNexp(SUN_I * t);
-    dyvals[IDX(1,k)] = w - t + SUN_I * v;
-    dyvals[IDX(2,k)] = ONE + SUN_I * (w - t);
+    dyvals[IDX(0, k)] = v - k * u + (ONE + K * t) * SUNexp(SUN_I * t);
+    dyvals[IDX(1, k)] = w - t + SUN_I * v;
+    dyvals[IDX(2, k)] = ONE + SUN_I * (w - t);
   }
 
   return 0; /* Return with success */
@@ -350,7 +347,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
 /* f routine to compute the "local" portion of the ODE RHS function f(t,y)
    (for use by the CVBBDPRE module) */
-static int floc(sunindextype Nlocal, sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
+static int floc(sunindextype Nlocal, sunrealtype t, N_Vector y, N_Vector ydot,
+                void* user_data)
 {
   return f(t, y, ydot, user_data);
 }
@@ -411,11 +409,12 @@ static int Solution(sunrealtype t, N_Vector u)
   sunscalartype* uarray = N_VGetArrayPointer(u);
   if (check_flag((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
-  for (sunindextype k=0; k<NX; k++) {
-    sunscalartype K = (sunscalartype)k;
-    uarray[IDX(0,k)] = t * SUNexp(SUN_I * t) + SUNexp(-K * t);
-    uarray[IDX(1,k)] = t * SUN_I * SUNexp(SUN_I * t);
-    uarray[IDX(2,k)] = SUN_I * SUNexp(SUN_I * t) + t;
+  for (sunindextype k = 0; k < NX; k++)
+  {
+    sunscalartype K   = (sunscalartype)k;
+    uarray[IDX(0, k)] = t * SUNexp(SUN_I * t) + SUNexp(-K * t);
+    uarray[IDX(1, k)] = t * SUN_I * SUNexp(SUN_I * t);
+    uarray[IDX(2, k)] = SUN_I * SUNexp(SUN_I * t) + t;
   }
 
   return 0;
@@ -434,4 +433,5 @@ static int SolutionError(sunrealtype t, N_Vector u, N_Vector e)
   printf("    Max-norm of the error is %.5" ESYM "\n", error_norm);
   return 0;
 }
+
 /*---- end of file ----*/

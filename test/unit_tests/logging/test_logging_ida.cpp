@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "true_sol")) { return 1; }
 
   sunscalartype* ydata = N_VGetArrayPointer(y);
-  ydata[0]           = utrue;
-  ydata[1]           = vtrue;
+  ydata[0]             = utrue;
+  ydata[1]             = vtrue;
 
   N_Vector yp = N_VNew_Serial(2, sunctx);
   if (check_ptr(y, "N_VNew_Serial")) { return 1; }
@@ -81,8 +81,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "true_sol")) { return 1; }
 
   sunscalartype* ypdata = N_VGetArrayPointer(yp);
-  ypdata[0]           = uptrue;
-  ypdata[1]           = vptrue;
+  ypdata[0]             = uptrue;
+  ypdata[1]             = vptrue;
 
   // Create IDA memory structure
   void* ida_mem = IDACreate(sunctx);

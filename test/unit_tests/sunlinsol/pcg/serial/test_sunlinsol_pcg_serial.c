@@ -42,15 +42,15 @@
 #define THOUSAND SUN_RCONST(1000.0)
 
 #if defined(SUNDIALS_SCALAR_TYPE_REAL)
-  #define SOMEMATRIXNUMBERd     SUN_RCONST(5.0)
-  #define SOMEMATRIXNUMBERup    SUN_RCONST(1.0)
-  #define SOMEMATRIXNUMBERlow   SUN_RCONST(1.0)
-  #define SOMESCALING           SUN_RCONST(2.5)
+#define SOMEMATRIXNUMBERd   SUN_RCONST(5.0)
+#define SOMEMATRIXNUMBERup  SUN_RCONST(1.0)
+#define SOMEMATRIXNUMBERlow SUN_RCONST(1.0)
+#define SOMESCALING         SUN_RCONST(2.5)
 #elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-  #define SOMEMATRIXNUMBERd     SUN_RCONST(10.0)
-  #define SOMEMATRIXNUMBERup    SUN_CCONST(-1.0, 2.0)
-  #define SOMEMATRIXNUMBERlow   SUN_CCONST(-1.0, -2.0)
-  #define SOMESCALING           SUN_RCONST(2.5)
+#define SOMEMATRIXNUMBERd   SUN_RCONST(10.0)
+#define SOMEMATRIXNUMBERup  SUN_CCONST(-1.0, 2.0)
+#define SOMEMATRIXNUMBERlow SUN_CCONST(-1.0, -2.0)
+#define SOMESCALING         SUN_RCONST(2.5)
 #else
 #error \
   "SUNDIALS scalar type not defined, report to github.com/LLNL/sundials/issues"
@@ -59,11 +59,11 @@
 /* user data structure */
 typedef struct
 {
-  sunindextype N; /* problem size */
-  N_Vector d;     /* matrix diagonal */
-  N_Vector s;     /* scaling vector supplied to PCG */
-  sunscalartype up;    /* nondiagonal entries of the matrix */
-  sunscalartype low;  /* nondiagonal entries of the matrix */
+  sunindextype N;    /* problem size */
+  N_Vector d;        /* matrix diagonal */
+  N_Vector s;        /* scaling vector supplied to PCG */
+  sunscalartype up;  /* nondiagonal entries of the matrix */
+  sunscalartype low; /* nondiagonal entries of the matrix */
 } UserData;
 
 /* private functions */
@@ -390,12 +390,14 @@ int ATimes(void* Data, N_Vector v_vec, N_Vector z_vec)
   /* iterate through interior of domain, performing product */
   for (i = 1; i < N - 1; i++)
   {
-    z[i] = (-v[i - 1] * low / s[i - 1] + diag[i] * v[i] / s[i] - v[i + 1] * up / s[i + 1]) /
+    z[i] = (-v[i - 1] * low / s[i - 1] + diag[i] * v[i] / s[i] -
+            v[i + 1] * up / s[i + 1]) /
            s[i];
   }
 
   /* perform product at right boundary (note: v is zero at the boundary)*/
-  z[N - 1] = (-v[N - 2] * low / s[N - 2] + diag[N - 1] * v[N - 1] / s[N - 1]) / s[N - 1];
+  z[N - 1] = (-v[N - 2] * low / s[N - 2] + diag[N - 1] * v[N - 1] / s[N - 1]) /
+             s[N - 1];
 
   /* return with success */
   return 0;

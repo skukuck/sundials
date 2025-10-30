@@ -24,15 +24,15 @@ from sundials4py.core import *
 
 def make_adjoint_stepper(sunctx, sunstepper, nvec):
     mem_helper = SUNMemoryHelper_Sys(sunctx)
-    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(
-        0, mem_helper, 1, 1, 0, sunctx
-    )
+    status, scheme = SUNAdjointCheckpointScheme_Create_Fixed(0, mem_helper, 1, 1, 0, sunctx)
     b1 = 0
     b2 = 0
     nsteps = 1
     t0 = 0.0
     y0 = nvec
-    status, adj_stepper = SUNAdjointStepper_Create(sunstepper, b1, sunstepper, b2, nsteps, t0, y0, scheme, sunctx)
+    status, adj_stepper = SUNAdjointStepper_Create(
+        sunstepper, b1, sunstepper, b2, nsteps, t0, y0, scheme, sunctx
+    )
     return adj_stepper, scheme, mem_helper
 
 

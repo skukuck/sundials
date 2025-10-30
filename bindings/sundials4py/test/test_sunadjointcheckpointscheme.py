@@ -50,16 +50,14 @@ def test_insert_vector(sunctx, nvec):
     step_num = 0
     stage_num = 0
     t = 0.0
-    status = SUNAdjointCheckpointScheme_InsertVector(
-        scheme, step_num, stage_num, t, nvec
-    )
+    status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
     assert status == 0
 
 
 # TODO(CJB): fix or remove
 # def test_load_vector(sunctx, nvec):
 #     scheme_status, scheme, mem_helper = make_fixed_scheme(sunctx)
-    
+
 #     step_num = 0
 #     stage_num = 0
 #     t = 0.0

@@ -74,6 +74,7 @@ def test_initialize(estimator_type, sunctx):
     status = SUNDomEigEstimator_Initialize(est)
     assert status == 0
 
+
 # TODO(CJB): fix or remov
 # @pytest.mark.parametrize("estimator_type", ["power"])
 # def test_estimate(estimator_type, sunctx):

@@ -144,6 +144,4 @@ def test_fixedpoint_setup_and_solve(sunctx):
         # Compare to analytic solution
         utrue = N_VNew_Serial(NEQ, sunctx)
         problem.solution(utrue)
-        assert np.allclose(
-            N_VGetArrayPointer(ucur), N_VGetArrayPointer(utrue), atol=1e-2
-        )
+        assert np.allclose(N_VGetArrayPointer(ucur), N_VGetArrayPointer(utrue), atol=1e-2)

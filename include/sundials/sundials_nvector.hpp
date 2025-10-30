@@ -39,7 +39,6 @@ struct N_VectorDeleter
 {
   void operator()(N_Vector v)
   {
-    fprintf(stderr, ">>>> deleter nvector:%p\n", v);
     N_VDestroy(v);
   }
 };

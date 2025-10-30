@@ -1,0 +1,46 @@
+
+Analytic ODE test in complex arithmetic with GMRES iterative linear solver:
+    maxl = 10
+    no preconditioning
+    reltol = 1.0e-06,  abstol = 1.0e-10
+
+      t            u_90                      u_90'                     v_90                   v_90'                     w_90                   w_90'
+   -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    0.000 |  1.00000 +  0.00000i  | -89.00000 +  0.00000i |  0.00000 +  0.00000i  |  0.00000 +  1.00000i  |  0.00000 +  1.00000i  |  0.00000 + -0.00000i  
+    1.000 |  0.54030 +  0.84147i  | -0.30117 +  1.38177i  | -0.84147 +  0.54030i  | -1.38177 + -0.30117i  |  0.15853 +  0.54030i  |  0.45970 + -0.84147i  
+    2.000 | -0.83229 +  1.81859i  | -2.23474 +  0.07700i  | -1.81859 + -0.83229i  | -0.07700 + -2.23474i  |  1.09070 + -0.41615i  |  1.41615 + -0.90930i  
+    3.000 | -2.96998 +  0.42336i  | -1.41335 + -2.82886i  | -0.42336 + -2.96998i  |  2.82886 + -1.41335i  |  2.85888 + -0.98999i  |  1.98999 + -0.14112i  
+    4.000 | -2.61457 + -3.02721i  |  2.37357 + -3.37138i  |  3.02721 + -2.61457i  |  3.37137 +  2.37357i  |  4.75680 + -0.65364i  |  1.65364 +  0.75680i  
+    5.000 |  1.41831 + -4.79462i  |  5.07828 +  0.45939i  |  4.79462 +  1.41831i  | -0.45939 +  5.07828i  |  5.95892 +  0.28366i  |  0.71634 +  0.95892i  
+   -----------------------------------------------------------------------------------------------------------------------------------------------------------
+    Max-norm of the error is 5.79204e-06
+    Max-norm of the derivative error is 6.46605e-06
+
+Final Solver Statistics:
+Current time                  = 5.00772063451183
+Steps                         = 230
+Error test fails              = 1
+NLS step fails                = 0
+Initial step size             = 8.66011613252536e-11
+Last step size                = 0.0648820481749407
+Current step size             = 0.0648820481749407
+Last method order             = 5
+Current method order          = 5
+Residual fn evals             = 232
+IC linesearch backtrack ops   = 0
+NLS iters                     = 232
+NLS fails                     = 0
+NLS iters per step            = 1.00869565217391
+LS setups                     = 0
+Jac fn evals                  = 0
+LS residual fn evals          = 828
+Prec setup evals              = 0
+Prec solves                   = 0
+LS iters                      = 828
+LS fails                      = 0
+Jac-times setups              = 0
+Jac-times evals               = 828
+LS iters per NLS iter         = 3.56896551724138
+Jac evals per NLS iter        = 0
+Prec evals per NLS iter       = 0
+Root fn evals                 = 0

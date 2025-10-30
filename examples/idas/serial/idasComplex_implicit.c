@@ -56,7 +56,7 @@
  *-----------------------------------------------------------------*/
 
 /* Header files */
-#include <ida/ida.h> /* prototypes for IDA fcts., consts */
+#include <idas/idas.h> /* prototypes for IDA fcts., consts */
 #include <math.h>
 #include <nvector/nvector_serial.h> /* serial N_Vector types, fcts., macros */
 #include <stdio.h>
@@ -66,7 +66,7 @@
 #include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver     */
 #include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix           */
 #include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
-#include <ida/ida_bbdpre.h>      /* prototypes for IDABBDPRE module      */
+#include <idas/idas_bbdpre.h>      /* prototypes for IDABBDPRE module      */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"

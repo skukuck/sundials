@@ -27,58 +27,58 @@ from sundials4py.core import *
 
 def make_estimator(estimator_type, sunctx):
     if estimator_type == "power":
-        nv_view = NVectorView.Create(N_VNew_Serial(5, sunctx.get()))
-        e = SUNDomEigEstimator_Power(nv_view.get(), 10, 1.0, sunctx.get())
-        return SUNDomEigEstimatorView.Create(e), nv_view
+        nvec = N_VNew_Serial(5, sunctx)
+        e = SUNDomEigEstimator_Power(nvec, 10, 1.0, sunctx)
+        return e, nvec
     else:
         raise ValueError("Unknown estimator type")
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_create_estimator(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    assert e_view is not None
+    est, nvec = make_estimator(estimator_type, sunctx)
+    assert est is not None
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_max_iters(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    status = SUNDomEigEstimator_SetMaxIters(e_view.get(), 10)
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_SetMaxIters(est, 10)
     assert status == 0
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_num_preprocess_iters(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    status = SUNDomEigEstimator_SetNumPreprocessIters(e_view.get(), 2)
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_SetNumPreprocessIters(est, 2)
     assert status == 0
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_reltol(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    status = SUNDomEigEstimator_SetRelTol(e_view.get(), 1e-6)
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_SetRelTol(est, 1e-6)
     assert status == 0
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_initial_guess(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    status = SUNDomEigEstimator_SetInitialGuess(e_view.get(), nv_view.get())
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_SetInitialGuess(est, nvec)
     assert status == 0
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_initialize(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    status = SUNDomEigEstimator_Initialize(e_view.get())
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_Initialize(est)
     assert status == 0
 
-
+# TODO(CJB): fix or remov
 # @pytest.mark.parametrize("estimator_type", ["power"])
 # def test_estimate(estimator_type, sunctx):
-# 	e_view, nv_view = make_estimator(estimator_type, sunctx)
-# 	err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(e_view.get(), 1.0, 0.0)
+# 	est, nvec = make_estimator(estimator_type, sunctx)
+# 	err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(est)
 # 	assert isinstance(err, int)
 # 	assert isinstance(lambdaR, float)
 # 	assert isinstance(lambdaI, float)
@@ -86,23 +86,23 @@ def test_initialize(estimator_type, sunctx):
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_get_res(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    err, res = SUNDomEigEstimator_GetRes(e_view.get())
+    est, nvec = make_estimator(estimator_type, sunctx)
+    err, res = SUNDomEigEstimator_GetRes(est)
     assert isinstance(err, int)
     assert isinstance(res, float)
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_get_num_iters(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    err, num_iters = SUNDomEigEstimator_GetNumIters(e_view.get())
+    est, nvec = make_estimator(estimator_type, sunctx)
+    err, num_iters = SUNDomEigEstimator_GetNumIters(est)
     assert isinstance(err, int)
     assert isinstance(num_iters, int)
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_get_num_atimes_calls(estimator_type, sunctx):
-    e_view, nv_view = make_estimator(estimator_type, sunctx)
-    err, num_atimes = SUNDomEigEstimator_GetNumATimesCalls(e_view.get())
+    est, nvec = make_estimator(estimator_type, sunctx)
+    err, num_atimes = SUNDomEigEstimator_GetNumATimesCalls(est)
     assert isinstance(err, int)
     assert isinstance(num_atimes, int)

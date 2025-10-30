@@ -25,20 +25,19 @@ SUNREALTYPE_ATOL = sqrt(finfo(sunrealtype).eps)
 
 @pytest.fixture
 def sunctx():
-    sunctx = SUNContextView.Create()
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     yield sunctx
 
 
 @pytest.fixture
 def nvec(sunctx):
-    nvec = NVectorView.Create(N_VNew_Serial(10, sunctx.get()))
+    nvec = N_VNew_Serial(10, sunctx)
     yield nvec
 
 
 @pytest.fixture
 def sunstepper(sunctx):
-    status, stepper1 = SUNStepper_Create(sunctx.get())
-    stepper = SUNStepperView.Create(stepper1)
+    status, stepper = SUNStepper_Create(sunctx)
 
     # Dummy callback implementations
     def evolve_fn(stepper, tout, vret, tret):
@@ -72,15 +71,15 @@ def sunstepper(sunctx):
         return 0
 
     # Set all function pointers
-    SUNStepper_SetEvolveFn(stepper.get(), evolve_fn)
-    SUNStepper_SetOneStepFn(stepper.get(), one_step_fn)
-    SUNStepper_SetFullRhsFn(stepper.get(), full_rhs_fn)
-    SUNStepper_SetReInitFn(stepper.get(), reinit_fn)
-    SUNStepper_SetResetFn(stepper.get(), reset_fn)
-    SUNStepper_SetResetCheckpointIndexFn(stepper.get(), reset_ckpt_idx_fn)
-    SUNStepper_SetStopTimeFn(stepper.get(), stop_time_fn)
-    SUNStepper_SetStepDirectionFn(stepper.get(), step_direction_fn)
-    SUNStepper_SetForcingFn(stepper.get(), forcing_fn)
-    SUNStepper_SetGetNumStepsFn(stepper.get(), get_num_steps_fn)
+    SUNStepper_SetEvolveFn(stepper, evolve_fn)
+    SUNStepper_SetOneStepFn(stepper, one_step_fn)
+    SUNStepper_SetFullRhsFn(stepper, full_rhs_fn)
+    SUNStepper_SetReInitFn(stepper, reinit_fn)
+    SUNStepper_SetResetFn(stepper, reset_fn)
+    SUNStepper_SetResetCheckpointIndexFn(stepper, reset_ckpt_idx_fn)
+    SUNStepper_SetStopTimeFn(stepper, stop_time_fn)
+    SUNStepper_SetStepDirectionFn(stepper, step_direction_fn)
+    SUNStepper_SetForcingFn(stepper, forcing_fn)
+    SUNStepper_SetGetNumStepsFn(stepper, get_num_steps_fn)
 
     yield stepper

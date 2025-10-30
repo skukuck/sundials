@@ -24,175 +24,176 @@ from sundials4py.core import *
 
 def make_stepper(sunctx):
     # Create am empty stepper
-    status, s = SUNStepper_Create(sunctx.get())
-    return SUNStepperView.Create(s)
+    status, s = SUNStepper_Create(sunctx)
+    assert status == SUN_SUCCESS
+    return s
 
 
 def test_create_stepper(sunctx):
-    s_view = make_stepper(sunctx)
-    assert s_view.get() is not None
+    s = make_stepper(sunctx)
+    assert s is not None
 
 
 def test_stepper_evolve(sunctx, nvec):
-    s_view = make_stepper(sunctx)
-    vret = nvec.get()
-    err, tret = SUNStepper_Evolve(s_view.get(), 1.0, vret)
+    s = make_stepper(sunctx)
+    vret = nvec
+    err, tret = SUNStepper_Evolve(s, 1.0, vret)
     assert isinstance(err, int)
     assert isinstance(tret, float)
 
 
 def test_stepper_one_step(sunctx, nvec):
-    s_view = make_stepper(sunctx)
-    vret = nvec.get()
-    err, tret = SUNStepper_OneStep(s_view.get(), 1.0, vret)
+    s = make_stepper(sunctx)
+    vret = nvec
+    err, tret = SUNStepper_OneStep(s, 1.0, vret)
     assert isinstance(err, int)
     assert isinstance(tret, float)
 
 
 def test_stepper_reset(sunctx, nvec):
-    s_view = make_stepper(sunctx)
-    err = SUNStepper_Reset(s_view.get(), 0.0, nvec.get())
+    s = make_stepper(sunctx)
+    err = SUNStepper_Reset(s, 0.0, nvec)
     assert isinstance(err, int)
 
 
 def test_stepper_set_evolve_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def evolve_fn(stepper, tout, vret, tret):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetEvolveFn(s_view.get(), evolve_fn)
+    err = SUNStepper_SetEvolveFn(s, evolve_fn)
     assert err == 0
     # Call evolve to trigger callback
-    SUNStepper_Evolve(s_view.get(), 1.0, nvec.get())
+    SUNStepper_Evolve(s, 1.0, nvec)
     assert called["flag"]
 
 
 def test_stepper_set_one_step_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def one_step_fn(stepper, tout, vret, tret):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetOneStepFn(s_view.get(), one_step_fn)
+    err = SUNStepper_SetOneStepFn(s, one_step_fn)
     assert err == 0
-    SUNStepper_OneStep(s_view.get(), 1.0, nvec.get())
+    SUNStepper_OneStep(s, 1.0, nvec)
     assert called["flag"]
 
 
 def test_stepper_set_full_rhs_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def full_rhs_fn(stepper, t, v, f, mode):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetFullRhsFn(s_view.get(), full_rhs_fn)
+    err = SUNStepper_SetFullRhsFn(s, full_rhs_fn)
     assert err == 0
     # Call with dummy args
-    SUNStepper_FullRhs(s_view.get(), 0.0, nvec.get(), nvec.get(), 0)
+    SUNStepper_FullRhs(s, 0.0, nvec, nvec, 0)
     assert called["flag"]
 
 
 def test_stepper_set_reinit_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def reinit_fn(stepper, t, y):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetReInitFn(s_view.get(), reinit_fn)
+    err = SUNStepper_SetReInitFn(s, reinit_fn)
     assert err == 0
-    SUNStepper_ReInit(s_view.get(), 0.0, nvec.get())
+    SUNStepper_ReInit(s, 0.0, nvec)
     assert called["flag"]
 
 
 def test_stepper_set_reset_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def reset_fn(stepper, t, y):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetResetFn(s_view.get(), reset_fn)
+    err = SUNStepper_SetResetFn(s, reset_fn)
     assert err == 0
-    SUNStepper_Reset(s_view.get(), 0.0, nvec.get())
+    SUNStepper_Reset(s, 0.0, nvec)
     assert called["flag"]
 
 
 def test_stepper_set_reset_ckpt_idx_fn(sunctx):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def reset_ckpt_idx_fn(stepper, idx):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetResetCheckpointIndexFn(s_view.get(), reset_ckpt_idx_fn)
+    err = SUNStepper_SetResetCheckpointIndexFn(s, reset_ckpt_idx_fn)
     assert err == 0
-    SUNStepper_ResetCheckpointIndex(s_view.get(), 1)
+    SUNStepper_ResetCheckpointIndex(s, 1)
     assert called["flag"]
 
 
 def test_stepper_set_stop_time_fn(sunctx):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def stop_time_fn(stepper, tstop):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetStopTimeFn(s_view.get(), stop_time_fn)
+    err = SUNStepper_SetStopTimeFn(s, stop_time_fn)
     assert err == 0
-    SUNStepper_SetStopTime(s_view.get(), 2.0)
+    SUNStepper_SetStopTime(s, 2.0)
     assert called["flag"]
 
 
 def test_stepper_set_step_direction_fn(sunctx):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def step_direction_fn(stepper, direction):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetStepDirectionFn(s_view.get(), step_direction_fn)
+    err = SUNStepper_SetStepDirectionFn(s, step_direction_fn)
     assert err == 0
-    SUNStepper_SetStepDirection(s_view.get(), 1)
+    SUNStepper_SetStepDirection(s, 1)
     assert called["flag"]
 
 
 def test_stepper_set_forcing_fn(sunctx, nvec):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def forcing_fn(stepper, tshift, tscale, forcing, nforcing):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetForcingFn(s_view.get(), forcing_fn)
+    err = SUNStepper_SetForcingFn(s, forcing_fn)
     assert err == 0
-    SUNStepper_SetForcing(s_view.get(), 0.0, 1.0, [nvec.get()], 1)
+    SUNStepper_SetForcing(s, 0.0, 1.0, [nvec], 1)
     assert called["flag"]
 
 
 def test_stepper_set_get_num_steps_fn(sunctx):
-    s_view = make_stepper(sunctx)
+    s = make_stepper(sunctx)
     called = {"flag": False}
 
     def get_num_steps_fn(stepper, nst):
         called["flag"] = True
         return 0
 
-    err = SUNStepper_SetGetNumStepsFn(s_view.get(), get_num_steps_fn)
+    err = SUNStepper_SetGetNumStepsFn(s, get_num_steps_fn)
     assert err == 0
-    status, nst = SUNStepper_GetNumSteps(s_view.get())
+    status, nst = SUNStepper_GetNumSteps(s)
     assert called["flag"]
     assert isinstance(nst, int)

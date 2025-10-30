@@ -24,75 +24,73 @@ from sundials4py.core import *
 
 def make_controller(controller_type, sunctx):
     if controller_type == "soderlind":
-        c = SUNAdaptController_Soderlind(sunctx.get())
-        return SUNAdaptControllerView.Create(c), None, None
+        c = SUNAdaptController_Soderlind(sunctx)
+        return c, None, None
     elif controller_type == "imexgus":
-        c = SUNAdaptController_ImExGus(sunctx.get())
-        return SUNAdaptControllerView.Create(c), None, None
+        c = SUNAdaptController_ImExGus(sunctx)
+        return c, None, None
     elif controller_type == "mrihtol":
-        c1 = SUNAdaptController_ImExGus(sunctx.get())
-        c2 = SUNAdaptController_Soderlind(sunctx.get())
-        c1_view = SUNAdaptControllerView.Create(c1)
-        c2_view = SUNAdaptControllerView.Create(c2)
-        c = SUNAdaptController_MRIHTol(c1_view.get(), c2_view.get(), sunctx.get())
-        return SUNAdaptControllerView.Create(c), c1_view, c2_view
+        c1 = SUNAdaptController_ImExGus(sunctx)
+        c2 = SUNAdaptController_Soderlind(sunctx)
+        c = SUNAdaptController_MRIHTol(c1, c2, sunctx)
+        return c, c1, c2
     else:
         raise ValueError("Unknown controller type")
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_create_controller(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    assert c_view is not None
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    assert c is not None
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_get_type(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    t = SUNAdaptController_GetType(c_view.get())
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    t = SUNAdaptController_GetType(c)
     assert isinstance(t, int)
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_estimate_step(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    err, hnew = SUNAdaptController_EstimateStep(c_view.get(), 1.0, 1, 0.1)
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    err, hnew = SUNAdaptController_EstimateStep(c, 1.0, 1, 0.1)
     assert isinstance(err, int)
     assert isinstance(hnew, float)
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_reset(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    status = SUNAdaptController_Reset(c_view.get())
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    status = SUNAdaptController_Reset(c)
     assert status == 0
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_set_defaults(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    status = SUNAdaptController_SetDefaults(c_view.get())
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    status = SUNAdaptController_SetDefaults(c)
     assert status == 0
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_set_error_bias(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    status = SUNAdaptController_SetErrorBias(c_view.get(), 1.0)
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    status = SUNAdaptController_SetErrorBias(c, 1.0)
     assert status == 0
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_update_h(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    status = SUNAdaptController_UpdateH(c_view.get(), 1.0, 0.1)
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    status = SUNAdaptController_UpdateH(c, 1.0, 0.1)
     assert status == 0
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_estimate_step_tol(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    err, hnew, tolfacnew = SUNAdaptController_EstimateStepTol(c_view.get(), 1.0, 1.0, 1, 0.1, 0.1)
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    err, hnew, tolfacnew = SUNAdaptController_EstimateStepTol(c, 1.0, 1.0, 1, 0.1, 0.1)
     assert isinstance(err, int)
     assert isinstance(hnew, float)
     assert isinstance(tolfacnew, float)
@@ -100,6 +98,6 @@ def test_estimate_step_tol(controller_type, sunctx):
 
 @pytest.mark.parametrize("controller_type", ["mrihtol"])
 def test_update_mrihtol(controller_type, sunctx):
-    c_view, c1_view, c2_view = make_controller(controller_type, sunctx)
-    status = SUNAdaptController_UpdateMRIHTol(c_view.get(), 1.0, 1.0, 0.1, 0.1)
+    c, c1, c2 = make_controller(controller_type, sunctx)
+    status = SUNAdaptController_UpdateMRIHTol(c, 1.0, 1.0, 0.1, 0.1)
     assert status == 0

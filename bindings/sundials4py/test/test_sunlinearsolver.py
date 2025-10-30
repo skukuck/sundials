@@ -24,60 +24,60 @@ from sundials4py.core import *
 
 
 def test_smoke_create_dense(sunctx, nvec):
-    A = SUNMatrixView.Create(SUNDenseMatrix(2, 2, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(nvec.get(), A.get(), sunctx.get()))
+    A = SUNDenseMatrix(2, 2, sunctx)
+    LS = SUNLinSol_Dense(nvec, A, sunctx)
     assert LS is not None
 
 
 def test_smoke_create_band(sunctx, nvec):
-    A = SUNMatrixView.Create(SUNBandMatrix(2, 1, 1, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Band(nvec.get(), A.get(), sunctx.get()))
+    A = SUNBandMatrix(2, 1, 1, sunctx)
+    LS = SUNLinSol_Band(nvec, A, sunctx)
     assert LS is not None
 
 
 def test_smoke_create_spgmr(sunctx, nvec):
-    LS = SUNLinearSolverView.Create(SUNLinSol_SPGMR(nvec.get(), SUN_PREC_NONE, 0, sunctx.get()))
+    LS = SUNLinSol_SPGMR(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
 def test_smoke_create_pcg(sunctx, nvec):
-    LS = SUNLinearSolverView.Create(SUNLinSol_PCG(nvec.get(), SUN_PREC_NONE, 0, sunctx.get()))
+    LS = SUNLinSol_PCG(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
 def test_smoke_create_spbcgs(sunctx, nvec):
-    LS = SUNLinearSolverView.Create(SUNLinSol_SPBCGS(nvec.get(), SUN_PREC_NONE, 0, sunctx.get()))
+    LS = SUNLinSol_SPBCGS(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
 def test_smoke_create_sptfqmr(sunctx, nvec):
-    LS = SUNLinearSolverView.Create(SUNLinSol_SPTFQMR(nvec.get(), SUN_PREC_NONE, 0, sunctx.get()))
+    LS = SUNLinSol_SPTFQMR(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
 def test_smoke_get_type_and_id(sunctx, nvec):
-    A = SUNMatrixView.Create(SUNDenseMatrix(2, 2, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(nvec.get(), A.get(), sunctx.get()))
-    typ = SUNLinSolGetType(LS.get())
-    id_ = SUNLinSolGetID(LS.get())
+    A = SUNDenseMatrix(2, 2, sunctx)
+    LS = SUNLinSol_Dense(nvec, A, sunctx)
+    typ = SUNLinSolGetType(LS)
+    id_ = SUNLinSolGetID(LS)
     assert isinstance(typ, int)
     assert isinstance(id_, int)
 
 
 def test_smoke_initialize_setup(sunctx, nvec):
-    A = SUNMatrixView.Create(SUNDenseMatrix(2, 2, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(nvec.get(), A.get(), sunctx.get()))
-    ret_init = SUNLinSolInitialize(LS.get())
-    ret_setup = SUNLinSolSetup(LS.get(), A.get())
+    A = SUNDenseMatrix(2, 2, sunctx)
+    LS = SUNLinSol_Dense(nvec, A, sunctx)
+    ret_init = SUNLinSolInitialize(LS)
+    ret_setup = SUNLinSolSetup(LS, A)
     assert isinstance(ret_init, int)
     assert isinstance(ret_setup, int)
 
 
 def test_smoke_num_iters_resnorm_lastflag(sunctx, nvec):
-    LS = SUNLinearSolverView.Create(SUNLinSol_SPGMR(nvec.get(), 0, 0, sunctx.get()))
-    niters = SUNLinSolNumIters(LS.get())
-    resnorm = SUNLinSolResNorm(LS.get())
-    lastflag = SUNLinSolLastFlag(LS.get())
+    LS = SUNLinSol_SPGMR(nvec, 0, 0, sunctx)
+    niters = SUNLinSolNumIters(LS)
+    resnorm = SUNLinSolResNorm(LS)
+    lastflag = SUNLinSolLastFlag(LS)
     assert isinstance(niters, int)
     assert isinstance(resnorm, float)
     assert isinstance(lastflag, int)

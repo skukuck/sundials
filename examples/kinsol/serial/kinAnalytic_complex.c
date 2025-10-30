@@ -42,14 +42,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <kinsol/kinsol_bbdpre.h>      /* prototypes for KINBBDPRE module  */
+#include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver */
+#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver  */
+#include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver  */
+#include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix       */
+#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix        */
 #include "kinsol/kinsol.h"             /* access to KINSOL func., consts.  */
 #include "nvector/nvector_serial.h"    /* access to serial N_Vector        */
-#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver  */
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix        */
-#include <sunlinsol/sunlinsol_band.h>  /* access to banded SUNLinearSolver */
-#include <sunmatrix/sunmatrix_band.h>  /* access to banded SUNMatrix       */
-#include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver  */
-#include <kinsol/kinsol_bbdpre.h>      /* prototypes for KINBBDPRE module  */
 
 /* precision specific formatting macros */
 #if defined(SUNDIALS_EXTENDED_PRECISION)
@@ -60,39 +60,39 @@
 
 /* precision specific math function macros */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ABS(x)   (fabs((x)))
-#define SQRT(x)  (sqrt((x)))
-#define EXP(x)   (cexp((x)))
-#define SIN(x)   (csin((x)))
-#define COS(x)   (ccos((x)))
+#define ABS(x)  (fabs((x)))
+#define SQRT(x) (sqrt((x)))
+#define EXP(x)  (cexp((x)))
+#define SIN(x)  (csin((x)))
+#define COS(x)  (ccos((x)))
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ABS(x)   (fabsf((x)))
-#define SQRT(x)  (sqrtf((x)))
-#define EXP(x)   (cexpf((x)))
-#define SIN(x)   (csinf((x)))
-#define COS(x)   (ccosf((x)))
+#define ABS(x)  (fabsf((x)))
+#define SQRT(x) (sqrtf((x)))
+#define EXP(x)  (cexpf((x)))
+#define SIN(x)  (csinf((x)))
+#define COS(x)  (ccosf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ABS(x)   (fabsl((x)))
-#define SQRT(x)  (sqrtl((x)))
-#define EXP(x)   (cexpl((x)))
-#define SIN(x)   (csinl((x)))
-#define COS(x)   (ccosl((x)))
+#define ABS(x)  (fabsl((x)))
+#define SQRT(x) (sqrtl((x)))
+#define EXP(x)  (cexpl((x)))
+#define SIN(x)  (csinl((x)))
+#define COS(x)  (ccosl((x)))
 #endif
 
 /* problem constants */
-#define NX 100   /* number of locations */
-#define NEQ 3*NX /* number of equations */
+#define NX  100    /* number of locations */
+#define NEQ 3 * NX /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0  */
-#define TWO          SUN_RCONST(2.0)             /* real 2.0  */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define FOUR         SUN_RCONST(4.0)             /* real 4.0  */
-#define FIVE         SUN_RCONST(5.0)             /* real 5.0  */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0  */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
+#define ZERO  SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF  SUN_RCONST(0.5)  /* real 0.5  */
+#define ONE   SUN_RCONST(1.0)  /* real 1.0  */
+#define TWO   SUN_RCONST(2.0)  /* real 2.0  */
+#define THREE SUN_RCONST(3.0)  /* real 3.0  */
+#define FOUR  SUN_RCONST(4.0)  /* real 4.0  */
+#define FIVE  SUN_RCONST(5.0)  /* real 5.0  */
+#define SIX   SUN_RCONST(6.0)  /* real 6.0  */
+#define TEN   SUN_RCONST(10.0) /* real 10.0 */
 
 /* analytic solution */
 #define XTRUE SUN_CCONST(0.28443101049565, 0.27031686078054)
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
   printf("Analytic solution in each bin:\n");
   printf("    x = %f  + %fI\n", creal(XTRUE), cimag(XTRUE));
   printf("    y = %f  + %fI\n", creal(YTRUE), cimag(YTRUE));
-  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE)) ;
+  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE));
   printf("Solution method: Newton\n");
   printf("    tolerance     = %" GSYM "\n", uopt->tol);
   printf("    max iters     = %ld\n", uopt->maxiter);
@@ -359,6 +359,7 @@ int ResFunction(N_Vector u, N_Vector f, void* user_data)
 
   return (0);
 }
+
 /* -----------------------------------------------------------------------------
   * "Local" nonlinear system for KINBBDPRE
   * ---------------------------------------------------------------------------*/
@@ -383,7 +384,6 @@ static int check_ans(N_Vector u, sunrealtype tol)
 
   for (j = 0; j < NX; j++)
   {
-
     /* solution error */
     exR = ABS(creal(data[3 * j + 0]) - creal(XTRUE));
     eyR = ABS(creal(data[3 * j + 1]) - creal(YTRUE));
@@ -408,8 +408,7 @@ static int check_ans(N_Vector u, sunrealtype tol)
     }
 
     tol *= TEN;
-    if (exR > tol || eyR > tol || ezR > tol || exI > tol || eyI > tol ||
-        ezI > tol)
+    if (exR > tol || eyR > tol || ezR > tol || exI > tol || eyI > tol || ezI > tol)
     {
       printf("FAIL (cell %d)\n", j);
       return (1);
@@ -431,10 +430,10 @@ static int SetDefaults(UserOpt* uopt)
   if (*uopt == NULL) { return (-1); }
 
   /* Set default options values */
-  (*uopt)->tol            = 100 * SQRT(SUN_UNIT_ROUNDOFF);
-  (*uopt)->maxiter        = 30;
-  (*uopt)->maxliniter     = 10;
-  (*uopt)->linear_solver  = 1;               /* banded LS */
+  (*uopt)->tol           = 100 * SQRT(SUN_UNIT_ROUNDOFF);
+  (*uopt)->maxiter       = 30;
+  (*uopt)->maxliniter    = 10;
+  (*uopt)->linear_solver = 1; /* banded LS */
 
   return (0);
 }
@@ -493,7 +492,8 @@ static void InputHelp(void)
   printf(" Command line options:\n");
   printf("   --tol           : nonlinear solver tolerance\n");
   printf("   --maxiter       : max number of nonlinear iterations\n");
-  printf("   --linear_solver : linear solver type (0 dense, 1 band, 2 SPGMR, 3 SPGMR+BBDPRE)\n");
+  printf("   --linear_solver : linear solver type (0 dense, 1 band, 2 SPGMR, 3 "
+         "SPGMR+BBDPRE)\n");
   printf("   --maxliniter    : max number of SPGMR iterations\n");
   return;
 }

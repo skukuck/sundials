@@ -22,8 +22,8 @@
 
 #include <Kokkos_Core.hpp>
 #include <memory>
-#include <sundials/sundials_nvector.hpp>
 #include <sundials/sundials_math.h>
+#include <sundials/sundials_nvector.hpp>
 
 namespace sundials {
 namespace kokkos {
@@ -194,7 +194,8 @@ void N_VCompare_Kokkos(sunrealtype c, N_Vector x, N_Vector z)
   Kokkos::parallel_for(
     "N_VCompare", typename VectorType::range_policy(0, xvec->Length()),
     KOKKOS_LAMBDA(const size_type i) {
-      zdata(i) = std::abs(xdata(i)) >= c ? sunscalartype{1.0} : sunscalartype{0.0};
+      zdata(i) = std::abs(xdata(i)) >= c ? sunscalartype{1.0}
+                                         : sunscalartype{0.0};
     });
 }
 
@@ -278,8 +279,7 @@ sunrealtype N_VDotProd_Kokkos(N_Vector x, N_Vector y)
 }
 
 template<class VectorType>
-SUNErrCode N_VDotProdComplex_Kokkos(N_Vector x, N_Vector y,
-                                    sunscalartype* result)
+SUNErrCode N_VDotProdComplex_Kokkos(N_Vector x, N_Vector y, sunscalartype* result)
 {
   auto xvec{GetVec<VectorType>(x)};
   auto yvec{GetVec<VectorType>(y)};
@@ -428,7 +428,8 @@ sunrealtype N_VMinQuotient_Kokkos(N_Vector num, N_Vector denom)
     KOKKOS_LAMBDA(const size_type i, sunrealtype& update) {
       if (SUN_REAL(ddata(i)) != sunrealtype{0.0})
       {
-        if (SUN_REAL(ndata(i) / ddata(i)) < update) update = SUN_REAL(ndata(i) / ddata(i));
+        if (SUN_REAL(ndata(i) / ddata(i)) < update)
+          update = SUN_REAL(ndata(i) / ddata(i));
       }
     },
     Kokkos::Min<sunrealtype>(gpu_result));
@@ -619,36 +620,38 @@ private:
     this->object_->ops->nvgetvectorid = impl::N_VGetVectorID_Kokkos;
 
     /* standard vector operations */
-    this->object_->ops->nvabs            = impl::N_VAbs_Kokkos<this_type>;
-    this->object_->ops->nvaddconst       = impl::N_VAddConst_Kokkos<this_type>;
-    this->object_->ops->nvcompare        = impl::N_VCompare_Kokkos<this_type>;
-    this->object_->ops->nvconst          = impl::N_VConst_Kokkos<this_type>;
-    this->object_->ops->nvconstrmask     = impl::N_VConstrMask_Kokkos<this_type>;
-    this->object_->ops->nvdiv            = impl::N_VDiv_Kokkos<this_type>;
-    this->object_->ops->nvdotprod        = impl::N_VDotProd_Kokkos<this_type>;
-    this->object_->ops->nvdotprodcomplex = impl::N_VDotProdComplex_Kokkos<this_type>;
-    this->object_->ops->nvinv            = impl::N_VInv_Kokkos<this_type>;
-    this->object_->ops->nvinvtest        = impl::N_VInvTest_Kokkos<this_type>;
-    this->object_->ops->nvl1norm         = impl::N_VL1Norm_Kokkos<this_type>;
-    this->object_->ops->nvlinearsum      = impl::N_VLinearSum_Kokkos<this_type>;
-    this->object_->ops->nvmaxnorm        = impl::N_VMaxNorm_Kokkos<this_type>;
-    this->object_->ops->nvmin            = impl::N_VMin_Kokkos<this_type>;
-    this->object_->ops->nvminquotient    = impl::N_VMinQuotient_Kokkos<this_type>;
-    this->object_->ops->nvprod           = impl::N_VProd_Kokkos<this_type>;
-    this->object_->ops->nvscale          = impl::N_VScale_Kokkos<this_type>;
-    this->object_->ops->nvwl2norm        = impl::N_VWL2Norm_Kokkos<this_type>;
-    this->object_->ops->nvwrmsnorm       = impl::N_VWrmsNorm_Kokkos<this_type>;
-    this->object_->ops->nvwrmsnormmask   = impl::N_VWrmsNormMask_Kokkos<this_type>;
+    this->object_->ops->nvabs        = impl::N_VAbs_Kokkos<this_type>;
+    this->object_->ops->nvaddconst   = impl::N_VAddConst_Kokkos<this_type>;
+    this->object_->ops->nvcompare    = impl::N_VCompare_Kokkos<this_type>;
+    this->object_->ops->nvconst      = impl::N_VConst_Kokkos<this_type>;
+    this->object_->ops->nvconstrmask = impl::N_VConstrMask_Kokkos<this_type>;
+    this->object_->ops->nvdiv        = impl::N_VDiv_Kokkos<this_type>;
+    this->object_->ops->nvdotprod    = impl::N_VDotProd_Kokkos<this_type>;
+    this->object_->ops->nvdotprodcomplex =
+      impl::N_VDotProdComplex_Kokkos<this_type>;
+    this->object_->ops->nvinv         = impl::N_VInv_Kokkos<this_type>;
+    this->object_->ops->nvinvtest     = impl::N_VInvTest_Kokkos<this_type>;
+    this->object_->ops->nvl1norm      = impl::N_VL1Norm_Kokkos<this_type>;
+    this->object_->ops->nvlinearsum   = impl::N_VLinearSum_Kokkos<this_type>;
+    this->object_->ops->nvmaxnorm     = impl::N_VMaxNorm_Kokkos<this_type>;
+    this->object_->ops->nvmin         = impl::N_VMin_Kokkos<this_type>;
+    this->object_->ops->nvminquotient = impl::N_VMinQuotient_Kokkos<this_type>;
+    this->object_->ops->nvprod        = impl::N_VProd_Kokkos<this_type>;
+    this->object_->ops->nvscale       = impl::N_VScale_Kokkos<this_type>;
+    this->object_->ops->nvwl2norm     = impl::N_VWL2Norm_Kokkos<this_type>;
+    this->object_->ops->nvwrmsnorm    = impl::N_VWrmsNorm_Kokkos<this_type>;
+    this->object_->ops->nvwrmsnormmask = impl::N_VWrmsNormMask_Kokkos<this_type>;
 
     /* local reduction operations */
-    this->object_->ops->nvconstrmasklocal     = impl::N_VConstrMask_Kokkos<this_type>;
-    this->object_->ops->nvdotprodlocal        = impl::N_VDotProd_Kokkos<this_type>;
-    this->object_->ops->nvdotprodlocalcomplex = impl::N_VDotProdComplex_Kokkos<this_type>;
-    this->object_->ops->nvinvtestlocal        = impl::N_VInvTest_Kokkos<this_type>;
-    this->object_->ops->nvl1normlocal         = impl::N_VL1Norm_Kokkos<this_type>;
-    this->object_->ops->nvmaxnormlocal        = impl::N_VMaxNorm_Kokkos<this_type>;
-    this->object_->ops->nvminlocal            = impl::N_VMin_Kokkos<this_type>;
-    this->object_->ops->nvminquotientlocal    =
+    this->object_->ops->nvconstrmasklocal = impl::N_VConstrMask_Kokkos<this_type>;
+    this->object_->ops->nvdotprodlocal = impl::N_VDotProd_Kokkos<this_type>;
+    this->object_->ops->nvdotprodlocalcomplex =
+      impl::N_VDotProdComplex_Kokkos<this_type>;
+    this->object_->ops->nvinvtestlocal = impl::N_VInvTest_Kokkos<this_type>;
+    this->object_->ops->nvl1normlocal  = impl::N_VL1Norm_Kokkos<this_type>;
+    this->object_->ops->nvmaxnormlocal = impl::N_VMaxNorm_Kokkos<this_type>;
+    this->object_->ops->nvminlocal     = impl::N_VMin_Kokkos<this_type>;
+    this->object_->ops->nvminquotientlocal =
       impl::N_VMinQuotient_Kokkos<this_type>;
     this->object_->ops->nvwsqrsumlocal = impl::N_VWSqrSumLocal_Kokkos<this_type>;
     this->object_->ops->nvwsqrsummasklocal =

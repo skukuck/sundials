@@ -46,38 +46,38 @@
 
 /* precision specific math function macros */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-#define ABS(x)   (fabs((x)))
-#define SQRT(x)  (sqrt((x)))
-#define EXP(x)   (cexp((x)))
-#define SIN(x)   (csin((x)))
-#define COS(x)   (ccos((x)))
+#define ABS(x)  (fabs((x)))
+#define SQRT(x) (sqrt((x)))
+#define EXP(x)  (cexp((x)))
+#define SIN(x)  (csin((x)))
+#define COS(x)  (ccos((x)))
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-#define ABS(x)   (fabsf((x)))
-#define SQRT(x)  (sqrtf((x)))
-#define EXP(x)   (cexpf((x)))
-#define SIN(x)   (csinf((x)))
-#define COS(x)   (ccosf((x)))
+#define ABS(x)  (fabsf((x)))
+#define SQRT(x) (sqrtf((x)))
+#define EXP(x)  (cexpf((x)))
+#define SIN(x)  (csinf((x)))
+#define COS(x)  (ccosf((x)))
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
-#define ABS(x)   (fabsl((x)))
-#define SQRT(x)  (sqrtl((x)))
-#define EXP(x)   (cexpl((x)))
-#define SIN(x)   (csinl((x)))
-#define COS(x)   (ccosl((x)))
+#define ABS(x)  (fabsl((x)))
+#define SQRT(x) (sqrtl((x)))
+#define EXP(x)  (cexpl((x)))
+#define SIN(x)  (csinl((x)))
+#define COS(x)  (ccosl((x)))
 #endif
 
 /* problem constants */
 #define NEQ 3 /* number of equations */
 
-#define ZERO         SUN_RCONST(0.0)             /* real 0.0  */
-#define PTONE        SUN_RCONST(0.1)             /* real 0.1  */
-#define HALF         SUN_RCONST(0.5)             /* real 0.5  */
-#define ONE          SUN_RCONST(1.0)             /* real 1.0 */
-#define TWO          SUN_RCONST(2.0)             /* real 2.0 */
-#define THREE        SUN_RCONST(3.0)             /* real 3.0  */
-#define FOUR         SUN_RCONST(4.0)             /* real 4.0 */
-#define FIVE         SUN_RCONST(5.0)             /* real 5.0 */
-#define SIX          SUN_RCONST(6.0)             /* real 6.0 */
-#define TEN          SUN_RCONST(10.0)            /* real 10.0 */
+#define ZERO  SUN_RCONST(0.0)  /* real 0.0  */
+#define PTONE SUN_RCONST(0.1)  /* real 0.1  */
+#define HALF  SUN_RCONST(0.5)  /* real 0.5  */
+#define ONE   SUN_RCONST(1.0)  /* real 1.0 */
+#define TWO   SUN_RCONST(2.0)  /* real 2.0 */
+#define THREE SUN_RCONST(3.0)  /* real 3.0  */
+#define FOUR  SUN_RCONST(4.0)  /* real 4.0 */
+#define FIVE  SUN_RCONST(5.0)  /* real 5.0 */
+#define SIX   SUN_RCONST(6.0)  /* real 6.0 */
+#define TEN   SUN_RCONST(10.0) /* real 10.0 */
 
 /* analytic solution */
 #define XTRUE SUN_CCONST(0.28443101049565, 0.27031686078054)
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
   N_Vector scale = NULL; /* scaling vector      */
   FILE* infofp   = NULL; /* KINSOL log file     */
   long int nni, nfe;     /* solver outputs      */
-  sunscalartype* data;     /* vector data array   */
+  sunscalartype* data;   /* vector data array   */
   void* kmem;            /* KINSOL memory       */
 
   /* Set default options */
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
   printf("Analytic solution:\n");
   printf("    x = %f  + %fI\n", creal(XTRUE), cimag(XTRUE));
   printf("    y = %f  + %fI\n", creal(YTRUE), cimag(YTRUE));
-  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE)) ;
+  printf("    z = %f  + %fI\n", creal(ZTRUE), cimag(ZTRUE));
   printf("Solution method: Anderson accelerated fixed point iteration.\n");
   printf("    tolerance    = %" GSYM "\n", uopt->tol);
   printf("    max iters    = %ld\n", uopt->maxiter);
@@ -346,9 +346,9 @@ int FPFunction(N_Vector u, N_Vector g, void* user_data)
   y = udata[1];
   z = udata[2];
 
-  gdata[0] = (ONE/FOUR)*(SIN(y) + SUN_CCONST(0.0, 1.0)*z + ONE);
-  gdata[1] = (ONE/FIVE)*(x*x + COS(z) + SUN_CCONST(0.0, 2.0));
-  gdata[2] = (ONE/SIX)*(EXP(-x) + y + THREE);
+  gdata[0] = (ONE / FOUR) * (SIN(y) + SUN_CCONST(0.0, 1.0) * z + ONE);
+  gdata[1] = (ONE / FIVE) * (x * x + COS(z) + SUN_CCONST(0.0, 2.0));
+  gdata[2] = (ONE / SIX) * (EXP(-x) + y + THREE);
 
   return (0);
 }

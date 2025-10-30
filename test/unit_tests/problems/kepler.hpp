@@ -145,8 +145,8 @@ inline int ode_rhs_force(sunrealtype t, N_Vector y_vec, N_Vector f_vec,
 
   const sunscalartype sqrt_qTq = std::sqrt(SUNSQR(q1) + SUNSQR(q2));
 
-  f_data[2] = -q1 / ((sunscalartype) std::pow(sqrt_qTq, 3));
-  f_data[3] = -q2 / ((sunscalartype) std::pow(sqrt_qTq, 3));
+  f_data[2] = -q1 / ((sunscalartype)std::pow(sqrt_qTq, 3));
+  f_data[3] = -q2 / ((sunscalartype)std::pow(sqrt_qTq, 3));
 
   return 0;
 }

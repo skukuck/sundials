@@ -67,16 +67,16 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 int main(void)
 {
   /* general problem parameters */
-  sunrealtype T0     = SUN_RCONST(0.0);       /* initial time */
-  sunrealtype Tf     = SUN_RCONST(5.0);       /* final time */
-  sunrealtype dTout  = SUN_RCONST(1.0);       /* time between outputs */
-  sunindextype NEQ   = 3;                     /* number of dependent vars. */
-  int Nt             = (int)ceil(Tf / dTout); /* number of output times */
-  #if defined(SUNDIALS_SINGLE_PRECISION)
-  sunrealtype reltol = SUN_RCONST(1.0e-3);                /* tolerances */
-  #else
+  sunrealtype T0    = SUN_RCONST(0.0);       /* initial time */
+  sunrealtype Tf    = SUN_RCONST(5.0);       /* final time */
+  sunrealtype dTout = SUN_RCONST(1.0);       /* time between outputs */
+  sunindextype NEQ  = 3;                     /* number of dependent vars. */
+  int Nt            = (int)ceil(Tf / dTout); /* number of output times */
+#if defined(SUNDIALS_SINGLE_PRECISION)
+  sunrealtype reltol = SUN_RCONST(1.0e-3); /* tolerances */
+#else
   sunrealtype reltol = SUN_RCONST(1.0e-6);
-  #endif
+#endif
   sunrealtype abstol = SUN_RCONST(1.0e-10);
 
   /* general problem variables */

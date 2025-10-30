@@ -43,13 +43,13 @@
 #define THOUSAND SUN_RCONST(1000.0)
 
 #if defined(SUNDIALS_SCALAR_TYPE_REAL)
-  #define SOMEMATRIXNUMBERd    SUN_RCONST(5.0)
-  #define SOMEMATRIXNUMBERup   SUN_RCONST(1.0)
-  #define SOMEMATRIXNUMBERlow  SUN_RCONST(1.0)
+#define SOMEMATRIXNUMBERd   SUN_RCONST(5.0)
+#define SOMEMATRIXNUMBERup  SUN_RCONST(1.0)
+#define SOMEMATRIXNUMBERlow SUN_RCONST(1.0)
 #elif defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
-  #define SOMEMATRIXNUMBERd     SUN_CCONST(6.0,2.0)
-  #define SOMEMATRIXNUMBERup    SUN_CCONST(-1.0,2.0)
-  #define SOMEMATRIXNUMBERlow   SUN_CCONST(2.0,-1.0)
+#define SOMEMATRIXNUMBERd   SUN_CCONST(6.0, 2.0)
+#define SOMEMATRIXNUMBERup  SUN_CCONST(-1.0, 2.0)
+#define SOMEMATRIXNUMBERlow SUN_CCONST(2.0, -1.0)
 #else
 #error \
   "SUNDIALS scalar type not defined, report to github.com/LLNL/sundials/issues"
@@ -62,8 +62,8 @@ typedef struct
   N_Vector d;     /* matrix diagonal */
   N_Vector s1;    /* scaling vectors supplied to SPFGMR */
   N_Vector s2;
-  sunscalartype up;   /* nondiagonal entries of the matrix */
-  sunscalartype low;  /* nondiagonal entries of the matrix */
+  sunscalartype up;  /* nondiagonal entries of the matrix */
+  sunscalartype low; /* nondiagonal entries of the matrix */
 } UserData;
 
 /* private functions */
@@ -481,12 +481,14 @@ int ATimes(void* Data, N_Vector v_vec, N_Vector z_vec)
   /* iterate through interior of local domain, performing product */
   for (i = 1; i < N - 1; i++)
   {
-    z[i] = (-v[i - 1] * s2[i - 1] * low + diag[i] * v[i] * s2[i] - v[i + 1] * s2[i + 1] * up) /
+    z[i] = (-v[i - 1] * s2[i - 1] * low + diag[i] * v[i] * s2[i] -
+            v[i + 1] * s2[i + 1] * up) /
            s1[i];
   }
 
   /* perform product at the right domain boundary (note: v is zero at the boundary)*/
-  z[N - 1] = (-v[N - 2] * s2[N - 2] * low + diag[N-1] * v[N - 1] * s2[N - 1]) / s1[N - 1];
+  z[N - 1] = (-v[N - 2] * s2[N - 2] * low + diag[N - 1] * v[N - 1] * s2[N - 1]) /
+             s1[N - 1];
 
   /* return with success */
   return 0;

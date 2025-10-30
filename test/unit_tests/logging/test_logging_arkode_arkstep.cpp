@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "true_sol")) { return 1; }
 
   sunscalartype* ydata = N_VGetArrayPointer(y);
-  ydata[0]           = utrue;
-  ydata[1]           = vtrue;
+  ydata[0]             = utrue;
+  ydata[1]             = vtrue;
 
   // Create ARKStep memory structure
   void* arkode_mem = nullptr;

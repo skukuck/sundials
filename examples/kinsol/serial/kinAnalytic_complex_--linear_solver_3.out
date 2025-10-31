@@ -1,0 +1,38 @@
+Solve the nonlinear system in 100 bins:
+    4x    - sin(y) - zi     - 1  = 0
+   -x^2   + 5y     - cos(z) - 2i = 0
+   -e^-x  - y      + 6z     - 3  = 0
+Analytic solution in each bin:
+    x = 0.284431  + 0.270317I
+    y = 0.161171  + 0.426222I
+    z = 0.647715  + 0.037549I
+Solution method: Newton
+    tolerance     = 1.49012e-06
+    max iters     = 30
+    linear solver = SPGMR+KINBBDPRE
+    max lin iters = 10
+Nonlinear iters               = 4
+Nonlinear fn evals            = 5
+Beta condition fails          = 0
+Backtrack operations          = 0
+Nonlinear fn norm             = 1.18218685876991e-08
+Step length                   = 0.00076146218502355
+Jac fn evals                  = 0
+LS Nonlinear fn evals         = 10
+Prec setup evals              = 1
+Prec solves                   = 10
+LS iters                      = 6
+LS fails                      = 0
+Jac-times evals               = 10
+LS iters per NLS iter         = 1.5
+Jac evals per NLS iter        = 0
+Prec evals per NLS iter       = 0.25
+Computed solution (first cell):
+    x = 0.284431 + 0.270317I
+    y = 0.161171 + 0.426222I
+    z = 0.647715 + 0.037549I
+Solution error (first cell):
+    ex = 1.883483e-10 + 5.505557e-11I
+    ey = 8.200876e-11 + 1.054605e-10I
+    ez = 3.137690e-11 + 1.069800e-11I
+PASS

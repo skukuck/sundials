@@ -396,7 +396,8 @@ SUNDIALS_EXPORT int ARKodeGetAccumulatedError(void* arkode_mem,
 SUNDIALS_EXPORT int ARKodeGetNumLinSolvSetups(void* arkode_mem,
                                               long int* nlinsetups);
 SUNDIALS_EXPORT int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur);
-SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem, N_Vector* state); // nb::rv_policy::reference
+SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem,
+                                          N_Vector* state); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetCurrentGamma(void* arkode_mem, sunrealtype* gamma);
 SUNDIALS_EXPORT int ARKodeGetNonlinearSystemData(
   void* arkode_mem, sunrealtype* tcur, N_Vector* zpred, N_Vector* z,
@@ -409,7 +410,8 @@ SUNDIALS_EXPORT int ARKodeGetNonlinSolvStats(void* arkode_mem, long int* nniters
                                              long int* nnfails);
 SUNDIALS_EXPORT int ARKodeGetNumStepSolveFails(void* arkode_mem,
                                                long int* nncfails);
-SUNDIALS_EXPORT int ARKodeGetJac(void* arkode_mem, SUNMatrix* J); // nb::rv_policy::reference
+SUNDIALS_EXPORT int ARKodeGetJac(void* arkode_mem,
+                                 SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetJacTime(void* arkode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int ARKodeGetJacNumSteps(void* arkode_mem, long int* nst_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
@@ -430,7 +432,8 @@ SUNDIALS_EXPORT int ARKodeGetLastLinFlag(void* arkode_mem, long int* flag);
 SUNDIALS_EXPORT char* ARKodeGetLinReturnFlagName(long int flag);
 
 /* Optional output functions (non-identity mass matrices) */
-SUNDIALS_EXPORT int ARKodeGetCurrentMassMatrix(void* arkode_mem, SUNMatrix* M); // nb::rv_policy::reference
+SUNDIALS_EXPORT int ARKodeGetCurrentMassMatrix(void* arkode_mem,
+                                               SUNMatrix* M); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

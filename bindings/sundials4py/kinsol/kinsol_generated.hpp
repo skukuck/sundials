@@ -39,7 +39,7 @@ m.attr("KIN_PICARD")              = 2;
 m.attr("KIN_FP")                  = 3;
 
 m.def("KINSol", KINSol, nb::arg("kinmem"), nb::arg("uu"), nb::arg("strategy"),
-      nb::arg("u_scale"), nb::arg("f_scale"));
+      nb::arg("u_scale"), nb::arg("f_scale"), "Solver function");
 
 m.def("KINSetUserData", KINSetUserData, nb::arg("kinmem"), nb::arg("user_data"));
 
@@ -212,8 +212,7 @@ m.def(
 m.def("KINPrintAllStats", KINPrintAllStats, nb::arg("kinmem"),
       nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("KINGetReturnFlagName", KINGetReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("KINGetReturnFlagName", KINGetReturnFlagName, nb::arg("flag"));
 // #ifdef __cplusplus
 //
 // #endif
@@ -257,8 +256,7 @@ m.def(
 
 m.def(
   "KINGetJac",
-  [](void* kinmem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  [](void* kinmem) -> std::tuple<int, SUNMatrix>
   {
     auto KINGetJac_adapt_modifiable_immutable_to_return =
       [](void* kinmem) -> std::tuple<int, SUNMatrix>
@@ -268,21 +266,10 @@ m.def(
       int r = KINGetJac(kinmem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
-    auto KINGetJac_adapt_return_type_to_shared_ptr =
-      [&KINGetJac_adapt_modifiable_immutable_to_return](void* kinmem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
-    {
-      auto lambda_result = KINGetJac_adapt_modifiable_immutable_to_return(kinmem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
-                                             SUNMatrixDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return KINGetJac_adapt_return_type_to_shared_ptr(kinmem);
+    return KINGetJac_adapt_modifiable_immutable_to_return(kinmem);
   },
-  nb::arg("kinmem"), nb::rv_policy::reference);
+  nb::arg("kinmem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "KINGetJacNumIters",
@@ -437,8 +424,7 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def("KINGetLinReturnFlagName", KINGetLinReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("KINGetLinReturnFlagName", KINGetLinReturnFlagName, nb::arg("flag"));
 // #ifdef __cplusplus
 //
 // #endif

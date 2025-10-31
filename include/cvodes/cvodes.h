@@ -284,7 +284,8 @@ SUNDIALS_EXPORT int CVodeGetNumStabLimOrderReds(void* cvode_mem,
 SUNDIALS_EXPORT int CVodeGetActualInitStep(void* cvode_mem, sunrealtype* hinused);
 SUNDIALS_EXPORT int CVodeGetLastStep(void* cvode_mem, sunrealtype* hlast);
 SUNDIALS_EXPORT int CVodeGetCurrentStep(void* cvode_mem, sunrealtype* hcur);
-SUNDIALS_EXPORT int CVodeGetCurrentState(void* cvode_mem, N_Vector* y); // nb::rv_policy::reference
+SUNDIALS_EXPORT int CVodeGetCurrentState(void* cvode_mem,
+                                         N_Vector* y); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetCurrentStateSens(void* cvode_mem,
                                              N_Vector** yS_1d_out); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetCurrentSensSolveIndex(void* cvode_mem, int* index);
@@ -298,12 +299,10 @@ SUNDIALS_EXPORT int CVodeGetIntegratorStats(
   void* cvode_mem, long int* nsteps, long int* nfevals, long int* nlinsetups,
   long int* netfails, int* qlast, int* qcur, sunrealtype* hinused,
   sunrealtype* hlast, sunrealtype* hcur, sunrealtype* tcur);
-SUNDIALS_EXPORT int CVodeGetNonlinearSystemData(void* cvode_mem,
-                                                sunrealtype* tcur,
-                                                N_Vector* ypred, N_Vector* yn,
-                                                N_Vector* fn, sunrealtype* gamma,
-                                                sunrealtype* rl1, N_Vector* zn1,
-                                                void** user_data); // nb::rv_policy::reference
+SUNDIALS_EXPORT int CVodeGetNonlinearSystemData(
+  void* cvode_mem, sunrealtype* tcur, N_Vector* ypred, N_Vector* yn,
+  N_Vector* fn, sunrealtype* gamma, sunrealtype* rl1, N_Vector* zn1,
+  void** user_data); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetNonlinearSystemDataSens(
   void* cvode_mem, sunrealtype* tcur, N_Vector** ySpred_1d_out,
   N_Vector** ySn_1d_out, sunrealtype* gamma, sunrealtype* rl1,

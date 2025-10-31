@@ -28,7 +28,7 @@ m.def(
     return SUNNonlinSol_FixedPoint_adapt_return_type_to_shared_ptr(y, m, sunctx);
   },
   nb::arg("y"), nb::arg("m"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  nb::keep_alive<0, 3>());
 
 m.def(
   "SUNNonlinSol_FixedPointSens",
@@ -49,7 +49,7 @@ m.def(
                                                                        m, sunctx);
   },
   nb::arg("count"), nb::arg("y"), nb::arg("m"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 4>()", nb::rv_policy::reference, nb::keep_alive<0, 4>());
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
       nb::arg("NLS"), nb::arg("beta"));

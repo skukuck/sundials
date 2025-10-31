@@ -18,13 +18,13 @@ auto pyEnumSUNAdaptController_Type =
 
 auto pyClass_generic_SUNAdaptController_Ops =
   nb::class_<_generic_SUNAdaptController_Ops>(m,
-                                              "_generic_SUNAdaptController_Ops",
-                                              "")
+                                              "_generic_SUNAdaptController_Ops", "Structure containing function pointers to controller operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClass_generic_SUNAdaptController =
-  nb::class_<_generic_SUNAdaptController>(m, "_generic_SUNAdaptController", "")
+  nb::class_<_generic_SUNAdaptController>(m,
+                                          "_generic_SUNAdaptController", " A SUNAdaptController is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of\n   operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 

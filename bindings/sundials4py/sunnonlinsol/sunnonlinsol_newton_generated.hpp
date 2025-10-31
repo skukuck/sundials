@@ -28,7 +28,7 @@ m.def(
     return SUNNonlinSol_Newton_adapt_return_type_to_shared_ptr(y, sunctx);
   },
   nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 2>());
+  nb::keep_alive<0, 2>());
 
 m.def(
   "SUNNonlinSol_NewtonSens",
@@ -49,7 +49,7 @@ m.def(
                                                                    sunctx);
   },
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  nb::keep_alive<0, 3>());
 
 m.def("SUNNonlinSolSetLSetupFn_Newton", SUNNonlinSolSetLSetupFn_Newton,
       nb::arg("NLS"), nb::arg("LSetupFn"));

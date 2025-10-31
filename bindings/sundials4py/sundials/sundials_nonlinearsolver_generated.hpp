@@ -16,14 +16,16 @@ auto pyEnumSUNNonlinearSolver_Type =
 //
 
 auto pyClass_generic_SUNNonlinearSolver_Ops =
-  nb::class_<_generic_SUNNonlinearSolver_Ops>(m,
-                                              "_generic_SUNNonlinearSolver_Ops",
-                                              "")
+  nb::class_<
+    _generic_SUNNonlinearSolver_Ops>(m, "_generic_SUNNonlinearSolver_Ops",
+                                     "Structure containing function pointers "
+                                     "to nonlinear solver operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClass_generic_SUNNonlinearSolver =
-  nb::class_<_generic_SUNNonlinearSolver>(m, "_generic_SUNNonlinearSolver", "")
+  nb::class_<_generic_SUNNonlinearSolver>(m,
+                                          "_generic_SUNNonlinearSolver", " A nonlinear solver is a structure with an implementation-dependent 'content'\n   field, and a pointer to a structure of solver nonlinear solver operations\n   corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 

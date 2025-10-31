@@ -27,7 +27,7 @@ m.def(
     return SUNLinSol_Dense_adapt_return_type_to_shared_ptr(y, A, sunctx);
   },
   nb::arg("y"), nb::arg("A"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  nb::keep_alive<0, 3>());
 // #ifdef __cplusplus
 //
 // #endif

@@ -28,7 +28,7 @@ m.def(
                                                          sunctx);
   },
   nb::arg("y"), nb::arg("pretype"), nb::arg("maxl"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 4>()", nb::rv_policy::reference, nb::keep_alive<0, 4>());
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def("SUNLinSol_PCGSetPrecType", SUNLinSol_PCGSetPrecType, nb::arg("S"),
       nb::arg("pretype"));

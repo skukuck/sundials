@@ -32,7 +32,10 @@ def adapt_sundials_types_returns_to_shared_ptr(
     # print(f"    {adapted_function.cpp_element()}")
     # print(f"    {adapted_function.cpp_element().cpp_element_comments}")
 
-    if "nb::rv_policy::reference" in adapted_function.cpp_element().cpp_element_comments.comments_as_str():
+    if (
+        "nb::rv_policy::reference"
+        in adapted_function.cpp_element().cpp_element_comments.comments_as_str()
+    ):
         return None
 
     tuple_args_match = None

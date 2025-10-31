@@ -21,9 +21,7 @@ m.def("ARKStepSetTableName", ARKStepSetTableName, nb::arg("arkode_mem"),
 
 m.def(
   "ARKStepGetCurrentButcherTables",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>,
-                  std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
+  [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
   {
     auto ARKStepGetCurrentButcherTables_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
@@ -35,29 +33,13 @@ m.def(
                                              &Be_adapt_modifiable);
       return std::make_tuple(r, Bi_adapt_modifiable, Be_adapt_modifiable);
     };
-    auto ARKStepGetCurrentButcherTables_adapt_return_type_to_shared_ptr =
-      [&ARKStepGetCurrentButcherTables_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>,
-                    std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>>
-    {
-      auto lambda_result =
-        ARKStepGetCurrentButcherTables_adapt_modifiable_immutable_to_return(
-          arkode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
-                                             ARKodeButcherTableDeleter>(
-                               std::get<1>(lambda_result)),
-                             our_make_shared<std::remove_pointer_t<ARKodeButcherTable>,
-                                             ARKodeButcherTableDeleter>(
-                               std::get<2>(lambda_result)));
-    };
-
-    return ARKStepGetCurrentButcherTables_adapt_return_type_to_shared_ptr(
+    return ARKStepGetCurrentButcherTables_adapt_modifiable_immutable_to_return(
       arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"),
+  " Optional output functions\n\n nb::rv_policy::reference",
+  nb::rv_policy::reference);
 
 m.def(
   "ARKStepGetTimestepperStats",

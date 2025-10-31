@@ -26,8 +26,7 @@ m.def(
 
     return SUNAdaptController_ImExGus_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_ImExGus",
       SUNAdaptController_SetParams_ImExGus, nb::arg("C"), nb::arg("k1e"),

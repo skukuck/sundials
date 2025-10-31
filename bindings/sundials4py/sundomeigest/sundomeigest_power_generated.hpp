@@ -31,7 +31,7 @@ m.def(
                                                                     sunctx);
   },
   nb::arg("q"), nb::arg("max_iters"), nb::arg("rel_tol"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 4>()", nb::rv_policy::reference, nb::keep_alive<0, 4>());
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 // #ifdef __cplusplus
 //
 // #endif

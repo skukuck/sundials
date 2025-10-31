@@ -30,12 +30,14 @@ auto pyEnumN_Vector_ID =
 //
 
 auto pyClass_generic_N_Vector_Ops =
-  nb::class_<_generic_N_Vector_Ops>(m, "_generic_N_Vector_Ops", "")
+  nb::class_<_generic_N_Vector_Ops>(m,
+                                    "_generic_N_Vector_Ops", "Structure containing function pointers to vector operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClass_generic_N_Vector =
-  nb::class_<_generic_N_Vector>(m, "_generic_N_Vector", "")
+  nb::class_<_generic_N_Vector>(m,
+                                "_generic_N_Vector", " A vector is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of vector\n   operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 
@@ -56,7 +58,7 @@ m.def(
 
     return N_VClone_adapt_return_type_to_shared_ptr(w);
   },
-  nb::arg("w"), nb::rv_policy::reference);
+  nb::arg("w"), "py::return_value_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "N_VCloneEmpty",
@@ -73,7 +75,7 @@ m.def(
 
     return N_VCloneEmpty_adapt_return_type_to_shared_ptr(w);
   },
-  nb::arg("w"), nb::rv_policy::reference);
+  nb::arg("w"), "py::return_value_policy::reference", nb::rv_policy::reference);
 
 m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
 

@@ -77,7 +77,7 @@ m.def("IDASVtolerances", IDASVtolerances, nb::arg("ida_mem"), nb::arg("reltol"),
 m.def("IDAWFtolerances", IDAWFtolerances, nb::arg("ida_mem"), nb::arg("efun"));
 
 m.def("IDACalcIC", IDACalcIC, nb::arg("ida_mem"), nb::arg("icopt"),
-      nb::arg("tout1"));
+      nb::arg("tout1"), "Initial condition calculation function");
 
 m.def("IDASetNonlinConvCoefIC", IDASetNonlinConvCoefIC, nb::arg("ida_mem"),
       nb::arg("epiccon"));
@@ -157,7 +157,7 @@ m.def("IDASetNonlinearSolver", IDASetNonlinearSolver, nb::arg("ida_mem"),
       nb::arg("NLS"));
 
 m.def("IDARootInit", IDARootInit, nb::arg("ida_mem"), nb::arg("nrtfn"),
-      nb::arg("g"));
+      nb::arg("g"), "Rootfinding initialization function");
 
 m.def(
   "IDASetRootDirection",
@@ -197,7 +197,7 @@ m.def(
                                                          ypret, itask);
   },
   nb::arg("ida_mem"), nb::arg("tout"), nb::arg("yret"), nb::arg("ypret"),
-  nb::arg("itask"));
+  nb::arg("itask"), "Solver function");
 
 m.def("IDAComputeY", IDAComputeY, nb::arg("ida_mem"), nb::arg("ycor"),
       nb::arg("y"));
@@ -250,7 +250,7 @@ m.def(
   nb::arg("ida_mem"), nb::arg("ycor_1d"), nb::arg("ypS_1d"));
 
 m.def("IDAGetDky", IDAGetDky, nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"),
-      nb::arg("dky"));
+      nb::arg("dky"), "Dense output function");
 
 m.def(
   "IDAGetNumSteps",
@@ -393,8 +393,7 @@ m.def(
 
 m.def(
   "IDAGetCurrentY",
-  [](void* ida_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+  [](void* ida_mem) -> std::tuple<int, N_Vector>
   {
     auto IDAGetCurrentY_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, N_Vector>
@@ -404,27 +403,14 @@ m.def(
       int r = IDAGetCurrentY(ida_mem, &ycur_adapt_modifiable);
       return std::make_tuple(r, ycur_adapt_modifiable);
     };
-    auto IDAGetCurrentY_adapt_return_type_to_shared_ptr =
-      [&IDAGetCurrentY_adapt_modifiable_immutable_to_return](void* ida_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
-    {
-      auto lambda_result =
-        IDAGetCurrentY_adapt_modifiable_immutable_to_return(ida_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<N_Vector>,
-                                             N_VectorDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return IDAGetCurrentY_adapt_return_type_to_shared_ptr(ida_mem);
+    return IDAGetCurrentY_adapt_modifiable_immutable_to_return(ida_mem);
   },
-  nb::arg("ida_mem"), nb::rv_policy::reference);
+  nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "IDAGetCurrentYp",
-  [](void* ida_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+  [](void* ida_mem) -> std::tuple<int, N_Vector>
   {
     auto IDAGetCurrentYp_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, N_Vector>
@@ -434,22 +420,10 @@ m.def(
       int r = IDAGetCurrentYp(ida_mem, &ypcur_adapt_modifiable);
       return std::make_tuple(r, ypcur_adapt_modifiable);
     };
-    auto IDAGetCurrentYp_adapt_return_type_to_shared_ptr =
-      [&IDAGetCurrentYp_adapt_modifiable_immutable_to_return](void* ida_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
-    {
-      auto lambda_result =
-        IDAGetCurrentYp_adapt_modifiable_immutable_to_return(ida_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<N_Vector>,
-                                             N_VectorDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return IDAGetCurrentYp_adapt_return_type_to_shared_ptr(ida_mem);
+    return IDAGetCurrentYp_adapt_modifiable_immutable_to_return(ida_mem);
   },
-  nb::arg("ida_mem"), nb::rv_policy::reference);
+  nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "IDAGetActualInitStep",
@@ -692,8 +666,7 @@ m.def(
 m.def("IDAPrintAllStats", IDAPrintAllStats, nb::arg("ida_mem"),
       nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("IDAGetReturnFlagName", IDAGetReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("IDAGetReturnFlagName", IDAGetReturnFlagName, nb::arg("flag"));
 
 m.def("IDAQuadReInit", IDAQuadReInit, nb::arg("ida_mem"), nb::arg("yQ0"));
 
@@ -704,7 +677,7 @@ m.def("IDAQuadSVtolerances", IDAQuadSVtolerances, nb::arg("ida_mem"),
       nb::arg("reltolQ"), nb::arg("abstolQ"));
 
 m.def("IDASetQuadErrCon", IDASetQuadErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQ"));
+      nb::arg("errconQ"), "Optional input specification functions");
 
 m.def(
   "IDAGetQuad",
@@ -868,7 +841,8 @@ m.def(
     return IDAGetSensConsistentIC_adapt_arr_ptr_to_std_vector(ida_mem, yyS0_1d,
                                                               ypS0_1d);
   },
-  nb::arg("ida_mem"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"));
+  nb::arg("ida_mem"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"),
+  "Initial condition calculation function");
 
 m.def("IDASetSensDQMethod", IDASetSensDQMethod, nb::arg("ida_mem"),
       nb::arg("DQtype"), nb::arg("DQrhomax"));
@@ -909,7 +883,8 @@ m.def("IDASetNonlinearSolverSensSim", IDASetNonlinearSolverSensSim,
 m.def("IDASetNonlinearSolverSensStg", IDASetNonlinearSolverSensStg,
       nb::arg("ida_mem"), nb::arg("NLS"));
 
-m.def("IDASensToggleOff", IDASensToggleOff, nb::arg("ida_mem"));
+m.def("IDASensToggleOff", IDASensToggleOff, nb::arg("ida_mem"),
+      "Enable/disable sensitivities");
 
 m.def(
   "IDAGetSens",
@@ -1228,7 +1203,7 @@ m.def(
 m.def("IDAQuadSensEEtolerances", IDAQuadSensEEtolerances, nb::arg("ida_mem"));
 
 m.def("IDASetQuadSensErrCon", IDASetQuadSensErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQS"));
+      nb::arg("errconQS"), "Optional input specification functions");
 
 m.def(
   "IDAGetQuadSens",
@@ -1536,8 +1511,7 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("qB"));
 
-m.def("IDAGetAdjIDABmem", IDAGetAdjIDABmem, nb::arg("ida_mem"),
-      nb::arg("which"), nb::rv_policy::reference);
+m.def("IDAGetAdjIDABmem", IDAGetAdjIDABmem, nb::arg("ida_mem"), nb::arg("which"));
 
 m.def("IDAGetConsistentICB", IDAGetConsistentICB, nb::arg("ida_mem"),
       nb::arg("which"), nb::arg("yyB0"), nb::arg("ypB0"));
@@ -1648,8 +1622,7 @@ m.def("IDASetIncrementFactor", IDASetIncrementFactor, nb::arg("ida_mem"),
 
 m.def(
   "IDAGetJac",
-  [](void* ida_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  [](void* ida_mem) -> std::tuple<int, SUNMatrix>
   {
     auto IDAGetJac_adapt_modifiable_immutable_to_return =
       [](void* ida_mem) -> std::tuple<int, SUNMatrix>
@@ -1659,21 +1632,10 @@ m.def(
       int r = IDAGetJac(ida_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
-    auto IDAGetJac_adapt_return_type_to_shared_ptr =
-      [&IDAGetJac_adapt_modifiable_immutable_to_return](void* ida_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
-    {
-      auto lambda_result = IDAGetJac_adapt_modifiable_immutable_to_return(ida_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
-                                             SUNMatrixDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return IDAGetJac_adapt_return_type_to_shared_ptr(ida_mem);
+    return IDAGetJac_adapt_modifiable_immutable_to_return(ida_mem);
   },
-  nb::arg("ida_mem"), nb::rv_policy::reference);
+  nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "IDAGetJacCj",
@@ -1879,8 +1841,7 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAGetLinReturnFlagName", IDAGetLinReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("IDAGetLinReturnFlagName", IDAGetLinReturnFlagName, nb::arg("flag"));
 
 m.def(
   "IDASetLinearSolverB",

@@ -26,8 +26,7 @@ m.def(
 
     return SUNAdaptController_Soderlind_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_Soderlind",
       SUNAdaptController_SetParams_Soderlind, nb::arg("C"), nb::arg("k1"),
@@ -49,8 +48,7 @@ m.def(
 
     return SUNAdaptController_PID_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_PID", SUNAdaptController_SetParams_PID,
       nb::arg("C"), nb::arg("k1"), nb::arg("k2"), nb::arg("k3"));
@@ -71,8 +69,7 @@ m.def(
 
     return SUNAdaptController_PI_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_PI", SUNAdaptController_SetParams_PI,
       nb::arg("C"), nb::arg("k1"), nb::arg("k2"));
@@ -93,8 +90,7 @@ m.def(
 
     return SUNAdaptController_I_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_I", SUNAdaptController_SetParams_I,
       nb::arg("C"), nb::arg("k1"));
@@ -115,8 +111,7 @@ m.def(
 
     return SUNAdaptController_ExpGus_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_ExpGus", SUNAdaptController_SetParams_ExpGus,
       nb::arg("C"), nb::arg("k1"), nb::arg("k2"));
@@ -137,8 +132,7 @@ m.def(
 
     return SUNAdaptController_ImpGus_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def("SUNAdaptController_SetParams_ImpGus", SUNAdaptController_SetParams_ImpGus,
       nb::arg("C"), nb::arg("k1"), nb::arg("k2"));
@@ -159,8 +153,7 @@ m.def(
 
     return SUNAdaptController_H0211_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def(
   "SUNAdaptController_H0321",
@@ -178,8 +171,7 @@ m.def(
 
     return SUNAdaptController_H0321_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def(
   "SUNAdaptController_H211",
@@ -197,8 +189,7 @@ m.def(
 
     return SUNAdaptController_H211_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
 m.def(
   "SUNAdaptController_H312",
@@ -216,8 +207,7 @@ m.def(
 
     return SUNAdaptController_H312_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 // #ifdef __cplusplus
 //
 // #endif

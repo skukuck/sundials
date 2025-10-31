@@ -198,7 +198,7 @@ m.def("CVodeSetEtaConvFail", CVodeSetEtaConvFail, nb::arg("cvode_mem"),
       nb::arg("eta_cf"));
 
 m.def("CVodeRootInit", CVodeRootInit, nb::arg("cvode_mem"), nb::arg("nrtfn"),
-      nb::arg("g"));
+      nb::arg("g"), "Rootfinding initialization function");
 
 m.def(
   "CVodeSetRootDirection",
@@ -238,13 +238,14 @@ m.def(
     return CVode_adapt_modifiable_immutable_to_return(cvode_mem, tout, yout,
                                                       itask);
   },
-  nb::arg("cvode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"));
+  nb::arg("cvode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"),
+  "Solver function");
 
 m.def("CVodeComputeState", CVodeComputeState, nb::arg("cvode_mem"),
       nb::arg("ycor"), nb::arg("y"));
 
 m.def("CVodeGetDky", CVodeGetDky, nb::arg("cvode_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("dky"));
+      nb::arg("k"), nb::arg("dky"), "Dense output function");
 
 m.def(
   "CVodeGetNumSteps",
@@ -437,8 +438,7 @@ m.def(
 
 m.def(
   "CVodeGetCurrentState",
-  [](void* cvode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+  [](void* cvode_mem) -> std::tuple<int, N_Vector>
   {
     auto CVodeGetCurrentState_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem) -> std::tuple<int, N_Vector>
@@ -448,22 +448,10 @@ m.def(
       int r = CVodeGetCurrentState(cvode_mem, &y_adapt_modifiable);
       return std::make_tuple(r, y_adapt_modifiable);
     };
-    auto CVodeGetCurrentState_adapt_return_type_to_shared_ptr =
-      [&CVodeGetCurrentState_adapt_modifiable_immutable_to_return](void* cvode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
-    {
-      auto lambda_result =
-        CVodeGetCurrentState_adapt_modifiable_immutable_to_return(cvode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<N_Vector>,
-                                             N_VectorDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return CVodeGetCurrentState_adapt_return_type_to_shared_ptr(cvode_mem);
+    return CVodeGetCurrentState_adapt_modifiable_immutable_to_return(cvode_mem);
   },
-  nb::arg("cvode_mem"), nb::rv_policy::reference);
+  nb::arg("cvode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "CVodeGetCurrentSensSolveIndex",
@@ -677,8 +665,7 @@ m.def(
 m.def("CVodePrintAllStats", CVodePrintAllStats, nb::arg("cvode_mem"),
       nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("CVodeGetReturnFlagName", CVodeGetReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("CVodeGetReturnFlagName", CVodeGetReturnFlagName, nb::arg("flag"));
 
 m.def("CVodeQuadReInit", CVodeQuadReInit, nb::arg("cvode_mem"), nb::arg("yQ0"));
 
@@ -689,7 +676,7 @@ m.def("CVodeQuadSVtolerances", CVodeQuadSVtolerances, nb::arg("cvode_mem"),
       nb::arg("reltolQ"), nb::arg("abstolQ"));
 
 m.def("CVodeSetQuadErrCon", CVodeSetQuadErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQ"));
+      nb::arg("errconQ"), "Optional input specification functions");
 
 m.def(
   "CVodeGetQuad",
@@ -873,7 +860,8 @@ m.def("CVodeSetNonlinearSolverSensStg", CVodeSetNonlinearSolverSensStg,
 m.def("CVodeSetNonlinearSolverSensStg1", CVodeSetNonlinearSolverSensStg1,
       nb::arg("cvode_mem"), nb::arg("NLS"));
 
-m.def("CVodeSensToggleOff", CVodeSensToggleOff, nb::arg("cvode_mem"));
+m.def("CVodeSensToggleOff", CVodeSensToggleOff, nb::arg("cvode_mem"),
+      "Enable/disable sensitivities");
 
 m.def(
   "CVodeGetSens",
@@ -1286,7 +1274,7 @@ m.def("CVodeQuadSensEEtolerances", CVodeQuadSensEEtolerances,
       nb::arg("cvode_mem"));
 
 m.def("CVodeSetQuadSensErrCon", CVodeSetQuadSensErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQS"));
+      nb::arg("errconQS"), "Optional input specification functions");
 
 m.def(
   "CVodeGetQuadSens",
@@ -1570,7 +1558,7 @@ m.def(
   nb::arg("cvode_mem"), nb::arg("which"), nb::arg("qB"));
 
 m.def("CVodeGetAdjCVodeBmem", CVodeGetAdjCVodeBmem, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::rv_policy::reference);
+      nb::arg("which"));
 
 m.def("CVodeGetAdjY", CVodeGetAdjY, nb::arg("cvode_mem"), nb::arg("t"),
       nb::arg("y"));
@@ -1685,8 +1673,7 @@ m.def("CVodeSetLSNormFactor", CVodeSetLSNormFactor, nb::arg("arkode_mem"),
 
 m.def(
   "CVodeGetJac",
-  [](void* cvode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  [](void* cvode_mem) -> std::tuple<int, SUNMatrix>
   {
     auto CVodeGetJac_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem) -> std::tuple<int, SUNMatrix>
@@ -1696,22 +1683,10 @@ m.def(
       int r = CVodeGetJac(cvode_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
-    auto CVodeGetJac_adapt_return_type_to_shared_ptr =
-      [&CVodeGetJac_adapt_modifiable_immutable_to_return](void* cvode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
-    {
-      auto lambda_result =
-        CVodeGetJac_adapt_modifiable_immutable_to_return(cvode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
-                                             SUNMatrixDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return CVodeGetJac_adapt_return_type_to_shared_ptr(cvode_mem);
+    return CVodeGetJac_adapt_modifiable_immutable_to_return(cvode_mem);
   },
-  nb::arg("cvode_mem"), nb::rv_policy::reference);
+  nb::arg("cvode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "CVodeGetJacTime",
@@ -1938,8 +1913,7 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodeGetLinReturnFlagName", CVodeGetLinReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("CVodeGetLinReturnFlagName", CVodeGetLinReturnFlagName, nb::arg("flag"));
 
 m.def(
   "CVodeSetLinearSolverB",

@@ -27,7 +27,7 @@ m.def(
     return SUNDenseMatrix_adapt_return_type_to_shared_ptr(M, N, sunctx);
   },
   nb::arg("M"), nb::arg("N"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  nb::keep_alive<0, 3>());
 
 m.def("SUNDenseMatrix_Print", SUNDenseMatrix_Print, nb::arg("A"),
       nb::arg("outfile"));

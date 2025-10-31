@@ -48,8 +48,7 @@ m.def("SUNContext_ClearErrHandlers", SUNContext_ClearErrHandlers,
 
 m.def(
   "SUNContext_GetProfiler",
-  [](SUNContext sunctx)
-    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNProfiler>>>
+  [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNProfiler>
   {
     auto SUNContext_GetProfiler_adapt_modifiable_immutable_to_return =
       [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNProfiler>
@@ -59,34 +58,17 @@ m.def(
       SUNErrCode r = SUNContext_GetProfiler(sunctx, &profiler_adapt_modifiable);
       return std::make_tuple(r, profiler_adapt_modifiable);
     };
-    auto SUNContext_GetProfiler_adapt_return_type_to_shared_ptr =
-      [&SUNContext_GetProfiler_adapt_modifiable_immutable_to_return](
-        SUNContext sunctx)
-      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNProfiler>>>
-    {
-      auto lambda_result =
-        SUNContext_GetProfiler_adapt_modifiable_immutable_to_return(sunctx);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNProfiler>,
-                                             SUNProfilerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNContext_GetProfiler_adapt_return_type_to_shared_ptr(sunctx);
+    return SUNContext_GetProfiler_adapt_modifiable_immutable_to_return(sunctx);
   },
-  nb::arg("sunctx"),
-  "nb::call_policy<sundials4py::returns_references_to<1, 1>>()",
-  nb::rv_policy::reference,
-  nb::call_policy<sundials4py::returns_references_to<1, 1>>());
+  nb::arg("sunctx"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def("SUNContext_SetProfiler", SUNContext_SetProfiler, nb::arg("sunctx"),
       nb::arg("profiler"));
 
 m.def(
   "SUNContext_GetLogger",
-  [](SUNContext sunctx)
-    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
+  [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNLogger>
   {
     auto SUNContext_GetLogger_adapt_modifiable_immutable_to_return =
       [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNLogger>
@@ -96,26 +78,10 @@ m.def(
       SUNErrCode r = SUNContext_GetLogger(sunctx, &logger_adapt_modifiable);
       return std::make_tuple(r, logger_adapt_modifiable);
     };
-    auto SUNContext_GetLogger_adapt_return_type_to_shared_ptr =
-      [&SUNContext_GetLogger_adapt_modifiable_immutable_to_return](
-        SUNContext sunctx)
-      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
-    {
-      auto lambda_result =
-        SUNContext_GetLogger_adapt_modifiable_immutable_to_return(sunctx);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNLogger>,
-                                             SUNLoggerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNContext_GetLogger_adapt_return_type_to_shared_ptr(sunctx);
+    return SUNContext_GetLogger_adapt_modifiable_immutable_to_return(sunctx);
   },
-  nb::arg("sunctx"),
-  "nb::call_policy<sundials4py::returns_references_to<1, 1>>()",
-  nb::rv_policy::reference,
-  nb::call_policy<sundials4py::returns_references_to<1, 1>>());
+  nb::arg("sunctx"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def("SUNContext_SetLogger", SUNContext_SetLogger, nb::arg("sunctx"),
       nb::arg("logger"));

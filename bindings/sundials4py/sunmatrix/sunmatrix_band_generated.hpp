@@ -27,7 +27,7 @@ m.def(
     return SUNBandMatrix_adapt_return_type_to_shared_ptr(N, mu, ml, sunctx);
   },
   nb::arg("N"), nb::arg("mu"), nb::arg("ml"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 4>()", nb::rv_policy::reference, nb::keep_alive<0, 4>());
+  "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
 m.def(
   "SUNBandMatrixStorage",
@@ -48,7 +48,7 @@ m.def(
                                                                 sunctx);
   },
   nb::arg("N"), nb::arg("mu"), nb::arg("ml"), nb::arg("smu"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 5>()", nb::rv_policy::reference, nb::keep_alive<0, 5>());
+  "nb::keep_alive<0, 5>()", nb::keep_alive<0, 5>());
 
 m.def("SUNBandMatrix_Print", SUNBandMatrix_Print, nb::arg("A"),
       nb::arg("outfile"));

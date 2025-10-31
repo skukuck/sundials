@@ -83,7 +83,8 @@ SUNDIALS_EXPORT int KINSetJacTimesVecFn(void* kinmem, KINLsJacTimesVecFn jtv);
   Optional outputs from the KINLS linear solver interface
   -----------------------------------------------------------------*/
 
-SUNDIALS_EXPORT int KINGetJac(void* kinmem, SUNMatrix* J); // nb::rv_policy::reference
+SUNDIALS_EXPORT int KINGetJac(void* kinmem,
+                              SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int KINGetJacNumIters(void* kinmem, long int* nni_J);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

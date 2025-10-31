@@ -30,8 +30,7 @@ m.def(
                                                            sparsetype, sunctx);
   },
   nb::arg("M"), nb::arg("N"), nb::arg("NNZ"), nb::arg("sparsetype"),
-  nb::arg("sunctx"), "nb::keep_alive<0, 5>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 5>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 5>()", nb::keep_alive<0, 5>());
 
 m.def(
   "SUNSparseFromDenseMatrix",
@@ -51,8 +50,7 @@ m.def(
     return SUNSparseFromDenseMatrix_adapt_return_type_to_shared_ptr(A, droptol,
                                                                     sparsetype);
   },
-  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"),
-  nb::rv_policy::reference);
+  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"));
 
 m.def(
   "SUNSparseFromBandMatrix",
@@ -72,8 +70,7 @@ m.def(
     return SUNSparseFromBandMatrix_adapt_return_type_to_shared_ptr(A, droptol,
                                                                    sparsetype);
   },
-  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"),
-  nb::rv_policy::reference);
+  nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"));
 
 m.def("SUNSparseMatrix_Realloc", SUNSparseMatrix_Realloc, nb::arg("A"));
 

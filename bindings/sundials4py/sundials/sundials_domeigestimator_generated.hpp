@@ -5,12 +5,14 @@
 //
 
 auto pyClassSUNDomEigEstimator_Ops_ =
-  nb::class_<SUNDomEigEstimator_Ops_>(m, "SUNDomEigEstimator_Ops_", "")
+  nb::class_<SUNDomEigEstimator_Ops_>(m,
+                                      "SUNDomEigEstimator_Ops_", "Structure containing function pointers to estimator operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClassSUNDomEigEstimator_ =
-  nb::class_<SUNDomEigEstimator_>(m, "SUNDomEigEstimator_", "")
+  nb::class_<SUNDomEigEstimator_>(m,
+                                  "SUNDomEigEstimator_", " An estimator is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of estimator\n   operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 

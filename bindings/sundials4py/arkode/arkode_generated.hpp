@@ -82,11 +82,13 @@ m.attr("ARK_SUNADJSTEPPER_ERR")      = -55;
 m.attr("ARK_DEE_FAIL")               = -56;
 m.attr("ARK_UNRECOGNIZED_ERROR")     = -99;
 
-auto pyEnumARKRelaxSolver = nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver",
-                                                      nb::is_arithmetic(), "")
-                              .value("ARK_RELAX_BRENT", ARK_RELAX_BRENT, "")
-                              .value("ARK_RELAX_NEWTON", ARK_RELAX_NEWTON, "")
-                              .export_values();
+auto pyEnumARKRelaxSolver =
+  nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver", nb::is_arithmetic(),
+                            " --------------------------\n * Relaxation Solver "
+                            "Options\n * --------------------------")
+    .value("ARK_RELAX_BRENT", ARK_RELAX_BRENT, "")
+    .value("ARK_RELAX_NEWTON", ARK_RELAX_NEWTON, "")
+    .export_values();
 // #ifndef SWIG
 //
 // #endif
@@ -143,7 +145,8 @@ m.def(
     return ARKodeCreateMRIStepInnerStepper_adapt_return_type_to_shared_ptr(
       arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"), "Utility to wrap ARKODE as an MRIStepInnerStepper",
+  nb::rv_policy::reference);
 
 m.def("ARKodeSStolerances", ARKodeSStolerances, nb::arg("arkode_mem"),
       nb::arg("reltol"), nb::arg("abstol"));
@@ -344,13 +347,16 @@ m.def(
     return ARKodeEvolve_adapt_modifiable_immutable_to_return(arkode_mem, tout,
                                                              yout, itask);
   },
-  nb::arg("arkode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"));
+  nb::arg("arkode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"),
+  "Integrate the ODE over an interval in t");
 
 m.def("ARKodeGetDky", ARKodeGetDky, nb::arg("arkode_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("dky"));
+      nb::arg("k"), nb::arg("dky"),
+      "Computes the kth derivative of the y function at time t");
 
 m.def("ARKodeComputeState", ARKodeComputeState, nb::arg("arkode_mem"),
-      nb::arg("zcor"), nb::arg("z"));
+      nb::arg("zcor"), nb::arg("z"),
+      "Utility function to update/compute y based on zcor");
 
 m.def(
   "ARKodeGetNumRhsEvals",
@@ -498,8 +504,7 @@ m.def(
 m.def("ARKodePrintAllStats", ARKodePrintAllStats, nb::arg("arkode_mem"),
       nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("ARKodeGetReturnFlagName", ARKodeGetReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("ARKodeGetReturnFlagName", ARKodeGetReturnFlagName, nb::arg("flag"));
 
 m.def("ARKodeWriteParameters", ARKodeWriteParameters, nb::arg("arkode_mem"),
       nb::arg("fp"));
@@ -697,8 +702,7 @@ m.def(
 
 m.def(
   "ARKodeGetCurrentState",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
+  [](void* arkode_mem) -> std::tuple<int, N_Vector>
   {
     auto ARKodeGetCurrentState_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, N_Vector>
@@ -708,23 +712,10 @@ m.def(
       int r = ARKodeGetCurrentState(arkode_mem, &state_adapt_modifiable);
       return std::make_tuple(r, state_adapt_modifiable);
     };
-    auto ARKodeGetCurrentState_adapt_return_type_to_shared_ptr =
-      [&ARKodeGetCurrentState_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<N_Vector>>>
-    {
-      auto lambda_result =
-        ARKodeGetCurrentState_adapt_modifiable_immutable_to_return(arkode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<N_Vector>,
-                                             N_VectorDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return ARKodeGetCurrentState_adapt_return_type_to_shared_ptr(arkode_mem);
+    return ARKodeGetCurrentState_adapt_modifiable_immutable_to_return(arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "ARKodeGetCurrentGamma",
@@ -821,8 +812,7 @@ m.def(
 
 m.def(
   "ARKodeGetJac",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
   {
     auto ARKodeGetJac_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
@@ -832,22 +822,10 @@ m.def(
       int r = ARKodeGetJac(arkode_mem, &J_adapt_modifiable);
       return std::make_tuple(r, J_adapt_modifiable);
     };
-    auto ARKodeGetJac_adapt_return_type_to_shared_ptr =
-      [&ARKodeGetJac_adapt_modifiable_immutable_to_return](void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
-    {
-      auto lambda_result =
-        ARKodeGetJac_adapt_modifiable_immutable_to_return(arkode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
-                                             SUNMatrixDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return ARKodeGetJac_adapt_return_type_to_shared_ptr(arkode_mem);
+    return ARKodeGetJac_adapt_modifiable_immutable_to_return(arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "ARKodeGetJacTime",
@@ -1040,13 +1018,11 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("ARKodeGetLinReturnFlagName", ARKodeGetLinReturnFlagName, nb::arg("flag"),
-      nb::rv_policy::reference);
+m.def("ARKodeGetLinReturnFlagName", ARKodeGetLinReturnFlagName, nb::arg("flag"));
 
 m.def(
   "ARKodeGetCurrentMassMatrix",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
   {
     auto ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, SUNMatrix>
@@ -1056,24 +1032,12 @@ m.def(
       int r = ARKodeGetCurrentMassMatrix(arkode_mem, &M_adapt_modifiable);
       return std::make_tuple(r, M_adapt_modifiable);
     };
-    auto ARKodeGetCurrentMassMatrix_adapt_return_type_to_shared_ptr =
-      [&ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
-    {
-      auto lambda_result =
-        ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return(
-          arkode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
-                                             SUNMatrixDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return ARKodeGetCurrentMassMatrix_adapt_return_type_to_shared_ptr(arkode_mem);
+    return ARKodeGetCurrentMassMatrix_adapt_modifiable_immutable_to_return(
+      arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"), " Optional output functions (non-identity mass matrices)\n\n nb::rv_policy::reference",
+  nb::rv_policy::reference);
 
 m.def("ARKodeGetResWeights", ARKodeGetResWeights, nb::arg("arkode_mem"),
       nb::arg("rweight"));
@@ -1252,8 +1216,8 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("ARKodePrintMem", ARKodePrintMem, nb::arg("arkode_mem"),
-      nb::arg("outfile"));
+m.def("ARKodePrintMem", ARKodePrintMem, nb::arg("arkode_mem"), nb::arg("outfile"),
+      "Output the ARKODE memory structure (useful when debugging)");
 
 m.def("ARKodeSetRelaxEtaFail", ARKodeSetRelaxEtaFail, nb::arg("arkode_mem"),
       nb::arg("eta_rf"));
@@ -1415,7 +1379,7 @@ m.def(
 
     return ARKodeCreateSUNStepper_adapt_return_type_to_shared_ptr(arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"), "SUNStepper functions", nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif
@@ -1493,7 +1457,8 @@ m.def("ARKodeSetMassLSNormFactor", ARKodeSetMassLSNormFactor,
 //
 
 auto pyClassARKodeButcherTableMem =
-  nb::class_<ARKodeButcherTableMem>(m, "ARKodeButcherTableMem", "")
+  nb::class_<ARKodeButcherTableMem>(m,
+                                    "ARKodeButcherTableMem", "---------------------------------------------------------------\n  Types : struct ARKodeButcherTableMem, ARKodeButcherTable\n  ---------------------------------------------------------------")
     .def(nb::init<>()) // implicit default constructor
   ;
 
@@ -1539,7 +1504,7 @@ m.def(
                                                                      b_1d, d_1d);
   },
   nb::arg("s"), nb::arg("q"), nb::arg("p"), nb::arg("c_1d"), nb::arg("A_1d"),
-  nb::arg("b_1d"), nb::arg("d_1d"), nb::rv_policy::reference);
+  nb::arg("b_1d"), nb::arg("d_1d"));
 
 m.def(
   "ARKodeButcherTable_Copy",
@@ -1558,7 +1523,7 @@ m.def(
 
     return ARKodeButcherTable_Copy_adapt_return_type_to_shared_ptr(B);
   },
-  nb::arg("B"), nb::rv_policy::reference);
+  nb::arg("B"));
 
 m.def("ARKodeButcherTable_Write", ARKodeButcherTable_Write, nb::arg("B"),
       nb::arg("outfile"));
@@ -1622,7 +1587,7 @@ m.def(
 
 auto pyEnumARKODE_ERKTableID =
   nb::enum_<ARKODE_ERKTableID>(m, "ARKODE_ERKTableID", nb::is_arithmetic(), "")
-    .value("ARKODE_ERK_NONE", ARKODE_ERK_NONE, "")
+    .value("ARKODE_ERK_NONE", ARKODE_ERK_NONE, "ensure enum is signed int")
     .value("ARKODE_HEUN_EULER_2_1_2", ARKODE_HEUN_EULER_2_1_2, "")
     .value("ARKODE_MIN_ERK_NUM", ARKODE_MIN_ERK_NUM, "")
     .value("ARKODE_BOGACKI_SHAMPINE_4_2_3", ARKODE_BOGACKI_SHAMPINE_4_2_3, "")
@@ -1676,7 +1641,7 @@ m.def(
 
     return ARKodeButcherTable_LoadERK_adapt_return_type_to_shared_ptr(emethod);
   },
-  nb::arg("emethod"), nb::rv_policy::reference);
+  nb::arg("emethod"), "Accessor routine to load built-in ERK table");
 
 m.def(
   "ARKodeButcherTable_LoadERKByName",
@@ -1696,10 +1661,10 @@ m.def(
     return ARKodeButcherTable_LoadERKByName_adapt_return_type_to_shared_ptr(
       emethod);
   },
-  nb::arg("emethod"), nb::rv_policy::reference);
+  nb::arg("emethod"));
 
 m.def("ARKodeButcherTable_ERKIDToName", ARKodeButcherTable_ERKIDToName,
-      nb::arg("emethod"), nb::rv_policy::reference);
+      nb::arg("emethod"));
 // #ifdef __cplusplus
 //
 // #endif
@@ -1714,7 +1679,7 @@ m.def("ARKodeButcherTable_ERKIDToName", ARKodeButcherTable_ERKIDToName,
 
 auto pyEnumARKODE_DIRKTableID =
   nb::enum_<ARKODE_DIRKTableID>(m, "ARKODE_DIRKTableID", nb::is_arithmetic(), "")
-    .value("ARKODE_DIRK_NONE", ARKODE_DIRK_NONE, "")
+    .value("ARKODE_DIRK_NONE", ARKODE_DIRK_NONE, "ensure enum is signed int")
     .value("ARKODE_SDIRK_2_1_2", ARKODE_SDIRK_2_1_2, "")
     .value("ARKODE_MIN_DIRK_NUM", ARKODE_MIN_DIRK_NUM, "")
     .value("ARKODE_BILLINGTON_3_3_2", ARKODE_BILLINGTON_3_3_2, "")
@@ -1767,7 +1732,7 @@ m.def(
 
     return ARKodeButcherTable_LoadDIRK_adapt_return_type_to_shared_ptr(imethod);
   },
-  nb::arg("imethod"), nb::rv_policy::reference);
+  nb::arg("imethod"), "Accessor routine to load built-in DIRK table");
 
 m.def(
   "ARKodeButcherTable_LoadDIRKByName",
@@ -1787,10 +1752,10 @@ m.def(
     return ARKodeButcherTable_LoadDIRKByName_adapt_return_type_to_shared_ptr(
       imethod);
   },
-  nb::arg("imethod"), nb::rv_policy::reference);
+  nb::arg("imethod"), "Accessor routine to load built-in DIRK table");
 
 m.def("ARKodeButcherTable_DIRKIDToName", ARKodeButcherTable_DIRKIDToName,
-      nb::arg("imethod"), nb::rv_policy::reference);
+      nb::arg("imethod"));
 // #ifdef __cplusplus
 //
 // #endif
@@ -1805,7 +1770,7 @@ m.def("ARKodeButcherTable_DIRKIDToName", ARKodeButcherTable_DIRKIDToName,
 
 auto pyEnumARKODE_SPRKMethodID =
   nb::enum_<ARKODE_SPRKMethodID>(m, "ARKODE_SPRKMethodID", nb::is_arithmetic(), "")
-    .value("ARKODE_SPRK_NONE", ARKODE_SPRK_NONE, "")
+    .value("ARKODE_SPRK_NONE", ARKODE_SPRK_NONE, "ensure enum is signed int")
     .value("ARKODE_SPRK_EULER_1_1", ARKODE_SPRK_EULER_1_1, "")
     .value("ARKODE_MIN_SPRK_NUM", ARKODE_MIN_SPRK_NUM, "")
     .value("ARKODE_SPRK_LEAPFROG_2_2", ARKODE_SPRK_LEAPFROG_2_2, "")
@@ -1862,8 +1827,7 @@ m.def(
     return ARKodeSPRKTable_Create_adapt_return_type_to_shared_ptr(s, q, a_1d,
                                                                   ahat_1d);
   },
-  nb::arg("s"), nb::arg("q"), nb::arg("a_1d"), nb::arg("ahat_1d"),
-  nb::rv_policy::reference);
+  nb::arg("s"), nb::arg("q"), nb::arg("a_1d"), nb::arg("ahat_1d"));
 
 m.def(
   "ARKodeSPRKTable_Load",
@@ -1882,7 +1846,7 @@ m.def(
 
     return ARKodeSPRKTable_Load_adapt_return_type_to_shared_ptr(id);
   },
-  nb::arg("id"), nb::rv_policy::reference);
+  nb::arg("id"));
 
 m.def(
   "ARKodeSPRKTable_LoadByName",
@@ -1900,7 +1864,7 @@ m.def(
 
     return ARKodeSPRKTable_LoadByName_adapt_return_type_to_shared_ptr(method);
   },
-  nb::arg("method"), nb::rv_policy::reference);
+  nb::arg("method"));
 
 m.def(
   "ARKodeSPRKTable_Copy",
@@ -1919,7 +1883,7 @@ m.def(
 
     return ARKodeSPRKTable_Copy_adapt_return_type_to_shared_ptr(that_sprk_storage);
   },
-  nb::arg("that_sprk_storage"), nb::rv_policy::reference);
+  nb::arg("that_sprk_storage"));
 
 m.def("ARKodeSPRKTable_Write", ARKodeSPRKTable_Write, nb::arg("sprk_table"),
       nb::arg("outfile"));

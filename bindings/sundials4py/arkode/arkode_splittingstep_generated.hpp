@@ -5,14 +5,16 @@
 //
 
 auto pyClassSplittingStepCoefficientsMem =
-  nb::class_<SplittingStepCoefficientsMem>(m, "SplittingStepCoefficientsMem", "")
+  nb::class_<SplittingStepCoefficientsMem>(m,
+                                           "SplittingStepCoefficientsMem", "---------------------------------------------------------------\n  Types : struct SplittingStepCoefficientsMem, SplittingStepCoefficients\n  ---------------------------------------------------------------")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyEnumARKODE_SplittingCoefficientsID =
   nb::enum_<ARKODE_SplittingCoefficientsID>(m, "ARKODE_SplittingCoefficientsID",
-                                            nb::is_arithmetic(), "")
-    .value("ARKODE_SPLITTING_NONE", ARKODE_SPLITTING_NONE, "")
+                                            nb::is_arithmetic(), " Splitting names use the convention\n * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions>")
+    .value("ARKODE_SPLITTING_NONE", ARKODE_SPLITTING_NONE,
+           "ensure enum is signed int")
     .value("ARKODE_SPLITTING_LIE_TROTTER_1_1_2",
            ARKODE_SPLITTING_LIE_TROTTER_1_1_2, "")
     .value("ARKODE_MIN_SPLITTING_NUM", ARKODE_MIN_SPLITTING_NUM, "")
@@ -79,8 +81,7 @@ m.def(
                                                                             beta_1d);
   },
   nb::arg("sequential_methods"), nb::arg("stages"), nb::arg("partitions"),
-  nb::arg("order"), nb::arg("alpha_1d"), nb::arg("beta_1d"),
-  nb::rv_policy::reference);
+  nb::arg("order"), nb::arg("alpha_1d"), nb::arg("beta_1d"));
 
 m.def(
   "SplittingStepCoefficients_Copy",
@@ -100,7 +101,7 @@ m.def(
     return SplittingStepCoefficients_Copy_adapt_return_type_to_shared_ptr(
       coefficients);
   },
-  nb::arg("coefficients"), nb::rv_policy::reference);
+  nb::arg("coefficients"));
 
 m.def("SplittingStepCoefficients_Write", SplittingStepCoefficients_Write,
       nb::arg("coefficients"), nb::arg("outfile"));
@@ -123,7 +124,7 @@ m.def(
     return SplittingStepCoefficients_LoadCoefficients_adapt_return_type_to_shared_ptr(
       id);
   },
-  nb::arg("id"), nb::rv_policy::reference);
+  nb::arg("id"));
 
 m.def(
   "SplittingStepCoefficients_LoadCoefficientsByName",
@@ -143,10 +144,10 @@ m.def(
     return SplittingStepCoefficients_LoadCoefficientsByName_adapt_return_type_to_shared_ptr(
       name);
   },
-  nb::arg("name"), nb::rv_policy::reference);
+  nb::arg("name"));
 
 m.def("SplittingStepCoefficients_IDToName", SplittingStepCoefficients_IDToName,
-      nb::arg("id"), nb::rv_policy::reference);
+      nb::arg("id"));
 
 m.def(
   "SplittingStepCoefficients_LieTrotter",
@@ -166,7 +167,7 @@ m.def(
     return SplittingStepCoefficients_LieTrotter_adapt_return_type_to_shared_ptr(
       partitions);
   },
-  nb::arg("partitions"), nb::rv_policy::reference);
+  nb::arg("partitions"));
 
 m.def(
   "SplittingStepCoefficients_Strang",
@@ -186,7 +187,7 @@ m.def(
     return SplittingStepCoefficients_Strang_adapt_return_type_to_shared_ptr(
       partitions);
   },
-  nb::arg("partitions"), nb::rv_policy::reference);
+  nb::arg("partitions"));
 
 m.def(
   "SplittingStepCoefficients_Parallel",
@@ -206,7 +207,7 @@ m.def(
     return SplittingStepCoefficients_Parallel_adapt_return_type_to_shared_ptr(
       partitions);
   },
-  nb::arg("partitions"), nb::rv_policy::reference);
+  nb::arg("partitions"));
 
 m.def(
   "SplittingStepCoefficients_SymmetricParallel",
@@ -226,7 +227,7 @@ m.def(
     return SplittingStepCoefficients_SymmetricParallel_adapt_return_type_to_shared_ptr(
       partitions);
   },
-  nb::arg("partitions"), nb::rv_policy::reference);
+  nb::arg("partitions"));
 
 m.def(
   "SplittingStepCoefficients_ThirdOrderSuzuki",
@@ -246,7 +247,7 @@ m.def(
     return SplittingStepCoefficients_ThirdOrderSuzuki_adapt_return_type_to_shared_ptr(
       partitions);
   },
-  nb::arg("partitions"), nb::rv_policy::reference);
+  nb::arg("partitions"));
 
 m.def(
   "SplittingStepCoefficients_TripleJump",
@@ -267,7 +268,7 @@ m.def(
     return SplittingStepCoefficients_TripleJump_adapt_return_type_to_shared_ptr(partitions,
                                                                                 order);
   },
-  nb::arg("partitions"), nb::arg("order"), nb::rv_policy::reference);
+  nb::arg("partitions"), nb::arg("order"));
 
 m.def(
   "SplittingStepCoefficients_SuzukiFractal",
@@ -288,7 +289,7 @@ m.def(
     return SplittingStepCoefficients_SuzukiFractal_adapt_return_type_to_shared_ptr(partitions,
                                                                                    order);
   },
-  nb::arg("partitions"), nb::arg("order"), nb::rv_policy::reference);
+  nb::arg("partitions"), nb::arg("order"));
 
 m.def("SplittingStepSetCoefficients", SplittingStepSetCoefficients,
       nb::arg("arkode_mem"), nb::arg("coefficients"));

@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos
 # -----------------------------------------------------------------
-# Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint 
+# Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint
 # sensitivity example (ark_lotka_volterra_ASA.c)
 # -----------------------------------------------------------------
 import numpy as np

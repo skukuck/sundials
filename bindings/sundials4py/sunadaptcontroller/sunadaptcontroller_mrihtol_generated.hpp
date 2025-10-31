@@ -32,7 +32,7 @@ m.def(
                                                                       sunctx);
   },
   nb::arg("HControl"), nb::arg("TolControl"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 3>()", nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  "nb::keep_alive<0, 3>()", nb::keep_alive<0, 3>());
 
 m.def("SUNAdaptController_SetParams_MRIHTol",
       SUNAdaptController_SetParams_MRIHTol, nb::arg("C"),
@@ -41,9 +41,7 @@ m.def("SUNAdaptController_SetParams_MRIHTol",
 
 m.def(
   "SUNAdaptController_GetSlowController_MRIHTol",
-  [](SUNAdaptController C)
-    -> std::tuple<SUNErrCode,
-                  std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>>
+  [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
   {
     auto SUNAdaptController_GetSlowController_MRIHTol_adapt_modifiable_immutable_to_return =
       [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
@@ -54,32 +52,15 @@ m.def(
         SUNAdaptController_GetSlowController_MRIHTol(C, &Cslow_adapt_modifiable);
       return std::make_tuple(r, Cslow_adapt_modifiable);
     };
-    auto SUNAdaptController_GetSlowController_MRIHTol_adapt_return_type_to_shared_ptr =
-      [&SUNAdaptController_GetSlowController_MRIHTol_adapt_modifiable_immutable_to_return](
-        SUNAdaptController C)
-      -> std::tuple<SUNErrCode,
-                    std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>>
-    {
-      auto lambda_result =
-        SUNAdaptController_GetSlowController_MRIHTol_adapt_modifiable_immutable_to_return(
-          C);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNAdaptController>,
-                                             SUNAdaptControllerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNAdaptController_GetSlowController_MRIHTol_adapt_return_type_to_shared_ptr(
+    return SUNAdaptController_GetSlowController_MRIHTol_adapt_modifiable_immutable_to_return(
       C);
   },
-  nb::arg("C"), nb::rv_policy::reference);
+  nb::arg("C"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "SUNAdaptController_GetFastController_MRIHTol",
-  [](SUNAdaptController C)
-    -> std::tuple<SUNErrCode,
-                  std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>>
+  [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
   {
     auto SUNAdaptController_GetFastController_MRIHTol_adapt_modifiable_immutable_to_return =
       [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
@@ -90,26 +71,11 @@ m.def(
         SUNAdaptController_GetFastController_MRIHTol(C, &Cfast_adapt_modifiable);
       return std::make_tuple(r, Cfast_adapt_modifiable);
     };
-    auto SUNAdaptController_GetFastController_MRIHTol_adapt_return_type_to_shared_ptr =
-      [&SUNAdaptController_GetFastController_MRIHTol_adapt_modifiable_immutable_to_return](
-        SUNAdaptController C)
-      -> std::tuple<SUNErrCode,
-                    std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>>
-    {
-      auto lambda_result =
-        SUNAdaptController_GetFastController_MRIHTol_adapt_modifiable_immutable_to_return(
-          C);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNAdaptController>,
-                                             SUNAdaptControllerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNAdaptController_GetFastController_MRIHTol_adapt_return_type_to_shared_ptr(
+    return SUNAdaptController_GetFastController_MRIHTol_adapt_modifiable_immutable_to_return(
       C);
   },
-  nb::arg("C"), nb::rv_policy::reference);
+  nb::arg("C"), "nb::rv_policy::reference", nb::rv_policy::reference);
 // #ifdef __cplusplus
 //
 // #endif

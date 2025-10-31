@@ -213,12 +213,14 @@ auto pyEnumSUNLinearSolver_ID =
 //
 
 auto pyClass_generic_SUNLinearSolver_Ops =
-  nb::class_<_generic_SUNLinearSolver_Ops>(m, "_generic_SUNLinearSolver_Ops", "")
+  nb::class_<_generic_SUNLinearSolver_Ops>(m,
+                                           "_generic_SUNLinearSolver_Ops", "Structure containing function pointers to linear solver operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClass_generic_SUNLinearSolver =
-  nb::class_<_generic_SUNLinearSolver>(m, "_generic_SUNLinearSolver", "")
+  nb::class_<_generic_SUNLinearSolver>(m,
+                                       "_generic_SUNLinearSolver", " A linear solver is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of linear solver\n   operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 
@@ -249,22 +251,8 @@ m.def("SUNLinSolNumIters", SUNLinSolNumIters, nb::arg("S"));
 
 m.def("SUNLinSolResNorm", SUNLinSolResNorm, nb::arg("S"));
 
-m.def(
-  "SUNLinSolResid",
-  [](SUNLinearSolver S) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-  {
-    auto SUNLinSolResid_adapt_return_type_to_shared_ptr =
-      [](SUNLinearSolver S) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    {
-      auto lambda_result = SUNLinSolResid(S);
-
-      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
-        lambda_result);
-    };
-
-    return SUNLinSolResid_adapt_return_type_to_shared_ptr(S);
-  },
-  nb::arg("S"), nb::rv_policy::reference);
+m.def("SUNLinSolResid", SUNLinSolResid, nb::arg("S"),
+      "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def("SUNLinSolLastFlag", SUNLinSolLastFlag, nb::arg("S"));
 // #ifdef __cplusplus

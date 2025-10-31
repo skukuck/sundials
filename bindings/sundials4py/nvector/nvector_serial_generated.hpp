@@ -27,7 +27,7 @@ m.def(
     return N_VNewEmpty_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
   },
   nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 2>());
+  nb::keep_alive<0, 2>());
 
 m.def(
   "N_VNew_Serial",
@@ -47,7 +47,7 @@ m.def(
     return N_VNew_Serial_adapt_return_type_to_shared_ptr(vec_length, sunctx);
   },
   nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
-  nb::rv_policy::reference, nb::keep_alive<0, 2>());
+  nb::keep_alive<0, 2>());
 
 m.def(
   "N_VMake_Serial",
@@ -81,7 +81,7 @@ m.def(
                                                           sunctx);
   },
   nb::arg("vec_length"), nb::arg("v_data_1d"), nb::arg("sunctx"),
-  "nb::keep_alive<0, 3>()", nb::rv_policy::reference, nb::keep_alive<0, 3>());
+  "nb::keep_alive<0, 3>()", nb::keep_alive<0, 3>());
 
 m.def("N_VEnableFusedOps_Serial", N_VEnableFusedOps_Serial, nb::arg("v"),
       nb::arg("tf"));

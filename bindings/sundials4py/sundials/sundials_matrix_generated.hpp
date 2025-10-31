@@ -24,12 +24,14 @@ auto pyEnumSUNMatrix_ID =
 //
 
 auto pyClass_generic_SUNMatrix_Ops =
-  nb::class_<_generic_SUNMatrix_Ops>(m, "_generic_SUNMatrix_Ops", "")
+  nb::class_<_generic_SUNMatrix_Ops>(m,
+                                     "_generic_SUNMatrix_Ops", "Structure containing function pointers to matrix operations")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyClass_generic_SUNMatrix =
-  nb::class_<_generic_SUNMatrix>(m, "_generic_SUNMatrix", "")
+  nb::class_<_generic_SUNMatrix>(m,
+                                 "_generic_SUNMatrix", " A matrix is a structure with an implementation-dependent\n   'content' field, and a pointer to a structure of matrix\n   operations corresponding to that implementation.")
     .def(nb::init<>()) // implicit default constructor
   ;
 
@@ -50,7 +52,7 @@ m.def(
 
     return SUNMatClone_adapt_return_type_to_shared_ptr(A);
   },
-  nb::arg("A"), nb::rv_policy::reference);
+  nb::arg("A"));
 
 m.def("SUNMatZero", SUNMatZero, nb::arg("A"));
 

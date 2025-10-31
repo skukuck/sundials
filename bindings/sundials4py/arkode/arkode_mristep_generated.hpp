@@ -5,7 +5,8 @@
 //
 
 auto pyEnumMRISTEP_METHOD_TYPE =
-  nb::enum_<MRISTEP_METHOD_TYPE>(m, "MRISTEP_METHOD_TYPE", nb::is_arithmetic(), "")
+  nb::enum_<MRISTEP_METHOD_TYPE>(m, "MRISTEP_METHOD_TYPE", nb::is_arithmetic(),
+                                 "MRIStep method types")
     .value("MRISTEP_EXPLICIT", MRISTEP_EXPLICIT, "")
     .value("MRISTEP_IMPLICIT", MRISTEP_IMPLICIT, "")
     .value("MRISTEP_IMEX", MRISTEP_IMEX, "")
@@ -18,8 +19,9 @@ auto pyEnumMRISTEP_METHOD_TYPE =
 //
 
 auto pyEnumARKODE_MRITableID =
-  nb::enum_<ARKODE_MRITableID>(m, "ARKODE_MRITableID", nb::is_arithmetic(), "")
-    .value("ARKODE_MRI_NONE", ARKODE_MRI_NONE, "")
+  nb::enum_<ARKODE_MRITableID>(m, "ARKODE_MRITableID", nb::is_arithmetic(),
+                               "MRI coupling table IDs")
+    .value("ARKODE_MRI_NONE", ARKODE_MRI_NONE, "ensure enum is signed int")
     .value("ARKODE_MIS_KW3", ARKODE_MIS_KW3, "")
     .value("ARKODE_MIN_MRI_NUM", ARKODE_MIN_MRI_NUM, "")
     .value("ARKODE_MRI_GARK_ERK33a", ARKODE_MRI_GARK_ERK33a, "")
@@ -57,7 +59,8 @@ auto pyEnumARKODE_MRITableID =
 //
 
 auto pyClassMRIStepCouplingMem =
-  nb::class_<MRIStepCouplingMem>(m, "MRIStepCouplingMem", "")
+  nb::class_<MRIStepCouplingMem>(m,
+                                 "MRIStepCouplingMem", "---------------------------------------------------------------\n  MRI coupling data structure and associated utility routines\n  ---------------------------------------------------------------")
     .def(nb::init<>()) // implicit default constructor
   ;
 
@@ -78,7 +81,7 @@ m.def(
 
     return MRIStepCoupling_LoadTable_adapt_return_type_to_shared_ptr(method);
   },
-  nb::arg("method"), nb::rv_policy::reference);
+  nb::arg("method"), "Accessor routine to load built-in MRI table");
 
 m.def(
   "MRIStepCoupling_LoadTableByName",
@@ -96,7 +99,7 @@ m.def(
 
     return MRIStepCoupling_LoadTableByName_adapt_return_type_to_shared_ptr(method);
   },
-  nb::arg("method"), nb::rv_policy::reference);
+  nb::arg("method"), "Accessor routine to load built-in MRI table from string");
 
 m.def(
   "MRIStepCoupling_Create",
@@ -137,7 +140,7 @@ m.def(
                                                                   G_1d, c_1d);
   },
   nb::arg("nmat"), nb::arg("stages"), nb::arg("q"), nb::arg("p"),
-  nb::arg("W_1d"), nb::arg("G_1d"), nb::arg("c_1d"), nb::rv_policy::reference);
+  nb::arg("W_1d"), nb::arg("G_1d"), nb::arg("c_1d"));
 
 m.def(
   "MRIStepCoupling_MIStoMRI",
@@ -156,7 +159,7 @@ m.def(
 
     return MRIStepCoupling_MIStoMRI_adapt_return_type_to_shared_ptr(B, q, p);
   },
-  nb::arg("B"), nb::arg("q"), nb::arg("p"), nb::rv_policy::reference);
+  nb::arg("B"), nb::arg("q"), nb::arg("p"));
 
 m.def(
   "MRIStepCoupling_Copy",
@@ -174,7 +177,7 @@ m.def(
 
     return MRIStepCoupling_Copy_adapt_return_type_to_shared_ptr(MRIC);
   },
-  nb::arg("MRIC"), nb::rv_policy::reference);
+  nb::arg("MRIC"));
 
 m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
       nb::arg("outfile"));
@@ -190,8 +193,7 @@ m.def("MRIStepSetPostInnerFn", MRIStepSetPostInnerFn, nb::arg("arkode_mem"),
 
 m.def(
   "MRIStepGetCurrentCoupling",
-  [](void* arkode_mem)
-    -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>>
+  [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>
   {
     auto MRIStepGetCurrentCoupling_adapt_modifiable_immutable_to_return =
       [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>
@@ -201,23 +203,13 @@ m.def(
       int r = MRIStepGetCurrentCoupling(arkode_mem, &MRIC_adapt_modifiable);
       return std::make_tuple(r, MRIC_adapt_modifiable);
     };
-    auto MRIStepGetCurrentCoupling_adapt_return_type_to_shared_ptr =
-      [&MRIStepGetCurrentCoupling_adapt_modifiable_immutable_to_return](
-        void* arkode_mem)
-      -> std::tuple<int, std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>>
-    {
-      auto lambda_result =
-        MRIStepGetCurrentCoupling_adapt_modifiable_immutable_to_return(arkode_mem);
 
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<MRIStepCoupling>,
-                                             MRIStepCouplingDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return MRIStepGetCurrentCoupling_adapt_return_type_to_shared_ptr(arkode_mem);
+    return MRIStepGetCurrentCoupling_adapt_modifiable_immutable_to_return(
+      arkode_mem);
   },
-  nb::arg("arkode_mem"), nb::rv_policy::reference);
+  nb::arg("arkode_mem"),
+  " Optional output functions\n\n nb::rv_policy::reference",
+  nb::rv_policy::reference);
 
 m.def(
   "MRIStepGetLastInnerStepFlag",

@@ -19,8 +19,7 @@ m.def(
 
     return SUNMemoryHelper_Sys_adapt_return_type_to_shared_ptr(sunctx);
   },
-  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::rv_policy::reference,
-  nb::keep_alive<0, 1>());
+  nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 // #ifdef __cplusplus
 //
 // #endif

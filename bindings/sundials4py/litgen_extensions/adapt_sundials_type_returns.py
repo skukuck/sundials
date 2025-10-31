@@ -28,6 +28,13 @@ def adapt_sundials_types_returns_to_shared_ptr(
     is_tuple = False
     return_type_str = return_type.str_return_type()
 
+    # print(f"{adapted_function.cpp_element().function_name}")
+    # print(f"    {adapted_function.cpp_element()}")
+    # print(f"    {adapted_function.cpp_element().cpp_element_comments}")
+
+    if "nb::rv_policy::reference" in adapted_function.cpp_element().cpp_element_comments.comments_as_str():
+        return None
+
     tuple_args_match = None
     tuple_args_list = None
     if return_type_str.startswith("std::tuple"):

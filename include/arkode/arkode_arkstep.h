@@ -98,7 +98,7 @@ SUNDIALS_EXPORT int ARKStepSetTableName(void* arkode_mem, const char* itable,
 /* Optional output functions */
 SUNDIALS_EXPORT int ARKStepGetCurrentButcherTables(void* arkode_mem,
                                                    ARKodeButcherTable* Bi,
-                                                   ARKodeButcherTable* Be);
+                                                   ARKodeButcherTable* Be); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKStepGetTimestepperStats(
   void* arkode_mem, long int* expsteps, long int* accsteps,
   long int* step_attempts, long int* nfe_evals, long int* nfi_evals,

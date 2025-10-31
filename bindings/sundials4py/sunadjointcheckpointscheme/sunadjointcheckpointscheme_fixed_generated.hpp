@@ -64,7 +64,8 @@ m.def(
   nb::arg("estimate"), nb::arg("keep"), nb::arg("sunctx"),
   "nb::call_policy<sundials4py::returns_references_to<6, 1>>()",
   nb::rv_policy::reference,
-  nb::call_policy<sundials4py::returns_references_to<6, 1>>());
+  nb::call_policy<sundials4py::returns_references_to<6, 1>>(),
+  nb::call_policy<sundials4py::returns_references_to<2, 1>>());
 // #ifdef __cplusplus
 //
 // #endif

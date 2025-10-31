@@ -66,7 +66,7 @@ SUNDIALS_EXPORT int ERKStepSetTableName(void* arkode_mem, const char* etable);
 
 /* Optional output functions */
 SUNDIALS_EXPORT int ERKStepGetCurrentButcherTable(void* arkode_mem,
-                                                  ARKodeButcherTable* B);
+                                                  ARKodeButcherTable* B); // nb::rv_policy::reference
 
 /* Grouped optional output functions */
 SUNDIALS_EXPORT int ERKStepGetTimestepperStats(

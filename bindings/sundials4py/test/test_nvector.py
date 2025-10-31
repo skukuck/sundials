@@ -21,6 +21,26 @@ from fixtures import *
 from sundials4py.core import *
 
 
+def test_create_manyvector(sunctx):
+    y = N_VNew_Serial(5, sunctx)
+    z = N_VNew_Serial(5, sunctx)
+
+    N_VConst(1.0, y)
+    N_VConst(2.0, z)
+
+    yz = N_VNew_ManyVector(2, [y, z], sunctx)
+
+    yarr = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yz, 0))
+    assert np.allclose(N_VGetArrayPointer(y), yarr)
+
+    zarr = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yz, 1))
+    assert np.allclose(N_VGetArrayPointer(z), zarr)
+
+    N_VConst(3.0, yz)
+    assert np.allclose(3.0, yarr)
+    assert np.allclose(3.0, zarr)
+
+
 @pytest.mark.parametrize("vector_type", ["serial"])
 def test_create_nvector(vector_type, sunctx):
     if vector_type == "serial":

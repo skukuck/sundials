@@ -209,7 +209,7 @@ SUNDIALS_EXPORT
 sunrealtype SUNLinSolResNorm(SUNLinearSolver S);
 
 SUNDIALS_EXPORT
-N_Vector SUNLinSolResid(SUNLinearSolver S);
+N_Vector SUNLinSolResid(SUNLinearSolver S); // nb::rv_policy::reference
 
 /* TODO(CJB): sunindextype being the return type here could cause a problem if
               sunindextype happened to be smaller than an int.  */

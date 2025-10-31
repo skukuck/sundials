@@ -2,8 +2,8 @@
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos
 # -----------------------------------------------------------------
-# Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint sensitivity example
-# (ark_lotka_volterra_ASA.c)
+# Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint 
+# sensitivity example (ark_lotka_volterra_ASA.c)
 # -----------------------------------------------------------------
 import numpy as np
 import sundials4py.core as sun
@@ -119,8 +119,8 @@ def main():
         sun.SUNDATAIOMODE_INMEM, mem_helper, check_freq, ncheck, keep_checks, sunctx
     )
     assert status == sun.SUN_SUCCESS
-    # status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), checkpoint_scheme)
-    # assert status == ark.ARK_SUCCESS
+    status = ark.ARKodeSetAdjointCheckpointScheme(arkode.get(), checkpoint_scheme)
+    assert status == ark.ARK_SUCCESS
 
     #
     # Compute the forward solution
@@ -159,26 +159,26 @@ def main():
     print(sun.N_VGetArrayPointer(uB))
     print(sun.N_VGetArrayPointer(qB))
 
-    # # Create ARKStep adjoint stepper
-    # status, adj_stepper = ark.ARKStepCreateAdjointStepper(
-    #     arkode.get(),
-    #     lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
-    #     None,
-    #     tf,
-    #     sf,
-    #     sunctx,
-    # )
+    # Create ARKStep adjoint stepper
+    status, adj_stepper = ark.ARKStepCreateAdjointStepper(
+        arkode.get(),
+        lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
+        None,
+        tf,
+        sf,
+        sunctx,
+    )
 
-    # #
-    # # Now compute the adjoint solution
-    # #
+    #
+    # Now compute the adjoint solution
+    #
 
-    # status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf)
-    # assert status == ark.ARK_SUCCESS
+    status, tret = sun.SUNAdjointStepper_Evolve(adj_stepper, t0, sf)
+    assert status == ark.ARK_SUCCESS
 
-    # print("Adjoint Solution:")
-    # print(sun.N_VGetArrayPointer(uB))
-    # print(sun.N_VGetArrayPointer(qB))
+    print("Adjoint Solution:")
+    print(sun.N_VGetArrayPointer(uB))
+    print(sun.N_VGetArrayPointer(qB))
 
     # print("\nARKStep Adjoint Stats:")
     # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)

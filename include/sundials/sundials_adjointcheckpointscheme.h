@@ -108,7 +108,7 @@ SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_LoadVector(
   SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
   suncountertype stage_num, sunbooleantype peek, N_Vector* out,
-  sunrealtype* tout);
+  sunrealtype* tout); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_Destroy(SUNAdjointCheckpointScheme*);

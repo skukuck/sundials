@@ -59,11 +59,11 @@ SUNErrCode SUNAdaptController_SetParams_MRIHTol(SUNAdaptController C,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdaptController_GetSlowController_MRIHTol(SUNAdaptController C,
-                                                        SUNAdaptController* Cslow);
+                                                        SUNAdaptController* Cslow); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdaptController_GetFastController_MRIHTol(SUNAdaptController C,
-                                                        SUNAdaptController* Cfast);
+                                                        SUNAdaptController* Cfast); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 SUNAdaptController_Type SUNAdaptController_GetType_MRIHTol(SUNAdaptController C);

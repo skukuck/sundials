@@ -28,13 +28,23 @@
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
-using namespace sundials::experimental;
 
 namespace sundials4py {
 
 void bind_sunadjointcheckpointscheme_fixed(nb::module_& m)
 {
 #include "sunadjointcheckpointscheme_fixed_generated.hpp"
+
+    m.def("SUNAdjointCheckpointScheme_Create_Fixed",
+        [](SUNDataIOMode io_mode, SUNMemoryHelper mem_helper, suncountertype interval, suncountertype estimate, sunbooleantype keep, SUNContext sunctx) -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNAdjointCheckpointScheme>>>
+        {
+            SUNAdjointCheckpointScheme check_scheme;
+            SUNErrCode err = SUNAdjointCheckpointScheme_Create_Fixed(io_mode, mem_helper, interval, estimate, keep, sunctx, &check_scheme);
+            return std::make_tuple(err, our_make_shared<std::remove_pointer_t<SUNAdjointCheckpointScheme>, SUNAdjointCheckpointSchemeDeleter>(check_scheme));
+        }, 
+        nb::arg("io_mode"), nb::arg("mem_helper"), nb::arg("interval"), nb::arg("estimate"), nb::arg("keep"), nb::arg("sunctx"), 
+        nb::call_policy<sundials4py::returns_references_to<2, 1>>() /* keep SUNMemoryHelper alive as long as SUNAdjointCheckpointScheme is alive */, 
+        nb::call_policy<sundials4py::returns_references_to<6, 1>>() /* keep SUNContext alive as long as SUNAdjointCheckpointScheme is alive */);
 }
 
 } // namespace sundials4py

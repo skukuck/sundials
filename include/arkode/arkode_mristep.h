@@ -212,7 +212,7 @@ SUNDIALS_EXPORT int MRIStepSetPostInnerFn(void* arkode_mem,
 
 /* Optional output functions */
 SUNDIALS_EXPORT int MRIStepGetCurrentCoupling(void* arkode_mem,
-                                              MRIStepCoupling* MRIC);
+                                              MRIStepCoupling* MRIC); // nb::rv_policy::reference
 SUNDIALS_EXPORT int MRIStepGetLastInnerStepFlag(void* arkode_mem, int* flag);
 SUNDIALS_EXPORT int MRIStepGetNumInnerStepperFails(void* arkode_mem,
                                                    long int* inner_fails);

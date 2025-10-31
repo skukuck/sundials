@@ -58,7 +58,7 @@ SUNDIALS_EXPORT int SPRKStepSetMethodName(void* arkode_mem, const char* method);
 
 /* Optional output functions */
 SUNDIALS_EXPORT int SPRKStepGetCurrentMethod(void* arkode_mem,
-                                             ARKodeSPRKTable* sprk_storage);
+                                             ARKodeSPRKTable* sprk_storage); // nb::rv_policy::reference
 
 #ifdef __cplusplus
 }

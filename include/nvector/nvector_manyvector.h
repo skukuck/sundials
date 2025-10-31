@@ -70,7 +70,7 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array_1d,
                            SUNContext sunctx);
 
 SUNDIALS_EXPORT
-N_Vector N_VGetSubvector_ManyVector(N_Vector v, sunindextype vec_num);
+N_Vector N_VGetSubvector_ManyVector(N_Vector v, sunindextype vec_num); // nb::rv_policy::reference
 
 SUNDIALS_EXPORT
 sunrealtype* N_VGetSubvectorArrayPointer_ManyVector(N_Vector v,

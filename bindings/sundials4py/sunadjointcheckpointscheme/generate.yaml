@@ -32,3 +32,9 @@ modules:
     path: sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed_generated.hpp
     headers:
     - ../../include/sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h
+    fn_exclude_by_name__regex:
+    # SUNAdjointCheckpointScheme_Create_Fixed takes both a SUNMemoryHelper and SUNContext
+    # which must be kept alive as long as the SUNAdjointCheckpointScheme object.
+    # Currently, our adapt_sundials_type_returns.py litgen extension cannot handle cases
+    # where there are two patients in the Nurse,Patient scheme. So we wrap this one manually.
+    - "^SUNAdjointCheckpointScheme_Create_Fixed$"

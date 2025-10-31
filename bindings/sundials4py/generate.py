@@ -66,7 +66,7 @@ def generate(config_yaml_path, dump_srcml=False):
     ]
 
     # Don't capture comments from the source for generating Python doc strings
-    options.comments_exclude = True
+    options.comments_exclude = False
 
     # Export enum values to the package namespace
     options.enum_export_values = True
@@ -81,13 +81,12 @@ def generate(config_yaml_path, dump_srcml=False):
     # Litgen original option is fn_params_output_modifiable_immutable_to_return__regex, but we use fn_params_output_modifiable_immutable_to_return__regex_custom
     # since we override the adapt_modifiable_immutable_to_return function adapter
     options.fn_params_output_modifiable_immutable_to_return__regex_custom = r".*"
-    options.fn_return_force_policy_reference__callback = (
-        ensure_return_policy_reference_for_pointers
-    )
 
     # Force the functions that return pointers to use `nb::rv_policy::reference`
-    options.fn_return_force_policy_reference_for_pointers__regex = r".*"
-
+    # options.fn_return_force_policy_reference_for_pointers__regex = r".*"
+    # options.fn_return_force_policy_reference__callback = (
+    #     ensure_return_policy_reference_for_pointers
+    # )
     # Don't create default constructors for any struct
     options.struct_create_default_named_ctor__regex = ""
 

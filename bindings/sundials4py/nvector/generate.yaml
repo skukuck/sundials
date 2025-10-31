@@ -93,6 +93,11 @@ modules:
     headers:
     - ../../include/nvector/nvector_manyvector.h
     fn_exclude_by_name__regex:
+    # N_VNew_ManyVector takes an array of N_Vectors for the subvectors. We need to keep
+    # the subvectors alive as long as the ManyVector exists. Since we also need to keep 
+    # the SUNContext alive, this case falls outside what our litgen extension adapt_sundials_types_returns.py
+    # can currently handle, so we manually bind to it.
+    - "^N_VNew_ManyVector$"
     # Getting and setting array pointers requires us to do something custom
     - "^N_VGetSubvectorArrayPointer_ManyVector$"
     - "^N_VSetSubvectorArrayPointer_ManyVector$"

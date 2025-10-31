@@ -97,11 +97,11 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 ///
 /// \brief Helper struct to manage reference lifetimes for function return values in Python bindings.
 ///
-/// Enables the nb::keep_alive<Nurse, Patient> paradigm when the function returns a sequence where an
-/// element of the sequence (e.g., a tuple) is a Nurse.
+/// Enables the nb::keep_alive<Nurse, Patient> paradigm when the function returns a sequence where
+/// elements of the sequence (e.g., a tuple) are Nurses.
 ///
-/// \tparam IN Index of the return value in the returned sequence whose lifetime should be managed.
-/// \tparam IP Index of the input argument whose lifetime the return value should be tied to.
+/// \tparam IP Index of the input argument who is kept alive by the nurses.
+/// \tparam IN Indexes of the return values in the returned sequence who keep the patient alive.
 //
 /// See https://nanobind.readthedocs.io/en/latest/api_core.html#_CPPv4I0EN8nanobind11call_policyE.
 ///
@@ -127,9 +127,6 @@ struct returns_references_to
     (nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]), ...);
   }
 };
-
-template<size_t IN, size_t IP>
-using keep_alive_tuple = nb::call_policy<returns_references_to<IN, IP>>;
 
 // TODO(CJB): implement custom exception type so all messages follow a specific format
 

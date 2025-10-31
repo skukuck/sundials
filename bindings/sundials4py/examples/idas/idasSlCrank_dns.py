@@ -143,33 +143,29 @@ def main():
     dae = SliderCrankDAE()
 
     # SUNDIALS context
-    sunctx = SUNContextView.Create()
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
 
     # Create N_Vectors
-    id = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
-    yy = NVectorView.Create(N_VClone(id.get()))
-    yp = NVectorView.Create(N_VClone(id.get()))
-    q = NVectorView.Create(N_VNew_Serial(1, sunctx.get()))
+    id = N_VNew_Serial(NEQ, sunctx)
+    yy = N_VClone(id)
+    yp = N_VClone(id)
+    q = N_VNew_Serial(1, sunctx)
 
     # Consistent IC
-    id_arr = N_VGetArrayPointer(id.get())
+    id_arr = N_VGetArrayPointer(id)
     id_arr[:6] = 1.0
     id_arr[6:] = 0.0
-    dae.set_initial_conditions(yy.get(), yp.get())
+    dae.set_initial_conditions(yy, yp)
 
     # IDAS initialization
-    ida = IDAView.Create(IDACreate(sunctx.get()))
+    ida = IDACreate(sunctx)
     status = IDAInit(
-        ida.get(),
-        lambda t, yv, ypv, rv, _: dae.residual(t, yv, ypv, rv),
-        TBEGIN,
-        yy.get(),
-        yp.get(),
+        ida.get(), lambda t, yv, ypv, rv, _: dae.residual(t, yv, ypv, rv), TBEGIN, yy, yp
     )
     assert status == IDA_SUCCESS
     status = IDASStolerances(ida.get(), RTOLF, ATOLF)
     assert status == IDA_SUCCESS
-    status = IDASetId(ida.get(), id.get())
+    status = IDASetId(ida.get(), id)
     assert status == IDA_SUCCESS
     status = IDASetSuppressAlg(ida.get(), True)
     assert status == IDA_SUCCESS
@@ -177,18 +173,18 @@ def main():
     assert status == IDA_SUCCESS
 
     # Create dense SUNMatrix to use with dense linear solver
-    A = SUNMatrixView.Create(SUNDenseMatrix(NEQ, NEQ, sunctx.get()))
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
 
     # Create dense linear solver
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(yy.get(), A.get(), sunctx.get()))
+    LS = SUNLinSol_Dense(yy, A, sunctx)
 
     # Attach the matrix and linear solver
-    status = IDASetLinearSolver(ida.get(), LS.get(), A.get())
+    status = IDASetLinearSolver(ida.get(), LS, A)
     assert status == IDA_SUCCESS
 
     #  Setup quadrature
-    N_VConst(0.0, q.get())
-    status = IDAQuadInit(ida.get(), lambda t, yv, ypv, qv, _: dae.rhsQ(t, yv, ypv, qv), q.get())
+    N_VConst(0.0, q)
+    status = IDAQuadInit(ida.get(), lambda t, yv, ypv, qv, _: dae.rhsQ(t, yv, ypv, qv), q)
     assert status == IDA_SUCCESS
     status = IDASetQuadErrCon(ida.get(), 1)
     assert status == IDA_SUCCESS
@@ -204,7 +200,7 @@ def main():
     print("---------------------------------------------------------------------")
 
     # Time stepping loop (C example style)
-    yarr = N_VGetArrayPointer(yy.get())
+    yarr = N_VGetArrayPointer(yy)
     tout = TEND / NOUT
     tret = 0.0
     while True:
@@ -215,7 +211,7 @@ def main():
             f"{tret:5.2f} {yarr[0]:12.4e} {yarr[1]:12.4e} {yarr[2]:12.4e} | {nst:3d}  {kused:1d} {hused:12.4e}"
         )
 
-        status, tret = IDASolve(ida.get(), tout, yy.get(), yp.get(), IDA_NORMAL)
+        status, tret = IDASolve(ida.get(), tout, yy, yp, IDA_NORMAL)
         assert status >= 0
 
         tout += TEND / NOUT
@@ -247,9 +243,9 @@ def main():
     print(f"Number of nonlinear conv. failures = {nnf}")
     print(f"Number of step solver failures     = {ncfn}")
 
-    status, tret = IDAGetQuad(ida.get(), q.get())
+    status, tret = IDAGetQuad(ida.get(), q)
     print("--------------------------------------------")
-    print(f"  G = {N_VGetArrayPointer(q.get())[0]:24.16f}")
+    print(f"  G = {N_VGetArrayPointer(q)[0]:24.16f}")
     print("--------------------------------------------\n")
 
 

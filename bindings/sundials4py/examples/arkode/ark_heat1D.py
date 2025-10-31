@@ -97,24 +97,22 @@ def main():
     reltol = 1e-6
     abstol = 1e-10
 
-    sunctx = SUNContextView.Create()
-    y = NVectorView.Create(N_VNew_Serial(N, sunctx.get()))
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    y = N_VNew_Serial(N, sunctx)
 
     problem = Heat1DProblem(N, k)
-    problem.set_init_cond(y.get())
+    problem.set_init_cond(y)
 
     # Call ARKStepCreate to initialize the ARK timestepper module and
     # specify the right-hand side function in y'=f(t,y), the initial time
     # T0, and the initial dependent variable vector y.  Note: since this
     # problem is fully implicit, we set f_E to NULL and f_I to f. */
-    ark = ARKodeView.Create(
-        ARKStepCreate(
-            None,  # f_E (explicit)
-            lambda t, yvec, ydotvec, _: problem.f(t, yvec, ydotvec),  # f_I (implicit)
-            T0,
-            y.get(),
-            sunctx.get(),
-        )
+    ark = ARKStepCreate(
+        None,  # f_E (explicit)
+        lambda t, yvec, ydotvec, _: problem.f(t, yvec, ydotvec),  # f_I (implicit)
+        T0,
+        y,
+        sunctx,
     )
 
     # Set routines
@@ -128,8 +126,8 @@ def main():
     assert status == ARK_SUCCESS
 
     # PCG linear solver with no preconditioning, with up to N iterations
-    LS = SUNLinearSolverView.Create(SUNLinSol_PCG(y.get(), 0, N, sunctx.get()))
-    status = ARKodeSetLinearSolver(ark.get(), LS.get(), None)
+    LS = SUNLinSol_PCG(y, 0, N, sunctx)
+    status = ARKodeSetLinearSolver(ark.get(), LS, None)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetJacTimes(
@@ -145,7 +143,7 @@ def main():
         for i in range(N):
             FID.write(f"  {problem.dx * i:.16e}\n")
 
-    yarr = N_VGetArrayPointer(y.get())
+    yarr = N_VGetArrayPointer(y)
     with open("heat1D.txt", "w") as UFID:
         # Output initial condition
         UFID.write(" ".join(f"{val:.16e}" for val in yarr) + "\n")
@@ -158,8 +156,8 @@ def main():
         print("   -------------------------")
         print(f"  {t:10.6f}  {np.sqrt(np.dot(yarr, yarr) / N):10.6f}")
         for iout in range(Nt):
-            status, tret = ARKodeEvolve(ark.get(), tout, y.get(), ARK_NORMAL)
-            yarr = N_VGetArrayPointer(y.get())
+            status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
+            yarr = N_VGetArrayPointer(y)
             print(f"  {tret:10.6f}  {np.sqrt(np.dot(yarr, yarr) / N):10.6f}")
             UFID.write(" ".join(f"{val:.16e}" for val in yarr) + "\n")
             if status == ARK_SUCCESS:

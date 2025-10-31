@@ -110,21 +110,19 @@ def main():
     reltol = 1.0e-6
     abstol = 1.0e-10
 
-    sunctx = SUNContextView.Create()
-    y = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    y = N_VNew_Serial(NEQ, sunctx)
 
     # Create ODE problem instance and set initial conditions
     ode_problem = BrusselatorODE(u0, v0, w0, a, b, ep)
-    ode_problem.set_init_cond(y.get())
+    ode_problem.set_init_cond(y)
 
-    ark = ARKodeView.Create(
-        ARKStepCreate(
-            None,  # f_E (explicit)
-            lambda t, yvec, ydotvec, _: ode_problem.f(t, yvec, ydotvec),  # f_I (implicit)
-            T0,
-            y.get(),
-            sunctx.get(),
-        )
+    ark = ARKStepCreate(
+        None,  # f_E (explicit)
+        lambda t, yvec, ydotvec, _: ode_problem.f(t, yvec, ydotvec),  # f_I (implicit)
+        T0,
+        y,
+        sunctx,
     )
 
     status = ARKodeSStolerances(ark.get(), reltol, abstol)
@@ -137,10 +135,10 @@ def main():
     assert status == ARK_SUCCESS
 
     # Dense matrix and linear solver
-    A = SUNMatrixView.Create(SUNDenseMatrix(NEQ, NEQ, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(y.get(), A.get(), sunctx.get()))
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    LS = SUNLinSol_Dense(y, A, sunctx)
 
-    status = ARKodeSetLinearSolver(ark.get(), LS.get(), A.get())
+    status = ARKodeSetLinearSolver(ark.get(), LS, A)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetJacFn(
@@ -156,7 +154,7 @@ def main():
     assert status == ARK_SUCCESS
 
     # Initial problem output
-    yarr = N_VGetArrayPointer(y.get())
+    yarr = N_VGetArrayPointer(y)
     print("\nBrusselator ODE test problem:")
     print(f"    initial conditions:  u0 = {u0},  v0 = {v0},  w0 = {w0}")
     print(f"    problem parameters:  a = {a},  b = {b},  ep = {ep}")
@@ -173,8 +171,8 @@ def main():
         UFID.write(f" {T0:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")
         tout = T0 + dTout
         for iout in range(Nt):
-            status, tret = ARKodeEvolve(ark.get(), tout, y.get(), ARK_NORMAL)
-            yarr = N_VGetArrayPointer(y.get())
+            status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
+            yarr = N_VGetArrayPointer(y)
             print(f"  {tret:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}  {yarr[2]:10.6f}")
             UFID.write(f" {tret:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")
             if status == ARK_SUCCESS:

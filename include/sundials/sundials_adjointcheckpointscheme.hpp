@@ -32,7 +32,6 @@ struct SUNAdjointCheckpointSchemeDeleter
 {
   void operator()(SUNAdjointCheckpointScheme self)
   {
-    fprintf(stderr, ">>>> deleter SUNAdjointCheckpointScheme:%p\n", self);
     SUNAdjointCheckpointScheme_Destroy(&self);
   }
 };

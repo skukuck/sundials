@@ -207,8 +207,8 @@ class AnalyticNonlinearSys:
 
     # CJB: __enter__ and __exit__ are defined so that this class can be
     # use with python "with" statements. This is a workaround for the following scenario:
-    #   u0 = NVectorView.Create(N_VNew_Serial(...))
-    #   problem = AnalyticNonlinearSys(u0.get())
+    #   u0 = N_VNew_Serial(...)
+    #   problem = AnalyticNonlinearSys(u0)
     #   def g_fn(self, u, g, _):
     #      return problem.fixed_point_fn(u, g)
     # Without using a "with" block, this code will cause nanobind to complain about reference

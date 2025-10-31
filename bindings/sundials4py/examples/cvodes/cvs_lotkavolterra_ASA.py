@@ -96,17 +96,17 @@ def main():
     NEQ = ode.NEQ
     NP = ode.NP
 
-    sunctx = SUNContextView.Create()
-    y = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    y = N_VNew_Serial(NEQ, sunctx)
 
     # Set initial condition
-    ode.set_init_cond(y.get())
+    ode.set_init_cond(y)
 
     # Create CVODE solver and set up problem
-    cvode = CVodeView.Create(CVodeCreate(CV_BDF, sunctx.get()))
+    cvode = CVodeCreate(CV_BDF, sunctx)
 
     # Initialize CVODE with ODE RHS
-    status = CVodeInit(cvode.get(), lambda t, yv, ydv, _: ode.f(t, yv, ydv), T0, y.get())
+    status = CVodeInit(cvode.get(), lambda t, yv, ydv, _: ode.f(t, yv, ydv), T0, y)
     assert status == CV_SUCCESS
 
     # Set tolerances
@@ -118,8 +118,8 @@ def main():
     assert status == CV_SUCCESS
 
     # Set linear solver
-    ls = SUNLinearSolverView.Create(SUNLinSol_SPGMR(y.get(), 0, 3, sunctx.get()))
-    status = CVodeSetLinearSolver(cvode.get(), ls.get(), None)
+    ls = SUNLinSol_SPGMR(y, 0, 3, sunctx)
+    status = CVodeSetLinearSolver(cvode.get(), ls, None)
     assert status == CV_SUCCESS
 
     # Enable adjoint sensitivity analysis
@@ -133,26 +133,26 @@ def main():
     print(f"    reltol = {reltol}, abstol = {abstol}\n")
     print("        t           x           y")
     print("   ---------------------------------")
-    yarr = N_VGetArrayPointer(y.get())
+    yarr = N_VGetArrayPointer(y)
     print(f"  {T0:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
 
     # Forward integration
     tout = Tf
     t = 0.0
-    status, tret, ncheck = CVodeF(cvode.get(), tout, y.get(), CV_NORMAL)
-    yarr = N_VGetArrayPointer(y.get())
+    status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)
+    yarr = N_VGetArrayPointer(y)
     print(f"  {tout:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
     print("   ---------------------------------")
 
     # Adjoint terminal condition
-    uB = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
-    arr_uB = N_VGetArrayPointer(uB.get())
-    arr_uB[:] = ode.dgdu(y.get())
-    qB = NVectorView.Create(N_VNew_Serial(NP, sunctx.get()))
-    N_VConst(0.0, qB.get())
+    uB = N_VNew_Serial(NEQ, sunctx)
+    arr_uB = N_VGetArrayPointer(uB)
+    arr_uB[:] = ode.dgdu(y)
+    qB = N_VNew_Serial(NP, sunctx)
+    N_VConst(0.0, qB)
     print("Adjoint terminal condition:")
     print(arr_uB)
-    print(N_VGetArrayPointer(qB.get()))
+    print(N_VGetArrayPointer(qB))
 
     # Create the CVODES object for the backward problem
     status, which = CVodeCreateB(cvode.get(), CV_BDF)
@@ -160,11 +160,7 @@ def main():
 
     # Initialize the CVODES solver for the backward problem
     status = CVodeInitB(
-        cvode.get(),
-        which,
-        lambda t, yv, lv, ldotv, _: ode.adjoint_rhs(t, yv, lv, ldotv),
-        Tf,
-        uB.get(),
+        cvode.get(), which, lambda t, yv, lv, ldotv, _: ode.adjoint_rhs(t, yv, lv, ldotv), Tf, uB
     )
     assert status == CV_SUCCESS
 
@@ -173,14 +169,14 @@ def main():
     assert status == CV_SUCCESS
 
     # Create the linear solver for the backward problem
-    lsb = SUNLinearSolverView.Create(SUNLinSol_SPGMR(uB.get(), 0, 3, sunctx.get()))
-    status = CVodeSetLinearSolverB(cvode.get(), which, lsb.get(), None)
+    lsb = SUNLinSol_SPGMR(uB, 0, 3, sunctx)
+    status = CVodeSetLinearSolverB(cvode.get(), which, lsb, None)
     assert status == CV_SUCCESS
 
     # Call CVodeQuadInitB to allocate internal memory and initialize backward
     # quadrature integration. This gives the sensitivities w.r.t. the parameters.
     status = CVodeQuadInitB(
-        cvode.get(), which, lambda t, yv, mu, qBdot, _: ode.quad_rhs(t, yv, mu, qBdot), qB.get()
+        cvode.get(), which, lambda t, yv, mu, qBdot, _: ode.quad_rhs(t, yv, mu, qBdot), qB
     )
     assert status == CV_SUCCESS
 
@@ -202,19 +198,19 @@ def main():
     t = 0.0
 
     # Get the final adjoint solution
-    status, t = CVodeGetB(cvode.get(), which, uB.get())
+    status, t = CVodeGetB(cvode.get(), which, uB)
     assert status == CV_SUCCESS
 
     # Call CVodeGetQuadB to get the quadrature solution vector after a
     # successful return from CVodeB.
-    status, t = CVodeGetQuadB(cvode.get(), which, qB.get())
+    status, t = CVodeGetQuadB(cvode.get(), which, qB)
     assert status == CV_SUCCESS
 
     # dg/dp = -qB
-    arr_qB = N_VGetArrayPointer(qB.get())
+    arr_qB = N_VGetArrayPointer(qB)
     arr_qB *= -1.0
     print(f"Adjoint Solution at t = {t}:")
-    print(N_VGetArrayPointer(uB.get()))
+    print(N_VGetArrayPointer(uB))
     print(arr_qB)
 
 

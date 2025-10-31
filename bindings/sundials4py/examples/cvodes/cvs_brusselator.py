@@ -107,14 +107,14 @@ def main():
     reltol = 1.0e-6
     abstol = 1.0e-10
 
-    sunctx = SUNContextView.Create()
-    y = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    y = N_VNew_Serial(NEQ, sunctx)
 
     ode_problem = BrusselatorODE(u0, v0, w0, a, b, ep)
-    ode_problem.set_init_cond(y.get())
+    ode_problem.set_init_cond(y)
 
-    cvode = CVodeView.Create(CVodeCreate(CV_BDF, sunctx.get()))
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y.get())
+    cvode = CVodeCreate(CV_BDF, sunctx)
+    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y)
     assert status == CV_SUCCESS
     status = CVodeSStolerances(cvode.get(), reltol, abstol)
     assert status == CV_SUCCESS
@@ -122,9 +122,9 @@ def main():
     assert status == CV_SUCCESS
 
     # Dense matrix and linear solver
-    A = SUNMatrixView.Create(SUNDenseMatrix(NEQ, NEQ, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Dense(y.get(), A.get(), sunctx.get()))
-    status = CVodeSetLinearSolver(cvode.get(), LS.get(), A.get())
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    LS = SUNLinSol_Dense(y, A, sunctx)
+    status = CVodeSetLinearSolver(cvode.get(), LS, A)
     assert status == CV_SUCCESS
     status = CVodeSetJacFn(
         cvode.get(),
@@ -135,7 +135,7 @@ def main():
     assert status == CV_SUCCESS
 
     # Initial problem output
-    yarr = N_VGetArrayPointer(y.get())
+    yarr = N_VGetArrayPointer(y)
     print("\nBrusselator ODE test problem (CVODE):")
     print(f"    initial conditions:  u0 = {u0},  v0 = {v0}, w0 = {w0}")
     print(f"    problem parameters:  a = {a}, b = {b}, ep = {ep}")
@@ -150,8 +150,8 @@ def main():
         UFID.write(f" {T0:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")
         tout = T0 + dTout
         for iout in range(Nt):
-            status, tret = CVode(cvode.get(), tout, y.get(), CV_NORMAL)
-            yarr = N_VGetArrayPointer(y.get())
+            status, tret = CVode(cvode.get(), tout, y, CV_NORMAL)
+            yarr = N_VGetArrayPointer(y)
             print(f"  {tret:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}  {yarr[2]:10.6f}")
             UFID.write(f" {tret:.16e} {yarr[0]:.16e} {yarr[1]:.16e} {yarr[2]:.16e}\n")
             if status == CV_SUCCESS:

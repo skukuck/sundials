@@ -114,17 +114,17 @@ def main():
     print("Solution method: Modified Newton with band linear solver")
     print(f"Problem size: {NX} x {NY} = {NEQ}\n")
 
-    sunctx = SUNContextView.Create()
-    y = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
-    scale = NVectorView.Create(N_VNew_Serial(NEQ, sunctx.get()))
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    y = N_VNew_Serial(NEQ, sunctx)
+    scale = N_VNew_Serial(NEQ, sunctx)
 
     # Create problem instance and set initial guess
     problem = Laplace2D(NX, NY)
-    problem.set_init_cond(y.get())
+    problem.set_init_cond(y)
 
     # Initialize and allocate memory for KINSOL
-    kin = KINView.Create(KINCreate(sunctx.get()))
-    status = KINInit(kin.get(), lambda u, f, _: problem.func(u, f), y.get())
+    kin = KINCreate(sunctx)
+    status = KINInit(kin.get(), lambda u, f, _: problem.func(u, f), y)
     assert status == KIN_SUCCESS
 
     # Set function norm tolerance
@@ -132,9 +132,9 @@ def main():
     assert status == KIN_SUCCESS
 
     # Create band matrix and linear solver
-    J = SUNMatrixView.Create(SUNBandMatrix(NEQ, NX, NX, sunctx.get()))
-    LS = SUNLinearSolverView.Create(SUNLinSol_Band(y.get(), J.get(), sunctx.get()))
-    status = KINSetLinearSolver(kin.get(), LS.get(), J.get())
+    J = SUNBandMatrix(NEQ, NX, NX, sunctx)
+    LS = SUNLinSol_Band(y, J, sunctx)
+    status = KINSetLinearSolver(kin.get(), LS, J)
     assert status == KIN_SUCCESS
 
     # Set Modified Newton parameters
@@ -144,17 +144,17 @@ def main():
     assert status == KIN_SUCCESS
 
     # No scaling used
-    N_VConst(ONE, scale.get())
+    N_VConst(ONE, scale)
 
     # Call KINSol to solve problem
-    status = KINSol(kin.get(), y.get(), KIN_LINESEARCH, scale.get(), scale.get())
+    status = KINSol(kin.get(), y, KIN_LINESEARCH, scale, scale)
     assert status == KIN_SUCCESS
 
     # Get scaled norm of the system function
     status, fnorm = KINGetFuncNorm(kin.get())
     assert status == KIN_SUCCESS
     print(f"\nComputed solution (||F|| = {fnorm}):\n")
-    problem.print_output(y.get())
+    problem.print_output(y)
 
     # Print final statistics (faithful to C PrintFinalStats)
     status, nni = KINGetNumNonlinSolvIters(kin.get())

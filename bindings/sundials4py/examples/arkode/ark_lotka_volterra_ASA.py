@@ -168,7 +168,6 @@ def main():
     #     sf,
     #     sunctx,
     # )
-    # adj_stepper = sun.SUNAdjointStepperView.Create(adj_stepper)
 
     # #
     # # Now compute the adjoint solution
@@ -183,8 +182,6 @@ def main():
 
     # print("\nARKStep Adjoint Stats:")
     # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)
-
-    # # print(type(cs_view))
 
 
 if __name__ == "__main__":

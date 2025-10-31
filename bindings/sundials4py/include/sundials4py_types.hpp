@@ -18,6 +18,8 @@
 #ifndef _SUNDIALS4PY_TYPES_HPP
 #define _SUNDIALS4PY_TYPES_HPP
 
+#include <stdexcept>
+
 #include <sundials/sundials_types.h>
 
 #include "sundials4py.hpp"
@@ -29,6 +31,19 @@ namespace sundials4py {
 using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
 using CpuArray1d =
   nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig, nb::device::cpu>;
+
+
+class error_returned : public std::runtime_error {
+public:
+  explicit error_returned(const char* message)
+  : std::runtime_error(base_message + message) {}
+  
+  // Constructor that takes a std::string message
+  explicit error_returned(const std::string& message)
+  : std::runtime_error(base_message + message) {}
+private:
+  inline static const std::string base_message = "[sundials4py] a SUNDIALS function returned a code indicating an error, details are given below:\n\t";
+};
 
 } // namespace sundials4py
 

@@ -40,7 +40,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                                \
       KINGetUserData(kin_mem, &user_data);                                      \
       if (!user_data)                                                           \
-        throw std::runtime_error(                                               \
+        throw sundials4py::error_returned(                                               \
           "Failed to get Python function table from KINSOL memory");            \
       auto fntable    = static_cast<kinsol_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER = nb::cast(fn);                                           \
@@ -59,7 +59,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                                 \
       KINGetUserData(kin_mem, &user_data);                                       \
       if (!user_data)                                                            \
-        throw std::runtime_error(                                                \
+        throw sundials4py::error_returned(                                                \
           "Failed to get Python function table from KINSOL memory");             \
       auto fntable     = static_cast<kinsol_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER1 = nb::cast(fn1);                                          \
@@ -96,7 +96,7 @@ void bind_kinsol(nb::module_& m)
           if (kin_status != KIN_SUCCESS)
           {
             free(cb_fns);
-            throw std::runtime_error(
+            throw sundials4py::error_returned(
               "Failed to set user data in KINSOL memory");
           }
 
@@ -105,7 +105,7 @@ void bind_kinsol(nb::module_& m)
           if (kin_status != KIN_SUCCESS)
           {
             free(cb_fns);
-            throw std::runtime_error(
+            throw sundials4py::error_returned(
               "Failed to set user data ownership in KINSOL memory");
           }
 
@@ -131,7 +131,7 @@ void bind_kinsol(nb::module_& m)
       void* user_data = nullptr;
       KINGetUserData(kin_mem, &user_data);
       if (!user_data)
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to get Python function table from KINSOL memory");
       auto fntable     = static_cast<kinsol_user_supplied_fn_table*>(user_data);
       fntable->depthfn = nb::cast(depth_fn);

@@ -100,7 +100,7 @@ void bind_arkode_mristep(nb::module_& m)
                                     sunctx);
       if (ark_mem == nullptr)
       {
-        throw std::runtime_error("Failed to create ARKODE memory");
+        throw sundials4py::error_returned("Failed to create ARKODE memory");
       }
 
       // Create the user-supplied function table to store the Python user functions
@@ -111,7 +111,7 @@ void bind_arkode_mristep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error("Failed to set user data in ARKODE memory");
+        throw sundials4py::error_returned("Failed to set user data in ARKODE memory");
       }
 
       // Ensure ARKodeFree will free the user-supplied function table
@@ -119,7 +119,7 @@ void bind_arkode_mristep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to set user data ownership in ARKODE memory");
       }
 

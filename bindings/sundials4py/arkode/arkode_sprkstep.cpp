@@ -44,7 +44,7 @@ void bind_arkode_sprkstep(nb::module_& m)
       void* ark_mem = SPRKStepCreate(f1_wrapper, f2_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
-        throw std::runtime_error("Failed to create SPRKStep memory");
+        throw sundials4py::error_returned("Failed to create SPRKStep memory");
       }
 
       auto cb_fns    = arkode_user_supplied_fn_table_alloc();
@@ -52,13 +52,13 @@ void bind_arkode_sprkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error("Failed to set user data in SPRKStep memory");
+        throw sundials4py::error_returned("Failed to set user data in SPRKStep memory");
       }
       ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to set user data ownership in SPRKStep memory");
       }
       cb_fns->sprkstep_f1 = nb::cast(f1);

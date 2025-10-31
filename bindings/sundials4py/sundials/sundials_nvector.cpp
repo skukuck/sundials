@@ -40,7 +40,7 @@ void bind_nvector(nb::module_& m)
         [](N_Vector v)
         {
           auto ptr = N_VGetArrayPointer(v);
-          if (!ptr) { throw std::runtime_error("Failed to get array pointer"); }
+          if (!ptr) { throw sundials4py::error_returned("Failed to get array pointer"); }
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
           return sundials4py::Array1d(ptr, 1, shape, owner);
@@ -50,7 +50,7 @@ void bind_nvector(nb::module_& m)
         [](N_Vector v)
         {
           auto ptr = N_VGetDeviceArrayPointer(v);
-          if (!ptr) { throw std::runtime_error("Failed to get array pointer"); }
+          if (!ptr) { throw sundials4py::error_returned("Failed to get array pointer"); }
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
           return sundials4py::Array1d(ptr, 1, shape, owner);
@@ -61,7 +61,7 @@ void bind_nvector(nb::module_& m)
         {
           if (arr.shape(0) != N_VGetLength(v))
           {
-            throw std::runtime_error(
+            throw sundials4py::error_returned(
               "Array shape does not match vector length");
           }
           N_VSetArrayPointer(arr.data(), v);
@@ -73,7 +73,7 @@ void bind_nvector(nb::module_& m)
   //       {
   //         if (arr.shape(0) != N_VGetLength(v))
   //         {
-  //           throw std::runtime_error(
+  //           throw sundials4py::error_returned(
   //             "Array shape does not match vector length");
   //         }
   //         N_VSetDeviceArrayPointer(arr.data(), v);

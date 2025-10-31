@@ -120,15 +120,13 @@ struct returns_references_to
 
     if (!nb::isinstance<nb::sequence>(ret))
     {
-      throw std::runtime_error("return value should be a sequence");
+      throw sundials4py::error_returned("return value should be a sequence");
     }
 
     // Directly apply keep_alive for each IN using a fold expression
     (nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]), ...);
   }
 };
-
-// TODO(CJB): implement custom exception type so all messages follow a specific format
 
 } // namespace sundials4py
 

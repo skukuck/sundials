@@ -42,7 +42,7 @@ void bind_arkode_erkstep(nb::module_& m)
       void* ark_mem = ERKStepCreate(erkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
-        throw std::runtime_error("Failed to create ARKODE memory");
+        throw sundials4py::error_returned("Failed to create ARKODE memory");
       }
 
       // Create the user-supplied function table to store the Python user functions
@@ -53,7 +53,7 @@ void bind_arkode_erkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error("Failed to set user data in ARKODE memory");
+        throw sundials4py::error_returned("Failed to set user data in ARKODE memory");
       }
 
       // Ensure ARKodeFree will free the user-supplied function table
@@ -61,7 +61,7 @@ void bind_arkode_erkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to set user data ownership in ARKODE memory");
       }
 
@@ -86,7 +86,7 @@ void bind_arkode_erkstep(nb::module_& m)
                                                    sf, sunctx, &adj_stepper);
       if (ark_status != ARK_SUCCESS)
       {
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to create adjoint stepper in py-sundials memory");
       }
 
@@ -95,7 +95,7 @@ void bind_arkode_erkstep(nb::module_& m)
       ark_status      = ARKodeGetUserData(arkode_mem, &user_data);
       if (ark_status != ARK_SUCCESS)
       {
-        throw std::runtime_error("Failed to extract ARKODE user data");
+        throw sundials4py::error_returned("Failed to extract ARKODE user data");
       }
 
       auto cb_fns = static_cast<arkode_user_supplied_fn_table*>(user_data);

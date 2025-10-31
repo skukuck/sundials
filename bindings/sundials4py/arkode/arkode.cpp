@@ -54,7 +54,7 @@ void bind_arkode_splittingstep(nb::module_& m);
       void* user_data = nullptr;                                                \
       ARKodeGetUserData(ark_mem, &user_data);                                   \
       if (!user_data)                                                           \
-        throw std::runtime_error(                                               \
+        throw sundials4py::error_returned(                                               \
           "Failed to get Python function table from ARKODE memory");            \
       auto fntable    = static_cast<arkode_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER = nb::cast(fn);                                           \
@@ -73,7 +73,7 @@ void bind_arkode_splittingstep(nb::module_& m);
       void* user_data = nullptr;                                                 \
       ARKodeGetUserData(ark_mem, &user_data);                                    \
       if (!user_data)                                                            \
-        throw std::runtime_error(                                                \
+        throw sundials4py::error_returned(                                                \
           "Failed to get Python function table from ARKODE memory");             \
       auto fntable     = static_cast<arkode_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER1 = nb::cast(fn1);                                          \
@@ -157,7 +157,7 @@ void bind_arkode(nb::module_& m)
       void* user_data = nullptr;
       ARKodeGetUserData(ark_mem, &user_data);
       if (!user_data)
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to get Python function table from ARKODE memory");
       auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
       fntable->lsmasstimessetupfn = nb::cast(msetup);
@@ -182,7 +182,7 @@ void bind_arkode(nb::module_& m)
       void* user_data = nullptr;
       ARKodeGetUserData(ark_mem, &user_data);
       if (!user_data)
-        throw std::runtime_error(
+        throw sundials4py::error_returned(
           "Failed to get Python function table from ARKODE memory");
       auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
       fntable->lsmasstimessetupfn = nb::cast(msetup);

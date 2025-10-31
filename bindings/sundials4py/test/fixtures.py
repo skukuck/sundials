@@ -25,7 +25,7 @@ SUNREALTYPE_ATOL = sqrt(finfo(sunrealtype).eps)
 
 @pytest.fixture
 def sunctx():
-    status, status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     yield sunctx
 
 

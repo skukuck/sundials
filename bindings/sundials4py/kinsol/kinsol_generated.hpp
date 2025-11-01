@@ -105,7 +105,7 @@ m.def("KINSetScaledStepTol", KINSetScaledStepTol, nb::arg("kinmem"),
 m.def("KINSetConstraints", KINSetConstraints, nb::arg("kinmem"),
       nb::arg("constraints"));
 
-m.def("KINSetSysFunc", KINSetSysFunc, nb::arg("kinmem"), nb::arg("func"));
+// m.def("KINSetSysFunc", KINSetSysFunc, nb::arg("kinmem"), nb::arg("func"));
 
 m.def(
   "KINGetNumNonlinSolvIters",

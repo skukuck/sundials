@@ -49,6 +49,9 @@ modules:
     path: sundials/sundials_context_generated.hpp
     headers:
     - ../../include/sundials/sundials_context.h
+    fn_exclude_by_name__regex:
+    # TODO(CJB): interface these functions which take user-supplied callbacks
+    - "^SUNContext_PushErrHandler$"
   sundials_domeigestimator:
     path: sundials/sundials_domeigestimator_generated.hpp
     headers:

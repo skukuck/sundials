@@ -38,8 +38,8 @@ m.def("SUNContext_GetLastError", SUNContext_GetLastError, nb::arg("sunctx"));
 
 m.def("SUNContext_PeekLastError", SUNContext_PeekLastError, nb::arg("sunctx"));
 
-m.def("SUNContext_PushErrHandler", SUNContext_PushErrHandler, nb::arg("sunctx"),
-      nb::arg("err_fn"), nb::arg("err_user_data"));
+// m.def("SUNContext_PushErrHandler", SUNContext_PushErrHandler, nb::arg("sunctx"),
+//       nb::arg("err_fn"), nb::arg("err_user_data"));
 
 m.def("SUNContext_PopErrHandler", SUNContext_PopErrHandler, nb::arg("sunctx"));
 

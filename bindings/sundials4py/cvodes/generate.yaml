@@ -59,6 +59,9 @@ modules:
     - "CVodeSet.*Fn" 
     - "CVodeSet.*Preconditioner"
     - "CVodeSetJacTimes.*"
+    # TODO(CJB): interface these functions which take functions pointers
+    - "^CVodeRootInit$"
+    - "^CVodeWFtolerances$"
     # TODO(CJB): add support for these functions
     #  ** parameters are not yet supported by litgen
     - "^CVodeComputeStateSens$"

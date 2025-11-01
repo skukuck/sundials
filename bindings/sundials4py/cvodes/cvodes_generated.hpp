@@ -113,8 +113,8 @@ m.def("CVodeSStolerances", CVodeSStolerances, nb::arg("cvode_mem"),
 m.def("CVodeSVtolerances", CVodeSVtolerances, nb::arg("cvode_mem"),
       nb::arg("reltol"), nb::arg("abstol"));
 
-m.def("CVodeWFtolerances", CVodeWFtolerances, nb::arg("cvode_mem"),
-      nb::arg("efun"));
+// m.def("CVodeWFtolerances", CVodeWFtolerances, nb::arg("cvode_mem"),
+//       nb::arg("efun"));
 
 m.def("CVodeSetConstraints", CVodeSetConstraints, nb::arg("cvode_mem"),
       nb::arg("constraints"));
@@ -197,8 +197,8 @@ m.def("CVodeSetNumFailsEtaMaxErrFail", CVodeSetNumFailsEtaMaxErrFail,
 m.def("CVodeSetEtaConvFail", CVodeSetEtaConvFail, nb::arg("cvode_mem"),
       nb::arg("eta_cf"));
 
-m.def("CVodeRootInit", CVodeRootInit, nb::arg("cvode_mem"), nb::arg("nrtfn"),
-      nb::arg("g"), "Rootfinding initialization function");
+// m.def("CVodeRootInit", CVodeRootInit, nb::arg("cvode_mem"), nb::arg("nrtfn"),
+//       nb::arg("g"), "Rootfinding initialization function");
 
 m.def(
   "CVodeSetRootDirection",

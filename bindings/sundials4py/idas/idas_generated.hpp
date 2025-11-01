@@ -74,7 +74,7 @@ m.def("IDASStolerances", IDASStolerances, nb::arg("ida_mem"), nb::arg("reltol"),
 m.def("IDASVtolerances", IDASVtolerances, nb::arg("ida_mem"), nb::arg("reltol"),
       nb::arg("abstol"));
 
-m.def("IDAWFtolerances", IDAWFtolerances, nb::arg("ida_mem"), nb::arg("efun"));
+// m.def("IDAWFtolerances", IDAWFtolerances, nb::arg("ida_mem"), nb::arg("efun"));
 
 m.def("IDACalcIC", IDACalcIC, nb::arg("ida_mem"), nb::arg("icopt"),
       nb::arg("tout1"), "Initial condition calculation function");
@@ -156,8 +156,8 @@ m.def("IDASetNonlinConvCoef", IDASetNonlinConvCoef, nb::arg("ida_mem"),
 m.def("IDASetNonlinearSolver", IDASetNonlinearSolver, nb::arg("ida_mem"),
       nb::arg("NLS"));
 
-m.def("IDARootInit", IDARootInit, nb::arg("ida_mem"), nb::arg("nrtfn"),
-      nb::arg("g"), "Rootfinding initialization function");
+// m.def("IDARootInit", IDARootInit, nb::arg("ida_mem"), nb::arg("nrtfn"),
+//       nb::arg("g"), "Rootfinding initialization function");
 
 m.def(
   "IDASetRootDirection",

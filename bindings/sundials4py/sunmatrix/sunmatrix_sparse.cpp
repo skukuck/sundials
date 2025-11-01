@@ -22,7 +22,6 @@
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
-using namespace sundials::experimental;
 
 namespace sundials4py {
 

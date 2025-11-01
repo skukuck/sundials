@@ -28,7 +28,6 @@
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
-using namespace sundials::experimental;
 
 struct SUNNonlinearSolverFunctionTable
 {

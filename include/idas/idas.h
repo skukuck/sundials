@@ -359,7 +359,7 @@ SUNDIALS_EXPORT int IDASensReInit(void* ida_mem, int ism, N_Vector* yS0_1d,
 
 /* Tolerance input functions */
 SUNDIALS_EXPORT int IDASensSStolerances(void* ida_mem, sunrealtype reltolS,
-                                        sunrealtype* abstolS);
+                                        sunrealtype* abstolS_1d);
 SUNDIALS_EXPORT int IDASensSVtolerances(void* ida_mem, sunrealtype reltolS,
                                         N_Vector* abstolS_1d);
 SUNDIALS_EXPORT int IDASensEEtolerances(void* ida_mem);

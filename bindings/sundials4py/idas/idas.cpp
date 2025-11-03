@@ -148,8 +148,10 @@ void bind_idas(nb::module_& m)
           void* user_data = nullptr;
           IDAGetUserData(ida_mem, &user_data);
           if (!user_data)
+          {
             throw sundials4py::error_returned(
               "Failed to get Python function table from IDAS memory");
+          }
           auto fntable = static_cast<idas_user_supplied_fn_table*>(user_data);
           fntable->rootfn = nb::cast(fn);
           return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
@@ -162,8 +164,10 @@ void bind_idas(nb::module_& m)
           void* user_data = nullptr;
           IDAGetUserData(ida_mem, &user_data);
           if (!user_data)
+          {
             throw sundials4py::error_returned(
               "Failed to get Python function table from IDAS memory");
+          }
           auto fntable  = static_cast<idas_user_supplied_fn_table*>(user_data);
           fntable->resQ = nb::cast(resQ);
           return IDAQuadInit(ida_mem, &idas_resQ_wrapper, yQ0);
@@ -197,9 +201,6 @@ void bind_idas(nb::module_& m)
   // Sensitivity and quadrature sensitivity bindings
   //
 
-  using IDAQuadSensRhsStdFn = int(sunrealtype t, N_Vector yy,
-                                  std::vector<N_Vector> yQS, N_Vector yp,
-                                  std::vector<N_Vector> yQSdot, void* user_data);
   m.def("IDAQuadSensInit",
         [](void* ida_mem, std::function<IDAQuadSensRhsStdFn> resQS,
            std::vector<N_Vector> yQS0)
@@ -207,16 +208,15 @@ void bind_idas(nb::module_& m)
           void* user_data = nullptr;
           IDAGetUserData(ida_mem, &user_data);
           if (!user_data)
+          {
             throw sundials4py::error_returned(
               "Failed to get Python function table from IDAS memory");
+          }
           auto fntable   = static_cast<idas_user_supplied_fn_table*>(user_data);
           fntable->resQS = nb::cast(resQS);
           return IDAQuadSensInit(ida_mem, idas_resQS_wrapper, yQS0.data());
         });
 
-  using IDASensResStdFn = int(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
-                              int iS, std::vector<N_Vector> yS,
-                              std::vector<N_Vector> ySdot, void* user_data);
   m.def("IDASensInit",
         [](void* ida_mem, int Ns, int ism, std::function<IDASensResStdFn> resS,
            std::vector<N_Vector> yS0, std::vector<N_Vector> ypS0)
@@ -224,8 +224,10 @@ void bind_idas(nb::module_& m)
           void* user_data = nullptr;
           IDAGetUserData(ida_mem, &user_data);
           if (!user_data)
+          {
             throw sundials4py::error_returned(
               "Failed to get Python function table from IDAS memory");
+          }
           auto fntable  = static_cast<idas_user_supplied_fn_table*>(user_data);
           fntable->resS = nb::cast(resS);
           return IDASensInit(ida_mem, Ns, ism, idas_resS_wrapper, yS0.data(),
@@ -275,29 +277,32 @@ void bind_idas(nb::module_& m)
           void* user_data = nullptr;
           IDAGetUserDataB(ida_mem, which, &user_data);
           if (!user_data)
+          {
             throw sundials4py::error_returned(
               "Failed to get Python function table from IDAS memory");
+          }
           auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
           fntable->resQB = nb::cast(resQB);
           return IDAQuadInitB(ida_mem, which, idas_resQB_wrapper, yQBO);
         });
 
-  using IDAQuadRhsStdFnBS = int(sunrealtype t, N_Vector yy,
-                                std::vector<N_Vector> yS, N_Vector yyB,
-                                N_Vector qBdot, void* user_dataB);
-  m.def("IDAQuadInitBS",
-        [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBs,
-           N_Vector yQBO)
-        {
-          void* user_data = nullptr;
-          IDAGetUserDataB(ida_mem, which, &user_data);
-          if (!user_data)
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
-          fntable->resQBs = nb::cast(resQBs);
-          return IDAQuadInitBS(ida_mem, which, idas_resQBs_wrapper, yQBO);
-        });
+  // TODO(CJB): we can enable this functions with sundials v8.0.0
+  //            we need to add a int Ns argument to the callback like IDASensResFn has
+  // m.def("IDAQuadInitBS",
+  //       [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
+  //          N_Vector yQBO)
+  //       {
+  //         void* user_data = nullptr;
+  //         IDAGetUserDataB(ida_mem, which, &user_data);
+  //         if (!user_data)
+  //         {
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from IDAS memory");
+  //         }
+  //         auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
+  //         fntable->resQBS = nb::cast(resQBS);
+  //         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
+  //       });
 
   BIND_IDAB_CALLBACK(IDASetJacFnB, IDALsJacFnB, lsjacfnB, idas_lsjacfnB_wrapper,
                      nb::arg("ida_mem"), nb::arg("which"),
@@ -315,42 +320,29 @@ void bind_idas(nb::module_& m)
                       nb::arg("ida_mem"), nb::arg("which"),
                       nb::arg("jsetupB").none(), nb::arg("jtimesB").none());
 
-  using IDALsJacStdFnBS = int(sunrealtype t, N_Vector yy,
-                              std::vector<N_Vector> yS, N_Vector yyB,
-                              N_Vector fyB, SUNMatrix JB, void* user_dataB,
-                              N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B);
-  BIND_IDAB_CALLBACK(IDASetJacFnBS, IDALsJacStdFnBS, lsjacfnBS,
-                     idas_lsjacfnBS_wrapper, nb::arg("ida_mem"),
-                     nb::arg("which"), nb::arg("jacBS").none());
 
-  using IDALsPrecSetupStdFnBS = int(sunrealtype t, N_Vector yy, N_Vector yyB,
-                                    N_Vector fyB, sunbooleantype jokB,
-                                    sunbooleantype * jcurPtrB,
-                                    sunrealtype gammaB, void* user_dataB);
-  using IDALsPrecSolveStdFnBS =
-    int(sunrealtype t, N_Vector yy, std::vector<N_Vector> yS, N_Vector yyB,
-        N_Vector fyB, N_Vector rB, N_Vector zB, sunrealtype gammaB,
-        sunrealtype deltaB, int lrB, void* user_dataB);
-  BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
-                      lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,
-                      IDALsPrecSolveStdFnBS, lsprecsolvefnBS,
-                      idas_lsprecsolvefnBS_wrapper, nb::arg("ida_mem"),
-                      nb::arg("which"), nb::arg("psetBS").none(),
-                      nb::arg("psolveBS").none());
+  //
+  // TODO(CJB): we can enable these functions with sundials v8.0.0
+  //            we need to add a int Ns argument to the callback like IDASensResFn has
+  //
 
-  using IDALsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector yy,
-                                        std::vector<N_Vector> yS, N_Vector yyB,
-                                        N_Vector fyB, void* jac_dataB);
-  using IDALsJacTimesVecStdFnBS = int(N_Vector vB, N_Vector JvB, sunrealtype t,
-                                      N_Vector yy, std::vector<N_Vector> yS,
-                                      N_Vector yyB, N_Vector fyB,
-                                      void* jac_dataB, N_Vector tmpB);
-  BIND_IDAB_CALLBACK2(IDASetJacTimesBS, IDALsJacTimesSetupStdFnBS,
-                      lsjactimessetupfnBS, idas_lsjactimessetupfnBS_wrapper,
-                      IDALsJacTimesVecStdFnBS, lsjactimesvecfnBS,
-                      idas_lsjactimesvecfnBS_wrapper, nb::arg("ida_mem"),
-                      nb::arg("which"), nb::arg("jsetupBS").none(),
-                      nb::arg("jtimesBS").none());
+  // BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
+  //                     lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,
+  //                     IDALsPrecSolveStdFnBS, lsprecsolvefnBS,
+  //                     idas_lsprecsolvefnBS_wrapper, nb::arg("ida_mem"),
+  //                     nb::arg("which"), nb::arg("psetBS").none(),
+  //                     nb::arg("psolveBS").none());
+
+  // BIND_IDAB_CALLBACK(IDASetJacFnBS, IDALsJacStdFnBS, lsjacfnBS,
+  //                    idas_lsjacfnBS_wrapper, nb::arg("ida_mem"),
+  //                    nb::arg("which"), nb::arg("jacBS").none());
+
+  // BIND_IDAB_CALLBACK2(IDASetJacTimesBS, IDALsJacTimesSetupStdFnBS,
+  //                     lsjactimessetupfnBS, idas_lsjactimessetupfnBS_wrapper,
+  //                     IDALsJacTimesVecStdFnBS, lsjactimesvecfnBS,
+  //                     idas_lsjactimesvecfnBS_wrapper, nb::arg("ida_mem"),
+  //                     nb::arg("which"), nb::arg("jsetupBS").none(),
+  //                     nb::arg("jtimesBS").none());
 }
 
 } // namespace sundials4py

@@ -776,21 +776,22 @@ m.def(
 
 m.def(
   "IDASensSStolerances",
-  [](void* ida_mem, sunrealtype reltolS) -> std::tuple<int, sunrealtype>
+  [](void* ida_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
   {
-    auto IDASensSStolerances_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem, sunrealtype reltolS) -> std::tuple<int, sunrealtype>
+    auto IDASensSStolerances_adapt_arr_ptr_to_std_vector =
+      [](void* ida_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
     {
-      sunrealtype abstolS_adapt_modifiable;
+      sunrealtype* abstolS_1d_ptr =
+        reinterpret_cast<sunrealtype*>(abstolS_1d.data());
 
-      int r = IDASensSStolerances(ida_mem, reltolS, &abstolS_adapt_modifiable);
-      return std::make_tuple(r, abstolS_adapt_modifiable);
+      auto lambda_result = IDASensSStolerances(ida_mem, reltolS, abstolS_1d_ptr);
+      return lambda_result;
     };
 
-    return IDASensSStolerances_adapt_modifiable_immutable_to_return(ida_mem,
-                                                                    reltolS);
+    return IDASensSStolerances_adapt_arr_ptr_to_std_vector(ida_mem, reltolS,
+                                                           abstolS_1d);
   },
-  nb::arg("ida_mem"), nb::arg("reltolS"));
+  nb::arg("ida_mem"), nb::arg("reltolS"), nb::arg("abstolS_1d"));
 
 m.def(
   "IDASensSVtolerances",

@@ -43,6 +43,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, macos-15-intel, windows-latest]
 
     steps:
+    - name: Set macOS deployment target
+      if: contains(matrix.os, 'macos') 
+      run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)" >> $GITHUB_ENV
+
     - uses: actions/checkout@v4
       with:
         submodules: true

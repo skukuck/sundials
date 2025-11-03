@@ -30,7 +30,7 @@ dev = [
     "isort",
     "litgen@git+https://github.com/sundials-codes/litgen.git",
     "pytest",
-    "pytest-random-order"
+    "pytest-random-order",
     "pyyaml",
 ]
 

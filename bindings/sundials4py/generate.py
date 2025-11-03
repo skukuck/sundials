@@ -87,6 +87,7 @@ def generate(config_yaml_path, dump_srcml=False):
     # options.fn_return_force_policy_reference__callback = (
     #     ensure_return_policy_reference_for_pointers
     # )
+
     # Don't create default constructors for any struct
     options.struct_create_default_named_ctor__regex = ""
 

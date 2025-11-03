@@ -29,6 +29,7 @@ namespace nb = nanobind;
 namespace sundials4py {
 
 using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
+
 class error_returned : public std::runtime_error
 {
 public:

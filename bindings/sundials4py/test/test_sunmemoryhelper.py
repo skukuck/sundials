@@ -21,6 +21,7 @@ import pytest
 from fixtures import *
 from sundials4py.core import *
 
+
 def test_create_memory_helper_sys(sunctx):
     mem_helper = SUNMemoryHelper_Sys(sunctx)  # noqa: F405
     assert mem_helper is not None

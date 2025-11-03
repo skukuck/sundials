@@ -156,9 +156,6 @@ m.def("ARKodeResStolerance", ARKodeResStolerance, nb::arg("arkode_mem"),
 m.def("ARKodeResVtolerance", ARKodeResVtolerance, nb::arg("arkode_mem"),
       nb::arg("rabstol"));
 
-m.def("ARKodeResFtolerance", ARKodeResFtolerance, nb::arg("arkode_mem"),
-      nb::arg("rfun"));
-
 m.def(
   "ARKodeSetRootDirection",
   [](void* arkode_mem) -> std::tuple<int, int>

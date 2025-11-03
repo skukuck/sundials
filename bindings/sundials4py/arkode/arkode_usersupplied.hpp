@@ -145,7 +145,7 @@ inline int arkode_ewtfn_wrapper(N_Vector y, N_Vector ewt, void* user_data)
     1>(&arkode_user_supplied_fn_table::ewtn, y, ewt, user_data);
 }
 
-inline int arkode_rwtn_wrapper(N_Vector y, N_Vector rwt, void* user_data)
+inline int arkode_rwtfn_wrapper(N_Vector y, N_Vector rwt, void* user_data)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKRwtFn>, arkode_user_supplied_fn_table,

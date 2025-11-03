@@ -114,6 +114,9 @@ void bind_arkode(nb::module_& m)
   BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKEwtFn, ewtn, arkode_ewtfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("efun").none());
 
+  BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKRwtFn, rwtn, arkode_rwtfn_wrapper,
+                       nb::arg("arkode_mem"), nb::arg("efun").none());
+
   BIND_ARKODE_CALLBACK(ARKodeSetNlsRhsFn, ARKRhsFn, nlsfi,
                        arkode_nlsrhsfn_wrapper, nb::arg("arkode_mem"),
                        nb::arg("nls_fi").none());

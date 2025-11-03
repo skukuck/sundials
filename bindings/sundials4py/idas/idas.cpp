@@ -320,7 +320,6 @@ void bind_idas(nb::module_& m)
                       nb::arg("ida_mem"), nb::arg("which"),
                       nb::arg("jsetupB").none(), nb::arg("jtimesB").none());
 
-
   //
   // TODO(CJB): we can enable these functions with sundials v8.0.0
   //            we need to add a int Ns argument to the callback like IDASensResFn has

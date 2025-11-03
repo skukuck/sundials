@@ -20,9 +20,6 @@
  * produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
-#include <memory>
-#include <type_traits>
-
 #include "sundials4py.hpp"
 
 #include <sundials/sundials_nvector.hpp>
@@ -47,7 +44,7 @@ void bind_nvector(nb::module_& m)
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
           return sundials4py::Array1d(ptr, 1, shape, owner);
-        });
+        }, nb::rv_policy::reference);
 
   m.def("N_VGetDeviceArrayPointer",
         [](N_Vector v)
@@ -60,7 +57,7 @@ void bind_nvector(nb::module_& m)
           auto owner = nb::find(v);
           size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
           return sundials4py::Array1d(ptr, 1, shape, owner);
-        });
+        }, nb::rv_policy::reference);
 
   m.def("N_VSetArrayPointer",
         [](sundials4py::Array1d arr, N_Vector v)
@@ -72,18 +69,6 @@ void bind_nvector(nb::module_& m)
           }
           N_VSetArrayPointer(arr.data(), v);
         });
-
-  // TODO(CJB): we may need to add a SetDeviceArrayPointer op to the N_Vector class
-  // m.def("N_VSetDeviceArrayPointer",
-  //       [](sundials4py::GpuArray1d arr, N_Vector v)
-  //       {
-  //         if (arr.shape(0) != N_VGetLength(v))
-  //         {
-  //           throw sundials4py::error_returned(
-  //             "Array shape does not match vector length");
-  //         }
-  //         N_VSetDeviceArrayPointer(arr.data(), v);
-  //       });
 }
 
 } // namespace sundials4py

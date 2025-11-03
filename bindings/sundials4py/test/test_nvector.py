@@ -77,45 +77,45 @@ def test_make_nvector(vector_type, sunctx):
     assert np.allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
-@pytest.mark.parametrize("vector_type", ["serial"])
-def test_setarraypointer(vector_type, sunctx):
-    if vector_type == "serial":
-        nvec = N_VNew_Serial(5, sunctx)
-    else:
-        raise ValueError("Unknown vector type")
-    assert nvec is not None
-
-    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
-    N_VSetArrayPointer(arr, nvec)
-
-    assert np.allclose(N_VGetArrayPointer(nvec), arr)
-
-    N_VScale(2.0, nvec, nvec)
-
-    assert np.allclose(arr, [2.0, 4.0, 6.0, 8.0, 10.0])
-
-
-# # Test an operation that involves vector arrays
 # @pytest.mark.parametrize("vector_type", ["serial"])
-# def test_nvlinearcombination(vector_type, sunctx):
+# def test_setarraypointer(vector_type, sunctx):
 #     if vector_type == "serial":
-#         nvec1 = N_VNew_Serial(5, sunctx)
-#         nvec2 = N_VNew_Serial(5, sunctx)
+#         nvec = N_VNew_Serial(5, sunctx)
 #     else:
 #         raise ValueError("Unknown vector type")
+#     assert nvec is not None
 
-#     arr1 = N_VGetArrayPointer(nvec1)
-#     arr1[:] = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
+#     arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
+#     N_VSetArrayPointer(arr, nvec)
 
-#     arr2 = N_VGetArrayPointer(nvec2)
-#     arr2[:] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=sunrealtype)
+#     assert np.allclose(N_VGetArrayPointer(nvec), arr)
 
-#     c = np.array([1.0, 0.1], dtype=sunrealtype)
-#     X = [nvec1, nvec2]
+#     N_VScale(2.0, nvec, nvec)
 
-#     z = N_VNew_Serial(5, sunctx)
-#     N_VConst(0.0, z)
+#     assert np.allclose(arr, [2.0, 4.0, 6.0, 8.0, 10.0])
 
-#     N_VLinearCombination(2, c, X, z)
 
-#     assert np.allclose(N_VGetArrayPointer(z), [2.0, 4.0, 6.0, 8.0, 10.0])
+# Test an operation that involves vector arrays
+@pytest.mark.parametrize("vector_type", ["serial"])
+def test_nvlinearcombination(vector_type, sunctx):
+    if vector_type == "serial":
+        nvec1 = N_VNew_Serial(5, sunctx)
+        nvec2 = N_VNew_Serial(5, sunctx)
+    else:
+        raise ValueError("Unknown vector type")
+
+    arr1 = N_VGetArrayPointer(nvec1)
+    arr1[:] = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
+
+    arr2 = N_VGetArrayPointer(nvec2)
+    arr2[:] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=sunrealtype)
+
+    c = np.array([1.0, 0.1], dtype=sunrealtype)
+    X = [nvec1, nvec2]
+
+    z = N_VNew_Serial(5, sunctx)
+    N_VConst(0.0, z)
+
+    N_VLinearCombination(2, c, X, z)
+
+    assert np.allclose(N_VGetArrayPointer(z), [2.0, 4.0, 6.0, 8.0, 10.0])

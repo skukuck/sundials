@@ -25,16 +25,21 @@ The few notable differences are:
 View Classes and Memory Management
 ----------------------------------
 
-The SUNDIALS C objects (e.g., an ``N_Vector``) need to be wrapped in their corresponding "View" class to ensure memory is cleaned up in accordance with the Python garbage collection.
-While we must wrap the C objects in a View, the SUNDIALS functions must be passed the raw C object. The object is extracted from the View with the ``get`` function. Together, these
-two points result in code like:
+sundials4py provides natural usage of SUNDIALS objects with natural Python object lifetimes managed by the Python garbage collection as with any other Python object.
+There is only one caveat that arises with ``void*`` objects/variables due to restrictions in nanobind: 
+the SUNDIALS integrator/solver memory ``void*`` objects are (behind the scenes) wrapped in "View" classes.
+These view objects cannot be implicitly converted to the underlying ``void*``. As such, when calling a function which operates on these ``void*`` objects, one must
+extract the ``void*`` "capsule" from the view object by calling the view's ``get`` method:
 
 .. code-block:: python
    
    from sundials4py.core import *
+   from sundials4py.cvode import *
 
-   sunctx = SUNContextView.Create()
-   x = NVectorView.Create(N_VNew_Serial(10, sunctx.get()))
+   sunctx = SUNContext_Create(SUN_COMM_NULL)
+   cvode = CVodeCreate(CV_BDF, sunctx)
+   # notice we need to call cvode.get()
+   status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y)
 
 
 Return-by-Pointer Parameters

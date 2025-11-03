@@ -76,6 +76,10 @@ modules:
     - "^SUNClassicalGS$"
     - "^SUNQRfact$"
     - "^SUNQRsol$"
+    # TODO(CJB): interface these
+    # need to do custom handling of functions which take a function pointer
+    - "^SUNLinSolSetATimes$"
+    - "^SUNLinSolSetPreconditioner$"
   sundials_logger:
     path: sundials/sundials_logger_generated.hpp
     headers:

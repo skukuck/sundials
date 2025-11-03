@@ -228,11 +228,11 @@ m.def("SUNLinSolGetType", SUNLinSolGetType, nb::arg("S"));
 
 m.def("SUNLinSolGetID", SUNLinSolGetID, nb::arg("S"));
 
-m.def("SUNLinSolSetATimes", SUNLinSolSetATimes, nb::arg("S"), nb::arg("A_data"),
-      nb::arg("ATimes"));
+// m.def("SUNLinSolSetATimes", SUNLinSolSetATimes, nb::arg("S"), nb::arg("A_data"),
+//       nb::arg("ATimes"));
 
-m.def("SUNLinSolSetPreconditioner", SUNLinSolSetPreconditioner, nb::arg("S"),
-      nb::arg("P_data"), nb::arg("Pset"), nb::arg("Psol"));
+// m.def("SUNLinSolSetPreconditioner", SUNLinSolSetPreconditioner, nb::arg("S"),
+//       nb::arg("P_data"), nb::arg("Pset"), nb::arg("Psol"));
 
 m.def("SUNLinSolSetScalingVectors", SUNLinSolSetScalingVectors, nb::arg("S"),
       nb::arg("s1"), nb::arg("s2"));

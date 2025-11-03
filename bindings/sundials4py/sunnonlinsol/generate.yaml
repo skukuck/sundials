@@ -28,6 +28,7 @@ modules:
       - "^SUNNonlinSolSolve_.*"
       - "^SUNNonlinSolFree_.*"
       - "^SUNNonlinSolSetSysFn_.*"
+      - "^SUNNonlinSolSetLSetupFn_.*"
       - "^SUNNonlinSolSetLSolveFn_.*"
       - "^SUNNonlinSolSetConvTestFn_.*"
       - "^SUNNonlinSolSetOptions_.*"

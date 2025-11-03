@@ -185,12 +185,6 @@ m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
 m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
       nb::arg("MRIC"));
 
-// m.def("MRIStepSetPreInnerFn", MRIStepSetPreInnerFn, nb::arg("arkode_mem"),
-//       nb::arg("prefn"));
-
-// m.def("MRIStepSetPostInnerFn", MRIStepSetPostInnerFn, nb::arg("arkode_mem"),
-//       nb::arg("postfn"));
-
 m.def(
   "MRIStepGetCurrentCoupling",
   [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>

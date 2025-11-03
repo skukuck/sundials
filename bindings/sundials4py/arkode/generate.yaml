@@ -57,6 +57,7 @@ modules:
     - "^ARKodeSetWFtolerances$"
     - "^ARKodeSet.*Preconditioner$"
     - "^ARKodeSet.*Times$"
+    - "^ARKodeWFtolerances$"
     # TODO(CJB): add these
     - "^ARKodeRootInit$"
     - "^ARKodeResize$"

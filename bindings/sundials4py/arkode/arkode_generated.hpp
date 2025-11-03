@@ -106,10 +106,6 @@ auto pyEnumARKAccumError =
 // #endif
 //
 
-// m.def("ARKodeResize", ARKodeResize, nb::arg("arkode_mem"), nb::arg("ynew"),
-//       nb::arg("hscale"), nb::arg("t0"), nb::arg("resize"),
-//       nb::arg("resize_data"));
-
 m.def("ARKodeReset", ARKodeReset, nb::arg("arkode_mem"), nb::arg("tR"),
       nb::arg("yR"));
 
@@ -154,9 +150,6 @@ m.def("ARKodeSStolerances", ARKodeSStolerances, nb::arg("arkode_mem"),
 m.def("ARKodeSVtolerances", ARKodeSVtolerances, nb::arg("arkode_mem"),
       nb::arg("reltol"), nb::arg("abstol"));
 
-m.def("ARKodeWFtolerances", ARKodeWFtolerances, nb::arg("arkode_mem"),
-      nb::arg("efun"));
-
 m.def("ARKodeResStolerance", ARKodeResStolerance, nb::arg("arkode_mem"),
       nb::arg("rabstol"));
 
@@ -165,9 +158,6 @@ m.def("ARKodeResVtolerance", ARKodeResVtolerance, nb::arg("arkode_mem"),
 
 m.def("ARKodeResFtolerance", ARKodeResFtolerance, nb::arg("arkode_mem"),
       nb::arg("rfun"));
-
-// m.def("ARKodeRootInit", ARKodeRootInit, nb::arg("arkode_mem"), nb::arg("nrtfn"),
-//       nb::arg("g"));
 
 m.def(
   "ARKodeSetRootDirection",

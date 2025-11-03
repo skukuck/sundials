@@ -48,7 +48,8 @@ void bind_arkode_lsrkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw sundials4py::error_returned("Failed to set user data in LSRKStep memory");
+        throw sundials4py::error_returned(
+          "Failed to set user data in LSRKStep memory");
       }
       ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
       if (ark_status != ARK_SUCCESS)
@@ -79,7 +80,8 @@ void bind_arkode_lsrkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw sundials4py::error_returned("Failed to set user data in LSRKStep memory");
+        throw sundials4py::error_returned(
+          "Failed to set user data in LSRKStep memory");
       }
       ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
       if (ark_status != ARK_SUCCESS)

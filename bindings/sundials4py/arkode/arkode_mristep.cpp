@@ -111,7 +111,8 @@ void bind_arkode_mristep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw sundials4py::error_returned("Failed to set user data in ARKODE memory");
+        throw sundials4py::error_returned(
+          "Failed to set user data in ARKODE memory");
       }
 
       // Ensure ARKodeFree will free the user-supplied function table

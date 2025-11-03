@@ -50,9 +50,6 @@ m.def(
   },
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
-
-// m.def("SUNNonlinSolSetLSetupFn_Newton", SUNNonlinSolSetLSetupFn_Newton,
-//       nb::arg("NLS"), nb::arg("LSetupFn"));
 // #ifdef __cplusplus
 //
 // #endif

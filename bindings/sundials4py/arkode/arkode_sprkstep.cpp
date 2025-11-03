@@ -52,7 +52,8 @@ void bind_arkode_sprkstep(nb::module_& m)
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
-        throw sundials4py::error_returned("Failed to set user data in SPRKStep memory");
+        throw sundials4py::error_returned(
+          "Failed to set user data in SPRKStep memory");
       }
       ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
       if (ark_status != ARK_SUCCESS)

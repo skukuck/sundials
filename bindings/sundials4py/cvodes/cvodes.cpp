@@ -40,7 +40,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                               \
       CVodeGetUserData(cv_mem, &user_data);                                    \
       if (!user_data)                                                          \
-        throw sundials4py::error_returned(                                              \
+        throw sundials4py::error_returned(                                     \
           "Failed to get Python function table from CVODE memory");            \
       auto fntable    = static_cast<cvode_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER = nb::cast(fn);                                          \
@@ -59,7 +59,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                                \
       CVodeGetUserData(cv_mem, &user_data);                                     \
       if (!user_data)                                                           \
-        throw sundials4py::error_returned(                                               \
+        throw sundials4py::error_returned(                                      \
           "Failed to get Python function table from CVODE memory");             \
       auto fntable     = static_cast<cvode_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER1 = nb::cast(fn1);                                         \
@@ -77,7 +77,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                                  \
       CVodeGetUserDataB(cv_mem, which, &user_data);                               \
       if (!user_data)                                                             \
-        throw sundials4py::error_returned(                                                 \
+        throw sundials4py::error_returned(                                        \
           "Failed to get Python function table from CVODE memory");               \
       auto fntable    = static_cast<cvodea_user_supplied_fn_table*>(user_data);   \
       fntable->MEMBER = nb::cast(fn);                                             \
@@ -97,7 +97,7 @@ using namespace sundials::experimental;
       void* user_data = nullptr;                                                 \
       CVodeGetUserDataB(cv_mem, which, &user_data);                              \
       if (!user_data)                                                            \
-        throw sundials4py::error_returned(                                                \
+        throw sundials4py::error_returned(                                       \
           "Failed to get Python function table from CVODE memory");              \
       auto fntable     = static_cast<cvodea_user_supplied_fn_table*>(user_data); \
       fntable->MEMBER1 = nb::cast(fn1);                                          \
@@ -135,7 +135,8 @@ void bind_cvodes(nb::module_& m)
           if (cv_status != CV_SUCCESS)
           {
             free(cb_fns);
-            throw sundials4py::error_returned("Failed to set user data in CVODE memory");
+            throw sundials4py::error_returned(
+              "Failed to set user data in CVODE memory");
           }
 
           // Ensure CVodeFree will free the user-supplied function table
@@ -286,7 +287,8 @@ void bind_cvodes(nb::module_& m)
           if (cv_status != CV_SUCCESS)
           {
             free(cb_fns);
-            throw sundials4py::error_returned("Failed to set user data in CVODE memory");
+            throw sundials4py::error_returned(
+              "Failed to set user data in CVODE memory");
           }
 
           // Ensure CVodeFree will free the user-supplied function table

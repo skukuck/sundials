@@ -190,6 +190,7 @@ def test_stepper_set_get_num_steps_fn(sunctx):
 
     def get_num_steps_fn(stepper, nst):
         called["flag"] = True
+        nst = 1
         return 0
 
     err = SUNStepper_SetGetNumStepsFn(s, get_num_steps_fn)
@@ -197,3 +198,4 @@ def test_stepper_set_get_num_steps_fn(sunctx):
     status, nst = SUNStepper_GetNumSteps(s)
     assert called["flag"]
     assert isinstance(nst, int)
+    assert nst == 1

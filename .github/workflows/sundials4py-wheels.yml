@@ -1,5 +1,8 @@
 name: sundials4py wheels
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:

@@ -214,11 +214,6 @@ void bind_cvodes(nb::module_& m)
   BIND_CVODE_CALLBACK(CVodeSetProjFn, CVProjFn, projfn, cvode_projfn_wrapper,
                       nb::arg("cvode_mem"), nb::arg("pfun").none());
 
-  // We cant use std::function<std::remove_pointer_t<CVQuadSensRhsFn>>
-  // because we need to replace the N_Vector* arguments with std::vector<N_Vector>.
-  using CVQuadSensRhsStdFn = int(sunrealtype t, N_Vector y,
-                                 std::vector<N_Vector> yQS, N_Vector ydot,
-                                 std::vector<N_Vector> yQSdot, void* user_data);
   m.def("CVodeQuadSensInit",
         [](void* cv_mem, std::function<CVQuadSensRhsStdFn> fQS,
            std::vector<N_Vector> yQS0)
@@ -233,9 +228,6 @@ void bind_cvodes(nb::module_& m)
           return CVodeQuadSensInit(cv_mem, cvode_fQS_wrapper, yQS0.data());
         });
 
-  using CVSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
-                             int iS, std::vector<N_Vector> yS,
-                             std::vector<N_Vector> ySdot, void* user_data);
   m.def("CVodeSensInit",
         [](void* cv_mem, int Ns, int ism, std::function<CVSensRhsStdFn> fS,
            std::vector<N_Vector> yS0)
@@ -250,11 +242,9 @@ void bind_cvodes(nb::module_& m)
           return CVodeSensInit(cv_mem, Ns, ism, cvode_fS_wrapper, yS0.data());
         });
 
-  using CVSensRhs1StdFn = int(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
-                              int iS, N_Vector yS, N_Vector ySdot,
-                              void* user_data, N_Vector tmp1, N_Vector tmp2);
   m.def("CVodeSensInit1",
-        [](void* cv_mem, int Ns, std::function<CVSensRhs1StdFn> fS1, int ism,
+        [](void* cv_mem, int Ns, int ism,
+           std::function<std::remove_pointer_t<CVSensRhs1Fn>> fS1,
            std::vector<N_Vector> yS0)
         {
           void* user_data = nullptr;
@@ -320,23 +310,6 @@ void bind_cvodes(nb::module_& m)
           return CVodeQuadInitB(cv_mem, which, cvode_fQB_wrapper, yQBO);
         });
 
-  using CVQuadRhsStdFnBS = int(sunrealtype t, N_Vector y,
-                               std::vector<N_Vector> yS, N_Vector yB,
-                               N_Vector qBdot, void* user_dataB);
-  m.def("CVodeQuadInitBS",
-        [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBs,
-           N_Vector yQBO)
-        {
-          void* user_data = nullptr;
-          CVodeGetUserDataB(cv_mem, which, &user_data);
-          if (!user_data)
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from CVODE memory");
-          auto fntable = static_cast<cvodea_user_supplied_fn_table*>(user_data);
-          fntable->fQBs = nb::cast(fQBs);
-          return CVodeQuadInitBS(cv_mem, which, cvode_fQBs_wrapper, yQBO);
-        });
-
   BIND_CVODEB_CALLBACK(CVodeSetJacFnB, CVLsJacFnB, lsjacfnB,
                        cvode_lsjacfnB_wrapper, nb::arg("cv_mem"),
                        nb::arg("which"), nb::arg("jacB").none());
@@ -358,51 +331,46 @@ void bind_cvodes(nb::module_& m)
                        cvode_lslinsysfnB_wrapper, nb::arg("cv_mem"),
                        nb::arg("which"), nb::arg("linsysB").none());
 
-  using CVLsJacStdFnBS = int(sunrealtype t, N_Vector y,
-                             std::vector<N_Vector> yS, N_Vector yB,
-                             N_Vector fyB, SUNMatrix JB, void* user_dataB,
-                             N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B);
-  BIND_CVODEB_CALLBACK(CVodeSetJacFnBS, CVLsJacStdFnBS, lsjacfnBS,
-                       cvode_lsjacfnBS_wrapper, nb::arg("cv_mem"),
-                       nb::arg("which"), nb::arg("jacBS").none());
+  //
+  // TODO(CJB): we can enable these functions with sundials v8.0.0
+  //            we need to add a int Ns argument to the callback like CVSensRhsFn has
+  //
 
-  using CVLsPrecSetupStdFnBS = int(sunrealtype t, N_Vector y, N_Vector yB,
-                                   N_Vector fyB, sunbooleantype jokB,
-                                   sunbooleantype * jcurPtrB,
-                                   sunrealtype gammaB, void* user_dataB);
-  using CVLsPrecSolveStdFnBS =
-    int(sunrealtype t, N_Vector y, std::vector<N_Vector> yS, N_Vector yB,
-        N_Vector fyB, N_Vector rB, N_Vector zB, sunrealtype gammaB,
-        sunrealtype deltaB, int lrB, void* user_dataB);
-  BIND_CVODEB_CALLBACK2(CVodeSetPreconditionerBS, CVLsPrecSetupStdFnBS,
-                        lsprecsetupfnBS, cvode_lsprecsetupfnBS_wrapper,
-                        CVLsPrecSolveStdFnBS, lsprecsolvefnBS,
-                        cvode_lsprecsolvefnBS_wrapper, nb::arg("cv_mem"),
-                        nb::arg("which"), nb::arg("psetBS").none(),
-                        nb::arg("psolveBS").none());
+  // m.def("CVodeQuadInitBS",
+  //       [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBs,
+  //          N_Vector yQBO)
+  //       {
+  //         void* user_data = nullptr;
+  //         CVodeGetUserDataB(cv_mem, which, &user_data);
+  //         if (!user_data)
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from CVODE memory");
+  //         auto fntable = static_cast<cvodea_user_supplied_fn_table*>(user_data);
+  //         fntable->fQBs = nb::cast(fQBs);
+  //         return CVodeQuadInitBS(cv_mem, which, cvode_fQBs_wrapper, yQBO);
+  //       });
 
-  using CVLsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector y,
-                                       std::vector<N_Vector> yS, N_Vector yB,
-                                       N_Vector fyB, void* jac_dataB);
-  using CVLsJacTimesVecStdFnBS   = int(N_Vector vB, N_Vector JvB, sunrealtype t,
-                                     N_Vector y, std::vector<N_Vector> yS,
-                                     N_Vector yB, N_Vector fyB, void* jac_dataB,
-                                     N_Vector tmpB);
-  BIND_CVODEB_CALLBACK2(CVodeSetJacTimesBS, CVLsJacTimesSetupStdFnBS,
-                        lsjactimessetupfnBS, cvode_lsjactimessetupfnBS_wrapper,
-                        CVLsJacTimesVecStdFnBS, lsjactimesvecfnBS,
-                        cvode_lsjactimesvecfnBS_wrapper, nb::arg("cv_mem"),
-                        nb::arg("which"), nb::arg("jsetupBS").none(),
-                        nb::arg("jtimesBS").none());
+  // BIND_CVODEB_CALLBACK(CVodeSetJacFnBS, CVLsJacStdFnBS, lsjacfnBS,
+  //                      cvode_lsjacfnBS_wrapper, nb::arg("cv_mem"),
+  //                      nb::arg("which"), nb::arg("jacBS").none());
 
-  using CVLsLinSysStdFnBS =
-    int(sunrealtype t, N_Vector y, std::vector<N_Vector> yS, N_Vector yB,
-        N_Vector fyB, SUNMatrix AB, sunbooleantype jokB, sunbooleantype * jcurB,
-        sunrealtype gammaB, void* user_dataB, N_Vector tmp1B, N_Vector tmp2B,
-        N_Vector tmp3B);
-  BIND_CVODEB_CALLBACK(CVodeSetLinSysFnBS, CVLsLinSysStdFnBS, lslinsysfnBS,
-                       cvode_lslinsysfnBS_wrapper, nb::arg("cv_mem"),
-                       nb::arg("which"), nb::arg("linsysBS").none());
+  // BIND_CVODEB_CALLBACK2(CVodeSetPreconditionerBS, CVLsPrecSetupStdFnBS,
+  //                       lsprecsetupfnBS, cvode_lsprecsetupfnBS_wrapper,
+  //                       CVLsPrecSolveStdFnBS, lsprecsolvefnBS,
+  //                       cvode_lsprecsolvefnBS_wrapper, nb::arg("cv_mem"),
+  //                       nb::arg("which"), nb::arg("psetBS").none(),
+  //                       nb::arg("psolveBS").none());
+
+  // BIND_CVODEB_CALLBACK2(CVodeSetJacTimesBS, CVLsJacTimesSetupStdFnBS,
+  //                       lsjactimessetupfnBS, cvode_lsjactimessetupfnBS_wrapper,
+  //                       CVLsJacTimesVecStdFnBS, lsjactimesvecfnBS,
+  //                       cvode_lsjactimesvecfnBS_wrapper, nb::arg("cv_mem"),
+  //                       nb::arg("which"), nb::arg("jsetupBS").none(),
+  //                       nb::arg("jtimesBS").none());
+
+  // BIND_CVODEB_CALLBACK(CVodeSetLinSysFnBS, CVLsLinSysStdFnBS, lslinsysfnBS,
+  //                      cvode_lslinsysfnBS_wrapper, nb::arg("cv_mem"),
+  //                      nb::arg("which"), nb::arg("linsysBS").none());
 }
 
 } // namespace sundials4py

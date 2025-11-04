@@ -30,8 +30,6 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 #define BIND_IDA_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)                \
   m.def(                                                                      \
     #NAME,                                                                    \

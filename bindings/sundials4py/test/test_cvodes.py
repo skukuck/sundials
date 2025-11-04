@@ -91,17 +91,17 @@ def test_cvodes_fsa(sunctx):
     yS0 = [N_VClone(y)]
     N_VConst(1.0, yS0[0])
 
-    def fS(Ns, t, y, ydot, iS, yS, ySdot, _, tmp1, tmp2):
+    def fS(Ns, t, y, ydot, yS, ySdot, _, tmp1, tmp2):
         # Sensitivity RHS: df/dy * yS + df/dp (here, p = y0, so df/dp = 0)
         yarr = N_VGetArrayPointer(y)
-        ySarr = N_VGetArrayPointer(yS)
-        ySdotarr = N_VGetArrayPointer(ySdot)
+        ySarr = N_VGetArrayPointer(yS[0])
+        ySdotarr = N_VGetArrayPointer(ySdot[0])
         # df/dy = lambda
         lamb = ode_problem.lamb
         ySdotarr[0] = lamb * ySarr[0]
         return 0
 
-    status = CVodeSensInit1(cvode.get(), Ns, fS, ism, yS0)
+    status = CVodeSensInit(cvode.get(), Ns, ism, fS, yS0)
     assert status == CV_SUCCESS
 
     status = CVodeSensSStolerances(cvode.get(), rtol, np.array([atol], dtype=sunrealtype))

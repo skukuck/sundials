@@ -144,9 +144,9 @@ void bind_kinsol(nb::module_& m)
   BIND_KINSOL_CALLBACK(KINSetJacFn, KINSysFn, lsjacfn, kinsol_lsjacfn_wrapper,
                        nb::arg("kin_mem"), nb::arg("jac").none());
 
-  BIND_KINSOL_CALLBACK(KINSetJacTimesVecFn, KINLsJacTimesVecStdFn, lsjactimesvecfn,
-                       kinsol_lsjactimesvecfn_wrapper, nb::arg("kin_mem"),
-                       nb::arg("jtimes").none());
+  BIND_KINSOL_CALLBACK(KINSetJacTimesVecFn, KINLsJacTimesVecStdFn,
+                       lsjactimesvecfn, kinsol_lsjactimesvecfn_wrapper,
+                       nb::arg("kin_mem"), nb::arg("jtimes").none());
 
   BIND_KINSOL_CALLBACK(KINSetJacTimesVecSysFn, KINSysFn, lsjtvsysfn,
                        kinsol_lsjtvsysfn_wrapper, nb::arg("kin_mem"),

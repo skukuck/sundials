@@ -117,27 +117,36 @@ inline SUNErrCode sunstepper_set_step_direction_wrapper(Args... args)
                 std::forward<Args>(args)...);
 }
 
-using SUNStepperSetForcingStdFn =
-    SUNErrCode(SUNStepper stepper, sunrealtype tshift, sunrealtype tscale,
-               std::vector<N_Vector> forcing, int nforcing);
+using SUNStepperSetForcingStdFn = SUNErrCode(SUNStepper stepper,
+                                             sunrealtype tshift,
+                                             sunrealtype tscale,
+                                             std::vector<N_Vector> forcing,
+                                             int nforcing);
 
-inline SUNErrCode sunstepper_set_forcing_wrapper(SUNStepper stepper, sunrealtype tshift, sunrealtype tscale,
-               N_Vector* forcing_1d, int nforcing)
+inline SUNErrCode sunstepper_set_forcing_wrapper(SUNStepper stepper,
+                                                 sunrealtype tshift,
+                                                 sunrealtype tscale,
+                                                 N_Vector* forcing_1d,
+                                                 int nforcing)
 {
   auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
-  auto fn = nb::cast<std::function<SUNStepperSetForcingStdFn>>(fn_table->set_forcing);
+  auto fn =
+    nb::cast<std::function<SUNStepperSetForcingStdFn>>(fn_table->set_forcing);
 
   std::vector<N_Vector> forcing(forcing_1d, forcing_1d + nforcing);
 
   return fn(stepper, tshift, tscale, forcing, nforcing);
 }
 
-using SUNStepperGetNumStepsStdFn = std::tuple<SUNErrCode, suncountertype>(SUNStepper);
+using SUNStepperGetNumStepsStdFn =
+  std::tuple<SUNErrCode, suncountertype>(SUNStepper);
 
-inline SUNErrCode sunstepper_get_num_steps_wrapper(SUNStepper stepper, suncountertype* num_steps)
+inline SUNErrCode sunstepper_get_num_steps_wrapper(SUNStepper stepper,
+                                                   suncountertype* num_steps)
 {
   auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
-  auto fn = nb::cast<std::function<SUNStepperGetNumStepsStdFn>>(fn_table->get_num_steps);
+  auto fn =
+    nb::cast<std::function<SUNStepperGetNumStepsStdFn>>(fn_table->get_num_steps);
 
   auto result = fn(stepper);
 

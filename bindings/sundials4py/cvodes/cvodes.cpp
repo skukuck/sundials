@@ -153,7 +153,7 @@ void bind_cvodes(nb::module_& m)
 
           return cv_status;
         });
-  
+
   // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
   // m.def("CVodeRootInit",
   //       [](void* cv_mem, int nrtfn,

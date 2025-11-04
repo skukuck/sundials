@@ -41,7 +41,8 @@ struct SUNNonlinearSolverDeleter
   }
 };
 
-using SUNNonlinearSolverView = ClassView<SUNNonlinearSolver, SUNNonlinearSolverDeleter>;
+using SUNNonlinearSolverView =
+  ClassView<SUNNonlinearSolver, SUNNonlinearSolverDeleter>;
 } // namespace experimental
 } // namespace sundials
 

@@ -72,10 +72,9 @@ inline int idas_res_wrapper(Args... args)
                                                  std::forward<Args>(args)...);
 }
 
-
 //
 // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-// 
+//
 
 // using IDARootStdFn = int(sunrealtype t, N_Vector y, N_Vector yp, sundials4py::Array1d gout, void *user_data);
 
@@ -267,7 +266,6 @@ inline int idas_lsprecsetupfnB_wrapper(Args... args)
     1>(&idasa_user_supplied_fn_table::lsprecsetupfnB,
        std::forward<Args>(args)...);
 }
-
 
 template<typename... Args>
 inline int idas_lsprecsolvefnB_wrapper(Args... args)

@@ -53,9 +53,11 @@ inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
     1>(&SUNNonlinearSolverFunctionTable::sysfn, std::forward<Args>(args)...);
 }
 
-using SUNNonlinSolLSetupStdFn = std::tuple<int, sunbooleantype>(sunbooleantype jbad, void *mem);
+using SUNNonlinSolLSetupStdFn = std::tuple<int, sunbooleantype>(sunbooleantype jbad,
+                                                                void* mem);
 
-inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad, sunbooleantype *jcur, void *mem)
+inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad,
+                                               sunbooleantype* jcur, void* mem)
 {
   auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
   auto fn = nb::cast<std::function<SUNNonlinSolLSetupStdFn>>(fn_table->lsetupfn);

@@ -74,7 +74,7 @@ inline int cvode_f_wrapper(Args... args)
 
 //
 // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-// 
+//
 
 // using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout, void *user_data);
 
@@ -113,16 +113,17 @@ inline int cvode_lsjacfn_wrapper(Args... args)
     4>(&cvode_user_supplied_fn_table::lsjacfn, std::forward<Args>(args)...);
 }
 
-using CVLsPrecSetupStdFn = std::tuple<int, sunbooleantype>(sunrealtype t, N_Vector y, 
-      N_Vector fy, sunbooleantype jok,
-      sunrealtype gamma, void *user_data);
+using CVLsPrecSetupStdFn = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, N_Vector fy, sunbooleantype jok, sunrealtype gamma,
+  void* user_data);
 
-inline int cvode_lsprecsetupfn_wrapper(sunrealtype t, N_Vector y, 
-      N_Vector fy, sunbooleantype jok, sunbooleantype *jcurPtr, 
-      sunrealtype gamma, void *user_data)
+inline int cvode_lsprecsetupfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
+                                       sunbooleantype jok,
+                                       sunbooleantype* jcurPtr,
+                                       sunrealtype gamma, void* user_data)
 {
   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<CVLsPrecSetupStdFn>>(fn_table->lsprecsetupfn);
+  auto fn = nb::cast<std::function<CVLsPrecSetupStdFn>>(fn_table->lsprecsetupfn);
 
   auto result = fn(t, y, fy, jok, gamma, nullptr);
 
@@ -157,17 +158,19 @@ inline int cvode_lsjactimesvecfn_wrapper(Args... args)
        std::forward<Args>(args)...);
 }
 
-using CVLsLinSysStdFn = std::tuple<int, sunbooleantype>(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix M, 
-                                    sunbooleantype jok, sunrealtype gamma, 
-                                    void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
+using CVLsLinSysStdFn = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix M, sunbooleantype jok,
+  sunrealtype gamma, void* user_data, N_Vector tmp1, N_Vector tmp2,
+  N_Vector tmp3);
 
-
-inline int cvode_lslinsysfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix M, 
-                                    sunbooleantype jok, sunbooleantype *jcur, sunrealtype gamma, 
-                                    void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
+inline int cvode_lslinsysfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
+                                    SUNMatrix M, sunbooleantype jok,
+                                    sunbooleantype* jcur, sunrealtype gamma,
+                                    void* user_data, N_Vector tmp1,
+                                    N_Vector tmp2, N_Vector tmp3)
 {
   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<CVLsLinSysStdFn>>(fn_table->lslinsysfn);
+  auto fn = nb::cast<std::function<CVLsLinSysStdFn>>(fn_table->lslinsysfn);
 
   auto result = fn(t, y, fy, M, jok, gamma, nullptr, tmp1, tmp2, tmp3);
 
@@ -200,10 +203,14 @@ inline int cvode_fQ_wrapper(Args... args)
     1>(&cvode_user_supplied_fn_table::fQ, std::forward<Args>(args)...);
 }
 
-using CVQuadSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d, N_Vector yQdot,
-    std::vector<N_Vector> yQSdot_1d, void *user_data, N_Vector tmp, N_Vector tmpQ);
+using CVQuadSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y,
+                               std::vector<N_Vector> yS_1d, N_Vector yQdot,
+                               std::vector<N_Vector> yQSdot_1d, void* user_data,
+                               N_Vector tmp, N_Vector tmpQ);
 
-inline int cvode_fQS_wrapper(int Ns, sunrealtype t, N_Vector y, N_Vector *yS_1d, N_Vector yQdot, N_Vector *yQSdot_1d, void *user_data, N_Vector tmp, N_Vector tmpQ)
+inline int cvode_fQS_wrapper(int Ns, sunrealtype t, N_Vector y, N_Vector* yS_1d,
+                             N_Vector yQdot, N_Vector* yQSdot_1d,
+                             void* user_data, N_Vector tmp, N_Vector tmpQ)
 {
   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
   auto fn       = nb::cast<std::function<CVQuadSensRhsStdFn>>(fn_table->fQS);
@@ -290,16 +297,17 @@ inline int cvode_lsjacfnB_wrapper(Args... args)
     4>(&cvodea_user_supplied_fn_table::lsjacfnB, std::forward<Args>(args)...);
 }
 
-using CVLsPrecSetupStdFnB = std::tuple<int, sunbooleantype>(sunrealtype t, N_Vector y,
-   N_Vector yB, N_Vector fyB, sunbooleantype jokB,
-   sunrealtype gammaB, void *user_dataB);
+using CVLsPrecSetupStdFnB = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, N_Vector yB, N_Vector fyB, sunbooleantype jokB,
+  sunrealtype gammaB, void* user_dataB);
 
-inline int cvode_lsprecsetupfnB_wrapper(sunrealtype t, N_Vector y,
-   N_Vector yB, N_Vector fyB, sunbooleantype jokB, sunbooleantype *jcurPtrB,
-   sunrealtype gammaB, void *user_dataB)
+inline int cvode_lsprecsetupfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
+                                        N_Vector fyB, sunbooleantype jokB,
+                                        sunbooleantype* jcurPtrB,
+                                        sunrealtype gammaB, void* user_dataB)
 {
   auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(user_dataB);
-  auto fn       = nb::cast<std::function<CVLsPrecSetupStdFnB>>(fn_table->lsprecsetupfnB);
+  auto fn = nb::cast<std::function<CVLsPrecSetupStdFnB>>(fn_table->lsprecsetupfnB);
 
   auto result = fn(t, y, yB, fyB, jokB, gammaB, nullptr);
 
@@ -335,18 +343,20 @@ inline int cvode_lsjactimesvecfnB_wrapper(Args... args)
        std::forward<Args>(args)...);
 }
 
-using CVLsLinSysStdFnB = std::tuple<int, sunbooleantype>(sunrealtype t, N_Vector y, 
-  N_Vector yB, N_Vector fyB, SUNMatrix AB, sunbooleantype jokB, 
-  sunrealtype gammaB, void *user_dataB, 
-  N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B);
+using CVLsLinSysStdFnB = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, N_Vector yB, N_Vector fyB, SUNMatrix AB,
+  sunbooleantype jokB, sunrealtype gammaB, void* user_dataB, N_Vector tmp1B,
+  N_Vector tmp2B, N_Vector tmp3B);
 
-inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, 
-  N_Vector yB, N_Vector fyB, SUNMatrix AB, sunbooleantype jokB, 
-  sunbooleantype *jcurB, sunrealtype gammaB, void *user_dataB, 
-  N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B)
+inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
+                                     N_Vector fyB, SUNMatrix AB,
+                                     sunbooleantype jokB, sunbooleantype* jcurB,
+                                     sunrealtype gammaB, void* user_dataB,
+                                     N_Vector tmp1B, N_Vector tmp2B,
+                                     N_Vector tmp3B)
 {
   auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(user_dataB);
-  auto fn       = nb::cast<std::function<CVLsLinSysStdFnB>>(fn_table->lslinsysfnB);
+  auto fn = nb::cast<std::function<CVLsLinSysStdFnB>>(fn_table->lslinsysfnB);
 
   auto result = fn(t, y, yB, fyB, AB, jokB, gammaB, nullptr, tmp1B, tmp2B, tmp3B);
 

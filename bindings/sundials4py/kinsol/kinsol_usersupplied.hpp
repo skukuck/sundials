@@ -73,18 +73,18 @@ inline int kinsol_sysfn_wrapper(Args... args)
     1>(&kinsol_user_supplied_fn_table::sysfn, std::forward<Args>(args)...);
 }
 
-
-using KINDampingStdFn = std::tuple<int, sunrealtype>(long int iter, N_Vector u_val, N_Vector g_val,
-  sundials4py::Array1d qt_fn, long int depth, void *user_data);
+using KINDampingStdFn = std::tuple<int, sunrealtype>(
+  long int iter, N_Vector u_val, N_Vector g_val, sundials4py::Array1d qt_fn,
+  long int depth, void* user_data);
 
 inline int kinsol_dampingfn_wrapper(long int iter, N_Vector u_val, N_Vector g_val,
-  sunrealtype *qt_fn_1d, long int depth, void *user_data, sunrealtype *damping_factor)
+                                    sunrealtype* qt_fn_1d, long int depth,
+                                    void* user_data, sunrealtype* damping_factor)
 {
   auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
   auto fn       = nb::cast<std::function<KINDampingStdFn>>(fn_table->dampingfn);
 
-  sundials4py::Array1d qt_fn(qt_fn_1d,
-                             {static_cast<unsigned long>(depth)});
+  sundials4py::Array1d qt_fn(qt_fn_1d, {static_cast<unsigned long>(depth)});
 
   auto result = fn(iter, u_val, g_val, qt_fn, depth, nullptr);
 
@@ -147,12 +147,17 @@ inline int kinsol_lsprecsolvefn_wrapper(Args... args)
        std::forward<Args>(args)...);
 }
 
-using KINLsJacTimesVecStdFn = std::tuple<int, sunbooleantype>(N_Vector v, N_Vector Jv, N_Vector u, void *user_data);
+using KINLsJacTimesVecStdFn = std::tuple<int, sunbooleantype>(N_Vector v,
+                                                              N_Vector Jv,
+                                                              N_Vector u,
+                                                              void* user_data);
 
-inline int kinsol_lsjactimesvecfn_wrapper(N_Vector v, N_Vector Jv, N_Vector u, sunbooleantype *new_u, void *user_data)
+inline int kinsol_lsjactimesvecfn_wrapper(N_Vector v, N_Vector Jv, N_Vector u,
+                                          sunbooleantype* new_u, void* user_data)
 {
   auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<KINLsJacTimesVecStdFn>>(fn_table->lsjactimesvecfn);
+  auto fn =
+    nb::cast<std::function<KINLsJacTimesVecStdFn>>(fn_table->lsjactimesvecfn);
 
   auto result = fn(v, Jv, u, nullptr);
 

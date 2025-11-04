@@ -42,6 +42,11 @@ def test_kinsol(sunctx):
             new_depth = depth
         return 0, new_depth
 
+    def damping_fn(iter, u_val, g_val, qt_fn, depth, _):
+        # smoke test of damping
+        damping_factor = 1.0
+        return 0, damping_factor
+
     kin_status = KINSetMAA(kin_view.get(), m_aa)
     assert kin_status == KIN_SUCCESS
     kin_status = KINInit(kin_view.get(), fp_function, u)
@@ -49,6 +54,8 @@ def test_kinsol(sunctx):
     kin_status = KINSetFuncNormTol(kin_view.get(), tol)
     assert kin_status == KIN_SUCCESS
     kin_status = KINSetDepthFn(kin_view.get(), depth_fn)
+    assert kin_status == KIN_SUCCESS
+    kin_status = KINSetDampingFn(kin_view.get(), damping_fn)
     assert kin_status == KIN_SUCCESS
 
     # initial guess

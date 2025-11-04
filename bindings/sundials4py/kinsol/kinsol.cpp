@@ -116,7 +116,7 @@ void bind_kinsol(nb::module_& m)
   BIND_KINSOL_CALLBACK(KINSetSysFunc, KINSysFn, sysfn, kinsol_sysfn_wrapper,
                        nb::arg("kin_mem"), nb::arg("sysfn"));
 
-  BIND_KINSOL_CALLBACK(KINSetDampingFn, KINDampingFn, dampingfn,
+  BIND_KINSOL_CALLBACK(KINSetDampingFn, KINDampingStdFn, dampingfn,
                        kinsol_dampingfn_wrapper, nb::arg("kin_mem"),
                        nb::arg("damping_fn").none());
 
@@ -144,7 +144,7 @@ void bind_kinsol(nb::module_& m)
   BIND_KINSOL_CALLBACK(KINSetJacFn, KINSysFn, lsjacfn, kinsol_lsjacfn_wrapper,
                        nb::arg("kin_mem"), nb::arg("jac").none());
 
-  BIND_KINSOL_CALLBACK(KINSetJacTimesVecFn, KINLsJacTimesVecFn, lsjactimesvecfn,
+  BIND_KINSOL_CALLBACK(KINSetJacTimesVecFn, KINLsJacTimesVecStdFn, lsjactimesvecfn,
                        kinsol_lsjactimesvecfn_wrapper, nb::arg("kin_mem"),
                        nb::arg("jtimes").none());
 

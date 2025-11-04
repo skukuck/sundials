@@ -32,6 +32,14 @@
 #include "sundials_macros.h"
 #include "sundials_profiler_impl.h"
 
+/* Private functions */
+#if SUNDIALS_MPI_ENABLED
+static SUNErrCode sunCollectTimers(SUNProfiler p);
+#endif
+static void sunPrintTimer(SUNHashMapKeyValue kv, FILE* fp, void* pvoid);
+static int sunCompareTimes(const void* l, const void* r);
+static int sunclock_gettime_monotonic(sunTimespec* tp);
+
 static sunTimerStruct* sunTimerStructNew(void)
 {
   sunTimerStruct* ts = (sunTimerStruct*)malloc(sizeof(sunTimerStruct));

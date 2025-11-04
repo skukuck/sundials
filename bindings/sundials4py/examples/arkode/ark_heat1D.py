@@ -204,5 +204,9 @@ def main():
     print(f"   Total number of error test failures = {netf}")
 
 
+def test_ark_heat1D():
+    main()
+
+
 if __name__ == "__main__":
     main()

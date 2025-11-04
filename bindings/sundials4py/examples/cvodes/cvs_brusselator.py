@@ -42,7 +42,6 @@
 # are printed at the end.
 # -----------------------------------------------------------------
 
-
 import numpy as np
 from sundials4py.core import *
 from sundials4py.cvodes import *
@@ -186,6 +185,10 @@ def main():
     print(f"   Total number of Newton iterations = {nni}")
     print(f"   Total number of nonlinear solver convergence failures = {ncfn}")
     print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
+
+
+def test_cvs_brusselator():
+    main()
 
 
 if __name__ == "__main__":

@@ -214,5 +214,9 @@ def main():
     print(arr_qB)
 
 
+def test_cvs_lotkavolterra_ASA():
+    main()
+
+
 if __name__ == "__main__":
     main()

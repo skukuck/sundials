@@ -181,5 +181,9 @@ def main():
     print(f"nje      = {nje:6d}    nfeB    = {nfeD:6d}")
 
 
+def test_kinLaplace_bnd():
+    main()
+
+
 if __name__ == "__main__":
     main()

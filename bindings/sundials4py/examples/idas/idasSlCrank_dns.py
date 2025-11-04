@@ -249,5 +249,9 @@ def main():
     print("--------------------------------------------\n")
 
 
+def test_idaSlCrank_dns():
+    main()
+
+
 if __name__ == "__main__":
     main()

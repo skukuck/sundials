@@ -184,5 +184,9 @@ def main():
     # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)
 
 
+def test_ark_lotka_volterra_ASA():
+    main()
+
+
 if __name__ == "__main__":
     main()

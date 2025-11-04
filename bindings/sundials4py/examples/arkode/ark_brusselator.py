@@ -219,5 +219,9 @@ def main():
     print(f"   Total number of failed steps from solver failure = {ncfn}")
 
 
+def test_ark_brusselator():
+    main()
+
+
 if __name__ == "__main__":
     main()

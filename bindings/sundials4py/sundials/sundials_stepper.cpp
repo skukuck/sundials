@@ -195,9 +195,6 @@ void bind_sunstepper(nb::module_& m)
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  using SUNStepperSetForcingStdFn =
-    SUNErrCode(SUNStepper stepper, sunrealtype tshift, sunrealtype tscale,
-               std::vector<N_Vector> forcing, int nforcing);
   m.def(
     "SUNStepper_SetForcingFn",
     [](SUNStepper stepper, std::function<SUNStepperSetForcingStdFn> fn) -> SUNErrCode

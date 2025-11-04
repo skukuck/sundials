@@ -175,6 +175,8 @@ def test_stepper_set_forcing_fn(sunctx, nvec):
     called = {"flag": False}
 
     def forcing_fn(stepper, tshift, tscale, forcing, nforcing):
+        assert type(forcing) is list
+        assert len(forcing) == nforcing
         called["flag"] = True
         return 0
 

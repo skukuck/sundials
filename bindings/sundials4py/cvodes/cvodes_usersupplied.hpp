@@ -200,17 +200,18 @@ inline int cvode_fQ_wrapper(Args... args)
     1>(&cvode_user_supplied_fn_table::fQ, std::forward<Args>(args)...);
 }
 
-using CVQuadSensRhsStdFn = int(sunrealtype t, N_Vector y,
-                               std::vector<N_Vector> yQS, N_Vector ydot,
-                               std::vector<N_Vector> yQSdot, void* user_data,
-                               N_Vector tmp, N_Vector tmpQ);
+using CVQuadSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d, N_Vector yQdot,
+    std::vector<N_Vector> yQSdot_1d, void *user_data, N_Vector tmp, N_Vector tmpQ);
 
-template<typename... Args>
-inline int cvode_fQS_wrapper(Args... args)
+inline int cvode_fQS_wrapper(int Ns, sunrealtype t, N_Vector y, N_Vector *yS_1d, N_Vector yQdot, N_Vector *yQSdot_1d, void *user_data, N_Vector tmp, N_Vector tmpQ)
 {
-  // return sundials4py::user_supplied_fn_caller<
-  //   std::remove_pointer_t<CVQuadSensRhsFn>, cvode_user_supplied_fn_table,
-  //   3>(&cvode_user_supplied_fn_table::fQS, std::forward<Args>(args)...);
+  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  auto fn       = nb::cast<std::function<CVQuadSensRhsStdFn>>(fn_table->fQS);
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+  std::vector<N_Vector> yQSdot(yQSdot_1d, yQSdot_1d + Ns);
+
+  return fn(Ns, t, y, yS, yQdot, yQSdot, nullptr, tmp, tmpQ);
 }
 
 using CVSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,

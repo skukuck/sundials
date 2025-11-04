@@ -75,14 +75,14 @@ def test_initialize(estimator_type, sunctx):
     assert status == 0
 
 
-# TODO(CJB): fix or remove test
+# #TODO(CJB): fix or remove test
 # @pytest.mark.parametrize("estimator_type", ["power"])
 # def test_estimate(estimator_type, sunctx):
-# 	est, nvec = make_estimator(estimator_type, sunctx)
-# 	err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(est)
-# 	assert isinstance(err, int)
-# 	assert isinstance(lambdaR, float)
-# 	assert isinstance(lambdaI, float)
+#     est, nvec = make_estimator(estimator_type, sunctx)
+#     err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(est)
+#     assert isinstance(err, int)
+#     assert isinstance(lambdaR, float)
+#     assert isinstance(lambdaI, float)
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])

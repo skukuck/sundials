@@ -61,7 +61,6 @@ modules:
     # TODO(CJB): interface these functions which take functions pointers
     - "^IDARootInit$"
     - "^IDAWFtolerances$"
-    # TODO(CJB): add support for these functions
     #  ** parameters are not yet supported by litgen
     - "^IDAComputeStateSens$"
     - "^IDAComputeStateSens1$"

@@ -46,8 +46,3 @@ def test_erkstep(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
     assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
-
-
-def test_erkstep_adjoint(sunctx):
-    # TODO(CJB): implement
-    pass

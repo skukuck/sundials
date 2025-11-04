@@ -8,7 +8,6 @@ on:
     branches:
       - main
       - develop
-      - feature/python-nanobind # TODO(CJB): remove once PR is open
   pull_request:
   merge_group:
   workflow_dispatch:
@@ -58,8 +57,38 @@ jobs:
       env:
         CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
 
-    - name: Verify clean directory
-      run: git diff --exit-code
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        path: wheelhouse/*.whl
+        name: dist-${{ matrix.os }}
+
+  build_wheels_extra:
+    name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        precision: [single, double]
+        index: [32, 64]
+  
+    steps:
+  
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+  
+      uses: pypa/cibuildwheel@v2.22
+      env:
+        CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
+        CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
+  
+    - name: Rename wheels to include config
+      run: |
+        for whl in wheelhouse/*.whl; do
+          mv "$whl" "wheelhouse/$(echo $whl | sed 's/\.whl$/-${{ matrix.precision }}-${{ matrix.index }}.whl/')"
+        done
       shell: bash
 
     - name: Upload wheels
@@ -68,46 +97,21 @@ jobs:
         path: wheelhouse/*.whl
         name: dist-${{ matrix.os }}
 
-  # build_wheels_extra:
-  #   name: Build extra wheels on ${{ matrix.os }} (${{ matrix.precision }}/${{ matrix.index }})
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-latest, macos-13, macos-14, windows-latest]
-  #       precision: [single, double]
-  #       index: [32, 64]
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: true
-  #   - name: Build wheels
-  #     uses: pypa/cibuildwheel@v2.22
-  #     env:
-  #       CMAKE_ARGS: "-DSUNDIALS_PRECISION=${{ matrix.precision }} -DSUNDIALS_INDEX_SIZE=${{ matrix.index }}"
-  #       CIBW_TEST_COMMAND: "pytest {project}/bindings/sundials4py/test"
-  #   - name: Rename wheels to include config
-  #     run: |
-  #       for whl in wheelhouse/*.whl; do
-  #         mv "$whl" "wheelhouse/$(echo $whl | sed 's/\.whl$/-${{ matrix.precision }}-${{ matrix.index }}.whl/')"
-  #       done
-  #     shell: bash
+  upload:
+    name: Upload if release
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
 
-  # upload_all:
-  #   name: Upload if release
-  #   needs: [build_wheels, build_sdist]
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+    - uses: actions/setup-python@v5
+    - uses: actions/download-artifact@v4
+      with:
+        path: dist
+        pattern: dist-*
+        merge-multiple: true
 
-  #   steps:
-  #   - uses: actions/setup-python@v5
-  #   - uses: actions/download-artifact@v4
-  #     with:
-  #       path: dist
-  #       pattern: dist-*
-  #       merge-multiple: true
-
-  #   - uses: pypa/gh-action-pypi-publish@release/v1
-  #     with:
-  #       user: __token__
-  #       password: ${{ secrets.pypi_password }}
+    - uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}

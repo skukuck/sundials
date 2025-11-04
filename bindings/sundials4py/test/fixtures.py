@@ -67,8 +67,8 @@ def sunstepper(sunctx):
     def forcing_fn(stepper, tshift, tscale, forcing, nforcing):
         return 0
 
-    def get_num_steps_fn(stepper, nst):
-        return 0
+    def get_num_steps_fn(stepper):
+        return 0, 0
 
     # Set all function pointers
     SUNStepper_SetEvolveFn(stepper, evolve_fn)

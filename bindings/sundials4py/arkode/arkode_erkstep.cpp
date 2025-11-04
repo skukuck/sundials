@@ -39,6 +39,8 @@ void bind_arkode_erkstep(nb::module_& m)
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
+      if (!rhs) { throw sundials4py::illegal_value("rhs was null"); }
+
       void* ark_mem = ERKStepCreate(erkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
@@ -80,10 +82,10 @@ void bind_arkode_erkstep(nb::module_& m)
        std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_f, sunrealtype tf,
        N_Vector sf, SUNContext sunctx) -> std::tuple<int, SUNAdjointStepper>
     {
-      auto f_wrapper = adj_f ? erkstep_adjf_wrapper : nullptr;
+      if (!adj_f) { throw sundials4py::illegal_value("adj_f was null"); }
 
       SUNAdjointStepper adj_stepper = nullptr;
-      int ark_status = ERKStepCreateAdjointStepper(arkode_mem, f_wrapper, tf,
+      int ark_status = ERKStepCreateAdjointStepper(arkode_mem, erkstep_adjf_wrapper, tf,
                                                    sf, sunctx, &adj_stepper);
       if (ark_status != ARK_SUCCESS)
       {

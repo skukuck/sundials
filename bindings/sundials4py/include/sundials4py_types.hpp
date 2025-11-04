@@ -48,6 +48,24 @@ private:
     "details are given below:\n\t";
 };
 
+class illegal_value : public std::runtime_error
+{
+public:
+  explicit illegal_value(const char* message)
+    : std::runtime_error(base_message + message)
+  {}
+
+  // Constructor that takes a std::string message
+  explicit illegal_value(const std::string& message)
+    : std::runtime_error(base_message + message)
+  {}
+
+private:
+  inline static const std::string base_message =
+    "[sundials4py] an illegal value was given, "
+    "details are given below:\n\t";
+};
+
 } // namespace sundials4py
 
 #endif

@@ -37,8 +37,9 @@ void bind_arkode_lsrkstep(nb::module_& m)
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      auto rhs_wrapper = rhs ? lsrkstep_f_wrapper : nullptr;
-      void* ark_mem    = LSRKStepCreateSTS(rhs_wrapper, t0, y0, sunctx);
+      if (!rhs) { throw sundials4py::illegal_value("rhs was null"); }
+
+      void* ark_mem    = LSRKStepCreateSTS(lsrkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
@@ -69,8 +70,9 @@ void bind_arkode_lsrkstep(nb::module_& m)
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      auto rhs_wrapper = rhs ? lsrkstep_f_wrapper : nullptr;
-      void* ark_mem    = LSRKStepCreateSSP(rhs_wrapper, t0, y0, sunctx);
+      if (!rhs) { throw sundials4py::illegal_value("rhs was null"); }
+
+      void* ark_mem    = LSRKStepCreateSSP(lsrkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
         throw sundials4py::error_returned("Failed to create LSRKStep memory");

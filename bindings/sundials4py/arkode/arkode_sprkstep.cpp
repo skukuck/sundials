@@ -38,10 +38,9 @@ void bind_arkode_sprkstep(nb::module_& m)
        std::function<std::remove_pointer_t<ARKRhsFn>> f2, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      auto f1_wrapper = f1 ? sprkstep_f1_wrapper : nullptr;
-      auto f2_wrapper = f2 ? sprkstep_f2_wrapper : nullptr;
+      if (!f1 && !f2) { throw sundials4py::illegal_value("f1 and f2 cannot be null"); }
 
-      void* ark_mem = SPRKStepCreate(f1_wrapper, f2_wrapper, t0, y0, sunctx);
+      void* ark_mem = SPRKStepCreate(sprkstep_f1_wrapper, sprkstep_f2_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
       {
         throw sundials4py::error_returned("Failed to create SPRKStep memory");

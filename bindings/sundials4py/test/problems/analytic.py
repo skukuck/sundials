@@ -33,19 +33,19 @@ class AnalyticODE(ODEProblem):
     * than 100 the problem becomes quite stiff.
     """
 
-    def __init__(self, lamb=1.0):
+    def __init__(self, lamb=-10.0):
         self.lamb = lamb
 
     def f(self, t, yvec, ydotvec):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
-        ydot[0] = self.lamb * y[0] + 1.0 / (1.0 + t * t) - 1.0 * np.arctan(t)
+        ydot[0] = self.lamb * y[0] + 1.0 / (1.0 + t * t) - self.lamb * np.arctan(t)
         return 0
 
-    def dom_eig(self, t, yvec, fnvec, lambdaR, lambdaI, tempv1, tempv2, tempv3):
+    def dom_eig(self, t, yvec, fnvec, tempv1, tempv2, tempv3):
         lamdbaR = self.lamb
         lamdbaI = 0.0
-        return 0
+        return 0, lamdbaR, lamdbaI
 
     def solution(self, y0vec, yvec, t):
         y = N_VGetArrayPointer(yvec)

@@ -35,8 +35,8 @@ def test_lsrkstep(sunctx):
     def rhs(t, y, ydot, _):
         return ode_problem.f(t, y, ydot)
 
-    def dom_eig(t, yvec, fnvec, lambdaR, lambdaI, _, tempv1, tempv2, tempv3):
-        return ode_problem.dom_eig(t, yvec, fnvec, lambdaR, lambdaI, tempv1, tempv2, tempv3)
+    def dom_eig(t, yvec, fnvec, _, tempv1, tempv2, tempv3):
+        return ode_problem.dom_eig(t, yvec, fnvec, tempv1, tempv2, tempv3)
 
     lsrk = LSRKStepCreateSTS(rhs, 0, y, sunctx)
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
@@ -53,4 +53,4 @@ def test_lsrkstep(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-1)
+    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

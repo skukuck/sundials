@@ -116,7 +116,7 @@ SUNDIALS packages and several modules/classes require user-supplied callback fun
 such as the right-hand side of an ODE or a nonlinear system function. In sundials4py, you can provide these as standard Python functions or lambdas.
 Somethings to note:
 
-- The callback signatures follow the C API exactly. As such, ``N_Vector`` arguments are passed as ``N_Vector`` objects and the underlying ndarray must be extracted in the user code.
+- The callback signatures follow the C API. As such, ``N_Vector`` arguments are passed as ``N_Vector`` objects and the underlying ndarray must be extracted in the user code. The only caveat is that return-by-pointer parameters are removed from the signature, and instead become return values (mirroring how return-by-pointer parameters for other functions are handled)
 - Most callback signatures include a ``void* user_data`` argument. In Python, this argument must be present in the signature, but it should be ignored.
 
 **Example: ODE right-hand side for ARKStep**
@@ -146,10 +146,26 @@ Somethings to note:
    kin = KINView.Create(KINCreate(sunctx.get()))
    KINInit(kin.get(), fp_function, u.get())
 
+**Example: ARKODE LSRKStep dominant eigenvalue estimation function with return-by-pointer parameters**
+
+.. code-block:: python
+
+   # The C signature is:
+   # int(sunrealtype t, N_Vector y, N_Vector fn,
+   #     sunrealtype* lambdaR, sunrealtype* lambdaI,
+   #     void* user_data, N_Vector temp1,
+   #     N_Vector temp2, N_Vector temp3)
+   def dom_eig(t, yvec, fnvec, temp1, temp2, temp3, _):
+        lamdbaR = L
+        lamdbaI = 0.0
+        # lambdaR and lambdaI should be returned in the order that they appear
+        # as parameters in the C API and follow the error code to return
+        return 0, lamdbaR, lamdbaI
+
 
 .. warning::
 
-   The ``user_data`` argument is almost always ``None`` on the Python side, but if it is not it should be ignored to avoid causing catastrophic errors.
+   The ``user_data`` argument is should always be ``None`` on the Python side, but if it is not it should be ignored to avoid causing catastrophic errors.
 
 
 Examples

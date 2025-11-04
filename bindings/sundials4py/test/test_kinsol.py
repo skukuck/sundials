@@ -35,11 +35,20 @@ def test_kinsol(sunctx):
     def fp_function(u, g, _):
         return problem.fixed_point_fn(u, g)
 
+    def depth_fn(iter, u_val, g_val, f_val, df, R_mat, depth, _, remove_indices):
+        if iter < 2:
+            new_depth = 1
+        else:
+            new_depth = depth
+        return 0, new_depth
+
     kin_status = KINSetMAA(kin_view.get(), m_aa)
     assert kin_status == KIN_SUCCESS
     kin_status = KINInit(kin_view.get(), fp_function, u)
     assert kin_status == KIN_SUCCESS
     kin_status = KINSetFuncNormTol(kin_view.get(), tol)
+    assert kin_status == KIN_SUCCESS
+    kin_status = KINSetDepthFn(kin_view.get(), depth_fn)
     assert kin_status == KIN_SUCCESS
 
     # initial guess

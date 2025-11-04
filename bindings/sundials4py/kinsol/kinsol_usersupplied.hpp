@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "sundials/sundials_types.h"
 #include "sundials4py.hpp"
 
 #include <kinsol/kinsol.h>
@@ -80,12 +81,32 @@ inline int kinsol_dampingfn_wrapper(Args... args)
     2>(&kinsol_user_supplied_fn_table::dampingfn, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline int kinsol_depthfn_wrapper(Args... args)
+using KINDepthStdFn = std::tuple<int, long int>(
+  long int iter, N_Vector u_val, N_Vector g_val, N_Vector f_val,
+  std::vector<N_Vector> df, sundials4py::Array1d R_mat, long int depth,
+  void* user_data, std::vector<sunbooleantype> remove_indices);
+
+inline int kinsol_depthfn_wrapper(long int iter, N_Vector u_val, N_Vector g_val,
+                                  N_Vector f_val, N_Vector* df_1d,
+                                  sunrealtype* R_mat_1d, long int depth,
+                                  void* user_data, long int* new_depth,
+                                  sunbooleantype* remove_indices_1d)
 {
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINDepthFn>, kinsol_user_supplied_fn_table,
-    3>(&kinsol_user_supplied_fn_table::depthfn, std::forward<Args>(args)...);
+  auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
+  auto fn       = nb::cast<std::function<KINDepthStdFn>>(fn_table->depthfn);
+
+  std::vector<N_Vector> df(df_1d, df_1d + depth);
+  sundials4py::Array1d R_mat(R_mat_1d,
+                             {static_cast<unsigned long>(depth * depth)});
+  // TODO(CJB): enable this if it becomes used in the future
+  std::vector<sunbooleantype> remove_indices(0);
+
+  auto result = fn(iter, u_val, g_val, f_val, df, R_mat, depth, nullptr,
+                   remove_indices);
+
+  *new_depth = std::get<1>(result);
+
+  return std::get<0>(result);
 }
 
 template<typename... Args>

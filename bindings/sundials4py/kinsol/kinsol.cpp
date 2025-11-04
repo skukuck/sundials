@@ -120,10 +120,6 @@ void bind_kinsol(nb::module_& m)
                        kinsol_dampingfn_wrapper, nb::arg("kin_mem"),
                        nb::arg("damping_fn").none());
 
-  using KINDepthStdFn =
-    int(long int iter, N_Vector u_val, N_Vector g_val, N_Vector f_val,
-        std::vector<N_Vector> df, sundials4py::Array1d R_mat, long int depth,
-        void* user_data, long int* new_depth, sunbooleantype* remove_indices);
   m.def(
     "KINSetDepthFn",
     [](void* kin_mem, std::function<KINDepthStdFn> depth_fn)

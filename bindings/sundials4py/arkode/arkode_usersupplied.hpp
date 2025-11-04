@@ -130,13 +130,22 @@ inline mristepinnerstepper_user_supplied_fn_table* mristepinnerstepper_user_supp
   return fn_table;
 }
 
-template<typename... Args>
-inline int arkode_rootfn_wrapper(Args... args)
-{
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRootFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::rootfn, std::forward<Args>(args)...);
-}
+//
+// TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+// 
+
+// using ARKRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout, void *user_data);
+
+// inline int arkode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d, void *user_data)
+// {
+//   auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+//   auto fn       = nb::cast<std::function<ARKRootStdFn>>(fn_table->rootfn);
+
+//   sundials4py::Array1d gout(gout_1d,
+//                              {static_cast<unsigned long>(nrtfn)});
+
+//   return fn(t, y, gout, nullptr);
+// }
 
 template<typename... Args>
 inline int arkode_ewtfn_wrapper(Args... args)

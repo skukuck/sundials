@@ -72,13 +72,22 @@ inline int cvode_f_wrapper(Args... args)
                                                  std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline int cvode_rootfn_wrapper(Args... args)
-{
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVRootFn>, cvode_user_supplied_fn_table,
-    1>(&cvode_user_supplied_fn_table::rootfn, std::forward<Args>(args)...);
-}
+//
+// TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+// 
+
+// using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout, void *user_data);
+
+// inline int cvode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d, void *user_data)
+// {
+//   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+//   auto fn       = nb::cast<std::function<CVRootStdFn>>(fn_table->rootfn);
+
+//   sundials4py::Array1d gout(gout_1d,
+//                              {static_cast<unsigned long>(nrtfn)});
+
+//   return fn(t, y, gout, nullptr);
+// }
 
 template<typename... Args>
 inline int cvode_ewtfn_wrapper(Args... args)

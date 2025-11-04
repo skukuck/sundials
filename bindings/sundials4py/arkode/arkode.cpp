@@ -99,6 +99,21 @@ void bind_arkode(nb::module_& m)
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
+  // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+  // m.def("ARKodeRootInit",
+  //       [](void* ark_mem, int nrtfn,
+  //          std::function<std::remove_pointer_t<ARKRootFn>> fn)
+  //       {
+  //         void* user_data = nullptr;
+  //         ARKodeGetUserData(ark_mem, &user_data);
+  //         if (!user_data)
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from ARKODE memory");
+  //         auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  //         fntable->rootfn = nb::cast(fn);
+  //         return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
+  //       });
+
   BIND_ARKODE_CALLBACK(ARKodeSetPostprocessStepFn, ARKPostProcessFn,
                        postprocessstepfn, arkode_postprocessstepfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("postprocessstep").none());

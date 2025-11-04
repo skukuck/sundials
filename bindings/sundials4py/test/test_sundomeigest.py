@@ -75,7 +75,7 @@ def test_initialize(estimator_type, sunctx):
     assert status == 0
 
 
-# TODO(CJB): fix or remov
+# TODO(CJB): fix or remove test
 # @pytest.mark.parametrize("estimator_type", ["power"])
 # def test_estimate(estimator_type, sunctx):
 # 	est, nvec = make_estimator(estimator_type, sunctx)

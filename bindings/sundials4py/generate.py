@@ -166,7 +166,7 @@ def generate(config_yaml_path, dump_srcml=False):
             with open(module["path"], "w") as file:
                 file.write(generated_code.glue_code)
                 file.write(generated_code.pydef_code)
-            # TODO(CJB): Not sure how we would combine generated and custom code for stubs
+            # Not sure how we would combine generated and custom code for stubs
             # with open(f'{module["path"]}.pyi', 'w') as file:
             #   file.write(generated_code.stub_code)
         else:

@@ -139,21 +139,22 @@ void bind_idas(nb::module_& m)
           return ida_status;
         });
 
-  m.def("IDARootInit",
-        [](void* ida_mem, int nrtfn,
-           std::function<std::remove_pointer_t<IDARootFn>> fn)
-        {
-          void* user_data = nullptr;
-          IDAGetUserData(ida_mem, &user_data);
-          if (!user_data)
-          {
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          }
-          auto fntable = static_cast<idas_user_supplied_fn_table*>(user_data);
-          fntable->rootfn = nb::cast(fn);
-          return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
-        });
+  // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+  // m.def("IDARootInit",
+  //       [](void* ida_mem, int nrtfn,
+  //          std::function<std::remove_pointer_t<IDARootStdFn>> fn)
+  //       {
+  //         void* user_data = nullptr;
+  //         IDAGetUserData(ida_mem, &user_data);
+  //         if (!user_data)
+  //         {
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from IDAS memory");
+  //         }
+  //         auto fntable = static_cast<idas_user_supplied_fn_table*>(user_data);
+  //         fntable->rootfn = nb::cast(fn);
+  //         return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
+  //       });
 
   m.def("IDAQuadInit",
         [](void* ida_mem,
@@ -284,24 +285,6 @@ void bind_idas(nb::module_& m)
           return IDAQuadInitB(ida_mem, which, idas_resQB_wrapper, yQBO);
         });
 
-  // TODO(CJB): we can enable this functions with sundials v8.0.0
-  //            we need to add a int Ns argument to the callback like IDASensResFn has
-  // m.def("IDAQuadInitBS",
-  //       [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
-  //          N_Vector yQBO)
-  //       {
-  //         void* user_data = nullptr;
-  //         IDAGetUserDataB(ida_mem, which, &user_data);
-  //         if (!user_data)
-  //         {
-  //           throw sundials4py::error_returned(
-  //             "Failed to get Python function table from IDAS memory");
-  //         }
-  //         auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
-  //         fntable->resQBS = nb::cast(resQBS);
-  //         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
-  //       });
-
   BIND_IDAB_CALLBACK(IDASetJacFnB, IDALsJacFnB, lsjacfnB, idas_lsjacfnB_wrapper,
                      nb::arg("ida_mem"), nb::arg("which"),
                      nb::arg("jacB").none());
@@ -320,8 +303,24 @@ void bind_idas(nb::module_& m)
 
   //
   // TODO(CJB): we can enable these functions with sundials v8.0.0
-  //            we need to add a int Ns argument to the callback like IDASensResFn has
+  //            we need to add a `int Ns` argument to the callbacks like IDASensResFn has
   //
+
+  // m.def("IDAQuadInitBS",
+  //       [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
+  //          N_Vector yQBO)
+  //       {
+  //         void* user_data = nullptr;
+  //         IDAGetUserDataB(ida_mem, which, &user_data);
+  //         if (!user_data)
+  //         {
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from IDAS memory");
+  //         }
+  //         auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
+  //         fntable->resQBS = nb::cast(resQBS);
+  //         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
+  //       });
 
   // BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
   //                     lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,

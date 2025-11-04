@@ -57,6 +57,16 @@ def test_idas_ivp(sunctx):
     status = IDASetPreconditioner(solver.get(), None, psolve)
     assert status == IDA_SUCCESS
 
+    # TODO(CJB): enable rootfinding once we have nrtfn as a callback argument
+    # nrtfn = 2
+    # def rootfn(t, yy, yp, gout, _):
+    #     # just a smoke test of the root finding callback
+    #     assert len(gout) == nrtfn
+    #     return 0
+
+    # status = IDARootInit(solver.get(), nrtfn, rootfn)
+    # assert status == IDA_SUCCESS
+
     tout = ode_problem.TF
     status, tret = IDASolve(solver.get(), tout, yy, yp, IDA_NORMAL)
     assert status == IDA_SUCCESS

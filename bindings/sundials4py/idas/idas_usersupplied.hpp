@@ -72,13 +72,23 @@ inline int idas_res_wrapper(Args... args)
                                                  std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline int idas_rootfn_wrapper(Args... args)
-{
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDARootFn>, idas_user_supplied_fn_table,
-    1>(&idas_user_supplied_fn_table::rootfn, std::forward<Args>(args)...);
-}
+
+//
+// TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+// 
+
+// using IDARootStdFn = int(sunrealtype t, N_Vector y, N_Vector yp, sundials4py::Array1d gout, void *user_data);
+
+// inline int idas_rootfn_wrapper(sunrealtype t, N_Vector y, N_Vector yp, sunrealtype* gout_1d, void *user_data)
+// {
+//   auto fn_table = static_cast<idas_user_supplied_fn_table*>(user_data);
+//   auto fn       = nb::cast<std::function<IDARootStdFn>>(fn_table->rootfn);
+
+//   sundials4py::Array1d gout(gout_1d,
+//                              {static_cast<unsigned long>(nrtfn)});
+
+//   return fn(t, y, yp, gout, nullptr);
+// }
 
 template<typename... Args>
 inline int idas_ewtfn_wrapper(Args... args)
@@ -241,28 +251,6 @@ inline int idas_resQB_wrapper(Args... args)
     1>(&idasa_user_supplied_fn_table::resQB, std::forward<Args>(args)...);
 }
 
-// TODO(CJB): for sundials v8.0.0, we can enable these functions,
-//            we need to add a int Ns argument like IDASensResFn has
-// using IDAQuadRhsStdFnBS = int(sunrealtype t, N_Vector y, N_Vector yp,
-//                               std::vector<N_Vector> yS,
-//                               std::vector<N_Vector> ypS, N_Vector yB,
-//                               N_Vector ypB, N_Vector rhsvalBQS, void* user_dataB);
-
-// inline int idas_resQBS_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
-//                                N_Vector* yS, N_Vector* ypS, N_Vector yB,
-//                                N_Vector ypB, N_Vector* rhsvalBQS,
-//                                void* user_dataB)
-// {
-//   auto fn_table = static_cast<idasa_user_supplied_fn_table*>(user_dataB);
-//   auto fn       = nb::cast<std::function<IDAQuadRhsStdFnBS>>(fn_table->resQBS);
-
-//   std::vector<N_Vector> yS_1d(yS, yS + Ns);
-//   std::vector<N_Vector> ypS_1d(ypS, ypS + Ns);
-//   std::vector<N_Vector> rhsvalBQS_1d(rhsvalBQS, rhsvalBQS + Ns);
-
-//   return fn(t, y, yp, yS_1d, ypS_1d, yB, ypB, rhsvalBQS_1d, nullptr);
-// }
-
 template<typename... Args>
 inline int idas_lsjacfnB_wrapper(Args... args)
 {
@@ -280,14 +268,6 @@ inline int idas_lsprecsetupfnB_wrapper(Args... args)
        std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline int idas_lsprecsetupfnBS_wrapper(Args... args)
-{
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsPrecSetupFnBS>, idasa_user_supplied_fn_table,
-    1>(&idasa_user_supplied_fn_table::lsprecsetupfnBS,
-       std::forward<Args>(args)...);
-}
 
 template<typename... Args>
 inline int idas_lsprecsolvefnB_wrapper(Args... args)
@@ -315,5 +295,32 @@ inline int idas_lsjactimesvecfnB_wrapper(Args... args)
     3>(&idasa_user_supplied_fn_table::lsjactimesvecfnB,
        std::forward<Args>(args)...);
 }
+
+// TODO(CJB): for sundials v8.0.0, we can enable these functions,
+//            we need to add a int Ns argument like IDASensResFn has
+// using IDAQuadRhsStdFnBS = int(sunrealtype t, N_Vector y, N_Vector yp,
+//                               std::vector<N_Vector> yS,
+//                               std::vector<N_Vector> ypS, N_Vector yB,
+//                               N_Vector ypB, N_Vector rhsvalBQS, void* user_dataB);
+
+// inline int idas_resQBS_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
+//                                N_Vector* yS, N_Vector* ypS, N_Vector yB,
+//                                N_Vector ypB, N_Vector* rhsvalBQS,
+//                                void* user_dataB)
+// {
+//   auto fn_table = static_cast<idasa_user_supplied_fn_table*>(user_dataB);
+//   auto fn       = nb::cast<std::function<IDAQuadRhsStdFnBS>>(fn_table->resQBS);
+
+//   std::vector<N_Vector> yS_1d(yS, yS + Ns);
+//   std::vector<N_Vector> ypS_1d(ypS, ypS + Ns);
+//   std::vector<N_Vector> rhsvalBQS_1d(rhsvalBQS, rhsvalBQS + Ns);
+
+//   return fn(t, y, yp, yS_1d, ypS_1d, yB, ypB, rhsvalBQS_1d, nullptr);
+// }
+
+// template<typename... Args>
+// inline int idas_lsprecsetupfnBS_wrapper(Args... args)
+// {
+// }
 
 #endif

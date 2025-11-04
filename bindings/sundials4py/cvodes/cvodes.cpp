@@ -153,20 +153,21 @@ void bind_cvodes(nb::module_& m)
 
           return cv_status;
         });
-
-  m.def("CVodeRootInit",
-        [](void* cv_mem, int nrtfn,
-           std::function<std::remove_pointer_t<CVRootFn>> fn)
-        {
-          void* user_data = nullptr;
-          CVodeGetUserData(cv_mem, &user_data);
-          if (!user_data)
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from CVODE memory");
-          auto fntable = static_cast<cvode_user_supplied_fn_table*>(user_data);
-          fntable->rootfn = nb::cast(fn);
-          return CVodeRootInit(cv_mem, nrtfn, &cvode_rootfn_wrapper);
-        });
+  
+  // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
+  // m.def("CVodeRootInit",
+  //       [](void* cv_mem, int nrtfn,
+  //          std::function<std::remove_pointer_t<CVRootFn>> fn)
+  //       {
+  //         void* user_data = nullptr;
+  //         CVodeGetUserData(cv_mem, &user_data);
+  //         if (!user_data)
+  //           throw sundials4py::error_returned(
+  //             "Failed to get Python function table from CVODE memory");
+  //         auto fntable = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  //         fntable->rootfn = nb::cast(fn);
+  //         return CVodeRootInit(cv_mem, nrtfn, &cvode_rootfn_wrapper);
+  //       });
 
   m.def("CVodeQuadInit",
         [](void* cv_mem, std::function<std::remove_pointer_t<CVQuadRhsFn>> fQ,
@@ -333,7 +334,7 @@ void bind_cvodes(nb::module_& m)
 
   //
   // TODO(CJB): we can enable these functions with sundials v8.0.0
-  //            we need to add a int Ns argument to the callback like CVSensRhsFn has
+  //            we need to add a `int Ns` argument to the callbacks like CVSensRhsFn has
   //
 
   // m.def("CVodeQuadInitBS",

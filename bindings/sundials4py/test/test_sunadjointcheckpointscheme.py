@@ -54,7 +54,7 @@ def test_insert_vector(sunctx, nvec):
     assert status == 0
 
 
-# TODO(CJB): fix or remove
+# TODO(CJB): fix or remove test
 # def test_load_vector(sunctx, nvec):
 #     scheme_status, scheme, mem_helper = make_fixed_scheme(sunctx)
 

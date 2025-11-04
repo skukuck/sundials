@@ -45,6 +45,16 @@ def test_cvodes_ivp(sunctx):
     status = CVodeSetLinearSolver(cvode.get(), ls, None)
     assert status == CV_SUCCESS
 
+    # # TODO(CJB): enable rootfinding once we have nrtfn as a callback argument
+    # nrtfn = 2
+    # def rootfn(t, yy, gout, _):
+    #     # just a smoke test of the root finding callback
+    #     assert len(gout) == nrtfn
+    #     return 0
+
+    # status = CVodeRootInit(cvode.get(), nrtfn, rootfn)
+    # assert status == CV_SUCCESS
+
     tout = 10.0
     status, tret = CVode(cvode.get(), tout, y, CV_NORMAL)
     assert status == CV_SUCCESS

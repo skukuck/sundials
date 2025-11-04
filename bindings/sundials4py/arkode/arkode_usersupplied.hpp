@@ -321,7 +321,7 @@ inline int arkode_lslinsysfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
                                      SUNMatrix A, SUNMatrix M,
                                      sunbooleantype jok, sunbooleantype* jcurPtr,
                                      sunrealtype gamma, void* user_data,
-                                      N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
+                                     N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
   auto fn       = nb::cast<std::function<ARKLsLinSysStdFn>>(fn_table->lslinsysfn);

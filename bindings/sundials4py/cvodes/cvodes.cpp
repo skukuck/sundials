@@ -337,7 +337,7 @@ void bind_cvodes(nb::module_& m)
   //
 
   // m.def("CVodeQuadInitBS",
-  //       [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBs,
+  //       [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS,
   //          N_Vector yQBO)
   //       {
   //         void* user_data = nullptr;
@@ -346,8 +346,8 @@ void bind_cvodes(nb::module_& m)
   //           throw sundials4py::error_returned(
   //             "Failed to get Python function table from CVODE memory");
   //         auto fntable = static_cast<cvodea_user_supplied_fn_table*>(user_data);
-  //         fntable->fQBs = nb::cast(fQBs);
-  //         return CVodeQuadInitBS(cv_mem, which, cvode_fQBs_wrapper, yQBO);
+  //         fntable->fQBS = nb::cast(fQBS);
+  //         return CVodeQuadInitBS(cv_mem, which, cvode_fQBS_wrapper, yQBO);
   //       });
 
   // BIND_CVODEB_CALLBACK(CVodeSetJacFnBS, CVLsJacStdFnBS, lsjacfnBS,

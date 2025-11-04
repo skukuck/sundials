@@ -189,7 +189,7 @@ void bind_arkode(nb::module_& m)
                        arkode_lslinsysfn_wrapper, nb::arg("arkode_mem"),
                        nb::arg("linsys").none());
 
-  // ARKodeSetMassTimes doesnt fit the BIND_ARKODE_CALLBACK macro pattern(s)
+  // ARKodeSetMassTimes doesn't fit the BIND_ARKODE_CALLBACK macro pattern(s)
   // due to the 4th argument for user data, so we just write it out explicitly.
   m.def(
     "ARKodeSetMassTimes",

@@ -1,0 +1,44 @@
+name: Checks - swig
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  swig_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sundials generator+litgen
+        run: |
+          pip install black isort pyyaml litgen@git+https://github.com/sundials-codes/litgen.git
+
+      - name: Check out repository code
+        uses: actions/checkout@v5
+        submodules: true
+
+      - name: Add safe directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run generator on code
+        run: |
+          cd bindings/sundials4py
+          python sundials4py-generate/generate.py .
+
+      - name: Run git diff to see if anything changed
+        run: /usr/bin/git diff --exit-code
+
+      - name: Run git diff if we failed
+        if: failure()
+        run:  /usr/bin/git diff > litgen.patch
+
+      - name: Archive diff as a patch if we failed
+        uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: litgen.patch
+          path: |
+            ${{ github.workspace }}/litgen.patch

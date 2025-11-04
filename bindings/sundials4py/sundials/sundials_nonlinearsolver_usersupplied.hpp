@@ -53,12 +53,18 @@ inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
     1>(&SUNNonlinearSolverFunctionTable::sysfn, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline int sunnonlinearsolver_lsetupfn_wrapper(Args... args)
+using SUNNonlinSolLSetupStdFn = std::tuple<int, sunbooleantype>(sunbooleantype jbad, void *mem);
+
+inline int sunnonlinearsolver_lsetupfn_wrapper(sunbooleantype jbad, sunbooleantype *jcur, void *mem)
 {
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<SUNNonlinSolLSetupFn>, SUNNonlinearSolverFunctionTable,
-    1>(&SUNNonlinearSolverFunctionTable::lsetupfn, std::forward<Args>(args)...);
+  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(mem);
+  auto fn = nb::cast<std::function<SUNNonlinSolLSetupStdFn>>(fn_table->lsetupfn);
+
+  auto result = fn(jbad, nullptr);
+
+  *jcur = std::get<1>(result);
+
+  return std::get<0>(result);
 }
 
 template<typename... Args>

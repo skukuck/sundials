@@ -83,7 +83,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
   m.def(
     "SUNNonlinSolSetLSetupFn",
     [](SUNNonlinearSolver NLS,
-       std::function<std::remove_pointer_t<SUNNonlinSolLSetupFn>> SetupFn) -> SUNErrCode
+       std::function<SUNNonlinSolLSetupStdFn> SetupFn) -> SUNErrCode
     {
       if (!NLS->python)
       {

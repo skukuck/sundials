@@ -216,9 +216,6 @@ void bind_sunstepper(nb::module_& m)
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  // We have to use a custom std::function type here because
-  // we need to replace the suncountertype* argument with a reference.
-  using SUNStepperGetNumStepsStdFn = SUNErrCode(SUNStepper, suncountertype&);
   m.def(
     "SUNStepper_SetGetNumStepsFn",
     [](SUNStepper stepper, std::function<SUNStepperGetNumStepsStdFn> fn) -> SUNErrCode

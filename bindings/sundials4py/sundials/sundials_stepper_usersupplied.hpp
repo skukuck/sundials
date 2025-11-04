@@ -126,13 +126,17 @@ inline SUNErrCode sunstepper_set_forcing_wrapper(Args... args)
                 std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline SUNErrCode sunstepper_get_num_steps_wrapper(Args... args)
+using SUNStepperGetNumStepsStdFn = std::tuple<SUNErrCode, suncountertype>(SUNStepper);
+inline SUNErrCode sunstepper_get_num_steps_wrapper(SUNStepper stepper, suncountertype* num_steps)
 {
-  return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<SUNStepperGetNumStepsFn>, SUNStepperFunctionTable,
-    SUNStepper>(&SUNStepperFunctionTable::get_num_steps,
-                std::forward<Args>(args)...);
+  auto fn_table = static_cast<SUNStepperFunctionTable*>(stepper->python);
+  auto fn = nb::cast<std::function<SUNStepperGetNumStepsStdFn>>(fn_table->get_num_steps);
+
+  auto result = fn(stepper);
+
+  *num_steps = std::get<1>(result);
+
+  return std::get<0>(result);
 }
 
 #endif // _SUNDIALS4PY_STEPPER_USERSUPPLIED_HPP

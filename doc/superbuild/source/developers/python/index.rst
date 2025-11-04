@@ -92,7 +92,7 @@ The recommended method for development is to use a typical Python development wo
 The last ``pip install`` command will allow automatic incremental builds. It will invoke the SUNDIALS `CMake` build system with the
 ``-DSUNDIALS_ENABLE_PYTHON=ON`` option through `scikit-build-core <https://scikit-build-core.readthedocs.io/en/latest/index.html>`__.
 After the initial build, if you make any changes within SUNDIALS a rebuild will be triggered when you import the ``sundials4py``
-module wihtin a Python script.
+module within a Python script.
 
 Different CMake options can be controlled by passing them through the ``--config-settings`` (or ``-C`` for short) option of ``pip install``.
 E.g.,
@@ -122,7 +122,7 @@ not the correctness of SUNDIALS itself.
 All user-supplied Python functions have to be wrapped with a functions which converts between a ``std::function`` and a raw C function pointer.
 This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in the ``user_data`` pointer (for the integrator memory structures), or in 
 the ``python`` member of the struct for modules which don't provide ``user_data`` back to their callbacks. 
-The upshot is that everytime we add a user-supplied function, we need to add a new member to the function table struct,
+The upshot is that every time we add a user-supplied function, we need to add a new member to the function table struct,
 and add a wrapper for it. We also have to add a wrapper for the "Set" function that takes the user-supplied function.
 
 Here is an example for ARKODE:

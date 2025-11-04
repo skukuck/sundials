@@ -4340,13 +4340,13 @@ fresult = swigc_FIDASensReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FIDASensSStolerances(ida_mem, reltols, abstols) &
+function FIDASensSStolerances(ida_mem, reltols, abstols_1d) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: reltols
-real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols
+real(C_DOUBLE), dimension(*), target, intent(inout) :: abstols_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
@@ -4354,7 +4354,7 @@ type(C_PTR) :: farg3
 
 farg1 = ida_mem
 farg2 = reltols
-farg3 = c_loc(abstols(1))
+farg3 = c_loc(abstols_1d(1))
 fresult = swigc_FIDASensSStolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function

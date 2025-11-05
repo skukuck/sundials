@@ -274,19 +274,6 @@ struct cvodea_user_supplied_fn_table
     lsjactimesvecfnB, lsjactimesvecfnBS, lslinsysfnB, lslinsysfnBS;
 };
 
-// Helper to extract CVodeMem and adjoint function table
-inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
-{
-  auto mem     = static_cast<CVodeMem>(cv_mem);
-  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(mem->python);
-  if (!fntable)
-  {
-    throw sundials4py::null_function_table(
-      "Failed to get Python adjoint function table from CVODE memory");
-  }
-  return fntable;
-}
-
 inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
 {
   // We must use malloc since CVODEFree calls free
@@ -297,6 +284,29 @@ inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
   std::memset(fn_table, 0, sizeof(cvodea_user_supplied_fn_table));
 
   return fn_table;
+}
+
+inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
+{
+  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(static_cast<CVodeMem>(cv_mem)->python);
+  if (!fntable)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python adjoint function table from CVODE memory");
+  }
+  return fntable;
+}
+
+inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem, int which)
+{
+  auto cvb_mem     = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
+  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
+  if (!fntable)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python adjoint function table from CVODE memory");
+  }
+  return fntable;
 }
 
 template<typename... Args>

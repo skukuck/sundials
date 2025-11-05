@@ -832,6 +832,8 @@ typedef struct CVpolynomialDataMemRec
 
 struct CVodeBMemRec
 {
+  void* python;
+
   /* Index of this backward problem */
   int cv_index;
 

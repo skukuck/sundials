@@ -721,6 +721,8 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
 
   new_cvB_mem->cv_index = ca_mem->ca_nbckpbs;
 
+  new_cvB_mem->python = NULL;
+
   new_cvB_mem->cv_mem = (CVodeMem)cvodeB_mem;
 
   new_cvB_mem->cv_f  = NULL;
@@ -729,7 +731,7 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
   new_cvB_mem->cv_fQ  = NULL;
   new_cvB_mem->cv_fQs = NULL;
 
-  new_cvB_mem->cv_user_data     = NULL;
+  new_cvB_mem->cv_user_data = NULL;
 
   new_cvB_mem->cv_lmem  = NULL;
   new_cvB_mem->cv_lfree = NULL;
@@ -2307,6 +2309,8 @@ static void CVAbckpbDelete(CVodeBMem* cvB_memPtr)
 
     /* Free workspace Nvector */
     N_VDestroy(tmp->cv_y);
+
+    free(tmp->python);
 
     free(tmp);
     tmp = NULL;

@@ -721,8 +721,6 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
 
   new_cvB_mem->cv_index = ca_mem->ca_nbckpbs;
 
-  new_cvB_mem->python = NULL;
-
   new_cvB_mem->cv_mem = (CVodeMem)cvodeB_mem;
 
   new_cvB_mem->cv_f  = NULL;
@@ -2309,8 +2307,6 @@ static void CVAbckpbDelete(CVodeBMem* cvB_memPtr)
 
     /* Free workspace Nvector */
     N_VDestroy(tmp->cv_y);
-
-    free(tmp->python);
 
     free(tmp);
     tmp = NULL;

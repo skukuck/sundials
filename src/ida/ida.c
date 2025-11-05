@@ -298,6 +298,7 @@ void* IDACreate(SUNContext sunctx)
   memset(IDA_mem, 0, sizeof(struct IDAMemRec));
 
   IDA_mem->ida_sunctx = sunctx;
+  IDA_Mem->python     = NULL;
 
   /* Set unit roundoff in IDA_mem */
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;
@@ -305,7 +306,6 @@ void* IDACreate(SUNContext sunctx)
   /* Set default values for integrator optional inputs */
   IDA_mem->ida_res            = NULL;
   IDA_mem->ida_user_data      = NULL;
-  IDA_mem->ida_own_user_data  = SUNFALSE;
   IDA_mem->ida_itol           = IDA_NN;
   IDA_mem->ida_atolmin0       = SUNTRUE;
   IDA_mem->ida_user_efun      = SUNFALSE;
@@ -1723,7 +1723,7 @@ void IDAFree(void** ida_mem)
     IDA_mem->ida_gactive = NULL;
   }
 
-  if (IDA_mem->ida_own_user_data) { free(IDA_mem->ida_user_data); }
+  free(IDA_mem->python);
 
   free(*ida_mem);
   *ida_mem = NULL;

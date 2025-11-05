@@ -101,6 +101,8 @@ typedef struct IDAMemRec
 {
   SUNContext ida_sunctx;
 
+  void* python;
+
   sunrealtype ida_uround; /* machine unit roundoff */
 
   /*--------------------------
@@ -109,7 +111,6 @@ typedef struct IDAMemRec
 
   IDAResFn ida_res;                 /* F(t,y(t),y'(t))=0; the function F     */
   void* ida_user_data;              /* user pointer passed to res            */
-  sunbooleantype ida_own_user_data; /* SUNTRUE if we own user_data and should free it */
 
   int ida_itol;                 /* itol = IDA_SS, IDA_SV, IDA_WF, IDA_NN */
   sunrealtype ida_rtol;         /* relative tolerance                    */
@@ -687,6 +688,8 @@ typedef struct IDApolynomialDataMemRec
  */
 struct IDABMemRec
 {
+  void* python;
+
   /* Index of this backward problem */
   int ida_index;
 
@@ -711,7 +714,6 @@ struct IDABMemRec
 
   /* User user_data */
   void* ida_user_data;
-  sunbooleantype ida_own_user_data; /* SUNTRUE if we own user_data and should free it */
 
   /* Linear solver's data and functions */
 

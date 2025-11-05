@@ -30,41 +30,31 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-#define BIND_IDA_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)                \
-  m.def(                                                                      \
-    #NAME,                                                                    \
-    [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn)       \
-    {                                                                         \
-      void* user_data = nullptr;                                              \
-      IDAGetUserData(ida_mem, &user_data);                                    \
-      if (!user_data)                                                         \
-        throw sundials4py::error_returned(                                    \
-          "Failed to get Python function table from IDAS memory");            \
-      auto fntable    = static_cast<idas_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER = nb::cast(fn);                                         \
-      if (fn) { return NAME(ida_mem, &WRAPPER); }                             \
-      else { return NAME(ida_mem, nullptr); }                                 \
-    },                                                                        \
+#define BIND_IDA_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)          \
+  m.def(                                                                \
+    #NAME,                                                              \
+    [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
+    {                                                                   \
+      auto fn_table    = get_idas_fn_table(ida_mem);                    \
+      fn_table->MEMBER = nb::cast(fn);                                  \
+      if (fn) { return NAME(ida_mem, &WRAPPER); }                       \
+      else { return NAME(ida_mem, nullptr); }                           \
+    },                                                                  \
     __VA_ARGS__)
 
-#define BIND_IDA_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,        \
-                           MEMBER2, WRAPPER2, ...)                             \
-  m.def(                                                                       \
-    #NAME,                                                                     \
-    [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,      \
-       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                     \
-    {                                                                          \
-      void* user_data = nullptr;                                               \
-      IDAGetUserData(ida_mem, &user_data);                                     \
-      if (!user_data)                                                          \
-        throw sundials4py::error_returned(                                     \
-          "Failed to get Python function table from IDAS memory");             \
-      auto fntable     = static_cast<idas_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER1 = nb::cast(fn1);                                        \
-      fntable->MEMBER2 = nb::cast(fn2);                                        \
-      if (fn1) { return NAME(ida_mem, WRAPPER1, WRAPPER2); }                   \
-      else { return NAME(ida_mem, nullptr, WRAPPER2); }                        \
-    },                                                                         \
+#define BIND_IDA_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,   \
+                           MEMBER2, WRAPPER2, ...)                        \
+  m.def(                                                                  \
+    #NAME,                                                                \
+    [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1, \
+       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                \
+    {                                                                     \
+      auto fn_table     = get_idas_fn_table(ida_mem);                     \
+      fn_table->MEMBER1 = nb::cast(fn1);                                  \
+      fn_table->MEMBER2 = nb::cast(fn2);                                  \
+      if (fn1) { return NAME(ida_mem, WRAPPER1, WRAPPER2); }              \
+      else { return NAME(ida_mem, nullptr, WRAPPER2); }                   \
+    },                                                                    \
     __VA_ARGS__)
 
 #define BIND_IDAB_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)                    \
@@ -72,37 +62,29 @@ using namespace sundials::experimental;
     #NAME,                                                                         \
     [](void* ida_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                              \
-      void* user_data = nullptr;                                                   \
-      IDAGetUserDataB(ida_mem, which, &user_data);                                 \
-      if (!user_data)                                                              \
-        throw sundials4py::error_returned(                                         \
-          "Failed to get Python function table from IDAS memory");                 \
-      auto fntable    = static_cast<idasa_user_supplied_fn_table*>(user_data);     \
-      fntable->MEMBER = nb::cast(fn);                                              \
+      void* user_data  = nullptr;                                                  \
+      auto fn_table    = get_idasa_fn_table(ida_mem, which);                       \
+      fn_table->MEMBER = nb::cast(fn);                                             \
       if (fn) { return NAME(ida_mem, which, &WRAPPER); }                           \
       else { return NAME(ida_mem, which, nullptr); }                               \
     },                                                                             \
     __VA_ARGS__)
 
-#define BIND_IDAB_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,        \
-                            MEMBER2, WRAPPER2, ...)                             \
-  m.def(                                                                        \
-    #NAME,                                                                      \
-    [](void* ida_mem, int which,                                                \
-       std::function<std::remove_pointer_t<FN_TYPE1>> fn1,                      \
-       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                      \
-    {                                                                           \
-      void* user_data = nullptr;                                                \
-      IDAGetUserDataB(ida_mem, which, &user_data);                              \
-      if (!user_data)                                                           \
-        throw sundials4py::error_returned(                                      \
-          "Failed to get Python function table from IDAS memory");              \
-      auto fntable     = static_cast<idasa_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER1 = nb::cast(fn1);                                         \
-      fntable->MEMBER2 = nb::cast(fn2);                                         \
-      if (fn1) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); }             \
-      else { return NAME(ida_mem, which, nullptr, WRAPPER2); }                  \
-    },                                                                          \
+#define BIND_IDAB_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
+                            MEMBER2, WRAPPER2, ...)                      \
+  m.def(                                                                 \
+    #NAME,                                                               \
+    [](void* ida_mem, int which,                                         \
+       std::function<std::remove_pointer_t<FN_TYPE1>> fn1,               \
+       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)               \
+    {                                                                    \
+      void* user_data   = nullptr;                                       \
+      auto fn_table     = get_idasa_fn_table(ida_mem, which);            \
+      fn_table->MEMBER1 = nb::cast(fn1);                                 \
+      fn_table->MEMBER2 = nb::cast(fn2);                                 \
+      if (fn1) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); }      \
+      else { return NAME(ida_mem, which, nullptr, WRAPPER2); }           \
+    },                                                                   \
     __VA_ARGS__)
 
 namespace sundials4py {
@@ -128,47 +110,36 @@ void bind_idas(nb::module_& m)
           int ida_status = IDAInit(ida_mem, idas_res_wrapper, t0, yy0, yp0);
 
           auto cb_fns = idas_user_supplied_fn_table_alloc();
-          ida_status  = IDASetUserData(ida_mem, static_cast<void*>(cb_fns));
+          static_cast<IDAMem>(ida_mem)->python = cb_fns;
+
+          ida_status = IDASetUserData(ida_mem, ida_mem);
           if (ida_status != IDA_SUCCESS)
           {
             free(cb_fns);
             throw sundials4py::error_returned(
               "Failed to set user data in IDAS memory");
           }
+
           cb_fns->res = nb::cast(res);
+
           return ida_status;
         });
 
-  // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-  // m.def("IDARootInit",
-  //       [](void* ida_mem, int nrtfn,
-  //          std::function<std::remove_pointer_t<IDARootStdFn>> fn)
-  //       {
-  //         void* user_data = nullptr;
-  //         IDAGetUserData(ida_mem, &user_data);
-  //         if (!user_data)
-  //         {
-  //           throw sundials4py::error_returned(
-  //             "Failed to get Python function table from IDAS memory");
-  //         }
-  //         auto fntable = static_cast<idas_user_supplied_fn_table*>(user_data);
-  //         fntable->rootfn = nb::cast(fn);
-  //         return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
-  //       });
+  m.def("IDARootInit",
+        [](void* ida_mem, int nrtfn,
+           std::function<std::remove_pointer_t<IDARootStdFn>> fn)
+        {
+          auto fn_table    = get_idas_fn_table(ida_mem);
+          fn_table->rootfn = nb::cast(fn);
+          return IDARootInit(ida_mem, nrtfn, &idas_rootfn_wrapper);
+        });
 
   m.def("IDAQuadInit",
         [](void* ida_mem,
            std::function<std::remove_pointer_t<IDAQuadRhsFn>> resQ, N_Vector yQ0)
         {
-          void* user_data = nullptr;
-          IDAGetUserData(ida_mem, &user_data);
-          if (!user_data)
-          {
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          }
-          auto fntable  = static_cast<idas_user_supplied_fn_table*>(user_data);
-          fntable->resQ = nb::cast(resQ);
+          auto fn_table  = get_idas_fn_table(ida_mem);
+          fn_table->resQ = nb::cast(resQ);
           return IDAQuadInit(ida_mem, &idas_resQ_wrapper, yQ0);
         });
 
@@ -204,15 +175,8 @@ void bind_idas(nb::module_& m)
         [](void* ida_mem, std::function<IDAQuadSensRhsStdFn> resQS,
            std::vector<N_Vector> yQS0)
         {
-          void* user_data = nullptr;
-          IDAGetUserData(ida_mem, &user_data);
-          if (!user_data)
-          {
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          }
-          auto fntable   = static_cast<idas_user_supplied_fn_table*>(user_data);
-          fntable->resQS = nb::cast(resQS);
+          auto fn_table   = get_idas_fn_table(ida_mem);
+          fn_table->resQS = nb::cast(resQS);
           return IDAQuadSensInit(ida_mem, idas_resQS_wrapper, yQS0.data());
         });
 
@@ -220,15 +184,8 @@ void bind_idas(nb::module_& m)
         [](void* ida_mem, int Ns, int ism, std::function<IDASensResStdFn> resS,
            std::vector<N_Vector> yS0, std::vector<N_Vector> ypS0)
         {
-          void* user_data = nullptr;
-          IDAGetUserData(ida_mem, &user_data);
-          if (!user_data)
-          {
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          }
-          auto fntable  = static_cast<idas_user_supplied_fn_table*>(user_data);
-          fntable->resS = nb::cast(resS);
+          auto fn_table  = get_idas_fn_table(ida_mem);
+          fn_table->resS = nb::cast(resS);
           return IDASensInit(ida_mem, Ns, ism, idas_resS_wrapper, yS0.data(),
                              ypS0.data());
         });
@@ -246,22 +203,15 @@ void bind_idas(nb::module_& m)
                                     yyB0, ypB0);
 
           auto cb_fns = idasa_user_supplied_fn_table_alloc();
-          ida_status  = IDASetUserDataB(ida_mem, which,
-                                        static_cast<void*>(cb_fns));
+          auto idab_mem = static_cast<IDABMem>(IDAGetAdjIDABmem(ida_mem, which));
+          idab_mem->python = cb_fns;
+
+          ida_status = IDASetUserDataB(ida_mem, which, idab_mem);
           if (ida_status != IDA_SUCCESS)
           {
             free(cb_fns);
             throw sundials4py::error_returned(
               "Failed to set user data in IDAS memory");
-          }
-
-          // Ensure IDAFree will free the user-supplied function table
-          ida_status = idaSetOwnUserDataB(ida_mem, which, SUNTRUE);
-          if (ida_status != IDA_SUCCESS)
-          {
-            free(cb_fns);
-            throw sundials4py::error_returned(
-              "Failed to set user data ownership in IDA memory");
           }
 
           cb_fns->resB = nb::cast(resB);
@@ -273,15 +223,8 @@ void bind_idas(nb::module_& m)
            std::function<std::remove_pointer_t<IDAQuadRhsFnB>> resQB,
            N_Vector yQBO)
         {
-          void* user_data = nullptr;
-          IDAGetUserDataB(ida_mem, which, &user_data);
-          if (!user_data)
-          {
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from IDAS memory");
-          }
-          auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
-          fntable->resQB = nb::cast(resQB);
+          auto fn_table   = get_idasa_fn_table(ida_mem, which);
+          fn_table->resQB = nb::cast(resQB);
           return IDAQuadInitB(ida_mem, which, idas_resQB_wrapper, yQBO);
         });
 
@@ -301,11 +244,6 @@ void bind_idas(nb::module_& m)
                       nb::arg("ida_mem"), nb::arg("which"),
                       nb::arg("jsetupB").none(), nb::arg("jtimesB").none());
 
-  //
-  // TODO(CJB): we can enable these functions with sundials v8.0.0
-  //            we need to add a `int Ns` argument to the callbacks like IDASensResFn has
-  //
-
   // m.def("IDAQuadInitBS",
   //       [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
   //          N_Vector yQBO)
@@ -317,8 +255,8 @@ void bind_idas(nb::module_& m)
   //           throw sundials4py::error_returned(
   //             "Failed to get Python function table from IDAS memory");
   //         }
-  //         auto fntable = static_cast<idasa_user_supplied_fn_table*>(user_data);
-  //         fntable->resQBS = nb::cast(resQBS);
+  //         auto fn_table = static_cast<idasa_user_supplied_fn_table*>(user_data);
+  //         fn_table->resQBS = nb::cast(resQBS);
   //         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
   //       });
 

@@ -57,15 +57,15 @@ def test_idas_ivp(sunctx):
     status = IDASetPreconditioner(solver.get(), None, psolve)
     assert status == IDA_SUCCESS
 
-    # TODO(CJB): enable rootfinding once we have nrtfn as a callback argument
-    # nrtfn = 2
-    # def rootfn(t, yy, yp, gout, _):
-    #     # just a smoke test of the root finding callback
-    #     assert len(gout) == nrtfn
-    #     return 0
+    nrtfn = 2
 
-    # status = IDARootInit(solver.get(), nrtfn, rootfn)
-    # assert status == IDA_SUCCESS
+    def rootfn(t, yy, yp, gout, _):
+        # just a smoke test of the root finding callback
+        assert len(gout) == nrtfn
+        return 0
+
+    status = IDARootInit(solver.get(), nrtfn, rootfn)
+    assert status == IDA_SUCCESS
 
     tout = ode_problem.TF
     status, tret = IDASolve(solver.get(), tout, yy, yp, IDA_NORMAL)
@@ -84,7 +84,6 @@ def test_idas_ivp(sunctx):
 
 
 def test_idas_fsa(sunctx):
-    # Forward Sensitivity Analysis (FSA) with respect to initial condition for DAE
     ode_problem = AnalyticDAE()
 
     solver = IDACreate(sunctx)
@@ -126,8 +125,7 @@ def test_idas_fsa(sunctx):
 
     def resS(Ns, t, yy, yp, resval, yS, ypS, resvalS, _, tmp1, tmp2, tmp3):
         # Sensitivity residuals: d(res)/d(yy) * yyS + d(res)/d(yp) * ypS
-        # For this analytic DAE, the Jacobians are known, but for smoke test, just zero
-        # print(type(resvalS))
+        # For smoke test, just zero out
         for i in range(Ns):
             N_VConst(0.0, resvalS[i])
         return 0
@@ -151,5 +149,70 @@ def test_idas_fsa(sunctx):
 
 
 def test_idas_adjoint(sunctx):
-    # TODO(CJB): implement
-    pass
+    ode_problem = AnalyticDAE()
+
+    solver = IDACreate(sunctx)
+    yy = N_VNew_Serial(2, sunctx)
+    yp = N_VNew_Serial(2, sunctx)
+
+    # y and y' initial conditions
+    ode_problem.set_init_cond(yy, yp, ode_problem.T0)
+
+    ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
+
+    def resfn(t, yy, yp, rr, _):
+        return ode_problem.res(t, yy, yp, rr)
+
+    def psolve(t, yy, yp, rr, r, z, cj, delta, _):
+        return ode_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
+
+    status = IDAInit(solver.get(), resfn, 0.0, yy, yp)
+    assert status == IDA_SUCCESS
+
+    status = IDASStolerances(solver.get(), 1e-4, 1e-4)
+    assert status == IDA_SUCCESS
+
+    status = IDASetLinearSolver(solver.get(), ls, None)
+    assert status == IDA_SUCCESS
+
+    status = IDASetPreconditioner(solver.get(), None, psolve)
+    assert status == IDA_SUCCESS
+
+    # Adjoint (backward) problem setup
+    status = IDAAdjInit(solver.get(), steps=5, interp=IDA_HERMITE)
+    assert status == IDA_SUCCESS
+
+    # # Integrate forward
+    # tout = ode_problem.TF
+    # status, tret = IDASolve(solver.get(), tout, yy, yp, IDA_NORMAL)
+    # assert status == IDA_SUCCESS
+
+    # # Create backward problem
+    # which = 0
+    # yyB = N_VClone(yy)
+    # ypB = N_VClone(yp)
+    # N_VConst(0.0, yyB)
+    # N_VConst(0.0, ypB)
+
+    # def resB(t, yy, yp, rr, _):
+    #     N_VConst(0.0, rr)
+    #     return 0
+
+    # status = IDAInitB(solver.get(), which, resB, tout, yyB, ypB)
+    # assert status == IDA_SUCCESS
+
+    # status = IDASStolerancesB(solver.get(), which, 1e-4, 1e-4)
+    # assert status == IDA_SUCCESS
+
+    # status = IDASetLinearSolverB(solver.get(), which, ls, None)
+    # assert status == IDA_SUCCESS
+
+    # # Integrate backward
+    # tB0 = ode_problem.T0
+    # status, tretB = IDASolveB(solver.get(), tB0, IDA_NORMAL)
+    # assert status == IDA_SUCCESS
+
+    # # Get sensitivities
+    # status, yyBout = IDAGetB(solver.get(), which, yyB)
+    # assert status == IDA_SUCCESS
+    # assert isinstance(yyBout, type(yyB))

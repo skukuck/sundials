@@ -242,15 +242,6 @@ void bind_cvodes(nb::module_& m)
               "Failed to set user data in CVODE memory");
           }
 
-          // Ensure CVodeFree will free the user-supplied function table
-          cv_status = cvSetOwnUserDataB(cv_mem, which, SUNTRUE);
-          if (cv_status != CV_SUCCESS)
-          {
-            free(cb_fns);
-            throw sundials4py::error_returned(
-              "Failed to set user data ownership in CVODE memory");
-          }
-
           // Finally, set the RHS function
           cb_fns->fB = nb::cast(fB);
 

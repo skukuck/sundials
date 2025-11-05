@@ -87,27 +87,6 @@ int CVodeSetUserData(void* cvode_mem, void* user_data)
 }
 
 /*
- * cvSetOwnUserData
- *
- * Specifies whether the user data pointer is owned by CVODES.
- */
-
-int cvSetOwnUserData(void* cvode_mem, sunbooleantype own_user_data)
-{
-  CVodeMem cv_mem;
-
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
-  }
-
-  cv_mem = (CVodeMem)cvode_mem;
-
-  return (CV_SUCCESS);
-}
-
-/*
  * CVodeSetMonitorFn
  *
  * Specifies the user function to call for monitoring

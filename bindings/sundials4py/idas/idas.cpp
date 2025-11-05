@@ -203,7 +203,7 @@ void bind_idas(nb::module_& m)
                                     yyB0, ypB0);
 
           auto cb_fns = idasa_user_supplied_fn_table_alloc();
-          auto idab_mem = static_cast<IDABMem>(IDAGetAdjIDABmem(ida_mem, which));
+          auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
           idab_mem->python = cb_fns;
 
           ida_status = IDASetUserDataB(ida_mem, which, idab_mem);

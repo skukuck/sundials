@@ -688,8 +688,6 @@ typedef struct IDApolynomialDataMemRec
  */
 struct IDABMemRec
 {
-  void* python;
-
   /* Index of this backward problem */
   int ida_index;
 

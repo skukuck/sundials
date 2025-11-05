@@ -350,8 +350,6 @@ static void IDAAbckpbDelete(IDABMem* IDAB_memPtr)
   N_VDestroy(IDAB_mem->ida_yy);
   N_VDestroy(IDAB_mem->ida_yp);
 
-  free(IDAB_mem->python);
-
   /* Free the node itself. */
   free(IDAB_mem);
   IDAB_mem = NULL;

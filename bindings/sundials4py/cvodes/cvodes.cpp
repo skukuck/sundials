@@ -220,7 +220,6 @@ void bind_cvodes(nb::module_& m)
           int cv_status = CVodeInitB(cv_mem, which, cvode_fB_wrapper, tB0, yB0);
 
           auto cb_fns     = cvodea_user_supplied_fn_table_alloc();
-
           auto cvb_mem =
             static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
           cvb_mem->python = cb_fns;
@@ -233,9 +232,7 @@ void bind_cvodes(nb::module_& m)
               "Failed to set user data in CVODE memory");
           }
 
-          // Finally, set the RHS function
           cb_fns->fB = nb::cast(fB);
-
           return cv_status;
         });
 

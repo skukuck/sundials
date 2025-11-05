@@ -23,6 +23,7 @@
 
 #include <sundials/sundials_core.hpp>
 
+#include "sundials/sundials_types.h"
 #include "sundials4py_helpers.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -90,12 +91,12 @@ using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout,
 inline int cvode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
                                 void* user_data)
 {
-  auto cv_mem = static_cast<CVodeMem>(user_data);
+  auto cv_mem   = static_cast<CVodeMem>(user_data);
   auto fn_table = get_cvode_fn_table(user_data);
   auto fn       = nb::cast<std::function<CVRootStdFn>>(fn_table->rootfn);
 
   sundials4py::Array1d gout(gout_1d,
-                             {static_cast<unsigned long>(cv_mem->cv_nrtfn)});
+                            {static_cast<unsigned long>(cv_mem->cv_nrtfn)});
 
   return fn(t, y, gout, nullptr);
 }
@@ -390,39 +391,156 @@ inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
   return std::get<0>(result);
 }
 
-// template<typename... Args>
-// inline int cvode_fQBS_wrapper(Args... args)
-// {
-// }
+using CVQuadRhsStdFnBS = int(sunrealtype t, N_Vector y,
+                             std::vector<N_Vector> yS_1d, N_Vector yB,
+                             N_Vector qBdot, void* user_dataB);
 
-// template<typename... Args>
-// inline int cvode_lsjacfnBS_wrapper(Args... args)
-// {
-// }
+inline int cvode_fQBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
+                              N_Vector yB, N_Vector qBdot, void* user_dataB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<CVQuadRhsStdFnBS>>(fn_table->fQBS);
+  auto Ns       = cv_mem->cv_Ns;
 
-// template<typename... Args>
-// inline int cvode_lsprecsetupfnBS_wrapper(Args... args)
-// {
-// }
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
 
-// template<typename... Args>
-// inline int cvode_lsprecsolvefnBS_wrapper(Args... args)
-// {
-// }
+  return fn(t, y, yS, yB, qBdot, nullptr);
+}
 
-// template<typename... Args>
-// inline int cvode_lsjactimessetupfnBS_wrapper(Args... args)
-// {
-// }
+using CVLsJacStdFnBS = int(sunrealtype t, N_Vector y,
+                           std::vector<N_Vector> yS_1d, N_Vector yB,
+                           N_Vector fyB, SUNMatrix JB, void* user_dataB,
+                           N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B);
 
-// template<typename... Args>
-// inline int cvode_lsjactimesvecfnBS_wrapper(Args... args)
-// {
-// }
+inline int cvode_lsjacfnBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
+                                   N_Vector yB, N_Vector fyB, SUNMatrix JB,
+                                   void* user_dataB, N_Vector tmp1B,
+                                   N_Vector tmp2B, N_Vector tmp3B)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<CVLsJacStdFnBS>>(fn_table->lsjacfnBS);
+  auto Ns       = cv_mem->cv_Ns;
 
-// template<typename... Args>
-// inline int cvode_lslinsysfnBS_wrapper(Args... args)
-// {
-// }
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  return fn(t, y, yS, yB, fyB, JB, nullptr, tmp1B, tmp2B, tmp3B);
+}
+
+using CVLsPrecSetupStdFnBS = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d, N_Vector yB,
+  N_Vector fyB, sunbooleantype jokB, sunrealtype gammaB, void* user_dataB);
+
+inline int cvode_lsprecsetupfnBS_wrapper(sunrealtype t, N_Vector y,
+                                         N_Vector* yS_1d, N_Vector yB,
+                                         N_Vector fyB, sunbooleantype jokB,
+                                         sunbooleantype* jcurPtrB,
+                                         sunrealtype gammaB, void* user_dataB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn =
+    nb::cast<std::function<CVLsPrecSetupStdFnBS>>(fn_table->lsprecsetupfnBS);
+  auto Ns = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  auto result = fn(t, y, yS, yB, fyB, jokB, gammaB, nullptr);
+
+  *jcurPtrB = std::get<1>(result);
+
+  return std::get<0>(result);
+}
+
+using CVLsPrecSolveStdFnBS = int(sunrealtype t, N_Vector y,
+                                 std::vector<N_Vector> yS_1d, N_Vector yB,
+                                 N_Vector fyB, N_Vector rB, N_Vector zB,
+                                 sunrealtype gammaB, sunrealtype deltaB,
+                                 int lrB, void* user_dataB);
+
+inline int cvode_lsprecsolvefnBS_wrapper(sunrealtype t, N_Vector y,
+                                         N_Vector* yS_1d, N_Vector yB,
+                                         N_Vector fyB, N_Vector rB, N_Vector zB,
+                                         sunrealtype gammaB, sunrealtype deltaB,
+                                         int lrB, void* user_dataB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn =
+    nb::cast<std::function<CVLsPrecSolveStdFnBS>>(fn_table->lsprecsolvefnBS);
+  auto Ns = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  return fn(t, y, yS, yB, fyB, rB, zB, gammaB, deltaB, lrB, nullptr);
+}
+
+using CVLsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d,
+                                     N_Vector yB, N_Vector fyB, void* user_dataB);
+
+inline int cvode_lsjactimessetupfnBS_wrapper(sunrealtype t, N_Vector y,
+                                             N_Vector* yS_1d, N_Vector yB,
+                                             N_Vector fyB, void* user_dataB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<CVLsJacTimesSetupStdFnBS>>(
+    fn_table->lsjactimessetupfnBS);
+  auto Ns = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  return fn(t, y, yS, yB, fyB, nullptr);
+}
+
+using CVLsJacTimesVecStdFnBS = int(N_Vector vB, N_Vector JvB, sunrealtype t,
+                                   N_Vector y, std::vector<N_Vector> yS_1d,
+                                   N_Vector yB, N_Vector fyB, void* user_dataB,
+                                   N_Vector tmpB);
+
+inline int cvode_lsjactimesvecfnBS_wrapper(N_Vector vB, N_Vector JvB,
+                                           sunrealtype t, N_Vector y,
+                                           N_Vector* yS_1d, N_Vector yB,
+                                           N_Vector fyB, void* user_dataB,
+                                           N_Vector tmpB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn =
+    nb::cast<std::function<CVLsJacTimesVecStdFnBS>>(fn_table->lsjactimesvecfnBS);
+  auto Ns = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  return fn(vB, JvB, t, y, yS, yB, fyB, nullptr, tmpB);
+}
+
+using CVLsLinSysStdFnBS = std::tuple<int, sunbooleantype>(
+  sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d, N_Vector yB,
+  N_Vector fyB, SUNMatrix AB, sunbooleantype jokB, sunrealtype gammaB,
+  void* user_dataB, N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B);
+
+inline int cvode_lslinsysfnBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
+                                      N_Vector yB, N_Vector fyB, SUNMatrix AB,
+                                      sunbooleantype jokB,
+                                      sunbooleantype* jcurB, sunrealtype gammaB,
+                                      void* user_dataB, N_Vector tmp1B,
+                                      N_Vector tmp2B, N_Vector tmp3B)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn = nb::cast<std::function<CVLsLinSysStdFnBS>>(fn_table->lslinsysfnBS);
+  auto Ns = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  auto result = fn(t, y, yS, yB, fyB, AB, jokB, gammaB, nullptr, tmp1B, tmp2B,
+                   tmp3B);
+
+  *jcurB = std::get<1>(result);
+
+  return std::get<0>(result);
+}
 
 #endif

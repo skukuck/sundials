@@ -278,36 +278,36 @@ void bind_cvodes(nb::module_& m)
                        cvode_lslinsysfnB_wrapper, nb::arg("cv_mem"),
                        nb::arg("which"), nb::arg("linsysB").none());
 
-  // m.def("CVodeQuadInitBS",
-  //       [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS,
-  //          N_Vector yQBO)
-  //       {
-  //         auto fntable  = get_cvodea_fn_table(cv_mem);
-  //         fntable->fQBS = nb::cast(fQBS);
-  //         return CVodeQuadInitBS(cv_mem, which, cvode_fQBS_wrapper, yQBO);
-  //       });
+  m.def("CVodeQuadInitBS",
+        [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS,
+           N_Vector yQBO)
+        {
+          auto fntable  = get_cvodea_fn_table(cv_mem);
+          fntable->fQBS = nb::cast(fQBS);
+          return CVodeQuadInitBS(cv_mem, which, cvode_fQBS_wrapper, yQBO);
+        });
 
-  // BIND_CVODEB_CALLBACK(CVodeSetJacFnBS, CVLsJacStdFnBS, lsjacfnBS,
-  //                      cvode_lsjacfnBS_wrapper, nb::arg("cv_mem"),
-  //                      nb::arg("which"), nb::arg("jacBS").none());
+  BIND_CVODEB_CALLBACK(CVodeSetJacFnBS, CVLsJacStdFnBS, lsjacfnBS,
+                       cvode_lsjacfnBS_wrapper, nb::arg("cv_mem"),
+                       nb::arg("which"), nb::arg("jacBS").none());
 
-  // BIND_CVODEB_CALLBACK2(CVodeSetPreconditionerBS, CVLsPrecSetupStdFnBS,
-  //                       lsprecsetupfnBS, cvode_lsprecsetupfnBS_wrapper,
-  //                       CVLsPrecSolveStdFnBS, lsprecsolvefnBS,
-  //                       cvode_lsprecsolvefnBS_wrapper, nb::arg("cv_mem"),
-  //                       nb::arg("which"), nb::arg("psetBS").none(),
-  //                       nb::arg("psolveBS").none());
+  BIND_CVODEB_CALLBACK2(CVodeSetPreconditionerBS, CVLsPrecSetupStdFnBS,
+                        lsprecsetupfnBS, cvode_lsprecsetupfnBS_wrapper,
+                        CVLsPrecSolveStdFnBS, lsprecsolvefnBS,
+                        cvode_lsprecsolvefnBS_wrapper, nb::arg("cv_mem"),
+                        nb::arg("which"), nb::arg("psetBS").none(),
+                        nb::arg("psolveBS").none());
 
-  // BIND_CVODEB_CALLBACK2(CVodeSetJacTimesBS, CVLsJacTimesSetupStdFnBS,
-  //                       lsjactimessetupfnBS, cvode_lsjactimessetupfnBS_wrapper,
-  //                       CVLsJacTimesVecStdFnBS, lsjactimesvecfnBS,
-  //                       cvode_lsjactimesvecfnBS_wrapper, nb::arg("cv_mem"),
-  //                       nb::arg("which"), nb::arg("jsetupBS").none(),
-  //                       nb::arg("jtimesBS").none());
+  BIND_CVODEB_CALLBACK2(CVodeSetJacTimesBS, CVLsJacTimesSetupStdFnBS,
+                        lsjactimessetupfnBS, cvode_lsjactimessetupfnBS_wrapper,
+                        CVLsJacTimesVecStdFnBS, lsjactimesvecfnBS,
+                        cvode_lsjactimesvecfnBS_wrapper, nb::arg("cv_mem"),
+                        nb::arg("which"), nb::arg("jsetupBS").none(),
+                        nb::arg("jtimesBS").none());
 
-  // BIND_CVODEB_CALLBACK(CVodeSetLinSysFnBS, CVLsLinSysStdFnBS, lslinsysfnBS,
-  //                      cvode_lslinsysfnBS_wrapper, nb::arg("cv_mem"),
-  //                      nb::arg("which"), nb::arg("linsysBS").none());
+  BIND_CVODEB_CALLBACK(CVodeSetLinSysFnBS, CVLsLinSysStdFnBS, lslinsysfnBS,
+                       cvode_lslinsysfnBS_wrapper, nb::arg("cv_mem"),
+                       nb::arg("which"), nb::arg("linsysBS").none());
 }
 
 } // namespace sundials4py

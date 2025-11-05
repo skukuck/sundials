@@ -38,8 +38,8 @@ using namespace sundials::experimental;
     #NAME,                                                             \
     [](void* cv_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                  \
-      auto fntable    = get_cvode_fn_table(cv_mem);                    \
-      fntable->MEMBER = nb::cast(fn);                                  \
+      auto fn_table    = get_cvode_fn_table(cv_mem);                   \
+      fn_table->MEMBER = nb::cast(fn);                                 \
       if (fn) { return NAME(cv_mem, &WRAPPER); }                       \
       else { return NAME(cv_mem, nullptr); }                           \
     },                                                                 \
@@ -52,9 +52,9 @@ using namespace sundials::experimental;
     [](void* cv_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,  \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                \
     {                                                                     \
-      auto fntable     = get_cvode_fn_table(cv_mem);                      \
-      fntable->MEMBER1 = nb::cast(fn1);                                   \
-      fntable->MEMBER2 = nb::cast(fn2);                                   \
+      auto fn_table     = get_cvode_fn_table(cv_mem);                     \
+      fn_table->MEMBER1 = nb::cast(fn1);                                  \
+      fn_table->MEMBER2 = nb::cast(fn2);                                  \
       if (fn1) { return NAME(cv_mem, WRAPPER1, WRAPPER2); }               \
       else { return NAME(cv_mem, nullptr, WRAPPER2); }                    \
     },                                                                    \
@@ -65,37 +65,29 @@ using namespace sundials::experimental;
     #NAME,                                                                        \
     [](void* cv_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                             \
-      void* user_data = nullptr;                                                  \
-      CVodeGetUserDataB(cv_mem, which, &user_data);                               \
-      if (!user_data)                                                             \
-        throw sundials4py::error_returned(                                        \
-          "Failed to get Python function table from CVODE memory");               \
-      auto fntable    = static_cast<cvodea_user_supplied_fn_table*>(user_data);   \
-      fntable->MEMBER = nb::cast(fn);                                             \
+      void* user_data  = nullptr;                                                 \
+      auto fn_table    = get_cvodea_fn_table(cv_mem);                             \
+      fn_table->MEMBER = nb::cast(fn);                                            \
       if (fn) { return NAME(cv_mem, which, &WRAPPER); }                           \
       else { return NAME(cv_mem, which, nullptr); }                               \
     },                                                                            \
     __VA_ARGS__)
 
-#define BIND_CVODEB_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,       \
-                              MEMBER2, WRAPPER2, ...)                            \
-  m.def(                                                                         \
-    #NAME,                                                                       \
-    [](void* cv_mem, int which,                                                  \
-       std::function<std::remove_pointer_t<FN_TYPE1>> fn1,                       \
-       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                       \
-    {                                                                            \
-      void* user_data = nullptr;                                                 \
-      CVodeGetUserDataB(cv_mem, which, &user_data);                              \
-      if (!user_data)                                                            \
-        throw sundials4py::error_returned(                                       \
-          "Failed to get Python function table from CVODE memory");              \
-      auto fntable     = static_cast<cvodea_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER1 = nb::cast(fn1);                                          \
-      fntable->MEMBER2 = nb::cast(fn2);                                          \
-      if (fn1) { return NAME(cv_mem, which, WRAPPER1, WRAPPER2); }               \
-      else { return NAME(cv_mem, which, nullptr, WRAPPER2); }                    \
-    },                                                                           \
+#define BIND_CVODEB_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
+                              MEMBER2, WRAPPER2, ...)                      \
+  m.def(                                                                   \
+    #NAME,                                                                 \
+    [](void* cv_mem, int which,                                            \
+       std::function<std::remove_pointer_t<FN_TYPE1>> fn1,                 \
+       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
+    {                                                                      \
+      void* user_data   = nullptr;                                         \
+      auto fn_table     = get_cvodea_fn_table(cv_mem);                     \
+      fn_table->MEMBER1 = nb::cast(fn1);                                   \
+      fn_table->MEMBER2 = nb::cast(fn2);                                   \
+      if (fn1) { return NAME(cv_mem, which, WRAPPER1, WRAPPER2); }         \
+      else { return NAME(cv_mem, which, nullptr, WRAPPER2); }              \
+    },                                                                     \
     __VA_ARGS__)
 
 void bind_cvodes(nb::module_& m)
@@ -142,8 +134,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, int nrtfn,
            std::function<std::remove_pointer_t<CVRootFn>> fn)
         {
-          auto fntable    = get_cvode_fn_table(cv_mem);
-          fntable->rootfn = nb::cast(fn);
+          auto fn_table    = get_cvode_fn_table(cv_mem);
+          fn_table->rootfn = nb::cast(fn);
           return CVodeRootInit(cv_mem, nrtfn, &cvode_rootfn_wrapper);
         });
 
@@ -151,8 +143,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, std::function<std::remove_pointer_t<CVQuadRhsFn>> fQ,
            N_Vector yQ0)
         {
-          auto fntable = get_cvode_fn_table(cv_mem);
-          fntable->fQ  = nb::cast(fQ);
+          auto fn_table = get_cvode_fn_table(cv_mem);
+          fn_table->fQ  = nb::cast(fQ);
           return CVodeQuadInit(cv_mem, &cvode_fQ_wrapper, yQ0);
         });
 
@@ -192,8 +184,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, std::function<CVQuadSensRhsStdFn> fQS,
            std::vector<N_Vector> yQS0)
         {
-          auto fntable = get_cvode_fn_table(cv_mem);
-          fntable->fQS = nb::cast(fQS);
+          auto fn_table = get_cvode_fn_table(cv_mem);
+          fn_table->fQS = nb::cast(fQS);
           return CVodeQuadSensInit(cv_mem, cvode_fQS_wrapper, yQS0.data());
         });
 
@@ -201,8 +193,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, int Ns, int ism, std::function<CVSensRhsStdFn> fS,
            std::vector<N_Vector> yS0)
         {
-          auto fntable = get_cvode_fn_table(cv_mem);
-          fntable->fS  = nb::cast(fS);
+          auto fn_table = get_cvode_fn_table(cv_mem);
+          fn_table->fS  = nb::cast(fS);
           return CVodeSensInit(cv_mem, Ns, ism, cvode_fS_wrapper, yS0.data());
         });
 
@@ -211,8 +203,8 @@ void bind_cvodes(nb::module_& m)
            std::function<std::remove_pointer_t<CVSensRhs1Fn>> fS1,
            std::vector<N_Vector> yS0)
         {
-          auto fntable = get_cvode_fn_table(cv_mem);
-          fntable->fS1 = nb::cast(fS1);
+          auto fn_table = get_cvode_fn_table(cv_mem);
+          fn_table->fS1 = nb::cast(fS1);
           return CVodeSensInit1(cv_mem, Ns, ism, cvode_fS1_wrapper, yS0.data());
         });
 
@@ -252,8 +244,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, int which,
            std::function<std::remove_pointer_t<CVQuadRhsFnB>> fQB, N_Vector yQBO)
         {
-          auto fntable = get_cvodea_fn_table(cv_mem);
-          fntable->fQB = nb::cast(fQB);
+          auto fn_table = get_cvodea_fn_table(cv_mem);
+          fn_table->fQB = nb::cast(fQB);
           return CVodeQuadInitB(cv_mem, which, cvode_fQB_wrapper, yQBO);
         });
 
@@ -282,8 +274,8 @@ void bind_cvodes(nb::module_& m)
         [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS,
            N_Vector yQBO)
         {
-          auto fntable  = get_cvodea_fn_table(cv_mem);
-          fntable->fQBS = nb::cast(fQBS);
+          auto fn_table  = get_cvodea_fn_table(cv_mem);
+          fn_table->fQBS = nb::cast(fQBS);
           return CVodeQuadInitBS(cv_mem, which, cvode_fQBS_wrapper, yQBO);
         });
 

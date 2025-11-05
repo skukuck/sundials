@@ -27,6 +27,8 @@
 #include <kinsol/kinsol.h>
 #include <kinsol/kinsol_ls.h>
 
+#include "kinsol_impl.h"
+
 #include <sundials/sundials_core.hpp>
 
 #include "sundials4py_helpers.hpp"
@@ -49,6 +51,20 @@ struct kinsol_user_supplied_fn_table
   nb::object lsjacfn, lsjactimesvecfn, lsjtvsysfn, lsprecsetupfn, lsprecsolvefn;
 };
 
+// Helper to extract KINMem and function table
+inline kinsol_user_supplied_fn_table* get_kinsol_fn_table(void* kin_mem)
+{
+  auto mem     = static_cast<KINMem>(kin_mem);
+  auto fntable = static_cast<kinsol_user_supplied_fn_table*>(mem->python);
+  if (!fntable)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python function table from KINSOL memory");
+  }
+  return fntable;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // KINSOL user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,7 +85,7 @@ template<typename... Args>
 inline int kinsol_sysfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINSysFn>, kinsol_user_supplied_fn_table,
+    std::remove_pointer_t<KINSysFn>, kinsol_user_supplied_fn_table, KINMem,
     1>(&kinsol_user_supplied_fn_table::sysfn, std::forward<Args>(args)...);
 }
 
@@ -81,7 +97,7 @@ inline int kinsol_dampingfn_wrapper(long int iter, N_Vector u_val, N_Vector g_va
                                     sunrealtype* qt_fn_1d, long int depth,
                                     void* user_data, sunrealtype* damping_factor)
 {
-  auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_kinsol_fn_table(user_data);
   auto fn       = nb::cast<std::function<KINDampingStdFn>>(fn_table->dampingfn);
 
   sundials4py::Array1d qt_fn(qt_fn_1d, {static_cast<unsigned long>(depth)});
@@ -104,7 +120,7 @@ inline int kinsol_depthfn_wrapper(long int iter, N_Vector u_val, N_Vector g_val,
                                   void* user_data, long int* new_depth,
                                   sunbooleantype* remove_indices_1d)
 {
-  auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_kinsol_fn_table(user_data);
   auto fn       = nb::cast<std::function<KINDepthStdFn>>(fn_table->depthfn);
 
   std::vector<N_Vector> df(df_1d, df_1d + depth);
@@ -125,7 +141,7 @@ template<typename... Args>
 inline int kinsol_lsjacfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINLsJacFn>, kinsol_user_supplied_fn_table,
+    std::remove_pointer_t<KINLsJacFn>, kinsol_user_supplied_fn_table, KINMem,
     3>(&kinsol_user_supplied_fn_table::lsjacfn, std::forward<Args>(args)...);
 }
 
@@ -133,7 +149,7 @@ template<typename... Args>
 inline int kinsol_lsprecsetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINLsPrecSetupFn>, kinsol_user_supplied_fn_table,
+    std::remove_pointer_t<KINLsPrecSetupFn>, kinsol_user_supplied_fn_table, KINMem,
     1>(&kinsol_user_supplied_fn_table::lsprecsetupfn,
        std::forward<Args>(args)...);
 }
@@ -142,7 +158,7 @@ template<typename... Args>
 inline int kinsol_lsprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINLsPrecSolveFn>, kinsol_user_supplied_fn_table,
+    std::remove_pointer_t<KINLsPrecSolveFn>, kinsol_user_supplied_fn_table, KINMem,
     1>(&kinsol_user_supplied_fn_table::lsprecsolvefn,
        std::forward<Args>(args)...);
 }
@@ -155,7 +171,7 @@ using KINLsJacTimesVecStdFn = std::tuple<int, sunbooleantype>(N_Vector v,
 inline int kinsol_lsjactimesvecfn_wrapper(N_Vector v, N_Vector Jv, N_Vector u,
                                           sunbooleantype* new_u, void* user_data)
 {
-  auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_kinsol_fn_table(user_data);
   auto fn =
     nb::cast<std::function<KINLsJacTimesVecStdFn>>(fn_table->lsjactimesvecfn);
 
@@ -170,7 +186,7 @@ template<typename... Args>
 inline int kinsol_lsjtvsysfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINSysFn>, kinsol_user_supplied_fn_table,
+    std::remove_pointer_t<KINSysFn>, kinsol_user_supplied_fn_table, KINMem,
     1>(&kinsol_user_supplied_fn_table::lsjtvsysfn, std::forward<Args>(args)...);
 }
 

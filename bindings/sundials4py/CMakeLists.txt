@@ -111,7 +111,8 @@ nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
 target_include_directories(
   sundials4py
   PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include ${SUNDIALS_SOURCE_DIR}/src
-          ${SUNDIALS_SOURCE_DIR}/src/arkode)
+          ${SUNDIALS_SOURCE_DIR}/src/arkode ${SUNDIALS_SOURCE_DIR}/src/cvodes 
+          ${SUNDIALS_SOURCE_DIR}/src/idas ${SUNDIALS_SOURCE_DIR}/src/kinsol)
 
 # Link against sundials libraries
 target_link_libraries(

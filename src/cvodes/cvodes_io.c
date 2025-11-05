@@ -104,8 +104,6 @@ int cvSetOwnUserData(void* cvode_mem, sunbooleantype own_user_data)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  cv_mem->cv_own_user_data = own_user_data;
-
   return (CV_SUCCESS);
 }
 

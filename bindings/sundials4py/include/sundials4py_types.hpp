@@ -66,6 +66,23 @@ private:
     "details are given below:\n\t";
 };
 
+class null_function_table : public std::runtime_error
+{
+public:
+  explicit null_function_table(const char* message)
+    : std::runtime_error(base_message + message)
+  {}
+
+  // Constructor that takes a std::string message
+  explicit null_function_table(const std::string& message)
+    : std::runtime_error(base_message + message)
+  {}
+
+private:
+  inline static const std::string base_message =
+    "[sundials4py] the python function table was null:\n\t";
+};
+
 } // namespace sundials4py
 
 #endif

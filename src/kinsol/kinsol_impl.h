@@ -74,6 +74,8 @@ typedef struct KINMemRec
 {
   SUNContext kin_sunctx;
 
+  void* python;
+
   sunrealtype kin_uround; /* machine epsilon (or unit roundoff error)
                                  (defined in sundials_types.h)                */
 
@@ -81,7 +83,6 @@ typedef struct KINMemRec
 
   KINSysFn kin_func;   /* nonlinear system function implementation     */
   void* kin_user_data; /* work space available to func routine         */
-  sunbooleantype kin_own_user_data; /* SUNTRUE if we own user_data and should free it */
   sunrealtype kin_fnormtol;         /* stopping tolerance on L2-norm of function
                                   value                                        */
   sunrealtype kin_scsteptol; /* scaled step length tolerance                 */
@@ -399,10 +400,6 @@ void KINFreeAA(KINMem kin_mem);
 /* Orthogonalization utilities */
 int KINInitOrth(KINMem kin_mem);
 void KINFreeOrth(KINMem kin_mem);
-
-/* Utility function to tell KINSOL to free the user data.
-   This is used by the Python interfaces. */
-int kinSetOwnUserData(void* kinmem, sunbooleantype own_user_data);
 
 /*
  * =================================================================

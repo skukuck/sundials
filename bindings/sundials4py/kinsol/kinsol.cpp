@@ -28,45 +28,33 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 #include "kinsol_usersupplied.hpp"
 
-#define BIND_KINSOL_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)               \
-  m.def(                                                                        \
-    #NAME,                                                                      \
-    [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn)         \
-    {                                                                           \
-      void* user_data = nullptr;                                                \
-      KINGetUserData(kin_mem, &user_data);                                      \
-      if (!user_data)                                                           \
-        throw sundials4py::error_returned(                                      \
-          "Failed to get Python function table from KINSOL memory");            \
-      auto fntable    = static_cast<kinsol_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER = nb::cast(fn);                                           \
-      if (fn) { return NAME(kin_mem, WRAPPER); }                                \
-      else { return NAME(kin_mem, nullptr); }                                   \
-    },                                                                          \
+#define BIND_KINSOL_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)       \
+  m.def(                                                                \
+    #NAME,                                                              \
+    [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
+    {                                                                   \
+      auto fntable    = get_kinsol_fn_table(kin_mem);                   \
+      fntable->MEMBER = nb::cast(fn);                                   \
+      if (fn) { return NAME(kin_mem, WRAPPER); }                        \
+      else { return NAME(kin_mem, nullptr); }                           \
+    },                                                                  \
     __VA_ARGS__)
 
-#define BIND_KINSOL_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,       \
-                              MEMBER2, WRAPPER2, ...)                            \
-  m.def(                                                                         \
-    #NAME,                                                                       \
-    [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,        \
-       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                       \
-    {                                                                            \
-      void* user_data = nullptr;                                                 \
-      KINGetUserData(kin_mem, &user_data);                                       \
-      if (!user_data)                                                            \
-        throw sundials4py::error_returned(                                       \
-          "Failed to get Python function table from KINSOL memory");             \
-      auto fntable     = static_cast<kinsol_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER1 = nb::cast(fn1);                                          \
-      fntable->MEMBER2 = nb::cast(fn2);                                          \
-      if (fn1) { return NAME(kin_mem, WRAPPER1, WRAPPER2); }                     \
-      else { return NAME(kin_mem, nullptr, WRAPPER2); }                          \
-    },                                                                           \
+#define BIND_KINSOL_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
+                              MEMBER2, WRAPPER2, ...)                      \
+  m.def(                                                                   \
+    #NAME,                                                                 \
+    [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,  \
+       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
+    {                                                                      \
+      auto fntable     = get_kinsol_fn_table(kin_mem);                     \
+      fntable->MEMBER1 = nb::cast(fn1);                                    \
+      fntable->MEMBER2 = nb::cast(fn2);                                    \
+      if (fn1) { return NAME(kin_mem, WRAPPER1, WRAPPER2); }               \
+      else { return NAME(kin_mem, nullptr, WRAPPER2); }                    \
+    },                                                                     \
     __VA_ARGS__)
 
 namespace sundials4py {
@@ -91,22 +79,15 @@ void bind_kinsol(nb::module_& m)
         {
           int kin_status = KINInit(kin_mem, kinsol_sysfn_wrapper, tmpl);
 
-          auto cb_fns = kinsol_user_supplied_fn_table_alloc();
-          kin_status  = KINSetUserData(kin_mem, static_cast<void*>(cb_fns));
+          auto cb_fns        = kinsol_user_supplied_fn_table_alloc();
+          auto kinsol_mem    = static_cast<KINMem>(kin_mem);
+          kinsol_mem->python = cb_fns;
+          kin_status         = KINSetUserData(kin_mem, kin_mem);
           if (kin_status != KIN_SUCCESS)
           {
             free(cb_fns);
             throw sundials4py::error_returned(
               "Failed to set user data in KINSOL memory");
-          }
-
-          // Ensure KINFree will free the user-supplied function table
-          kin_status = kinSetOwnUserData(kin_mem, SUNTRUE);
-          if (kin_status != KIN_SUCCESS)
-          {
-            free(cb_fns);
-            throw sundials4py::error_returned(
-              "Failed to set user data ownership in KINSOL memory");
           }
 
           cb_fns->sysfn = nb::cast(sysfn);
@@ -120,20 +101,9 @@ void bind_kinsol(nb::module_& m)
                        kinsol_dampingfn_wrapper, nb::arg("kin_mem"),
                        nb::arg("damping_fn").none());
 
-  m.def(
-    "KINSetDepthFn",
-    [](void* kin_mem, std::function<KINDepthStdFn> depth_fn)
-    {
-      void* user_data = nullptr;
-      KINGetUserData(kin_mem, &user_data);
-      if (!user_data)
-        throw sundials4py::error_returned(
-          "Failed to get Python function table from KINSOL memory");
-      auto fntable     = static_cast<kinsol_user_supplied_fn_table*>(user_data);
-      fntable->depthfn = nb::cast(depth_fn);
-      return KINSetDepthFn(kin_mem, kinsol_depthfn_wrapper);
-    },
-    nb::arg("kin_mem"), nb::arg("depth_fn").none());
+  BIND_KINSOL_CALLBACK(KINSetDepthFn, KINDepthStdFn, depthfn,
+                       kinsol_depthfn_wrapper, nb::arg("kin_mem"),
+                       nb::arg("depth_fn").none());
 
   BIND_KINSOL_CALLBACK2(KINSetPreconditioner, KINLsPrecSetupFn, lsprecsetupfn,
                         kinsol_lsprecsetupfn_wrapper, KINLsPrecSolveFn,

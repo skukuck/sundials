@@ -276,7 +276,6 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   /* Set default values for integrator optional inputs */
   cv_mem->cv_f                = NULL;
   cv_mem->cv_user_data        = NULL;
-  cv_mem->cv_own_user_data    = SUNFALSE;
   cv_mem->cv_itol             = CV_NN;
   cv_mem->cv_atolmin0         = SUNTRUE;
   cv_mem->cv_user_efun        = SUNFALSE;
@@ -1820,7 +1819,7 @@ void CVodeFree(void** cvode_mem)
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
 
-  if (cv_mem->cv_own_user_data) { free(cv_mem->cv_user_data); }
+  free(cv_mem->python);
 
   free(*cvode_mem);
   *cvode_mem = NULL;

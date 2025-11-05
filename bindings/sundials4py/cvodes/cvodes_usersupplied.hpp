@@ -47,6 +47,19 @@ struct cvode_user_supplied_fn_table
   nanobind::object fS, fS1;
 };
 
+// Helper to extract CVodeMem and function table
+inline cvode_user_supplied_fn_table* get_cvode_fn_table(void* cv_mem)
+{
+  auto mem     = static_cast<CVodeMem>(cv_mem);
+  auto fntable = static_cast<cvode_user_supplied_fn_table*>(mem->python);
+  if (!fntable)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python function table from CVODE memory");
+  }
+  return fntable;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // CVODE user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,34 +79,32 @@ inline cvode_user_supplied_fn_table* cvode_user_supplied_fn_table_alloc()
 template<typename... Args>
 inline int cvode_f_wrapper(Args... args)
 {
-  return sundials4py::user_supplied_fn_caller<std::remove_pointer_t<CVRhsFn>,
-                                              cvode_user_supplied_fn_table,
-                                              1>(&cvode_user_supplied_fn_table::f,
-                                                 std::forward<Args>(args)...);
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
+    1>(&cvode_user_supplied_fn_table::f, std::forward<Args>(args)...);
 }
 
-//
-// TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-//
+using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout,
+                        void* user_data);
 
-// using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout, void *user_data);
+inline int cvode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
+                                void* user_data)
+{
+  auto cv_mem = static_cast<CVodeMem>(user_data);
+  auto fn_table = get_cvode_fn_table(user_data);
+  auto fn       = nb::cast<std::function<CVRootStdFn>>(fn_table->rootfn);
 
-// inline int cvode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d, void *user_data)
-// {
-//   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
-//   auto fn       = nb::cast<std::function<CVRootStdFn>>(fn_table->rootfn);
+  sundials4py::Array1d gout(gout_1d,
+                             {static_cast<unsigned long>(cv_mem->cv_nrtfn)});
 
-//   sundials4py::Array1d gout(gout_1d,
-//                              {static_cast<unsigned long>(nrtfn)});
-
-//   return fn(t, y, gout, nullptr);
-// }
+  return fn(t, y, gout, nullptr);
+}
 
 template<typename... Args>
 inline int cvode_ewtfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVEwtFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVEwtFn>, cvode_user_supplied_fn_table, CVodeMem,
     1>(&cvode_user_supplied_fn_table::ewtn, std::forward<Args>(args)...);
 }
 
@@ -101,7 +112,7 @@ template<typename... Args>
 inline int cvode_nlsrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
     1>(&cvode_user_supplied_fn_table::fNLS, std::forward<Args>(args)...);
 }
 
@@ -109,7 +120,7 @@ template<typename... Args>
 inline int cvode_lsjacfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsJacFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVLsJacFn>, cvode_user_supplied_fn_table, CVodeMem,
     4>(&cvode_user_supplied_fn_table::lsjacfn, std::forward<Args>(args)...);
 }
 
@@ -122,7 +133,7 @@ inline int cvode_lsprecsetupfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
                                        sunbooleantype* jcurPtr,
                                        sunrealtype gamma, void* user_data)
 {
-  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_cvode_fn_table(user_data);
   auto fn = nb::cast<std::function<CVLsPrecSetupStdFn>>(fn_table->lsprecsetupfn);
 
   auto result = fn(t, y, fy, jok, gamma, nullptr);
@@ -137,7 +148,8 @@ inline int cvode_lsprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsPrecSolveFn>, cvode_user_supplied_fn_table,
-    1>(&cvode_user_supplied_fn_table::lsprecsolvefn, std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsprecsolvefn,
+                 std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -145,8 +157,8 @@ inline int cvode_lsjactimessetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesSetupFn>, cvode_user_supplied_fn_table,
-    1>(&cvode_user_supplied_fn_table::lsjactimessetupfn,
-       std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsjactimessetupfn,
+                 std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -154,8 +166,8 @@ inline int cvode_lsjactimesvecfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesVecFn>, cvode_user_supplied_fn_table,
-    2>(&cvode_user_supplied_fn_table::lsjactimesvecfn,
-       std::forward<Args>(args)...);
+    CVodeMem, 2>(&cvode_user_supplied_fn_table::lsjactimesvecfn,
+                 std::forward<Args>(args)...);
 }
 
 using CVLsLinSysStdFn = std::tuple<int, sunbooleantype>(
@@ -169,7 +181,7 @@ inline int cvode_lslinsysfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
                                     void* user_data, N_Vector tmp1,
                                     N_Vector tmp2, N_Vector tmp3)
 {
-  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_cvode_fn_table(user_data);
   auto fn = nb::cast<std::function<CVLsLinSysStdFn>>(fn_table->lslinsysfn);
 
   auto result = fn(t, y, fy, M, jok, gamma, nullptr, tmp1, tmp2, tmp3);
@@ -183,7 +195,7 @@ template<typename... Args>
 inline int cvode_lsjacrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
     1>(&cvode_user_supplied_fn_table::lsjacrhsfn, std::forward<Args>(args)...);
 }
 
@@ -191,7 +203,7 @@ template<typename... Args>
 inline int cvode_projfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVProjFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVProjFn>, cvode_user_supplied_fn_table, CVodeMem,
     1>(&cvode_user_supplied_fn_table::projfn, std::forward<Args>(args)...);
 }
 
@@ -199,7 +211,7 @@ template<typename... Args>
 inline int cvode_fQ_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVQuadRhsFn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVQuadRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
     1>(&cvode_user_supplied_fn_table::fQ, std::forward<Args>(args)...);
 }
 
@@ -212,7 +224,7 @@ inline int cvode_fQS_wrapper(int Ns, sunrealtype t, N_Vector y, N_Vector* yS_1d,
                              N_Vector yQdot, N_Vector* yQSdot_1d,
                              void* user_data, N_Vector tmp, N_Vector tmpQ)
 {
-  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_cvode_fn_table(user_data);
   auto fn       = nb::cast<std::function<CVQuadSensRhsStdFn>>(fn_table->fQS);
 
   std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
@@ -229,7 +241,7 @@ inline int cvode_fS_wrapper(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
                             N_Vector* yS, N_Vector* ySdot, void* user_data,
                             N_Vector tmp1, N_Vector tmp2)
 {
-  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_cvode_fn_table(user_data);
   auto fn       = nb::cast<std::function<CVSensRhsStdFn>>(fn_table->fS);
 
   std::vector<N_Vector> yS_1d(yS, yS + Ns);
@@ -242,7 +254,7 @@ template<typename... Args>
 inline int cvode_fS1_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVSensRhs1Fn>, cvode_user_supplied_fn_table,
+    std::remove_pointer_t<CVSensRhs1Fn>, cvode_user_supplied_fn_table, CVodeMem,
     3>(&cvode_user_supplied_fn_table::fS1, std::forward<Args>(args)...);
 }
 
@@ -261,6 +273,19 @@ struct cvodea_user_supplied_fn_table
     lsjactimesvecfnB, lsjactimesvecfnBS, lslinsysfnB, lslinsysfnBS;
 };
 
+// Helper to extract CVodeMem and adjoint function table
+inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
+{
+  auto mem     = static_cast<CVodeMem>(cv_mem);
+  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(mem->python);
+  if (!fntable)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python adjoint function table from CVODE memory");
+  }
+  return fntable;
+}
+
 inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
 {
   // We must use malloc since CVODEFree calls free
@@ -277,7 +302,7 @@ template<typename... Args>
 inline int cvode_fB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVRhsFnB>, cvodea_user_supplied_fn_table,
+    std::remove_pointer_t<CVRhsFnB>, cvodea_user_supplied_fn_table, CVodeMem,
     1>(&cvodea_user_supplied_fn_table::fB, std::forward<Args>(args)...);
 }
 
@@ -285,7 +310,7 @@ template<typename... Args>
 inline int cvode_fQB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVQuadRhsFnB>, cvodea_user_supplied_fn_table,
+    std::remove_pointer_t<CVQuadRhsFnB>, cvodea_user_supplied_fn_table, CVodeMem,
     1>(&cvodea_user_supplied_fn_table::fQB, std::forward<Args>(args)...);
 }
 
@@ -293,7 +318,7 @@ template<typename... Args>
 inline int cvode_lsjacfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsJacFnB>, cvodea_user_supplied_fn_table,
+    std::remove_pointer_t<CVLsJacFnB>, cvodea_user_supplied_fn_table, CVodeMem,
     4>(&cvodea_user_supplied_fn_table::lsjacfnB, std::forward<Args>(args)...);
 }
 
@@ -306,7 +331,7 @@ inline int cvode_lsprecsetupfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
                                         sunbooleantype* jcurPtrB,
                                         sunrealtype gammaB, void* user_dataB)
 {
-  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
   auto fn = nb::cast<std::function<CVLsPrecSetupStdFnB>>(fn_table->lsprecsetupfnB);
 
   auto result = fn(t, y, yB, fyB, jokB, gammaB, nullptr);
@@ -321,8 +346,8 @@ inline int cvode_lsprecsolvefnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsPrecSolveFnB>, cvodea_user_supplied_fn_table,
-    1>(&cvodea_user_supplied_fn_table::lsprecsolvefnB,
-       std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsprecsolvefnB,
+                 std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -330,8 +355,8 @@ inline int cvode_lsjactimessetupfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesSetupFnB>, cvodea_user_supplied_fn_table,
-    1>(&cvodea_user_supplied_fn_table::lsjactimessetupfnB,
-       std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsjactimessetupfnB,
+                 std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -339,8 +364,8 @@ inline int cvode_lsjactimesvecfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesVecFnB>, cvodea_user_supplied_fn_table,
-    2>(&cvodea_user_supplied_fn_table::lsjactimesvecfnB,
-       std::forward<Args>(args)...);
+    CVodeMem, 2>(&cvodea_user_supplied_fn_table::lsjactimesvecfnB,
+                 std::forward<Args>(args)...);
 }
 
 using CVLsLinSysStdFnB = std::tuple<int, sunbooleantype>(
@@ -355,7 +380,7 @@ inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
                                      N_Vector tmp1B, N_Vector tmp2B,
                                      N_Vector tmp3B)
 {
-  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
   auto fn = nb::cast<std::function<CVLsLinSysStdFnB>>(fn_table->lslinsysfnB);
 
   auto result = fn(t, y, yB, fyB, AB, jokB, gammaB, nullptr, tmp1B, tmp2B, tmp3B);
@@ -364,11 +389,6 @@ inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
 
   return std::get<0>(result);
 }
-
-//
-// TODO(CJB): we can enable these functions with sundials v8.0.0
-//            we need to add a int Ns argument to the callback like CVSensRhsFn has
-//
 
 // template<typename... Args>
 // inline int cvode_fQBS_wrapper(Args... args)

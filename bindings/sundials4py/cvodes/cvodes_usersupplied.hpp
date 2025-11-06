@@ -52,13 +52,13 @@ struct cvode_user_supplied_fn_table
 inline cvode_user_supplied_fn_table* get_cvode_fn_table(void* cv_mem)
 {
   auto mem     = static_cast<CVodeMem>(cv_mem);
-  auto fntable = static_cast<cvode_user_supplied_fn_table*>(mem->python);
-  if (!fntable)
+  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(mem->python);
+  if (!fn_table)
   {
     throw sundials4py::null_function_table(
       "Failed to get Python function table from CVODE memory");
   }
-  return fntable;
+  return fn_table;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -288,26 +288,26 @@ inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
 
 inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
 {
-  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(
+  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(
     static_cast<CVodeMem>(cv_mem)->python);
-  if (!fntable)
+  if (!fn_table)
   {
     throw sundials4py::null_function_table(
       "Failed to get Python adjoint function table from CVODE memory");
   }
-  return fntable;
+  return fn_table;
 }
 
 inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem, int which)
 {
   auto cvb_mem = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
-  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
-  if (!fntable)
+  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
+  if (!fn_table)
   {
     throw sundials4py::null_function_table(
       "Failed to get Python adjoint function table from CVODE memory");
   }
-  return fntable;
+  return fn_table;
 }
 
 template<typename... Args>

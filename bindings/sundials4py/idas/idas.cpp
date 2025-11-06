@@ -202,7 +202,7 @@ void bind_idas(nb::module_& m)
           int ida_status = IDAInitB(ida_mem, which, idas_resB_wrapper, tB0,
                                     yyB0, ypB0);
 
-          auto cb_fns = idasa_user_supplied_fn_table_alloc();
+          auto cb_fns   = idasa_user_supplied_fn_table_alloc();
           auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
           idab_mem->python = cb_fns;
 
@@ -244,21 +244,36 @@ void bind_idas(nb::module_& m)
                       nb::arg("ida_mem"), nb::arg("which"),
                       nb::arg("jsetupB").none(), nb::arg("jtimesB").none());
 
-  // m.def("IDAQuadInitBS",
-  //       [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
-  //          N_Vector yQBO)
-  //       {
-  //         void* user_data = nullptr;
-  //         IDAGetUserDataB(ida_mem, which, &user_data);
-  //         if (!user_data)
-  //         {
-  //           throw sundials4py::error_returned(
-  //             "Failed to get Python function table from IDAS memory");
-  //         }
-  //         auto fn_table = static_cast<idasa_user_supplied_fn_table*>(user_data);
-  //         fn_table->resQBS = nb::cast(resQBS);
-  //         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
-  //       });
+  m.def("IDAInitBS",
+        [](void* ida_mem, int which, std::function<IDAResStdFnBS> resBS,
+           sunrealtype tB0, N_Vector yyB0, N_Vector ypB0)
+        {
+          int ida_status = IDAInitBS(ida_mem, which, ida_resBS_wrapper, tB0, yyB0, ypB0);
+
+          auto cb_fns   = idasa_user_supplied_fn_table_alloc();
+          auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
+          idab_mem->python = cb_fns;
+
+          ida_status = IDASetUserDataB(ida_mem, which, idab_mem);
+          if (ida_status != IDA_SUCCESS)
+          {
+            free(cb_fns);
+            throw sundials4py::error_returned(
+              "Failed to set user data in IDA memory");
+          }
+
+          cb_fns->resBS = nb::cast(resBS);
+          return ida_status;
+        });
+
+  m.def("IDAQuadInitBS",
+        [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
+           N_Vector yQBO)
+        {
+          auto fn_table = get_idasa_fn_table(ida_mem, which);
+          fn_table->resQBS = nb::cast(resQBS);
+          return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
+        });
 
   // BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
   //                     lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,

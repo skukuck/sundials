@@ -266,6 +266,30 @@ void bind_cvodes(nb::module_& m)
                        cvode_lslinsysfnB_wrapper, nb::arg("cv_mem"),
                        nb::arg("which"), nb::arg("linsysB").none());
 
+  m.def("CVodeInitBS",
+        [](void* cv_mem, int which,
+           std::function<CVRhsStdFnBS> fBS, sunrealtype tB0,
+           N_Vector yB0)
+        {
+          int cv_status = CVodeInitBS(cv_mem, which, cvode_fBS_wrapper, tB0, yB0);
+
+          auto cb_fns     = cvodea_user_supplied_fn_table_alloc();
+          auto cvb_mem =
+            static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
+          cvb_mem->python = cb_fns;
+
+          cv_status = CVodeSetUserDataB(cv_mem, which, cvb_mem);
+          if (cv_status != CV_SUCCESS)
+          {
+            free(cb_fns);
+            throw sundials4py::error_returned(
+              "Failed to set user data in CVODE memory");
+          }
+
+          cb_fns->fBS = nb::cast(fBS);
+          return cv_status;
+        });
+
   m.def("CVodeQuadInitBS",
         [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS,
            N_Vector yQBO)

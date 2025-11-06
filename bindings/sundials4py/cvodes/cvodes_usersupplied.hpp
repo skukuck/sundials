@@ -266,7 +266,7 @@ inline int cvode_fS1_wrapper(Args... args)
 struct cvodea_user_supplied_fn_table
 {
   // cvode adjoint user-supplied function pointers
-  nb::object fB, fQB, fQBS;
+  nb::object fB, fBS, fQB, fQBS;
 
   // cvode_ls adjoint user-supplied function pointers
   nb::object lsjacfnB, lsjacfnBS, lsprecsetupfnB, lsprecsetupfnBS,
@@ -288,7 +288,8 @@ inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
 
 inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
 {
-  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(static_cast<CVodeMem>(cv_mem)->python);
+  auto fntable = static_cast<cvodea_user_supplied_fn_table*>(
+    static_cast<CVodeMem>(cv_mem)->python);
   if (!fntable)
   {
     throw sundials4py::null_function_table(
@@ -299,7 +300,7 @@ inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
 
 inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem, int which)
 {
-  auto cvb_mem     = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
+  auto cvb_mem = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
   auto fntable = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
   if (!fntable)
   {
@@ -401,6 +402,22 @@ inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
   return std::get<0>(result);
 }
 
+using CVRhsStdFnBS = int(sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d,
+                         N_Vector yB, N_Vector yBdot, void* user_dataB);
+
+inline int cvode_fBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
+                             N_Vector yB, N_Vector yBdot, void* user_dataB)
+{
+  auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<CVRhsStdFnBS>>(fn_table->fBS);
+  auto Ns       = cv_mem->cv_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+  return fn(t, y, yS, yB, yBdot, nullptr);
+}
+
 using CVQuadRhsStdFnBS = int(sunrealtype t, N_Vector y,
                              std::vector<N_Vector> yS_1d, N_Vector yB,
                              N_Vector qBdot, void* user_dataB);
@@ -486,8 +503,9 @@ inline int cvode_lsprecsolvefnBS_wrapper(sunrealtype t, N_Vector y,
   return fn(t, y, yS, yB, fyB, rB, zB, gammaB, deltaB, lrB, nullptr);
 }
 
-using CVLsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d,
-                                     N_Vector yB, N_Vector fyB, void* user_dataB);
+using CVLsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector y,
+                                     std::vector<N_Vector> yS_1d, N_Vector yB,
+                                     N_Vector fyB, void* user_dataB);
 
 inline int cvode_lsjactimessetupfnBS_wrapper(sunrealtype t, N_Vector y,
                                              N_Vector* yS_1d, N_Vector yB,

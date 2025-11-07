@@ -114,6 +114,25 @@ void bind_arkode(nb::module_& m)
   //         return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
   //       });
 
+  BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKEwtFn, ewtn, arkode_ewtfn_wrapper,
+                       nb::arg("arkode_mem"), nb::arg("efun").none());
+
+  BIND_ARKODE_CALLBACK(ARKodeResFtolerance, ARKRwtFn, rwtn, arkode_rwtfn_wrapper,
+                       nb::arg("arkode_mem"), nb::arg("efun").none());
+
+  // TODO(CJB): need do this one manually
+  // BIND_ARKODE_CALLBACK(ARKodeSetStabilityFn, ARKExpStabFn, expstabfn,
+  //                      arkode_expstabfn_wrapper, nb::arg("arkode_mem"),
+  //                      nb::arg("expstabfn").none());
+
+  // TODO(CJB): manually bind ARKodeResize which takes ARKodeVecResizeFn
+  // ARKodeResize
+
+  BIND_ARKODE_CALLBACK2(ARKodeSetRelaxFn, ARKRelaxFn, relaxfn,
+                        arkode_relaxfn_wrapper, ARKRelaxJacFn, relaxjacfn,
+                        arkode_relaxjacfn_wrapper, nb::arg("arkode_mem"),
+                        nb::arg("rfn").none(), nb::arg("rjacfn").none());
+
   BIND_ARKODE_CALLBACK(ARKodeSetPostprocessStepFn, ARKPostProcessFn,
                        postprocessstepfn, arkode_postprocessstepfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("postprocessstep").none());
@@ -125,12 +144,6 @@ void bind_arkode(nb::module_& m)
   BIND_ARKODE_CALLBACK(ARKodeSetStagePredictFn, ARKStagePredictFn,
                        stagepredictfn, arkode_stagepredictfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("stagepredict").none());
-
-  BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKEwtFn, ewtn, arkode_ewtfn_wrapper,
-                       nb::arg("arkode_mem"), nb::arg("efun").none());
-
-  BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKRwtFn, rwtn, arkode_rwtfn_wrapper,
-                       nb::arg("arkode_mem"), nb::arg("efun").none());
 
   BIND_ARKODE_CALLBACK(ARKodeSetNlsRhsFn, ARKRhsFn, nlsfi,
                        arkode_nlsrhsfn_wrapper, nb::arg("arkode_mem"),

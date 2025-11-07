@@ -43,7 +43,6 @@ struct arkode_user_supplied_fn_table
   nb::object rootfn;
   nb::object ewtn;
   nb::object rwtn;
-  nb::object adaptfn;
   nb::object expstabfn;
   nb::object vecresizefn;
   nb::object postprocessstepfn;
@@ -53,7 +52,7 @@ struct arkode_user_supplied_fn_table
   nb::object relaxjacfn;
   nb::object nlsfi;
 
-  // akrode_ls user-supplied function pointers
+  // arkode_ls user-supplied function pointers
   nb::object lsjacfn;
   nb::object lsmassfn;
   nb::object lsprecsetupfn;
@@ -163,27 +162,6 @@ inline int arkode_rwtfn_wrapper(Args... args)
     1>(&arkode_user_supplied_fn_table::rwtn, std::forward<Args>(args)...);
 }
 
-using ARKAdapStdFn = std::tuple<int, sunrealtype>(N_Vector y, sunrealtype t,
-                                                  sunrealtype h1, sunrealtype h2,
-                                                  sunrealtype h3, sunrealtype e1,
-                                                  sunrealtype e2, sunrealtype e3,
-                                                  int q, int p, void* user_data);
-
-inline int arkode_adaptfn_wrapper(N_Vector y, sunrealtype t, sunrealtype h1,
-                                  sunrealtype h2, sunrealtype h3, sunrealtype e1,
-                                  sunrealtype e2, sunrealtype e3, int q, int p,
-                                  sunrealtype* hnew, void* user_data)
-{
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<ARKAdapStdFn>>(fn_table->adaptfn);
-
-  auto result = fn(y, t, h1, h2, h3, e1, e2, e3, q, p, nullptr);
-
-  *hnew = std::get<1>(result);
-
-  return std::get<0>(result);
-}
-
 using ARKExpStabStdFn = std::tuple<int, sunrealtype>(N_Vector y, sunrealtype t,
                                                      void* user_data);
 
@@ -191,7 +169,7 @@ inline int arkode_expstabfn_wrapper(N_Vector y, sunrealtype t,
                                     sunrealtype* hstab, void* user_data)
 {
   auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<ARKExpStabStdFn>>(fn_table->adaptfn);
+  auto fn       = nb::cast<std::function<ARKExpStabStdFn>>(fn_table->expstabfn);
 
   auto result = fn(y, t, nullptr);
 

@@ -65,6 +65,7 @@ modules:
     # generator cannot handle functions with optional (i.e. NULLable) parameters that is not 
     # followed by only optional parameters, so we have to do something custom
     - "^ARKodeSetMassLinearSolver$"
+    # TODO(CJB): interface this (now or in the future?)
     # generator cannot yet handle mixing pointer outputs and ** in the same function
     - "^ARKodeGetNonlinearSystemData$"
   arkstep:
@@ -128,6 +129,7 @@ modules:
     - "^MRIStepInnerStepper_Set.*Fn$"
     - "^MRIStepSetPreInnerFn$"
     - "^MRIStepSetPostInnerFn$"
+    # TODO(CJB): interface this manually
     # generator cannot yet handle mixing pointer outputs and ** in the same function
     - "^MRIStepInnerStepper_GetForcingData$"
   forcingstep:

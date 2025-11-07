@@ -61,7 +61,8 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 ///
 /// \param fn_member is the name of the function in the FnTableType to call
 /// \param args is the arguments to the C function, which will be forwarded to the user-supplied Python function, except user_data, which is intercepted and passed as a nullptr.
-template<typename FnType, typename FnTableType, typename MemType, std::size_t UserDataArg, typename... Args>
+template<typename FnType, typename FnTableType, typename MemType,
+         std::size_t UserDataArg, typename... Args>
 int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
   constexpr size_t N            = sizeof...(Args);
@@ -72,7 +73,7 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
   void* user_data = std::get<user_data_index>(args_tuple);
 
   // Cast user_data to FnTableType*
-  auto mem = static_cast<MemType>(user_data);
+  auto mem      = static_cast<MemType>(user_data);
   auto fn_table = static_cast<FnTableType*>(mem->python);
   auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
 
@@ -81,7 +82,6 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
   return std::apply([&](auto&&... call_args) { return fn(call_args...); },
                     args_tuple);
 }
-
 
 /// This function will call a user-supplied Python function through C++ side wrappers
 /// \tparam FnType is the function signature, e.g., std::remove_pointer_t<CVRhsFn>

@@ -60,15 +60,11 @@ def test_load_vector(sunctx, nvec):
     step_num = 0
     stage_num = 0
     t = 0.0
-    status = SUNAdjointCheckpointScheme_InsertVector(
-        scheme, step_num, stage_num, t, nvec
-    )
+    status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
     assert status == 0
 
     peek = False
-    status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(
-        scheme, step_num, stage_num, peek
-    )
+    status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(scheme, step_num, stage_num, peek)
     assert status == 0
 
 

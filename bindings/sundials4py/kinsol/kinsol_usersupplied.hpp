@@ -64,7 +64,6 @@ inline kinsol_user_supplied_fn_table* get_kinsol_fn_table(void* kin_mem)
   return fntable;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // KINSOL user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,18 +148,18 @@ template<typename... Args>
 inline int kinsol_lsprecsetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINLsPrecSetupFn>, kinsol_user_supplied_fn_table, KINMem,
-    1>(&kinsol_user_supplied_fn_table::lsprecsetupfn,
-       std::forward<Args>(args)...);
+    std::remove_pointer_t<KINLsPrecSetupFn>, kinsol_user_supplied_fn_table,
+    KINMem, 1>(&kinsol_user_supplied_fn_table::lsprecsetupfn,
+               std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline int kinsol_lsprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<KINLsPrecSolveFn>, kinsol_user_supplied_fn_table, KINMem,
-    1>(&kinsol_user_supplied_fn_table::lsprecsolvefn,
-       std::forward<Args>(args)...);
+    std::remove_pointer_t<KINLsPrecSolveFn>, kinsol_user_supplied_fn_table,
+    KINMem, 1>(&kinsol_user_supplied_fn_table::lsprecsolvefn,
+               std::forward<Args>(args)...);
 }
 
 using KINLsJacTimesVecStdFn = std::tuple<int, sunbooleantype>(N_Vector v,

@@ -51,7 +51,7 @@ struct cvode_user_supplied_fn_table
 // Helper to extract CVodeMem and function table
 inline cvode_user_supplied_fn_table* get_cvode_fn_table(void* cv_mem)
 {
-  auto mem     = static_cast<CVodeMem>(cv_mem);
+  auto mem      = static_cast<CVodeMem>(cv_mem);
   auto fn_table = static_cast<cvode_user_supplied_fn_table*>(mem->python);
   if (!fn_table)
   {
@@ -300,7 +300,7 @@ inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
 
 inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem, int which)
 {
-  auto cvb_mem = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
+  auto cvb_mem  = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
   auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
   if (!fn_table)
   {

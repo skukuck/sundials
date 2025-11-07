@@ -219,7 +219,7 @@ void bind_cvodes(nb::module_& m)
         {
           int cv_status = CVodeInitB(cv_mem, which, cvode_fB_wrapper, tB0, yB0);
 
-          auto cb_fns     = cvodea_user_supplied_fn_table_alloc();
+          auto cb_fns = cvodea_user_supplied_fn_table_alloc();
           auto cvb_mem =
             static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
           cvb_mem->python = cb_fns;
@@ -267,13 +267,12 @@ void bind_cvodes(nb::module_& m)
                        nb::arg("which"), nb::arg("linsysB").none());
 
   m.def("CVodeInitBS",
-        [](void* cv_mem, int which,
-           std::function<CVRhsStdFnBS> fBS, sunrealtype tB0,
-           N_Vector yB0)
+        [](void* cv_mem, int which, std::function<CVRhsStdFnBS> fBS,
+           sunrealtype tB0, N_Vector yB0)
         {
           int cv_status = CVodeInitBS(cv_mem, which, cvode_fBS_wrapper, tB0, yB0);
 
-          auto cb_fns     = cvodea_user_supplied_fn_table_alloc();
+          auto cb_fns = cvodea_user_supplied_fn_table_alloc();
           auto cvb_mem =
             static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
           cvb_mem->python = cb_fns;

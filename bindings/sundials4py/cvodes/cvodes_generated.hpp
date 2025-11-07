@@ -238,6 +238,33 @@ m.def(
 m.def("CVodeComputeState", CVodeComputeState, nb::arg("cvode_mem"),
       nb::arg("ycor"), nb::arg("y"));
 
+m.def(
+  "CVodeComputeStateSens",
+  [](void* cvode_mem, std::vector<N_Vector> yScor_1d,
+     std::vector<N_Vector> yS_1d) -> int
+  {
+    auto CVodeComputeStateSens_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<N_Vector> yScor_1d,
+         std::vector<N_Vector> yS_1d) -> int
+    {
+      N_Vector* yScor_1d_ptr = reinterpret_cast<N_Vector*>(
+        yScor_1d.empty() ? nullptr : yScor_1d.data());
+      N_Vector* yS_1d_ptr =
+        reinterpret_cast<N_Vector*>(yS_1d.empty() ? nullptr : yS_1d.data());
+
+      auto lambda_result = CVodeComputeStateSens(cvode_mem, yScor_1d_ptr,
+                                                 yS_1d_ptr);
+      return lambda_result;
+    };
+
+    return CVodeComputeStateSens_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                             yScor_1d, yS_1d);
+  },
+  nb::arg("cvode_mem"), nb::arg("yScor_1d"), nb::arg("yS_1d"));
+
+m.def("CVodeComputeStateSens1", CVodeComputeStateSens1, nb::arg("cvode_mem"),
+      nb::arg("idx"), nb::arg("yScor1"), nb::arg("yS1"));
+
 m.def("CVodeGetDky", CVodeGetDky, nb::arg("cvode_mem"), nb::arg("t"),
       nb::arg("k"), nb::arg("dky"), "Dense output function");
 

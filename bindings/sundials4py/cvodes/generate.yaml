@@ -62,10 +62,12 @@ modules:
     - "^CVodeRootInit$"
     - "^CVodeWFtolerances$"
     #  ** parameters are not yet supported by litgen
-    - "^CVodeComputeStateSens$"
-    - "^CVodeComputeStateSens1$"
-    - "^CVodeGetCurrentStateSens$"
-    - "^CVodeGetNonlinearSystemDataSens$"
+    # - "^CVodeComputeStateSens$"
+    # - "^CVodeComputeStateSens1$"
+    # this function returns just a pointer address that is not useful from Python, so we don't interface it
     - "^CVodeGetAdjCurrentCheckPoint"
+    # TODO(CJB): interface these (in the future?)
     # generator cannot yet handle mixing pointer outputs and ** in the same function
+    - "^CVodeGetCurrentStateSens$"
     - "^CVodeGetNonlinearSystemData$"
+    - "^CVodeGetNonlinearSystemDataSens$"

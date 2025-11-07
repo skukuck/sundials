@@ -58,15 +58,12 @@ modules:
     - "IDASet.*Fn" 
     - "IDASet.*Preconditioner"
     - "IDASetJacTimes.*"
-    # TODO(CJB): interface these functions which take functions pointers
     - "^IDARootInit$"
     - "^IDAWFtolerances$"
-    #  ** parameters are not yet supported by litgen
-    - "^IDAComputeStateSens$"
-    - "^IDAComputeStateSens1$"
+    # TODO(CJB): interface these (in the future?)
+    # generator cannot yet handle mixing pointer outputs and ** in the same function
+    - "^IDAGetAdjCurrentCheckPoint$"
     - "^IDAGetCurrentYSens$"
     - "^IDAGetCurrentYpSens$"
-    - "^IDAGetNonlinearSystemDataSens$"
-    - "^IDAGetAdjCurrentCheckPoint$"
-    # generator cannot yet handle mixing pointer outputs and ** in the same function
     - "^IDAGetNonlinearSystemData$"
+    - "^IDAGetNonlinearSystemDataSens$"

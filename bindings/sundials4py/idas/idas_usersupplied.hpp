@@ -368,9 +368,129 @@ inline int idas_resQBS_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
   return fn(t, y, yp, yS, ypS, yB, ypB, rhsvalBQS, nullptr);
 }
 
-// template<typename... Args>
-// inline int idas_lsprecsetupfnBS_wrapper(Args... args)
-// {
-// }
+using IDALsJacStdFnBS = int(sunrealtype tt, sunrealtype c_jB, N_Vector yy,
+                            N_Vector yp, std::vector<N_Vector> yS_1d,
+                            std::vector<N_Vector> ypS_1d, N_Vector yyB,
+                            N_Vector ypB, N_Vector rrB, SUNMatrix JacB,
+                            void* user_dataB, N_Vector tmp1B, N_Vector tmp2B,
+                            N_Vector tmp3B);
+
+inline int idas_lsjacfnBS_wrapper(sunrealtype tt, sunrealtype c_jB, N_Vector yy,
+                                  N_Vector yp, N_Vector* yS_1d,
+                                  N_Vector* ypS_1d, N_Vector yyB, N_Vector ypB,
+                                  N_Vector rrB, SUNMatrix JacB, void* user_dataB,
+                                  N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B)
+{
+  auto ida_mem  = static_cast<IDAMem>(user_dataB);
+  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<IDALsJacStdFnBS>>(fn_table->lsjacfnBS);
+  auto Ns       = ida_mem->ida_Ns;
+
+  std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+  std::vector<N_Vector> ypS(ypS_1d, ypS_1d + Ns);
+
+  return fn(tt, c_jB, yy, yp, yS, ypS, yyB, ypB, rrB, JacB, nullptr, tmp1B,
+            tmp2B, tmp3B);
+}
+
+using IDALsPrecSetupStdFnBS = int(sunrealtype tt, N_Vector yy, N_Vector yp,
+                                  std::vector<N_Vector> yyS_1d,
+                                  std::vector<N_Vector> ypS_1d, N_Vector yyB,
+                                  N_Vector ypB, N_Vector rrB, sunrealtype c_jB,
+                                  void* user_dataB);
+
+inline int idas_lsprecsetupfnBS_wrapper(sunrealtype tt, N_Vector yy, N_Vector yp,
+                                        N_Vector* yyS_1d, N_Vector* ypS_1d,
+                                        N_Vector yyB, N_Vector ypB, N_Vector rrB,
+                                        sunrealtype c_jB, void* user_dataB)
+{
+  auto ida_mem  = static_cast<IDAMem>(user_dataB);
+  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn =
+    nb::cast<std::function<IDALsPrecSetupStdFnBS>>(fn_table->lsprecsetupfnBS);
+  auto Ns = ida_mem->ida_Ns;
+
+  std::vector<N_Vector> yyS(yyS_1d, yyS_1d + Ns);
+  std::vector<N_Vector> ypS(ypS_1d, ypS_1d + Ns);
+
+  return fn(tt, yy, yp, yyS, ypS, yyB, ypB, rrB, c_jB, nullptr);
+}
+
+using IDALsPrecSolveStdFnBS = int(sunrealtype tt, N_Vector yy, N_Vector yp,
+                                  std::vector<N_Vector> yyS_1d,
+                                  std::vector<N_Vector> ypS_1d, N_Vector yyB,
+                                  N_Vector ypB, N_Vector rrB, N_Vector rvecB,
+                                  N_Vector zvecB, sunrealtype c_jB,
+                                  sunrealtype deltaB, void* user_dataB);
+
+inline int idas_lsprecsolvefnBS_wrapper(sunrealtype tt, N_Vector yy, N_Vector yp,
+                                        N_Vector* yyS_1d, N_Vector* ypS_1d,
+                                        N_Vector yyB, N_Vector ypB,
+                                        N_Vector rrB, N_Vector rvecB,
+                                        N_Vector zvecB, sunrealtype c_jB,
+                                        sunrealtype deltaB, void* user_dataB)
+{
+  auto ida_mem  = static_cast<IDAMem>(user_dataB);
+  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn =
+    nb::cast<std::function<IDALsPrecSolveStdFnBS>>(fn_table->lsprecsolvefnBS);
+  auto Ns = ida_mem->ida_Ns;
+
+  std::vector<N_Vector> yyS(yyS_1d, yyS_1d + Ns);
+  std::vector<N_Vector> ypS(ypS_1d, ypS_1d + Ns);
+
+  return fn(tt, yy, yp, yyS, ypS, yyB, ypB, rrB, rvecB, zvecB, c_jB, deltaB,
+            nullptr);
+}
+
+using IDALsJacTimesSetupStdFnBS = int(sunrealtype t, N_Vector yy, N_Vector yp,
+                                      std::vector<N_Vector> yyS_1d,
+                                      std::vector<N_Vector> ypS_1d,
+                                      N_Vector yyB, N_Vector ypB, N_Vector rrB,
+                                      sunrealtype c_jB, void* user_dataB);
+
+inline int idas_lsjactimessetupfnBS_wrapper(sunrealtype t, N_Vector yy,
+                                            N_Vector yp, N_Vector* yyS_1d,
+                                            N_Vector* ypS_1d, N_Vector yyB,
+                                            N_Vector ypB, N_Vector rrB,
+                                            sunrealtype c_jB, void* user_dataB)
+{
+  auto ida_mem  = static_cast<IDAMem>(user_dataB);
+  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<IDALsJacTimesSetupStdFnBS>>(
+    fn_table->lsjactimessetupfnBS);
+  auto Ns = ida_mem->ida_Ns;
+
+  std::vector<N_Vector> yyS(yyS_1d, yyS_1d + Ns);
+  std::vector<N_Vector> ypS(ypS_1d, ypS_1d + Ns);
+
+  return fn(t, yy, yp, yyS, ypS, yyB, ypB, rrB, c_jB, nullptr);
+}
+
+using IDALsJacTimesVecStdFnBS = int(sunrealtype t, N_Vector yy, N_Vector yp,
+                                    std::vector<N_Vector> yyS_1d,
+                                    std::vector<N_Vector> ypS_1d, N_Vector yyB,
+                                    N_Vector ypB, N_Vector rrB, N_Vector vB,
+                                    N_Vector JvB, sunrealtype c_jB,
+                                    void* user_dataB, N_Vector tmp1B,
+                                    N_Vector tmp2B);
+
+inline int idas_lsjactimesvecfnBS_wrapper(
+  sunrealtype t, N_Vector yy, N_Vector yp, N_Vector* yyS_1d, N_Vector* ypS_1d,
+  N_Vector yyB, N_Vector ypB, N_Vector rrB, N_Vector vB, N_Vector JvB,
+  sunrealtype c_jB, void* user_dataB, N_Vector tmp1B, N_Vector tmp2B)
+{
+  auto ida_mem  = static_cast<IDAMem>(user_dataB);
+  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn       = nb::cast<std::function<IDALsJacTimesVecStdFnBS>>(
+    fn_table->lsjactimesvecfnBS);
+  auto Ns = ida_mem->ida_Ns;
+
+  std::vector<N_Vector> yyS(yyS_1d, yyS_1d + Ns);
+  std::vector<N_Vector> ypS(ypS_1d, ypS_1d + Ns);
+
+  return fn(t, yy, yp, yyS, ypS, yyB, ypB, rrB, vB, JvB, c_jB, nullptr, tmp1B,
+            tmp2B);
+}
 
 #endif

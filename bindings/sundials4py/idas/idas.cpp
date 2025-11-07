@@ -248,7 +248,8 @@ void bind_idas(nb::module_& m)
         [](void* ida_mem, int which, std::function<IDAResStdFnBS> resBS,
            sunrealtype tB0, N_Vector yyB0, N_Vector ypB0)
         {
-          int ida_status = IDAInitBS(ida_mem, which, ida_resBS_wrapper, tB0, yyB0, ypB0);
+          int ida_status = IDAInitBS(ida_mem, which, ida_resBS_wrapper, tB0,
+                                     yyB0, ypB0);
 
           auto cb_fns   = idasa_user_supplied_fn_table_alloc();
           auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
@@ -270,28 +271,28 @@ void bind_idas(nb::module_& m)
         [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
            N_Vector yQBO)
         {
-          auto fn_table = get_idasa_fn_table(ida_mem, which);
+          auto fn_table    = get_idasa_fn_table(ida_mem, which);
           fn_table->resQBS = nb::cast(resQBS);
           return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
         });
 
-  // BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
-  //                     lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,
-  //                     IDALsPrecSolveStdFnBS, lsprecsolvefnBS,
-  //                     idas_lsprecsolvefnBS_wrapper, nb::arg("ida_mem"),
-  //                     nb::arg("which"), nb::arg("psetBS").none(),
-  //                     nb::arg("psolveBS").none());
+  BIND_IDAB_CALLBACK(IDASetJacFnBS, IDALsJacStdFnBS, lsjacfnBS,
+                     idas_lsjacfnBS_wrapper, nb::arg("ida_mem"),
+                     nb::arg("which"), nb::arg("jacBS").none());
 
-  // BIND_IDAB_CALLBACK(IDASetJacFnBS, IDALsJacStdFnBS, lsjacfnBS,
-  //                    idas_lsjacfnBS_wrapper, nb::arg("ida_mem"),
-  //                    nb::arg("which"), nb::arg("jacBS").none());
+  BIND_IDAB_CALLBACK2(IDASetPreconditionerBS, IDALsPrecSetupStdFnBS,
+                      lsprecsetupfnBS, idas_lsprecsetupfnBS_wrapper,
+                      IDALsPrecSolveStdFnBS, lsprecsolvefnBS,
+                      idas_lsprecsolvefnBS_wrapper, nb::arg("ida_mem"),
+                      nb::arg("which"), nb::arg("psetBS").none(),
+                      nb::arg("psolveBS").none());
 
-  // BIND_IDAB_CALLBACK2(IDASetJacTimesBS, IDALsJacTimesSetupStdFnBS,
-  //                     lsjactimessetupfnBS, idas_lsjactimessetupfnBS_wrapper,
-  //                     IDALsJacTimesVecStdFnBS, lsjactimesvecfnBS,
-  //                     idas_lsjactimesvecfnBS_wrapper, nb::arg("ida_mem"),
-  //                     nb::arg("which"), nb::arg("jsetupBS").none(),
-  //                     nb::arg("jtimesBS").none());
+  BIND_IDAB_CALLBACK2(IDASetJacTimesBS, IDALsJacTimesSetupStdFnBS,
+                      lsjactimessetupfnBS, idas_lsjactimessetupfnBS_wrapper,
+                      IDALsJacTimesVecStdFnBS, lsjactimesvecfnBS,
+                      idas_lsjactimesvecfnBS_wrapper, nb::arg("ida_mem"),
+                      nb::arg("which"), nb::arg("jsetupBS").none(),
+                      nb::arg("jtimesBS").none());
 }
 
 } // namespace sundials4py

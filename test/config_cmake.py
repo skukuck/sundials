@@ -770,7 +770,7 @@ def main():
     group = parser.add_argument_group("SYCL Options")
 
     add_arg(
-        group, "--sycl", "SUNDIALS_SYCL", "ENABLE_SYCL", "OFF", "BOOL", "SUNDIALS SYCL support"
+        group, "--sycl", "SUNDIALS_SYCL", "SUNDIALS_ENABLE_SYCL", "OFF", "BOOL", "SUNDIALS SYCL support"
     )
 
     # ------------------------

@@ -446,7 +446,7 @@ C++ Compiler
    The C++ standard used when building SUNDIALS C++ source files.
 
    Default: ``14`` or ``17`` if :cmakeop:`ENABLE_GINKGO` or
-   :cmakeop:`ENABLE_SYCL` are ``ON``
+   :cmakeop:`SUNDIALS_ENABLE_SYCL` are ``ON``
 
    Options: ``14``, ``17``, ``20``, or ``23``
 
@@ -1856,7 +1856,7 @@ To enable RAJA support, set :cmakeop:`ENABLE_RAJA` to ``ON``, set
 :cmakeop:`RAJA_DIR` to the path of the RAJA installation, set
 :cmakeop:`SUNDIALS_RAJA_BACKENDS` to the desired backend (``CUDA``, ``HIP``, or
 ``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`SUNDIALS_ENABLE_HIP`, or
-:cmakeop:`ENABLE_SYCL` to ``ON`` depending on the selected backend. For
+:cmakeop:`SUNDIALS_ENABLE_SYCL` to ``ON`` depending on the selected backend. For
 example, the following command will configure SUNDIALS with RAJA support using
 the CUDA backend (targeting Ampere GPUs):
 
@@ -2083,7 +2083,7 @@ When SYCL support is enabled, the :ref:`SYCL NVector <NVectors.SYCL>` will
 be built (see section :numref:`Installation.LibrariesAndHeaders.Vector.SYCL`
 for the corresponding header file and library).
 
-To enable SYCL support, set the :cmakeop:`ENABLE_SYCL` to ``ON``. For example,
+To enable SYCL support, set the :cmakeop:`SUNDIALS_ENABLE_SYCL` to ``ON``. For example,
 the following command will configure SUNDIALS with SYCL support using Intel
 compilers:
 
@@ -2096,9 +2096,9 @@ compilers:
      -D CMAKE_C_COMPILER=icx \
      -D CMAKE_CXX_COMPILER=icpx \
      -D CMAKE_CXX_FLAGS="-fsycl" \
-     -D ENABLE_SYCL=ON
+     -D SUNDIALS_ENABLE_SYCL=ON
 
-.. cmakeoption:: ENABLE_SYCL
+.. cmakeoption:: SUNDIALS_ENABLE_SYCL
 
    Enable SYCL support
 
@@ -2116,6 +2116,10 @@ compilers:
       i.e., ``dpcpp`` and ``icpx``. When using ``icpx`` the ``-fsycl`` flag and
       any ahead of time compilation flags must be added to
       :cmakeop:`CMAKE_CXX_FLAGS`.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SYCL``
 
 .. cmakeoption:: SUNDIALS_SYCL_2020_UNSUPPORTED
 

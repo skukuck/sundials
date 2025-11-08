@@ -120,10 +120,10 @@ if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
     )
   endif()
 
-  if(SUNDIALS_GINKGO_BACKENDS MATCHES "SYCL" AND NOT ENABLE_SYCL)
+  if(SUNDIALS_GINKGO_BACKENDS MATCHES "SYCL" AND NOT SUNDIALS_ENABLE_SYCL)
     message(
       FATAL_ERROR
-        "SUNDIALS_GINKGO_BACKENDS includes SYCL but SYCL is not enabled. Set ENABLE_SYCL=ON or change the backend."
+        "SUNDIALS_GINKGO_BACKENDS includes SYCL but SYCL is not enabled. Set SUNDIALS_ENABLE_SYCL=ON or change the backend."
     )
   endif()
 

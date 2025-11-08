@@ -57,14 +57,14 @@ sundials_option(SUNDIALS_ENABLE_HIP BOOL "Enable HIP support" OFF DEPRECATED_NAM
 # -------------------------------------------------------------
 # Enable SYCL support?
 # -------------------------------------------------------------
-sundials_option(ENABLE_SYCL BOOL "Enable SYCL support" OFF)
+sundials_option(SUNDIALS_ENABLE_SYCL BOOL "Enable SYCL support" OFF DEPRECATED_NAMES ENABLE_SYCL)
 
 sundials_option(
   SUNDIALS_SYCL_2020_UNSUPPORTED
   BOOL
   "Disable the use of some SYCL 2020 features in SUNDIALS libraries and examples"
   OFF
-  DEPENDS_ON ENABLE_SYCL
+  DEPENDS_ON SUNDIALS_ENABLE_SYCL
   ADVANCED)
 
 # ---------------------------------------------------------------

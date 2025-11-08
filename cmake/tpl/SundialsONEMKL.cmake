@@ -58,7 +58,7 @@ endif()
 
 # Workaround bug in MKLConfig.cmake when using icpx -fsycl instead of dpcpp as
 # the C++ compiler
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   set(DPCPP_COMPILER ON)
 endif()
 

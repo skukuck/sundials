@@ -79,7 +79,7 @@ if(SUNDIALS_ENABLE_HIP)
   list(APPEND sundials_HEADERS sundials_hip_policies.hpp)
 endif()
 
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   list(APPEND sundials_HEADERS sundials_sycl_policies.hpp)
 endif()
 

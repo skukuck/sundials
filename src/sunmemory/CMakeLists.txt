@@ -31,6 +31,6 @@ if(SUNDIALS_ENABLE_HIP)
   add_subdirectory(hip)
 endif()
 
-if(ENABLE_SYCL)
+if(SUNDIALS_ENABLE_SYCL)
   add_subdirectory(sycl)
 endif()

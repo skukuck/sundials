@@ -42,7 +42,7 @@ sundials_option(SUNDIALS_OPENMP_DEVICE_WORKS BOOL
 # ---------------------------------------------------------------
 # Enable Pthread support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_PTHREAD BOOL "Enable Pthreads support" OFF)
+sundials_option(SUNDIALS_ENABLE_PTHREAD BOOL "Enable Pthreads support" OFF DEPRECATED_NAMES ENABLE_PTHREAD PTHREAD_ENABLE)
 
 # -------------------------------------------------------------
 # Enable CUDA support?

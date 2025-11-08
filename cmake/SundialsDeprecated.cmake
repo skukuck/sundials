@@ -19,15 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED PTHREAD_ENABLE)
-  message(DEPRECATION "The CMake option PTHREAD_ENABLE is deprecated. "
-                      "Use ENABLE_PTHREAD instead")
-  set(ENABLE_PTHREAD
-      ${PTHREAD_ENABLE}
-      CACHE BOOL "Enable Pthreads support" FORCE)
-  unset(PTHREAD_ENABLE CACHE)
-endif()
-
 if(DEFINED CUDA_ENABLE)
   message(DEPRECATION "The CMake option CUDA_ENABLE is deprecated. "
                       "Use ENABLE_CUDA instead.")

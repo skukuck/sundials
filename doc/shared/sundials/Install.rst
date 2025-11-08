@@ -1808,7 +1808,7 @@ When PThreads support is enabled, the :ref:`PThreads NVector
 :numref:`Installation.LibrariesAndHeaders.Vector.PThreads` for the corresponding
 header file and library).
 
-To enable PThreads support, set :cmakeop:`ENABLE_PTHREAD` to ``ON``. For
+To enable PThreads support, set :cmakeop:`SUNDIALS_ENABLE_PTHREAD` to ``ON``. For
 example, the following command will configure SUNDIALS with PThreads support:
 
 .. code-block:: bash
@@ -1817,13 +1817,17 @@ example, the following command will configure SUNDIALS with PThreads support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_PTHREAD=ON
+     -D SUNDIALS_ENABLE_PTHREAD=ON
 
-.. cmakeoption:: ENABLE_PTHREAD
+.. cmakeoption:: SUNDIALS_ENABLE_PTHREAD
 
    Enable PThreads support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_PTHREAD``
 
 .. _Installation.Options.RAJA:
 

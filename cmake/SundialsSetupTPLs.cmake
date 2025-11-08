@@ -156,7 +156,7 @@ endif()
 # Find PThreads
 # ---------------------------------------------------------------
 
-if(ENABLE_PTHREAD)
+if(SUNDIALS_ENABLE_PTHREAD)
   include(SundialsPthread)
   list(APPEND SUNDIALS_TPL_LIST "PTHREAD")
 endif()

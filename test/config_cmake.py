@@ -661,7 +661,7 @@ def main():
         group,
         "--pthread",
         "SUNDIALS_PTHREAD",
-        "ENABLE_PTHREAD",
+        "SUNDIALS_ENABLE_PTHREAD",
         "OFF",
         "BOOL",
         "SUNDIALS PThread support",

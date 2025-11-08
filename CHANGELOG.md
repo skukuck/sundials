@@ -114,15 +114,18 @@ include SUNDIALS directly within their CMake builds. Additionally, a consistent
 naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
 table below lists the old CMake option names and the new replacements.
 
-| Old Option     | New Option               |
-|----------------|--------------------------|
-| `BUILD_ARKODE` | `SUNDIALS_ENABLE_ARKODE` |
-| `BUILD_CVODE`  | `SUNDIALS_ENABLE_CVODE`  |
-| `BUILD_CVODES` | `SUNDIALS_ENABLE_CVODES` |
-| `BUILD_IDA`    | `SUNDIALS_ENABLE_IDA`    |
-| `BUILD_IDAS`   | `SUNDIALS_ENABLE_IDAS`   |
-| `BUILD_KINSOL` | `SUNDIALS_ENABLE_KINSOL` |
-| `ENABLE_MPI`   | `SUNDIALS_ENABLE_MPI`    |
+| Old Option             | New Option                      |
+|------------------------|---------------------------------|
+| `BUILD_ARKODE`         | `SUNDIALS_ENABLE_ARKODE`        |
+| `BUILD_CVODE`          | `SUNDIALS_ENABLE_CVODE`         |
+| `BUILD_CVODES`         | `SUNDIALS_ENABLE_CVODES`        |
+| `BUILD_IDA`            | `SUNDIALS_ENABLE_IDA`           |
+| `BUILD_IDAS`           | `SUNDIALS_ENABLE_IDAS`          |
+| `BUILD_KINSOL`         | `SUNDIALS_ENABLE_KINSOL`        |
+| `ENABLE_MPI`           | `SUNDIALS_ENABLE_MPI`           |
+| `ENABLE_OPENMP`        | `SUNDIALS_ENABLE_OPENMP`        |
+| `ENABLE_OPENMP_DEVICE` | `SUNDIALS_ENABLE_OPENMP_DEVICE` |
+| `OPENMP_DEVICE_WORKS`  | `SUNDIALS_OPENMP_DEVICE_WORKS`  |
 
 ## Changes to SUNDIALS in release 7.5.0
 

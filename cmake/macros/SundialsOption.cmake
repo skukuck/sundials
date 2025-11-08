@@ -40,7 +40,7 @@
 function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
-  set(options DEPENDS_ON_THROW_ERROR ADVANCED UNSET_DEPRECATED)
+  set(options DEPENDS_ON_THROW_ERROR ADVANCED)
   set(multiValueArgs OPTIONS DEPENDS_ON DEPRECATED_NAMES)
 
   # parse inputs and create variables arg_<keyword>
@@ -77,7 +77,7 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
             "Multiple deprecated options for ${NAME} provided."
           )
         endif()
-        if(arg_UNSET_DEPRECATED)
+        if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
           unset(${_deprecated_name} CACHE)
         endif()
       endif()

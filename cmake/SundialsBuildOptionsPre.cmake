@@ -163,7 +163,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/arkode")
   sundials_option(SUNDIALS_ENABLE_ARKODE BOOL "Enable the ARKODE library" ON
-                  DEPRECATED_NAME BUILD_ARKODE UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_ARKODE)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_ARKODE")
 else()
   set(SUNDIALS_ENABLE_ARKODE OFF)
@@ -171,7 +171,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/cvode")
   sundials_option(SUNDIALS_ENABLE_CVODE BOOL "Enable the CVODE library" ON
-                  DEPRECATED_NAME BUILD_CVODE UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_CVODE)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_CVODE")
 else()
   set(SUNDIALS_ENABLE_CVODE OFF)
@@ -179,7 +179,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/cvodes")
   sundials_option(SUNDIALS_ENABLE_CVODES BOOL "Build the CVODES library" ON
-                  DEPRECATED_NAME BUILD_CVODES UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_CVODES)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_CVODES")
 else()
   set(SUNDIALS_ENABLE_CVODES OFF)
@@ -187,7 +187,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/ida")
   sundials_option(SUNDIALS_ENABLE_IDA BOOL "Build the IDA library" ON
-                  DEPRECATED_NAME BUILD_IDA UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_IDA)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_IDA")
 else()
   set(SUNDIALS_ENABLE_IDA OFF)
@@ -195,7 +195,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/idas")
   sundials_option(SUNDIALS_ENABLE_IDAS BOOL "Build the IDAS library" ON
-                  DEPRECATED_NAME BUILD_IDAS UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_IDAS)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_IDAS")
 else()
   set(SUNDIALS_ENABLE_IDAS OFF)
@@ -203,7 +203,7 @@ endif()
 
 if(IS_DIRECTORY "${SUNDIALS_SOURCE_DIR}/src/kinsol")
   sundials_option(SUNDIALS_ENABLE_KINSOL BOOL "Build the KINSOL library" ON
-                  DEPRECATED_NAME BUILD_KINSOL UNSET_DEPRECATED)
+                  DEPRECATED_NAME BUILD_KINSOL)
   list(APPEND SUNDIALS_BUILD_LIST "BUILD_KINSOL")
 else()
   set(SUNDIALS_ENABLE_KINSOL OFF)
@@ -215,7 +215,7 @@ endif()
 
 # Fortran 2003 interface is disabled by default
 set(DOCSTR "Enable Fortran 2003 modules")
-sundials_option(SUNDIALS_ENABLE_FORTRAN BOOL "${DOCSTR}" OFF DEPRECATED_NAMES BUILD_FORTRAN_MODULE_INTERFACE UNSET_DEPRECATED)
+sundials_option(SUNDIALS_ENABLE_FORTRAN BOOL "${DOCSTR}" OFF DEPRECATED_NAMES BUILD_FORTRAN_MODULE_INTERFACE)
 
 if(SUNDIALS_ENABLE_FORTRAN)
   # F2003 interface only supports double precision
@@ -421,6 +421,9 @@ sundials_option(SUNDIALS_TEST_ENABLE_PROFILING BOOL "Profile tests" OFF
 sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"
   "${PROJECT_BINARY_DIR}/Testing/caliper" ADVANCED)
+
+sundials_option(SUNDIALS_ENABLE_UNSET_DEPRECATED BOOL
+                "Unset deprecated CMake options" OFF ADVANCED)
 
 # ---------------------------------------------------------------
 # Options for SUNDIALS testing with containers

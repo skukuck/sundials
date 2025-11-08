@@ -41,32 +41,56 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
   set(options DEPENDS_ON_THROW_ERROR ADVANCED UNSET_DEPRECATED)
-  set(oneValueArgs DEPRECATED_NAME)
-  set(multiValueArgs OPTIONS DEPENDS_ON)
+  set(multiValueArgs OPTIONS DEPENDS_ON DEPRECATED_NAMES)
 
   # parse inputs and create variables arg_<keyword>
   cmake_parse_arguments(arg "${options}" "${oneValueArgs}"
                         "${multiValueArgs}" ${ARGN})
 
-  # check for deprecated option
-  if(arg_DEPRECATED_NAME)
-    if(DEFINED ${arg_DEPRECATED_NAME})
+  # check for deprecated options
+  if(arg_DEPRECATED_NAMES)
+    unset(_save_name)
+    foreach(_deprecated_name ${arg_DEPRECATED_NAMES})
+      if(DEFINED ${_deprecated_name})
+        message(
+          WARNING
+          "The option ${_deprecated_name} is deprecated. Use ${NAME} instead."
+        )
+        if(NOT DEFINED _save_name)
+          # save name and value separately in case unset below
+          set(_save_name ${_deprecated_name})
+          set(_save_value ${${_deprecated_name}})
+        else()
+          if(TYPE STREQUAL BOOL)
+            # Check if boolean values match
+            if(NOT (${_save_value} AND ${${_deprecated_name}}) AND (${_save_value} OR ${${_deprecated_name}}))
+              message(FATAL_ERROR "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}.")
+            endif()
+          else()
+            # Check if filepath/string/path match
+            if(NOT (${_save_value} STREQUAL ${${_deprecated_name}}))
+              message(FATAL_ERROR "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}.")
+            endif()
+          endif()
+          message(
+            WARNING
+            "Multiple deprecated options for ${NAME} provided."
+          )
+        endif()
+        if(arg_UNSET_DEPRECATED)
+          unset(${_deprecated_name} CACHE)
+        endif()
+      endif()
+    endforeach()
+    if(DEFINED _save_name)
       if(DEFINED ${NAME})
         message(
           WARNING
-            "Both ${NAME} and ${arg_DEPRECATED_NAME} (deprecated) "
-            "are defined. Ignoring ${arg_DEPRECATED_NAME}."
+          "Both ${NAME} and ${_save_name} (deprecated) are defined. Ignoring "
+          "${_save_name}."
         )
       else()
-        message(
-          WARNING
-            "The option ${arg_DEPRECATED_NAME} is deprecated. Use "
-            "${NAME} instead."
-        )
-        set(${NAME} ${${arg_DEPRECATED_NAME}})
-      endif()
-      if(arg_UNSET_DEPRECATED)
-        unset(${arg_DEPRECATED_NAME} CACHE)
+        set(${NAME} ${_save_value})
       endif()
     endif()
   endif()

@@ -40,7 +40,7 @@
 macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
-  set(options DEPENDS_ON_THROW_ERROR ADVANCED)
+  set(options DEPENDS_ON_THROW_ERROR ADVANCED UNSET_DEPRECATED)
   set(oneValueArgs DEPRECATED_NAME)
   set(multiValueArgs OPTIONS DEPENDS_ON)
 
@@ -65,7 +65,9 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
         )
         set(${NAME} ${${sundials_option_DEPRECATED_NAME}})
       endif()
-      unset(${sundials_option_DEPRECATED_NAME} CACHE)
+      if(sundials_option_UNSET_DEPRECATED)
+        unset(${sundials_option_DEPRECATED_NAME} CACHE)
+      endif()
     endif()
   endif()
 

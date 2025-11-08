@@ -41,11 +41,33 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
   set(options DEPENDS_ON_THROW_ERROR ADVANCED)
+  set(oneValueArgs DEPRECATED_NAME)
   set(multiValueArgs OPTIONS DEPENDS_ON)
 
   # parse inputs and create variables sundials_option_<keyword>
   cmake_parse_arguments(sundials_option "${options}" "${oneValueArgs}"
                         "${multiValueArgs}" ${ARGN})
+
+  # check for deprecated option
+  if(sundials_option_DEPRECATED_NAME)
+    if(DEFINED ${sundials_option_DEPRECATED_NAME})
+      if(DEFINED ${NAME})
+        message(
+          WARNING
+            "Both ${NAME} and ${sundials_option_DEPRECATED_NAME} (deprecated) "
+            "are defined. Ignoring ${sundials_option_DEPRECATED_NAME}."
+        )
+      else()
+        message(
+          WARNING
+            "The option ${sundials_option_DEPRECATED_NAME} is deprecated. Use "
+            "${NAME} instead."
+        )
+        set(${NAME} ${${sundials_option_DEPRECATED_NAME}})
+      endif()
+      unset(${sundials_option_DEPRECATED_NAME} CACHE)
+    endif()
+  endif()
 
   # check if dependencies for this option have been met
   set(all_depends_on_dependencies_met TRUE)

@@ -33,15 +33,6 @@ unset(F2003_INTERFACE_ENABLE CACHE)
 # Deprecated TPL options
 #
 
-if(DEFINED MPI_ENABLE)
-  message(DEPRECATION "The CMake option MPI_ENABLE is deprecated. "
-                      "Use ENABLE_MPI instead.")
-  set(ENABLE_MPI
-      ${MPI_ENABLE}
-      CACHE BOOL "Enable MPI support" FORCE)
-  unset(MPI_ENABLE CACHE)
-endif()
-
 if(DEFINED OPENMP_ENABLE)
   message(DEPRECATION "The CMake option OPENMP_ENABLE is deprecated. "
                       "Use ENABLE_OPENMP instead.")

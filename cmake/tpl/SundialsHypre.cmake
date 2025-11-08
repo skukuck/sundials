@@ -40,9 +40,9 @@ endif()
 # -----------------------------------------------------------------------------
 
 # Using hypre requires building with MPI enabled
-if(NOT ENABLE_MPI)
+if(NOT SUNDIALS_ENABLE_MPI)
   message(
-    FATAL_ERROR "MPI is required for hypre support. Set ENABLE_MPI to ON.")
+    FATAL_ERROR "MPI is required for hypre support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # -----------------------------------------------------------------------------

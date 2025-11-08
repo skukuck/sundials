@@ -138,7 +138,7 @@ following commands will build and install the default configuration:
 The default configuration will install static and shared libraries for all
 SUNDIALS packages and install the associated example codes. Additional features
 can be enabled by specifying more options in the configuration step. For
-example, to enable MPI add ``-D ENABLE_MPI=ON`` to the ``cmake`` command above:
+example, to enable MPI add ``-D SUNDIALS_ENABLE_MPI=ON`` to the ``cmake`` command above:
 
 .. code-block:: bash
 
@@ -146,7 +146,7 @@ example, to enable MPI add ``-D ENABLE_MPI=ON`` to the ``cmake`` command above:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON
+     -D SUNDIALS_ENABLE_MPI=ON
 
 See section :numref:`Installation.Options` below for a complete list of SUNDIALS
 configuration options and additional configuration examples.
@@ -249,7 +249,7 @@ allocation account on Frontier:
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D AMDGPU_TARGETS=gfx90a \
      -D ENABLE_HIP=ON \
-     -D ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
      -D BUILD_FORTRAN_MODULE_INTERFACE=ON
    cd BUILD_DIR
    make -j8 install
@@ -1122,7 +1122,7 @@ will be built (see section
 :numref:`Installation.LibrariesAndHeaders.Vector.ParHyp` for the corresponding
 header file and library).
 
-To enable *hypre* support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
+To enable *hypre* support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
 :cmakeop:`ENABLE_HYPRE` to ``ON``, and set :cmakeop:`HYPRE_DIR` to the root path
 of the *hypre* installation. For example, the following command will configure
 SUNDIALS with *hypre* support:
@@ -1133,7 +1133,7 @@ SUNDIALS with *hypre* support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
      -D ENABLE_HYPRE=ON \
      -D HYPRE_DIR=/path/to/hypre/installation
 
@@ -1525,7 +1525,7 @@ respectively, for the corresponding header files and libraries).
       applications will need to include the path for MPI headers and link against
       the corresponding MPI library.
 
-To enable MPI support, set :cmakeop:`ENABLE_MPI` to ``ON``. If CMake is unable
+To enable MPI support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``. If CMake is unable
 to locate an MPI installation, set the relevant ``MPI_<language>_COMPILER``
 options to the desired MPI compilers. For example, the following command will
 configure SUNDIALS with MPI support:
@@ -1536,13 +1536,17 @@ configure SUNDIALS with MPI support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON
+     -D SUNDIALS_ENABLE_MPI=ON
 
-.. cmakeoption:: ENABLE_MPI
+.. cmakeoption:: SUNDIALS_ENABLE_MPI
 
    Enable MPI support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MPI``
 
 .. cmakeoption:: MPI_C_COMPILER
 
@@ -1558,11 +1562,11 @@ configure SUNDIALS with MPI support:
 
    .. note::
 
-      This option is only needed if MPI is enabled (:cmakeop:`ENABLE_MPI` is
+      This option is only needed if MPI is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is
       ``ON``) and C++ examples are enabled (:cmakeop:`EXAMPLES_ENABLE_CXX` is
       ``ON``). All SUNDIALS solvers can be used from C++ MPI applications by
       without setting any additional configuration options other than
-      :cmakeop:`ENABLE_MPI`.
+      :cmakeop:`SUNDIALS_ENABLE_MPI`.
 
 .. cmakeoption:: MPI_Fortran_COMPILER
 
@@ -1573,7 +1577,7 @@ configure SUNDIALS with MPI support:
    .. note::
 
       This option is triggered only needed if MPI is enabled
-      (:cmakeop:`ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
+      (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
       (:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``).
 
 .. cmakeoption:: MPIEXEC_EXECUTABLE
@@ -1734,7 +1738,7 @@ sections :numref:`Installation.LibrariesAndHeaders.Vector.PETSc` and
 :numref:`Installation.LibrariesAndHeaders.NonlinearSolver.PETScSNES`,
 respectively, for the corresponding header files and libraries).
 
-To enable PETSc support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
+To enable PETSc support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
 :cmakeop:`ENABLE_PETSC` to ``ON``, and set :cmakeop:`PETSC_DIR` to the path of
 the PETSc installation. Alternatively, a user can provide a list of include
 paths in :cmakeop:`PETSC_INCLUDES` and a list of complete paths to the PETSc
@@ -1747,7 +1751,7 @@ configure SUNDIALS with PETSc support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
      -D ENABLE_PETSC=ON \
      -D PETSC_DIR=/path/to/petsc/installation
 
@@ -1883,7 +1887,7 @@ SUNMatrix <SUNMatrix.SLUNRloc>` and :ref:`SuperLU_DIST SUNLinearSolver
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.SuperLU_DIST` for the
 corresponding header files and libraries).
 
-To enable SuperLU_DIST support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
+To enable SuperLU_DIST support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
 :cmakeop:`ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
 the path where SuperLU_DIST is installed. If SuperLU_DIST was built with OpenMP
 enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`ENABLE_OPENMP` to
@@ -2149,7 +2153,7 @@ National Laboratory and is available from the `XBraid GitHub repository
 <https://github.com/XBraid/xbraid>`__. SUNDIALS is regularly tested with the
 latest versions of XBraid, specifically up to version 3.0.0.
 
-To enable XBraid support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
+To enable XBraid support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
 :cmakeop:`ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
 of the XBraid installation. For example, the following command will configure
 SUNDIALS with XBraid support:
@@ -2161,7 +2165,7 @@ SUNDIALS with XBraid support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_INDEX_SIZE="32" \
-     -D ENABLE_MPI=ON \
+     -D SUNDIALS_ENABLE_MPI=ON \
      -D ENABLE_XBRAID=ON \
      -D XBRAID_DIR=/path/to/xbraid/installation
 
@@ -2171,7 +2175,7 @@ SUNDIALS with XBraid support:
    to ``int`` and ``double`` respectively. As such SUNDIALS must be configured
    with :cmakeop:`SUNDIALS_INDEX_SIZE` set to ``32`` and
    :cmakeop:`SUNDIALS_PRECISION` set to ``double``. Additionally, SUNDIALS must
-   be configured with :cmakeop:`ENABLE_MPI` set to ``ON``.
+   be configured with :cmakeop:`SUNDIALS_ENABLE_MPI` set to ``ON``.
 
 .. cmakeoption:: ENABLE_XBRAID
 
@@ -2544,7 +2548,7 @@ include all the header files for the core C++ classes.
    |              | ``sundials/sundials_profiler.hpp``           |
    +--------------+----------------------------------------------+
 
-When MPI support is enabled (:cmakeop:`ENABLE_MPI` is ``ON``), the following
+When MPI support is enabled (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``), the following
 header file provides aliases between MPI data types and SUNDIALS types. The
 alias ``MPI_SUNREALTYPE`` is one of ``MPI_FLOAT``, ``MPI_DOUBLE``, or
 ``MPI_LONG_DOUBLE`` depending on the value of :cmakeop:`SUNDIALS_PRECISION`. The

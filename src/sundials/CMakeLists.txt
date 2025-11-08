@@ -67,7 +67,7 @@ set(sundials_HEADERS
     sundials_types.h
     sundials_version.h)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   list(APPEND sundials_HEADERS sundials_mpi_errors.h)
 endif()
 
@@ -119,14 +119,14 @@ set(sundials_SOURCES
     sundials_profiler.c
     sundials_version.c)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   list(APPEND sundials_SOURCES sundials_mpi_errors.c)
 endif()
 
 # Add prefix with complete path to the source files
 add_prefix(${SUNDIALS_SOURCE_DIR}/src/sundials/ sundials_SOURCES)
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   set(_link_mpi_if_needed PUBLIC MPI::MPI_C
                           $<$<LINK_LANGUAGE:CXX>:MPI::MPI_CXX>)
 endif()
@@ -158,7 +158,7 @@ install(
         ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_logger_macros.h
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sundials/priv")
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   install(
     FILES
       ${SUNDIALS_SOURCE_DIR}/include/sundials/priv/sundials_mpi_errors_impl.h

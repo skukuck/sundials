@@ -40,9 +40,9 @@ endif()
 # -----------------------------------------------------------------------------
 
 # Using PETSc requires building with MPI enabled
-if(ENABLE_PETSC AND NOT ENABLE_MPI)
+if(ENABLE_PETSC AND NOT SUNDIALS_ENABLE_MPI)
   message(
-    FATAL_ERROR "MPI is required for PETSc support. Set ENABLE_MPI to ON.")
+    FATAL_ERROR "MPI is required for PETSc support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 if(SUNDIALS_PRECISION MATCHES "EXTENDED")

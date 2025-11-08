@@ -20,7 +20,7 @@
 # ---------------------------------------------------------------
 # Enable MPI support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_MPI BOOL "Enable MPI support" OFF)
+sundials_option(SUNDIALS_ENABLE_MPI BOOL "Enable MPI support" OFF DEPRECATED_NAMES ENABLE_MPI MPI_ENABLE)
 
 # ---------------------------------------------------------------
 # Enable OpenMP support?

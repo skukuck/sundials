@@ -26,7 +26,7 @@
 # Find MPI
 # ---------------------------------------------------------------
 
-if(ENABLE_MPI)
+if(SUNDIALS_ENABLE_MPI)
   include(SundialsMPI)
   list(APPEND SUNDIALS_TPL_LIST "MPI")
 endif()

@@ -47,10 +47,10 @@ if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
 endif()
 
 # Using SUPERLUDIST requires building with MPI enabled
-if(ENABLE_SUPERLUDIST AND NOT ENABLE_MPI)
+if(ENABLE_SUPERLUDIST AND NOT SUNDIALS_ENABLE_MPI)
   message(
     FATAL_ERROR
-      "MPI is required for SuperLU DIST support. Set ENABLE_MPI to ON.")
+      "MPI is required for SuperLU DIST support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # Using SUPERLUDIST with OpenMP requires building with OpenMP enabled

@@ -561,7 +561,7 @@ def main():
     )
 
     add_arg(
-        group, "--mpi", "SUNDIALS_MPI", "ENABLE_MPI", "OFF", "FILEPATH", "SUNDIALS MPI support"
+        group, "--mpi", "SUNDIALS_MPI", "SUNDIALS_ENABLE_MPI", "OFF", "FILEPATH", "SUNDIALS MPI support"
     )
 
     add_arg(

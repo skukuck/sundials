@@ -26,17 +26,17 @@ if(EXAMPLES_ENABLE_C)
     # implemented)
     add_subdirectory(C_openmp)
   endif()
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
     add_subdirectory(parallel)
   endif()
 endif()
 
 # C++ examples
 if(EXAMPLES_ENABLE_CXX)
-  if(ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
     add_subdirectory(CXX_parallel)
   endif()
-  if(ENABLE_MPI
+  if(SUNDIALS_ENABLE_MPI
      AND MPI_CXX_FOUND
      AND ENABLE_HYPRE
      AND HYPRE_FOUND)
@@ -46,7 +46,7 @@ endif()
 
 # CUDA examples
 if(EXAMPLES_ENABLE_CUDA)
-  if(ENABLE_MPI AND MPI_CXX_FOUND)
+  if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
     add_subdirectory(CUDA_mpi)
   endif()
 endif()
@@ -54,7 +54,7 @@ endif()
 # Fortran examples
 if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)
   endif()
 endif()

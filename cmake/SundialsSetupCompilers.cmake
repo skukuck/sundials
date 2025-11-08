@@ -501,7 +501,7 @@ endforeach()
 # ===============================================================
 
 foreach(lang ${_SUNDIALS_ENABLED_LANGS})
-  if(ENABLE_MPI)
+  if(SUNDIALS_ENABLE_MPI)
     if(DEFINED MPI_${lang}_COMPILER)
       set(_EXAMPLES_${lang}_COMPILER
           "${MPI_${lang}_COMPILER}"

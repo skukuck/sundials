@@ -20,7 +20,7 @@
 # C examples
 if(EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
-  if(ENABLE_MPI AND MPI_C_FOUND)
+  if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
     add_subdirectory(parallel)
   endif()
   if(ENABLE_OPENMP AND OPENMP_FOUND)

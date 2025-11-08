@@ -340,35 +340,35 @@ def main():
         group,
         "--arkode",
         "SUNDIALS_ARKODE",
-        "BUILD_ARKODE",
+        "SUNDIALS_ENABLE_ARKODE",
         "ON",
         "BOOL",
         "Build the ARKODE library",
     )
 
     add_arg(
-        group, "--cvode", "SUNDIALS_CVODE", "BUILD_CVODE", "ON", "BOOL", "Build the CVODE library"
+        group, "--cvode", "SUNDIALS_CVODE", "SUNDIALS_ENABLE_CVODE", "ON", "BOOL", "Build the CVODE library"
     )
 
     add_arg(
         group,
         "--cvodes",
         "SUNDIALS_CVODES",
-        "BUILD_CVODES",
+        "SUNDIALS_ENABLE_CVODES",
         "ON",
         "BOOL",
         "Build the CVODES library",
     )
 
-    add_arg(group, "--ida", "SUNDIALS_IDA", "BUILD_IDA", "ON", "BOOL", "Build the IDA library")
+    add_arg(group, "--ida", "SUNDIALS_IDA", "SUNDIALS_ENABLE_IDA", "ON", "BOOL", "Build the IDA library")
 
-    add_arg(group, "--idas", "SUNDIALS_IDAS", "BUILD_IDAS", "ON", "BOOL", "Build the IDAS library")
+    add_arg(group, "--idas", "SUNDIALS_IDAS", "SUNDIALS_ENABLE_IDAS", "ON", "BOOL", "Build the IDAS library")
 
     add_arg(
         group,
         "--kinsol",
         "SUNDIALS_KINSOL",
-        "BUILD_KINSOL",
+        "SUNDIALS_ENABLE_KINSOL",
         "ON",
         "BOOL",
         "Build the KINSOL library",

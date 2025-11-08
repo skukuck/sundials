@@ -87,10 +87,10 @@ message(STATUS "SUPERLUDIST_ROCM:           ${SUPERLUDIST_ROCM}")
 # If we have the SuperLU_DIST libraries, test them
 if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
 
-  if(SUPERLUDIST_CUDA AND (NOT ENABLE_CUDA))
+  if(SUPERLUDIST_CUDA AND (NOT SUNDIALS_ENABLE_CUDA))
     message(
       FATAL_ERROR
-        "SuperLU_DIST was built with CUDA but SUNDIALS does not have CUDA enabled. Set ENABLE_CUDA=TRUE."
+        "SuperLU_DIST was built with CUDA but SUNDIALS does not have CUDA enabled. Set SUNDIALS_ENABLE_CUDA=TRUE."
     )
   endif()
 

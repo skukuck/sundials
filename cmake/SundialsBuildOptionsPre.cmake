@@ -306,7 +306,7 @@ sundials_option(
 sundials_option(
   SUNDIALS_DEBUG_CUDA_LASTERROR BOOL
   "Enable CUDA last error checks when debugging" OFF
-  DEPENDS_ON SUNDIALS_DEBUG ENABLE_CUDA
+  DEPENDS_ON SUNDIALS_DEBUG SUNDIALS_ENABLE_CUDA
   ADVANCED)
 
 sundials_option(

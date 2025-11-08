@@ -23,7 +23,7 @@ endif()
 
 add_subdirectory(system)
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   add_subdirectory(cuda)
 endif()
 

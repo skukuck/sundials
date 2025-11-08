@@ -679,7 +679,7 @@ def main():
                                       SUNDIALS""",
     )
     add_arg(
-        group, "--cuda", "SUNDIALS_CUDA", "ENABLE_CUDA", "OFF", "BOOL", "SUNDIALS CUDA support"
+        group, "--cuda", "SUNDIALS_CUDA", "SUNDIALS_ENABLE_CUDA", "OFF", "BOOL", "SUNDIALS CUDA support"
     )
 
     # HIP

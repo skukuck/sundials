@@ -92,7 +92,7 @@ endif()
 # CUDA examples
 if(EXAMPLES_ENABLE_CUDA)
 
-  if(ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
+  if(SUNDIALS_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
     add_subdirectory(cuda)
   endif()
 

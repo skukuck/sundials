@@ -39,8 +39,8 @@ endif()
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-if((SUNDIALS_RAJA_BACKENDS MATCHES "CUDA") AND (NOT ENABLE_CUDA))
-  message(FATAL_ERROR "RAJA with a CUDA backend requires ENABLE_CUDA = ON")
+if((SUNDIALS_RAJA_BACKENDS MATCHES "CUDA") AND (NOT SUNDIALS_ENABLE_CUDA))
+  message(FATAL_ERROR "RAJA with a CUDA backend requires SUNDIALS_ENABLE_CUDA = ON")
 endif()
 
 if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT ENABLE_HIP))

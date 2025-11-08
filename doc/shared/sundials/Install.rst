@@ -716,7 +716,7 @@ Example Programs
 
    Build the SUNDIALS CUDA examples
 
-   Default: ``ON`` when :cmakeop:`ENABLE_CUDA` is ``ON``, otherwise ``OFF``
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_CUDA` is ``ON``, otherwise ``OFF``
 
 .. cmakeoption:: EXAMPLES_ENABLE_F2003
 
@@ -943,7 +943,7 @@ QR SUNLinearSolver <SUNLinSol.cuSolverSp>` will be built (see sections
 for the corresponding header files and libraries). For more information on using
 SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable CUDA support, set :cmakeop:`ENABLE_CUDA` to ``ON``. If CUDA is
+To enable CUDA support, set :cmakeop:`SUNDIALS_ENABLE_CUDA` to ``ON``. If CUDA is
 installed in a nonstandard location, you may need to set
 :cmakeop:`CUDA_TOOLKIT_ROOT_DIR` to your CUDA Toolkit installation path. You
 will also need to set :cmakeop:`CMAKE_CUDA_ARCHITECTURES` to the CUDA
@@ -956,14 +956,18 @@ SUNDIALS with CUDA support for a system with an Ampere GPU:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_CUDA
+.. cmakeoption:: SUNDIALS_ENABLE_CUDA
 
    Enable CUDA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_CUDA``
 
 .. cmakeoption:: CUDA_TOOLKIT_ROOT_DIR
 
@@ -1028,7 +1032,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
      -D ENABLE_GINKGO=ON \
      -D Ginkgo_DIR=/path/to/ginkgo/installation \
      -D SUNDIALS_GINKGO_BACKENDS="REF;OMP;CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80" \
      -D SUNDIALS_ENABLE_OPENMP=ON
 
@@ -1472,7 +1476,7 @@ the CUDA backend (targeting Ampere GPUs):
      -D ENABLE_MAGMA=ON \
      -D MAGMA_DIR=/path/to/magma/installation \
      -D SUNDIALS_MAGMA_BACKEND="CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
 .. cmakeoption:: ENABLE_MAGMA
@@ -1847,7 +1851,7 @@ for the corresponding header files and libraries).
 To enable RAJA support, set :cmakeop:`ENABLE_RAJA` to ``ON``, set
 :cmakeop:`RAJA_DIR` to the path of the RAJA installation, set
 :cmakeop:`SUNDIALS_RAJA_BACKENDS` to the desired backend (``CUDA``, ``HIP``, or
-``SYCL``), and set :cmakeop:`ENABLE_CUDA`, :cmakeop:`ENABLE_HIP`, or
+``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`ENABLE_HIP`, or
 :cmakeop:`ENABLE_SYCL` to ``ON`` depending on the selected backend. For
 example, the following command will configure SUNDIALS with RAJA support using
 the CUDA backend (targeting Ampere GPUs):
@@ -1861,7 +1865,7 @@ the CUDA backend (targeting Ampere GPUs):
      -D ENABLE_RAJA=ON \
      -D RAJA_DIR=/path/to/raja/installation \
      -D SUNDIALS_RAJA_BACKENDS="CUDA" \
-     -D ENABLE_CUDA=ON \
+     -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
 .. cmakeoption:: ENABLE_RAJA

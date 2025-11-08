@@ -71,7 +71,7 @@ if(SUNDIALS_ENABLE_MPI)
   list(APPEND sundials_HEADERS sundials_mpi_errors.h)
 endif()
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   list(APPEND sundials_HEADERS sundials_cuda_policies.hpp)
 endif()
 

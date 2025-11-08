@@ -429,7 +429,7 @@ if(BUILD_BENCHMARKS
    OR SUNDIALS_ENABLE_PYTHON
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
    OR EXAMPLES_ENABLE_CXX
-   OR ENABLE_CUDA
+   OR SUNDIALS_ENABLE_CUDA
    OR ENABLE_HIP
    OR ENABLE_SYCL
    OR ENABLE_RAJA
@@ -446,7 +446,7 @@ endif()
 # CUDA settings
 # ===============================================================
 
-if(ENABLE_CUDA)
+if(SUNDIALS_ENABLE_CUDA)
   include(SundialsSetupCuda)
   # we treat CUDA as both a TPL and a language
   list(APPEND SUNDIALS_TPL_LIST "CUDA")

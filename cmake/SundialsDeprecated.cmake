@@ -19,15 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED CUDA_ENABLE)
-  message(DEPRECATION "The CMake option CUDA_ENABLE is deprecated. "
-                      "Use ENABLE_CUDA instead.")
-  set(ENABLE_CUDA
-      ${CUDA_ENABLE}
-      CACHE BOOL "Enable CUDA support" FORCE)
-  unset(CUDA_ENABLE CACHE)
-endif()
-
 if(DEFINED LAPACK_ENABLE)
   message(DEPRECATION "The CMake option LAPACK_ENABLE is deprecated. "
                       "Use ENABLE_LAPACK instead.")

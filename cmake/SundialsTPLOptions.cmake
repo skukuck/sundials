@@ -47,7 +47,7 @@ sundials_option(SUNDIALS_ENABLE_PTHREAD BOOL "Enable Pthreads support" OFF DEPRE
 # -------------------------------------------------------------
 # Enable CUDA support?
 # -------------------------------------------------------------
-sundials_option(ENABLE_CUDA BOOL "Enable CUDA support" OFF)
+sundials_option(SUNDIALS_ENABLE_CUDA BOOL "Enable CUDA support" OFF DEPRECATED_NAMES ENABLE_CUDA CUDA_ENABLE)
 
 # -------------------------------------------------------------
 # Enable HIP support?

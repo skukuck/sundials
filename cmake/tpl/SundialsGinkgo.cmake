@@ -106,10 +106,10 @@ if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
         "SUNDIALS GINKGO interface is not compatible with extended precision")
   endif()
 
-  if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA" AND NOT ENABLE_CUDA)
+  if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA" AND NOT SUNDIALS_ENABLE_CUDA)
     message(
       FATAL_ERROR
-        "SUNDIALS_GINKGO_BACKENDS includes CUDA but CUDA is not enabled. Set ENABLE_CUDA=ON or change the backend."
+        "SUNDIALS_GINKGO_BACKENDS includes CUDA but CUDA is not enabled. Set SUNDIALS_ENABLE_CUDA=ON or change the backend."
     )
   endif()
 

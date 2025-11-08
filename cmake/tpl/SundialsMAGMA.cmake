@@ -61,10 +61,10 @@ message(STATUS "SUNDIALS_MAGMA_BACKENDS: ${SUNDIALS_MAGMA_BACKENDS}")
 # -----------------------------------------------------------------------------
 
 if(MAGMA_FOUND AND (NOT MAGMA_WORKS))
-  if(SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA" AND NOT ENABLE_CUDA)
+  if(SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA" AND NOT SUNDIALS_ENABLE_CUDA)
     message(
       FATAL_ERROR
-        "SUNDIALS_MAGMA_BACKENDS includes CUDA but CUDA is not enabled. Set ENABLE_CUDA=ON or change the backend."
+        "SUNDIALS_MAGMA_BACKENDS includes CUDA but CUDA is not enabled. Set SUNDIALS_ENABLE_CUDA=ON or change the backend."
     )
   endif()
   if(SUNDIALS_MAGMA_BACKENDS MATCHES "HIP" AND NOT ENABLE_HIP)

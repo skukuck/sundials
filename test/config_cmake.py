@@ -689,7 +689,7 @@ def main():
                                       SUNDIALS.""",
     )
 
-    add_arg(group, "--hip", "SUNDIALS_HIP", "ENABLE_HIP", "OFF", "BOOL", "SUNDIALS HIP support")
+    add_arg(group, "--hip", "SUNDIALS_HIP", "SUNDIALS_ENABLE_HIP", "OFF", "BOOL", "SUNDIALS HIP support")
 
     # OpenMP Offload
     group = parser.add_argument_group(

@@ -248,7 +248,7 @@ allocation account on Frontier:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D AMDGPU_TARGETS=gfx90a \
-     -D ENABLE_HIP=ON \
+     -D SUNDIALS_ENABLE_HIP=ON \
      -D SUNDIALS_ENABLE_MPI=ON \
      -D SUNDIALS_ENABLE_FORTRAN=ON
    cd BUILD_DIR
@@ -1083,7 +1083,7 @@ When HIP support is enabled, the :ref:`HIP NVector <NVectors.HIP>` will be built
 corresponding header file and library). For more information on using SUNDIALS
 with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable HIP support, set :cmakeop:`ENABLE_HIP` to ``ON`` and set
+To enable HIP support, set :cmakeop:`SUNDIALS_ENABLE_HIP` to ``ON`` and set
 :cmakeop:`AMDGPU_TARGETS` to the desired target (e.g., ``gfx705``). In addition,
 set :cmakeop:`CMAKE_C_COMPILER` and :cmakeop:`CMAKE_CXX_COMPILER` to a HIP
 compatible compiler e.g., ``hipcc``. For example, the following command will
@@ -1097,14 +1097,18 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D CMAKE_C_COMPILER=hipcc \
      -D CMAKE_CXX_COMPILER=hipcc \
-     -D ENABLE_HIP=ON \
+     -D SUNDIALS_ENABLE_HIP=ON \
      -D AMDGPU_TARGETS="gfx90a"
 
-.. cmakeoption:: ENABLE_HIP
+.. cmakeoption:: SUNDIALS_ENABLE_HIP
 
    Enable HIP Support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_ENABLE_HIP``
 
 .. cmakeoption:: AMDGPU_TARGETS
 
@@ -1851,7 +1855,7 @@ for the corresponding header files and libraries).
 To enable RAJA support, set :cmakeop:`ENABLE_RAJA` to ``ON``, set
 :cmakeop:`RAJA_DIR` to the path of the RAJA installation, set
 :cmakeop:`SUNDIALS_RAJA_BACKENDS` to the desired backend (``CUDA``, ``HIP``, or
-``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`ENABLE_HIP`, or
+``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`SUNDIALS_ENABLE_HIP`, or
 :cmakeop:`ENABLE_SYCL` to ``ON`` depending on the selected backend. For
 example, the following command will configure SUNDIALS with RAJA support using
 the CUDA backend (targeting Ampere GPUs):

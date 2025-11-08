@@ -46,7 +46,7 @@ endif()
 # CXX examples
 if(EXAMPLES_ENABLE_CXX)
   add_subdirectory(CXX_serial)
-  if(ENABLE_HIP)
+  if(SUNDIALS_ENABLE_HIP)
     add_subdirectory(hip)
   endif()
   if(ENABLE_MAGMA AND MAGMA_FOUND)

@@ -94,10 +94,10 @@ if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
     )
   endif()
 
-  if(SUPERLUDIST_HIP AND (NOT ENABLE_HIP))
+  if(SUPERLUDIST_HIP AND (NOT SUNDIALS_ENABLE_HIP))
     message(
       FATAL_ERROR
-        "SuperLU_DIST was built with HIP but SUNDIALS does not have HIP enabled. Set ENABLE_HIP=TRUE."
+        "SuperLU_DIST was built with HIP but SUNDIALS does not have HIP enabled. Set SUNDIALS_ENABLE_HIP=TRUE."
     )
   endif()
 

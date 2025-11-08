@@ -67,10 +67,10 @@ if(MAGMA_FOUND AND (NOT MAGMA_WORKS))
         "SUNDIALS_MAGMA_BACKENDS includes CUDA but CUDA is not enabled. Set SUNDIALS_ENABLE_CUDA=ON or change the backend."
     )
   endif()
-  if(SUNDIALS_MAGMA_BACKENDS MATCHES "HIP" AND NOT ENABLE_HIP)
+  if(SUNDIALS_MAGMA_BACKENDS MATCHES "HIP" AND NOT SUNDIALS_ENABLE_HIP)
     message(
       FATAL_ERROR
-        "SUNDIALS_MAGMA_BACKENDS includes HIP but HIP is not enabled. Set ENABLE_HIP=ON or change the backend."
+        "SUNDIALS_MAGMA_BACKENDS includes HIP but HIP is not enabled. Set SUNDIALS_ENABLE_HIP=ON or change the backend."
     )
   endif()
 

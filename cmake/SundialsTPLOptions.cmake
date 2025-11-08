@@ -52,7 +52,7 @@ sundials_option(SUNDIALS_ENABLE_CUDA BOOL "Enable CUDA support" OFF DEPRECATED_N
 # -------------------------------------------------------------
 # Enable HIP support?
 # -------------------------------------------------------------
-sundials_option(ENABLE_HIP BOOL "Enable HIP support" OFF)
+sundials_option(SUNDIALS_ENABLE_HIP BOOL "Enable HIP support" OFF DEPRECATED_NAMES ENABLE_HIP)
 
 # -------------------------------------------------------------
 # Enable SYCL support?

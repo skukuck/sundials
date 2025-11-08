@@ -312,7 +312,7 @@ sundials_option(
 sundials_option(
   SUNDIALS_DEBUG_HIP_LASTERROR BOOL
   "Enable HIP last error checks when debugging" OFF
-  DEPENDS_ON SUNDIALS_DEBUG ENABLE_HIP
+  DEPENDS_ON SUNDIALS_DEBUG SUNDIALS_ENABLE_HIP
   ADVANCED)
 
 sundials_option(

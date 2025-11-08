@@ -430,7 +430,7 @@ if(BUILD_BENCHMARKS
    OR SUNDIALS_TEST_ENABLE_UNIT_TESTS
    OR EXAMPLES_ENABLE_CXX
    OR SUNDIALS_ENABLE_CUDA
-   OR ENABLE_HIP
+   OR SUNDIALS_ENABLE_HIP
    OR ENABLE_SYCL
    OR ENABLE_RAJA
    OR ENABLE_TRILINOS
@@ -456,7 +456,7 @@ endif()
 # HIP settings
 # ===============================================================
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   include(SundialsSetupHIP)
   # we treat HIP as both a TPL and a language
   list(APPEND SUNDIALS_TPL_LIST "HIP")

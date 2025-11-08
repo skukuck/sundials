@@ -128,6 +128,7 @@ table below lists the old CMake option names and the new replacements.
 | `OPENMP_DEVICE_WORKS`  | `SUNDIALS_OPENMP_DEVICE_WORKS`  |
 | `ENABLE_PTHREAD`       | `SUNDIALS_ENABLE_PTHREAD`       |
 | `ENABLE_CUDA`          | `SUNDIALS_ENABLE_CUDA`          |
+| `ENABLE_HIP`           | `SUNDIALS_ENABLE_HIP`           |
 
 ## Changes to SUNDIALS in release 7.5.0
 

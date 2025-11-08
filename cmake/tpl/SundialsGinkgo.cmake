@@ -113,10 +113,10 @@ if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
     )
   endif()
 
-  if(SUNDIALS_GINKGO_BACKENDS MATCHES "HIP" AND NOT ENABLE_HIP)
+  if(SUNDIALS_GINKGO_BACKENDS MATCHES "HIP" AND NOT SUNDIALS_ENABLE_HIP)
     message(
       FATAL_ERROR
-        "SUNDIALS_GINKGO_BACKENDS includes HIP but HIP is not enabled. Set ENABLE_HIP=ON or change the backend."
+        "SUNDIALS_GINKGO_BACKENDS includes HIP but HIP is not enabled. Set SUNDIALS_ENABLE_HIP=ON or change the backend."
     )
   endif()
 

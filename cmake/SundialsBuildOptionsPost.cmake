@@ -23,7 +23,7 @@
 # available in CVODE.
 # ---------------------------------------------------------------
 
-if(SUNDIALS_ENABLE_CUDA OR ENABLE_HIP)
+if(SUNDIALS_ENABLE_CUDA OR SUNDIALS_ENABLE_HIP)
   set(CUDA_OR_HIP TRUE)
 else()
   set(CUDA_OR_HIP FALSE)
@@ -51,7 +51,7 @@ list(APPEND SUNDIALS_BUILD_LIST "BUILD_NVECTOR_CUDA")
 
 sundials_option(
   BUILD_NVECTOR_HIP BOOL "Build the NVECTOR_HIP module (requires HIP)" ON
-  DEPENDS_ON ENABLE_HIP
+  DEPENDS_ON SUNDIALS_ENABLE_HIP
   ADVANCED)
 list(APPEND SUNDIALS_BUILD_LIST "BUILD_NVECTOR_HIP")
 

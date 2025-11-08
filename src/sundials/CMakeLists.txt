@@ -75,7 +75,7 @@ if(SUNDIALS_ENABLE_CUDA)
   list(APPEND sundials_HEADERS sundials_cuda_policies.hpp)
 endif()
 
-if(ENABLE_HIP)
+if(SUNDIALS_ENABLE_HIP)
   list(APPEND sundials_HEADERS sundials_hip_policies.hpp)
 endif()
 

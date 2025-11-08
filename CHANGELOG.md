@@ -108,6 +108,22 @@ The `Convert` methods on the `sundials::kokkos:Vector`,
 classes have been deprecated and will be removed in the next major release. The
 method `get`, should be used instead.
 
+Several CMake options have been deprecated in favor of namespaced versions
+prefixed with `SUNDIALS_` to avoid naming collisions in applications that
+include SUNDIALS directly within their CMake builds. Additionally, a consistent
+naming convention (`SUNDIALS_ENABLE`) is now used for all boolean options. The
+table below lists the old CMake option names and the new replacements.
+
+| Old Option     | New Option               |
+|----------------|--------------------------|
+| `BUILD_ARKODE` | `SUNDIALS_ENABLE_ARKODE` |
+| `BUILD_CVODE`  | `SUNDIALS_ENABLE_CVODE`  |
+| `BUILD_CVODES` | `SUNDIALS_ENABLE_CVODES` |
+| `BUILD_IDA`    | `SUNDIALS_ENABLE_IDA`    |
+| `BUILD_IDAS`   | `SUNDIALS_ENABLE_IDAS`   |
+| `BUILD_KINSOL` | `SUNDIALS_ENABLE_KINSOL` |
+| `ENABLE_MPI`   | `SUNDIALS_ENABLE_MPI`    |
+
 ## Changes to SUNDIALS in release 7.5.0
 
 ### Major Features

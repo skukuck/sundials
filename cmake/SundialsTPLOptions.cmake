@@ -70,7 +70,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable LAPACK support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_LAPACK BOOL "Enable Lapack support" OFF)
+sundials_option(SUNDIALS_ENABLE_LAPACK BOOL "Enable Lapack support" OFF DEPRECATED ENABLE_LAPACK LAPACK_ENABLE)
 
 sundials_option(LAPACK_LIBRARIES STRING "Lapack and Blas libraries"
                 "${LAPACK_LIBRARIES}")

@@ -19,15 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED LAPACK_ENABLE)
-  message(DEPRECATION "The CMake option LAPACK_ENABLE is deprecated. "
-                      "Use ENABLE_LAPACK instead.")
-  set(ENABLE_LAPACK
-      ${LAPACK_ENABLE}
-      CACHE BOOL "Enable LAPACK support" FORCE)
-  unset(LAPACK_ENABLE CACHE)
-endif()
-
 if(DEFINED SUPERLUDIST_ENABLE)
   message(DEPRECATION "The CMake option SUPERLUDIST_ENABLE is deprecated. "
                       "Use ENABLE_SUPERLUDIST instead.")

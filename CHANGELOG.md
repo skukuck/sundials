@@ -130,6 +130,7 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_CUDA`          | `SUNDIALS_ENABLE_CUDA`          |
 | `ENABLE_HIP`           | `SUNDIALS_ENABLE_HIP`           |
 | `ENABLE_SYCL`          | `SUNDIALS_ENABLE_SYCL`          |
+| `ENABLE_LAPACK`        | `SUNDIALS_ENABLE_LAPACK`        |
 
 ## Changes to SUNDIALS in release 7.5.0
 

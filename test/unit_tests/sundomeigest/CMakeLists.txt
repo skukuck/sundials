@@ -37,6 +37,6 @@ target_link_libraries(test_sundomeigest_obj PRIVATE sundials_sundomeigestpower)
 add_subdirectory(Power)
 
 # Add the Arnoldi iteration examples if LAPACK is enabled
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   add_subdirectory(Arnoldi)
 endif()

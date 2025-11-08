@@ -120,7 +120,7 @@ endif()
 # Find (and test) the LAPACK and BLAS libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   include(SundialsLapack)
   list(APPEND SUNDIALS_TPL_LIST "BLAS_LAPACK")
 endif()

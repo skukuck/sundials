@@ -820,7 +820,7 @@ def main():
         group,
         "--lapack",
         "SUNDIALS_LAPACK",
-        "ENABLE_LAPACK",
+        "SUNDIALS_ENABLE_LAPACK",
         "OFF",
         "BOOL",
         "SUNDIALS LAPACK support",

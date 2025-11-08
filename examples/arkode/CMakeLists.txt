@@ -51,7 +51,7 @@ endif()
 # C++ examples
 if(EXAMPLES_ENABLE_CXX)
   add_subdirectory(CXX_serial)
-  if(ENABLE_LAPACK)
+  if(SUNDIALS_ENABLE_LAPACK)
     add_subdirectory(CXX_lapack)
   endif()
   if(BUILD_NVECTOR_MANYVECTOR)

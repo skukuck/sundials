@@ -111,7 +111,7 @@ if("@ENABLE_KOKKOS_KERNELS@" AND NOT TARGET Kokkos::kokkoskernels)
   find_dependency(KokkosKernels PATHS "@KokkosKernels_DIR@")
 endif()
 
-if("@ENABLE_LAPACK@" AND NOT TARGET LAPACK::LAPACK)
+if("@SUNDIALS_ENABLE_LAPACK@" AND NOT TARGET LAPACK::LAPACK)
   # For some reason find_dependency does not find the libraries if the variables
   # below are internal rather than CACHE variables
   set(BLAS_LIBRARIES "@BLAS_LIBRARIES@" CACHE "FILEPATH" "BLAS libraries")

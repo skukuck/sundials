@@ -321,7 +321,7 @@ check_c_source_compiles(
 
 # When LAPACK is enabled we will need a Fortran compiler to infer the
 # name-mangling scheme if it is not set by the user
-if(ENABLE_LAPACK)
+if(SUNDIALS_ENABLE_LAPACK)
   set(NEED_FORTRAN_NAME_MANGLING TRUE)
 endif()
 

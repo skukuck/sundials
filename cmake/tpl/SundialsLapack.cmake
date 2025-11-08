@@ -36,7 +36,7 @@ include_guard(GLOBAL)
 # -----------------------------------------------------------------------------
 
 # LAPACK does not support extended precision
-if(ENABLE_LAPACK AND SUNDIALS_PRECISION MATCHES "EXTENDED")
+if(SUNDIALS_ENABLE_LAPACK AND SUNDIALS_PRECISION MATCHES "EXTENDED")
   message(
     FATAL_ERROR "LAPACK is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()

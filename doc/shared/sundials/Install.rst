@@ -1342,7 +1342,7 @@ respectively, for the corresponding header files and libraries). Additionally,
 the :ref:`Arnoldi iteration SUNDomEigEstimator <SUNDomEigEst.Arnoldi>` will be
 build (see :numref:`Installation.LibrariesAndHeaders.DomEigEst.Arnoldi`).
 
-To enable LAPACK support, set :cmakeop:`ENABLE_LAPACK` to ``ON``. CMake will
+To enable LAPACK support, set :cmakeop:`SUNDIALS_ENABLE_LAPACK` to ``ON``. CMake will
 attempt to find BLAS and LAPACK installations on the system and set the
 variables :cmakeop:`BLAS_LIBRARIES`, :cmakeop:`BLAS_LINKER_FLAGS`,
 :cmakeop:`LAPACK_LIBRARIES`, and :cmakeop:`LAPACK_LINKER_FLAGS`.  You can set
@@ -1360,7 +1360,7 @@ build. For example, this is sometimes needed when using OpenBLAS:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_LAPACK=ON \
+     -D SUNDIALS_ENABLE_LAPACK=ON \
      -D BLAS_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so \
      -D LAPACK_LIBRARIES=/path/to/lapack/installation/lib/libopenblas.so
 
@@ -1373,11 +1373,15 @@ build. For example, this is sometimes needed when using OpenBLAS:
    these options in earlier versions of SUNDIALS were ``lower`` and ``one``,
    respectively.
 
-.. cmakeoption:: ENABLE_LAPACK
+.. cmakeoption:: SUNDIALS_ENABLE_LAPACK
 
    Enable LAPACK support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_LAPACK``
 
 .. cmakeoption:: LAPACK_ROOT
 

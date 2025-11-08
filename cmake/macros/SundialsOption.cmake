@@ -37,44 +37,44 @@
 #
 # The ADVANCED option can be used to make <variable> an advanced CMake option.
 
-macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
+function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
   set(options DEPENDS_ON_THROW_ERROR ADVANCED UNSET_DEPRECATED)
   set(oneValueArgs DEPRECATED_NAME)
   set(multiValueArgs OPTIONS DEPENDS_ON)
 
-  # parse inputs and create variables sundials_option_<keyword>
-  cmake_parse_arguments(sundials_option "${options}" "${oneValueArgs}"
+  # parse inputs and create variables arg_<keyword>
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}"
                         "${multiValueArgs}" ${ARGN})
 
   # check for deprecated option
-  if(sundials_option_DEPRECATED_NAME)
-    if(DEFINED ${sundials_option_DEPRECATED_NAME})
+  if(arg_DEPRECATED_NAME)
+    if(DEFINED ${arg_DEPRECATED_NAME})
       if(DEFINED ${NAME})
         message(
           WARNING
-            "Both ${NAME} and ${sundials_option_DEPRECATED_NAME} (deprecated) "
-            "are defined. Ignoring ${sundials_option_DEPRECATED_NAME}."
+            "Both ${NAME} and ${arg_DEPRECATED_NAME} (deprecated) "
+            "are defined. Ignoring ${arg_DEPRECATED_NAME}."
         )
       else()
         message(
           WARNING
-            "The option ${sundials_option_DEPRECATED_NAME} is deprecated. Use "
+            "The option ${arg_DEPRECATED_NAME} is deprecated. Use "
             "${NAME} instead."
         )
-        set(${NAME} ${${sundials_option_DEPRECATED_NAME}})
+        set(${NAME} ${${arg_DEPRECATED_NAME}})
       endif()
-      if(sundials_option_UNSET_DEPRECATED)
-        unset(${sundials_option_DEPRECATED_NAME} CACHE)
+      if(arg_UNSET_DEPRECATED)
+        unset(${arg_DEPRECATED_NAME} CACHE)
       endif()
     endif()
   endif()
 
   # check if dependencies for this option have been met
   set(all_depends_on_dependencies_met TRUE)
-  if(sundials_option_DEPENDS_ON)
-    foreach(_dependency ${sundials_option_DEPENDS_ON})
+  if(arg_DEPENDS_ON)
+    foreach(_dependency ${arg_DEPENDS_ON})
       if(NOT ${_dependency})
         set(all_depends_on_dependencies_met FALSE)
         list(APPEND depends_on_dependencies_not_met "${_dependency},")
@@ -95,7 +95,7 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
     endif()
 
     # make the option advanced if necessary
-    if(sundials_option_ADVANCED)
+    if(arg_ADVANCED)
       mark_as_advanced(FORCE ${NAME})
     endif()
 
@@ -111,7 +111,7 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
           "dependencies (${depends_on_dependencies_not_met}) evaluate to TRUE. "
           "Unsetting ${NAME}.")
       unset(${NAME} CACHE)
-      if(sundials_option_DEPENDS_ON_THROW_ERROR)
+      if(arg_DEPENDS_ON_THROW_ERROR)
         message(FATAL_ERROR "${_warn_msg_string}")
       else()
         message(WARNING "${_warn_msg_string}")
@@ -121,10 +121,10 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
   endif()
 
   # check for valid option choices
-  if((DEFINED ${NAME}) AND sundials_option_OPTIONS)
+  if((DEFINED ${NAME}) AND arg_OPTIONS)
     foreach(_option ${${NAME}})
-      if(NOT (${_option} IN_LIST sundials_option_OPTIONS))
-        list(JOIN sundials_option_OPTIONS ", " _options_msg)
+      if(NOT (${_option} IN_LIST arg_OPTIONS))
+        list(JOIN arg_OPTIONS ", " _options_msg)
         message(FATAL_ERROR "Value of ${NAME} must be one of ${_options_msg}")
       endif()
     endforeach()
@@ -133,7 +133,7 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
       CACHE ${NAME}
       PROPERTY TYPE)
     if(is_in_cache)
-      set_property(CACHE ${NAME} PROPERTY STRINGS ${sundials_option_OPTIONS})
+      set_property(CACHE ${NAME} PROPERTY STRINGS ${arg_OPTIONS})
     endif()
     unset(is_in_cache)
   endif()
@@ -141,4 +141,4 @@ macro(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
   unset(all_depends_on_dependencies_met)
   unset(depends_on_dependencies_not_met)
 
-endmacro()
+endfunction()

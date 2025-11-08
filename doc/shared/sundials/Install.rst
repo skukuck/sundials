@@ -1710,7 +1710,7 @@ When OpenMP offloading support is enabled, the :ref:`OpenMPDEV NVector
 corresponding header file and library).
 
 To enable OpenMP device offloading support, set the
-:cmakeop:`ENABLE_OPENMP_DEVICE` to ``ON``. For example, the following command
+:cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE` to ``ON``. For example, the following command
 will configure SUNDIALS with OpenMP device offloading support:
 
 .. code-block:: bash
@@ -1719,13 +1719,17 @@ will configure SUNDIALS with OpenMP device offloading support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_OPENMP_DEVICE=ON
+     -D SUNDIALS_ENABLE_OPENMP_DEVICE=ON
 
-.. cmakeoption:: ENABLE_OPENMP_DEVICE
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP_DEVICE
 
    Enable OpenMP device offloading support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_OPENMP_DEVICE``
 
 .. _Installation.Options.PETSc:
 

@@ -19,15 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED OPENMP_DEVICE_ENABLE)
-  message(DEPRECATION "The CMake option OPENMP_DEVICE_ENABLE is deprecated. "
-                      "Use ENABLE_OPENMP_DEVICE instead.")
-  set(ENABLE_OPENMP_DEVICE
-      ${OPENMP_DEVICE_ENABLE}
-      CACHE BOOL "Enable OpenMP device offloading support" FORCE)
-  unset(OPENMP_DEVICE_ENABLE CACHE)
-endif()
-
 if(DEFINED SKIP_OPENMP_DEVICE_CHECK)
   message(
     DEPRECATION "The CMake option SKIP_OPENMP_DEVICE_CHECK is deprecated. "

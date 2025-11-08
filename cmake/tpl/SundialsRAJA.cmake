@@ -128,10 +128,10 @@ if(NOT SUNDIALS_ENABLE_OPENMP AND RAJA_BACKENDS MATCHES "OPENMP")
   )
 endif()
 
-if(NOT ENABLE_OPENMP_DEVICE AND RAJA_BACKENDS MATCHES "TARGET_OPENMP")
+if(NOT SUNDIALS_ENABLE_OPENMP_DEVICE AND RAJA_BACKENDS MATCHES "TARGET_OPENMP")
   message(
     FATAL_ERROR
-      "RAJA was built with OpenMP device offloading, but OpenMP with device offloading is not enabled. Set ENABLE_OPENMP_DEVICE to ON."
+      "RAJA was built with OpenMP device offloading, but OpenMP with device offloading is not enabled. Set SUNDIALS_ENABLE_OPENMP_DEVICE to ON."
   )
 endif()
 

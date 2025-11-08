@@ -44,7 +44,7 @@ endif()
 # Find OpenMP with device offloading
 # --------------------------------------------------------------
 
-if(ENABLE_OPENMP_DEVICE)
+if(SUNDIALS_ENABLE_OPENMP_DEVICE)
   include(SundialsOpenMP)
   list(APPEND SUNDIALS_TPL_LIST "OPENMP_DEVICE")
 endif()

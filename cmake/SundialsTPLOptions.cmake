@@ -30,8 +30,8 @@ sundials_option(SUNDIALS_ENABLE_OPENMP BOOL "Enable OpenMP support" OFF DEPRECAT
 # ---------------------------------------------------------------
 # Enable OpenMP target offloading support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_OPENMP_DEVICE BOOL
-                "Enable OpenMP device offloading support" OFF)
+sundials_option(SUNDIALS_ENABLE_OPENMP_DEVICE BOOL
+                "Enable OpenMP device offloading support" OFF DEPRECATED_NAMES ENABLE_OPENMP_DEVICE OPENMP_DEVICE_ENABLE)
 
 # Advanced option to skip OpenMP device offloading support check. This is needed
 # for a specific compiler that doesn't correctly report its OpenMP spec date

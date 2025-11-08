@@ -702,7 +702,7 @@ def main():
         group,
         "--openmp-offload",
         "SUNDIALS_OPENMP_OFFLOAD",
-        "ENABLE_OPENMP_DEVICE",
+        "SUNDIALS_ENABLE_OPENMP_DEVICE",
         "OFF",
         "BOOL",
         "SUNDIALS OpenMP offload support",

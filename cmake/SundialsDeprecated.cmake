@@ -19,16 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED SKIP_OPENMP_DEVICE_CHECK)
-  message(
-    DEPRECATION "The CMake option SKIP_OPENMP_DEVICE_CHECK is deprecated. "
-                "Use OPENMP_DEVICE_WORKS instead.")
-  set(OPENMP_DEVICE_WORKS
-      ${SKIP_OPENMP_DEVICE_CHECK}
-      CACHE BOOL "Skip the compiler check for OpenMP device offloading" FORCE)
-  unset(SKIP_OPENMP_DEVICE_CHECK CACHE)
-endif()
-
 if(DEFINED PTHREAD_ENABLE)
   message(DEPRECATION "The CMake option PTHREAD_ENABLE is deprecated. "
                       "Use ENABLE_PTHREAD instead")

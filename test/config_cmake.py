@@ -644,7 +644,7 @@ def main():
         group,
         "--openmp-device-works",
         "SUNDIALS_OPENMP_DEVICE_WORKS",
-        "OPENMP_DEVICE_WORKS",
+        "SUNDIALS_OPENMP_DEVICE_WORKS",
         "OFF",
         "BOOL",
         "Disable OpenMP Device Support Checks (assume OpenMP 4.5+)",

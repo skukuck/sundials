@@ -73,7 +73,7 @@ set(OpenMP_Fortran_VERSION
 # Check for OpenMP offloading support
 if(OPENMP_FOUND AND (SUNDIALS_ENABLE_OPENMP_DEVICE OR SUPERLUDIST_OpenMP))
 
-  if(OPENMP_DEVICE_WORKS)
+  if(SUNDIALS_OPENMP_DEVICE_WORKS)
 
     # The user has asked for checks to be skipped, assume offloading is
     # supported

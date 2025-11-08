@@ -36,8 +36,8 @@ sundials_option(SUNDIALS_ENABLE_OPENMP_DEVICE BOOL
 # Advanced option to skip OpenMP device offloading support check. This is needed
 # for a specific compiler that doesn't correctly report its OpenMP spec date
 # (with CMake >= 3.9).
-sundials_option(OPENMP_DEVICE_WORKS BOOL
-                "Skip the OpenMP device offloading support check" OFF ADVANCED)
+sundials_option(SUNDIALS_OPENMP_DEVICE_WORKS BOOL
+                "Skip the OpenMP device offloading support check" OFF ADVANCED OPENMP_DEVICE_WORKS SKIP_OPENMP_DEVICE_CHECK)
 
 # ---------------------------------------------------------------
 # Enable Pthread support?

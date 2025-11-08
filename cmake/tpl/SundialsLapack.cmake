@@ -294,7 +294,7 @@ if(NEED_FORTRAN_NAME_MANGLING)
 endif()
 
 # Try building a simple test
-if(NOT LAPACK_WORKS)
+if(NOT SUNDIALS_LAPACK_WORKS)
 
   message(CHECK_START "Testing LAPACK")
 
@@ -348,5 +348,5 @@ if(NOT LAPACK_WORKS)
   endif()
 
 else()
-  message(STATUS "Skipped LAPACK test. Set LAPACK_WORKS=FALSE to test.")
+  message(STATUS "Skipped LAPACK test. Set SUNDIALS_LAPACK_WORKS=FALSE to test.")
 endif()

@@ -76,9 +76,9 @@ sundials_option(LAPACK_LIBRARIES STRING "Lapack and Blas libraries"
                 "${LAPACK_LIBRARIES}")
 
 sundials_option(
-  LAPACK_WORKS BOOL
+  SUNDIALS_LAPACK_WORKS BOOL
   "Set to ON to force CMake to accept a given LAPACK configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES LAPACK_WORKS)
 
 # ---------------------------------------------------------------
 # Enable Ginkgo support?

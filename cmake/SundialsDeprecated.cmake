@@ -19,15 +19,6 @@
 # Deprecated TPL options
 #
 
-if(DEFINED OPENMP_ENABLE)
-  message(DEPRECATION "The CMake option OPENMP_ENABLE is deprecated. "
-                      "Use ENABLE_OPENMP instead.")
-  set(ENABLE_OPENMP
-      ${OPENMP_ENABLE}
-      CACHE BOOL "Enable OpenMP support" FORCE)
-  unset(OPENMP_ENABLE CACHE)
-endif()
-
 if(DEFINED OPENMP_DEVICE_ENABLE)
   message(DEPRECATION "The CMake option OPENMP_DEVICE_ENABLE is deprecated. "
                       "Use ENABLE_OPENMP_DEVICE instead.")

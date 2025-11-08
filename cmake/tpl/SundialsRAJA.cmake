@@ -121,10 +121,10 @@ if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT RAJA_BACKENDS MATCHES "HIP"))
   )
 endif()
 
-if(NOT ENABLE_OPENMP AND RAJA_BACKENDS MATCHES "OPENMP")
+if(NOT SUNDIALS_ENABLE_OPENMP AND RAJA_BACKENDS MATCHES "OPENMP")
   message(
     FATAL_ERROR
-      "RAJA was built with OpenMP, but OpenMP is not enabled. Set ENABLE_OPENMP to ON."
+      "RAJA was built with OpenMP, but OpenMP is not enabled. Set SUNDIALS_ENABLE_OPENMP to ON."
   )
 endif()
 

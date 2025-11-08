@@ -63,7 +63,7 @@ if("@SUNDIALS_ENABLE_MPI@" AND NOT TARGET MPI::MPI_C)
   find_dependency(MPI)
 endif()
 
-if("@ENABLE_OPENMP@" AND NOT TARGET OpenMP::OpenMP_C)
+if("@SUNDIALS_ENABLE_OPENMP@" AND NOT TARGET OpenMP::OpenMP_C)
   find_dependency(OpenMP)
 endif()
 

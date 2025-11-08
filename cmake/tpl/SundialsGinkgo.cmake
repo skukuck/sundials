@@ -127,10 +127,10 @@ if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
     )
   endif()
 
-  if(SUNDIALS_GINKGO_BACKENDS MATCHES "OMP" AND NOT ENABLE_OPENMP)
+  if(SUNDIALS_GINKGO_BACKENDS MATCHES "OMP" AND NOT SUNDIALS_ENABLE_OPENMP)
     message(
       FATAL_ERROR
-        "SUNDIALS_GINKGO_BACKENDS includes OMP but OpenMP is not enabled. Set ENABLE_OPENMP=ON or change the backend."
+        "SUNDIALS_GINKGO_BACKENDS includes OMP but OpenMP is not enabled. Set SUNDIALS_ENABLE_OPENMP=ON or change the backend."
     )
   endif()
 

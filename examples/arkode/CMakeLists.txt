@@ -23,7 +23,7 @@ if(EXAMPLES_ENABLE_C)
   if(BUILD_NVECTOR_MANYVECTOR)
     add_subdirectory(C_manyvector)
   endif()
-  if(ENABLE_OPENMP AND OPENMP_FOUND)
+  if(SUNDIALS_ENABLE_OPENMP AND OPENMP_FOUND)
     add_subdirectory(C_openmp)
   endif()
   if(ENABLE_OPENMP_DEVICE

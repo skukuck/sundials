@@ -634,7 +634,7 @@ def main():
         group,
         "--openmp",
         "SUNDIALS_OPENMP",
-        "ENABLE_OPENMP",
+        "SUNDIALS_ENABLE_OPENMP",
         "OFF",
         "BOOL",
         "SUNDIALS OpenMP support",

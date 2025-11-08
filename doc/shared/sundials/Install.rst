@@ -1030,7 +1030,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
      -D SUNDIALS_GINKGO_BACKENDS="REF;OMP;CUDA" \
      -D ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80" \
-     -D ENABLE_OPENMP=ON
+     -D SUNDIALS_ENABLE_OPENMP=ON
 
 .. note::
 
@@ -1676,7 +1676,7 @@ When OpenMP support is enabled, the :ref:`OpenMP NVector <NVectors.OpenMP>` will
 be built (see section :numref:`Installation.LibrariesAndHeaders.Vector.OpenMP`
 for the corresponding header file and library).
 
-To enable OpenMP support, set the :cmakeop:`ENABLE_OPENMP` to ``ON``. For
+To enable OpenMP support, set the :cmakeop:`SUNDIALS_ENABLE_OPENMP` to ``ON``. For
 example, the following command will configure SUNDIALS with OpenMP support:
 
 .. code-block:: bash
@@ -1685,13 +1685,17 @@ example, the following command will configure SUNDIALS with OpenMP support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_OPENMP=ON
+     -D SUNDIALS_ENABLE_OPENMP=ON
 
-.. cmakeoption:: ENABLE_OPENMP
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP
 
    Enable OpenMP support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_OPENMP``
 
 Building with OpenMP Device Offloading
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1894,7 +1898,7 @@ corresponding header files and libraries).
 To enable SuperLU_DIST support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
 :cmakeop:`ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
 the path where SuperLU_DIST is installed. If SuperLU_DIST was built with OpenMP
-enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`ENABLE_OPENMP` to
+enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`SUNDIALS_ENABLE_OPENMP` to
 ``ON``. For example, the following command will configure SUNDIALS with
 SuperLU_DIST support:
 

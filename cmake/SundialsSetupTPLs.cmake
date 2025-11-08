@@ -35,7 +35,7 @@ endif()
 # Find OpenMP
 # ---------------------------------------------------------------
 
-if(ENABLE_OPENMP)
+if(SUNDIALS_ENABLE_OPENMP)
   include(SundialsOpenMP)
   list(APPEND SUNDIALS_TPL_LIST "OPENMP")
 endif()

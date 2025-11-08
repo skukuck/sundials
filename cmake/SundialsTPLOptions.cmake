@@ -25,7 +25,7 @@ sundials_option(SUNDIALS_ENABLE_MPI BOOL "Enable MPI support" OFF DEPRECATED_NAM
 # ---------------------------------------------------------------
 # Enable OpenMP support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_OPENMP BOOL "Enable OpenMP support" OFF)
+sundials_option(SUNDIALS_ENABLE_OPENMP BOOL "Enable OpenMP support" OFF DEPRECATED_NAMES ENABLE_OPENMP OPENMP_ENABLE)
 
 # ---------------------------------------------------------------
 # Enable OpenMP target offloading support?

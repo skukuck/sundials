@@ -56,10 +56,10 @@ endif()
 # Using SUPERLUDIST with OpenMP requires building with OpenMP enabled
 if(ENABLE_SUPERLUDIST
    AND SUPERLUDIST_OpenMP
-   AND NOT ENABLE_OPENMP)
+   AND NOT SUNDIALS_ENABLE_OPENMP)
   message(
     FATAL_ERROR
-      "OpenMP is required for SuperLU DIST support. Set ENABLE_OPENMP to ON.")
+      "OpenMP is required for SuperLU DIST support. Set SUNDIALS_ENABLE_OPENMP to ON.")
 endif()
 
 # -----------------------------------------------------------------------------

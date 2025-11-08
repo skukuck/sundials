@@ -47,7 +47,7 @@ endif()
 # F2003 examples (on by default) are an option only if the Fortran 2003
 # interface is enabled.
 set(DOCSTR "Build SUNDIALS Fortran 2003 examples")
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   set(EXAMPLES_ENABLE_F2003
       ON
       CACHE BOOL "${DOCSTR}")
@@ -68,7 +68,7 @@ else()
   if(EXAMPLES_ENABLE_F2003)
     message(
       WARNING
-        "EXAMPLES_ENABLE_F2003 is ON but BUILD_FORTRAN_MODULE_INTERFACE is OFF. "
+        "EXAMPLES_ENABLE_F2003 is ON but SUNDIALS_ENABLE_FORTRAN is OFF. "
         "Setting EXAMPLES_ENABLE_F2003 to OFF.")
     set(EXAMPLES_ENABLE_F2003
         OFF

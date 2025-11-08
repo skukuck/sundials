@@ -42,6 +42,6 @@ sundials_add_library(
 message(STATUS "Added SUNLINSOL_LAPACKDENSE module")
 
 # Add module if F2003 interface is enabled
-if(BUILD_FORTRAN_MODULE_INTERFACE)
+if(SUNDIALS_ENABLE_FORTRAN)
   add_subdirectory("fmod_int${SUNDIALS_INDEX_SIZE}")
 endif()

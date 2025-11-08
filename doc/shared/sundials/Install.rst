@@ -250,7 +250,7 @@ allocation account on Frontier:
      -D AMDGPU_TARGETS=gfx90a \
      -D ENABLE_HIP=ON \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D BUILD_FORTRAN_MODULE_INTERFACE=ON
+     -D SUNDIALS_ENABLE_FORTRAN=ON
    cd BUILD_DIR
    make -j8 install
    # Need an allocation to run the tests:
@@ -722,7 +722,7 @@ Example Programs
 
    Build the SUNDIALS Fortran 2003 examples
 
-   Default: ``ON`` when :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``,
+   Default: ``ON`` when :cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``,
    otherwise ``OFF``
 
 .. cmakeoption:: EXAMPLES_INSTALL
@@ -748,9 +748,9 @@ Example Programs
 Fortran Interfaces
 ^^^^^^^^^^^^^^^^^^
 
-.. cmakeoption:: BUILD_FORTRAN_MODULE_INTERFACE
+.. cmakeoption:: SUNDIALS_ENABLE_FORTRAN
 
-   Build the SUNDIALS Fortran 2003 interface
+   Enable SUNDIALS Fortran interfaces
 
    Default: ``OFF``
 
@@ -765,6 +765,10 @@ Fortran Interfaces
       that causes linking the Fortran interfaces to fail when building
       SUNDIALS. For now the work around is to only build with static libraries
       when using MSYS with gfortran on Windows.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``BUILD_FORTRAN_MODULE_INTERFACE``
 
 .. _Installation.Options.ErrorChecking:
 
@@ -1578,7 +1582,7 @@ configure SUNDIALS with MPI support:
 
       This option is triggered only needed if MPI is enabled
       (:cmakeop:`SUNDIALS_ENABLE_MPI` is ``ON``) and the Fortran interfaces are enabled
-      (:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE` is ``ON``).
+      (:cmakeop:`SUNDIALS_ENABLE_FORTRAN` is ``ON``).
 
 .. cmakeoption:: MPIEXEC_EXECUTABLE
 

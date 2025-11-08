@@ -478,7 +478,7 @@ def main():
         group,
         "--fmod-interface",
         "SUNDIALS_FMOD_INTERFACE",
-        "BUILD_FORTRAN_MODULE_INTERFACE",
+        "SUNDIALS_ENABLE_FORTRAN",
         "OFF",
         "BOOL",
         "Fortran module interface",

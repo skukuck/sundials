@@ -82,7 +82,7 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # Fortran examples
-if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN AND EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)

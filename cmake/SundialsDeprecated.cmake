@@ -16,20 +16,6 @@
 # ---------------------------------------------------------------
 
 #
-# Deprecated Fortran options
-#
-
-if(DEFINED F2003_INTERFACE_ENABLE)
-  message(DEPRECATION "The CMake option F2003_INTERFACE_ENABLE is deprecated. "
-                      "Use BUILD_FORTRAN_MODULE_INTERFACE instead.")
-  set(BUILD_FORTRAN_MODULE_INTERFACE
-      ${F2003_INTERFACE_ENABLE}
-      CACHE BOOL "Enable Fortran 2003 module interfaces")
-endif()
-
-unset(F2003_INTERFACE_ENABLE CACHE)
-
-#
 # Deprecated TPL options
 #
 

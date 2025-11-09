@@ -165,7 +165,7 @@ endif()
 # Find (and test) RAJA
 # -------------------------------------------------------------
 
-if(ENABLE_RAJA)
+if(SUNDIALS_ENABLE_RAJA)
   include(SundialsRAJA)
   list(APPEND SUNDIALS_TPL_LIST "RAJA")
 endif()

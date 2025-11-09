@@ -34,7 +34,7 @@ endif()
 
 # C++ examples
 if(EXAMPLES_ENABLE_CXX)
-  if(ENABLE_RAJA AND RAJA_FOUND)
+  if(SUNDIALS_ENABLE_RAJA AND RAJA_FOUND)
     add_subdirectory(raja)
     if(SUNDIALS_ENABLE_MPI
        AND MPI_C_FOUND

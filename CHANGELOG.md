@@ -147,6 +147,7 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_PETSC`         | `SUNDIALS_ENABLE_PETSC`         |
 | `PETSC_WORKS`          | `SUNDIALS_PETSC_WORKS`          |
 | `ENABLE_TRILINOS`      | `SUNDIALS_ENABLE_TRILINOS`      |
+| `ENABLE_RAJA`          | `SUNDIALS_ENABLE_RAJA`          |
 
 ## Changes to SUNDIALS in release 7.5.0
 

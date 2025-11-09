@@ -740,7 +740,7 @@ def main():
     group = parser.add_argument_group("RAJA Options")
 
     add_arg(
-        group, "--raja", "SUNDIALS_RAJA", "ENABLE_RAJA", "OFF", "BOOL", "SUNDIALS Raja support"
+        group, "--raja", "SUNDIALS_RAJA", "SUNDIALS_ENABLE_RAJA", "OFF", "BOOL", "SUNDIALS Raja support"
     )
 
     add_arg(

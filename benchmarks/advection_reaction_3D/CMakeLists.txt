@@ -15,7 +15,7 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-if(ENABLE_RAJA)
+if(SUNDIALS_ENABLE_RAJA)
   add_subdirectory(raja)
 endif()
 

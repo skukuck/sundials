@@ -1876,7 +1876,7 @@ When RAJA support is enabled, the :ref:`RAJA NVector <NVectors.RAJA>` will be
 built (see section :numref:`Installation.LibrariesAndHeaders.Vector.RAJA`
 for the corresponding header files and libraries).
 
-To enable RAJA support, set :cmakeop:`ENABLE_RAJA` to ``ON``, set
+To enable RAJA support, set :cmakeop:`SUNDIALS_ENABLE_RAJA` to ``ON``, set
 :cmakeop:`RAJA_DIR` to the path of the RAJA installation, set
 :cmakeop:`SUNDIALS_RAJA_BACKENDS` to the desired backend (``CUDA``, ``HIP``, or
 ``SYCL``), and set :cmakeop:`SUNDIALS_ENABLE_CUDA`, :cmakeop:`SUNDIALS_ENABLE_HIP`, or
@@ -1890,17 +1890,21 @@ the CUDA backend (targeting Ampere GPUs):
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_RAJA=ON \
+     -D SUNDIALS_ENABLE_RAJA=ON \
      -D RAJA_DIR=/path/to/raja/installation \
      -D SUNDIALS_RAJA_BACKENDS="CUDA" \
      -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_RAJA
+.. cmakeoption:: SUNDIALS_ENABLE_RAJA
 
    Enable RAJA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_RAJA``
 
 .. cmakeoption:: RAJA_DIR
 

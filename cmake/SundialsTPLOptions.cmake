@@ -245,7 +245,7 @@ sundials_option(
 # Enable RAJA support?
 # -------------------------------------------------------------
 
-sundials_option(ENABLE_RAJA BOOL "Enable RAJA support" OFF)
+sundials_option(SUNDIALS_ENABLE_RAJA BOOL "Enable RAJA support" OFF DEPRECATED_NAMES ENABLE_RAJA RAJA_ENABLE)
 
 sundials_option(RAJA_DIR PATH "Path to root of RAJA installation" "${RAJA_DIR}")
 
@@ -254,7 +254,7 @@ sundials_option(
   "Which RAJA backend under the SUNDIALS RAJA interfaces (CUDA, HIP, SYCL)"
   "CUDA"
   OPTIONS "CUDA;HIP;SYCL"
-  DEPENDS_ON ENABLE_RAJA)
+  DEPENDS_ON SUNDIALS_ENABLE_RAJA)
 
 # ---------------------------------------------------------------
 # Enable Trilinos support?

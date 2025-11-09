@@ -28,19 +28,6 @@ if(DEFINED SUPERLUDIST_LIBRARY_DIR)
 endif()
 
 #
-# Deprecated TPL options
-#
-
-if(DEFINED RAJA_ENABLE)
-  message(DEPRECATION "The CMake option RAJA_ENABLE is deprecated. "
-                      "Use ENABLE_RAJA instead.")
-  set(ENABLE_RAJA
-      ${RAJA_ENABLE}
-      CACHE BOOL "Enable RAJA support" FORCE)
-  unset(RAJA_ENABLE CACHE)
-endif()
-
-#
 # Deprecated CUDA_ARCH option
 #
 

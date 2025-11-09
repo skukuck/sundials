@@ -269,7 +269,7 @@ sundials_option(Trilinos_DIR PATH "Path to root of Trilinos installation"
 # Enable XBraid support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_XBRAID BOOL "Enable XBraid support" OFF)
+sundials_option(SUNDIALS_ENABLE_XBRAID BOOL "Enable XBraid support" OFF DEPRECATED_NAMES ENABLE_XBRAID)
 
 sundials_option(XBRAID_DIR PATH "Path to the root of an XBraid installation"
                 "${XBRAID_DIR}")
@@ -284,9 +284,9 @@ sundials_option(
   "${XBRAID_INCLUDES}" ADVANCED)
 
 sundials_option(
-  XBRAID_WORKS BOOL
+  SUNDIALS_XBRAID_WORKS BOOL
   "Set to ON to force CMake to accept a given XBraid configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES XBRAID_WORKS)
 
 # -------------------------------------------------------------
 # Enable oneMKL support?

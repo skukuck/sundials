@@ -84,7 +84,7 @@ if(SUNDIALS_ENABLE_SYCL)
 endif()
 
 # If enabled, add the XBraid interface header
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   list(APPEND sundials_HEADERS sundials_xbraid.h)
 endif()
 

@@ -73,7 +73,7 @@ message(STATUS "XBRAID_INCLUDES:  ${XBRAID_INCS}")
 
 # Add works variable
 
-if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
+if(XBRAID_FOUND AND (NOT SUNDIALS_XBRAID_WORKS))
 
   # Create the XBRAID_TEST directory
   set(XBRAID_TEST_DIR ${PROJECT_BINARY_DIR}/XBRAID_TEST)
@@ -123,7 +123,7 @@ if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
   # Process test result
   if(COMPILE_OK)
     message(STATUS "Checking if XBRAID works... OK")
-    set(XBRAID_WORKS
+    set(SUNDIALS_XBRAID_WORKS
         TRUE
         CACHE BOOL "XBRAID works as configured" FORCE)
   else()

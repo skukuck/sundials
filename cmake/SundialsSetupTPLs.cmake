@@ -201,7 +201,7 @@ endif()
 # Find (and test) XBraid
 # -------------------------------------------------------------
 
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   include(SundialsXBRAID)
   list(APPEND SUNDIALS_TPL_LIST "XBRAID")
 endif()

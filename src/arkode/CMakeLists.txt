@@ -128,6 +128,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
 endif()
 
 # Add ARKODE XBraid interface
-if(ENABLE_XBRAID)
+if(SUNDIALS_ENABLE_XBRAID)
   add_subdirectory(xbraid)
 endif()

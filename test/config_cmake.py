@@ -1137,7 +1137,7 @@ def main():
         group,
         "--xbraid",
         "SUNDIALS_XBRAID",
-        "ENABLE_XBRAID",
+        "SUNDIALS_ENABLE_XBRAID",
         "OFF",
         "BOOL",
         "SUNDIALS XBraid support",

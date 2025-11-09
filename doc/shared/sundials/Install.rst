@@ -2222,7 +2222,7 @@ National Laboratory and is available from the `XBraid GitHub repository
 latest versions of XBraid, specifically up to version 3.0.0.
 
 To enable XBraid support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
+:cmakeop:`SUNDIALS_ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
 of the XBraid installation. For example, the following command will configure
 SUNDIALS with XBraid support:
 
@@ -2234,7 +2234,7 @@ SUNDIALS with XBraid support:
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_INDEX_SIZE="32" \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D ENABLE_XBRAID=ON \
+     -D SUNDIALS_ENABLE_XBRAID=ON \
      -D XBRAID_DIR=/path/to/xbraid/installation
 
 .. note::
@@ -2245,11 +2245,15 @@ SUNDIALS with XBraid support:
    :cmakeop:`SUNDIALS_PRECISION` set to ``double``. Additionally, SUNDIALS must
    be configured with :cmakeop:`SUNDIALS_ENABLE_MPI` set to ``ON``.
 
-.. cmakeoption:: ENABLE_XBRAID
+.. cmakeoption:: SUNDIALS_ENABLE_XBRAID
 
    Enable or disable the ARKStep + XBraid interface.
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_XBRAID``
 
 .. cmakeoption:: XBRAID_DIR
 
@@ -2630,7 +2634,7 @@ depending on the value of :cmakeop:`SUNDIALS_INDEX_SIZE`.
    | Headers      | ``sundials/sundials_mpi_types.h``            |
    +--------------+----------------------------------------------+
 
-When XBraid support is enabled (:cmakeop:`ENABLE_XBRAID` is ``ON``), the
+When XBraid support is enabled (:cmakeop:`SUNDIALS_ENABLE_XBRAID` is ``ON``), the
 following header file defines types and functions for interfacing SUNDIALS with
 XBraid.
 
@@ -2830,7 +2834,7 @@ modules. Include the header files below to access the related functions.
    |              | ``arkode/arkode_bbdpre.h``                   |
    +--------------+----------------------------------------------+
 
-When XBraid support is enabled (:cmakeop:`ENABLE_XBRAID` is ``ON``), include the
+When XBraid support is enabled (:cmakeop:`SUNDIALS_ENABLE_XBRAID` is ``ON``), include the
 ARKODE-XBraid interface header file and link to the interface library given
 below to use ARKODE and XBraid together.
 

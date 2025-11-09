@@ -186,7 +186,7 @@ sundials_option(
 # Enable KLU support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_KLU BOOL "Enable KLU support" OFF)
+sundials_option(SUNDIALS_ENABLE_KLU BOOL "Enable KLU support" OFF DEPRECATED_NAMES ENABLE_KLU KLU_ENABLE)
 
 sundials_option(KLU_INCLUDE_DIR PATH "KLU include directory"
                 "${KLU_INCLUDE_DIR}")
@@ -195,8 +195,8 @@ sundials_option(KLU_LIBRARY_DIR PATH "KLU library directory"
                 "${KLU_LIBRARY_DIR}")
 
 sundials_option(
-  KLU_WORKS BOOL "Set to ON to force CMake to accept a given KLU configuration"
-  OFF ADVANCED)
+  SUNDIALS_KLU_WORKS BOOL "Set to ON to force CMake to accept a given KLU configuration"
+  OFF ADVANCED DEPRECATED_NAMES KLU_WORKS)
 
 # ---------------------------------------------------------------
 # Enable hypre support?

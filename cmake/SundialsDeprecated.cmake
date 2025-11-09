@@ -31,15 +31,6 @@ endif()
 # Deprecated TPL options
 #
 
-if(DEFINED KLU_ENABLE)
-  message(DEPRECATION "The CMake option KLU_ENABLE is deprecated. "
-                      "Use ENABLE_KLU instead.")
-  set(ENABLE_KLU
-      ${KLU_ENABLE}
-      CACHE BOOL "Enable KLU support" FORCE)
-  unset(KLU_ENABLE CACHE)
-endif()
-
 if(DEFINED HYPRE_ENABLE)
   message(DEPRECATION "The CMake option HYPRE_ENABLE is deprecated. "
                       "Use ENABLE_HYPRE instead.")

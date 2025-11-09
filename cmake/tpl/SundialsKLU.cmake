@@ -58,7 +58,7 @@ message(STATUS "KLU_INCLUDE_DIR: ${KLU_INCLUDE_DIR}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(KLU_FOUND AND (NOT KLU_WORKS))
+if(KLU_FOUND AND (NOT SUNDIALS_KLU_WORKS))
   # Do any checks which don't require compilation first.
 
   if(SUNDIALS_INDEX_SIZE MATCHES "64")
@@ -120,7 +120,7 @@ if(KLU_FOUND AND (NOT KLU_WORKS))
   # Process test result
   if(COMPILE_OK)
     message(STATUS "Checking if KLU works... OK")
-    set(KLU_WORKS
+    set(SUNDIALS_KLU_WORKS
         TRUE
         CACHE BOOL "KLU works with SUNDIALS as configured" FORCE)
   else()
@@ -130,9 +130,9 @@ if(KLU_FOUND AND (NOT KLU_WORKS))
     message(FATAL_ERROR "SUNDIALS interface to KLU is not functional.")
   endif()
 
-elseif(KLU_FOUND AND KLU_WORKS)
+elseif(KLU_FOUND AND SUNDIALS_KLU_WORKS)
   message(
     STATUS
-      "Skipped KLU tests, assuming KLU works with SUNDIALS. Set KLU_WORKS=FALSE to (re)run compatibility test."
+      "Skipped KLU tests, assuming KLU works with SUNDIALS. Set SUNDIALS_KLU_WORKS=FALSE to (re)run compatibility test."
   )
 endif()

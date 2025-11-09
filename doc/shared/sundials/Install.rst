@@ -1189,7 +1189,7 @@ be built (see section
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.KLU` for the
 corresponding header file and library).
 
-To enable KLU support, set :cmakeop:`ENABLE_KLU` to ``ON``. For SuiteSparse
+To enable KLU support, set :cmakeop:`SUNDIALS_ENABLE_KLU` to ``ON``. For SuiteSparse
 7.4.0 and newer, set :cmakeop:`KLU_ROOT` to the root of the SuiteSparse
 installation. Alternatively, set :cmakeop:`KLU_INCLUDE_DIR` and
 :cmakeop:`KLU_LIBRARY_DIR` to the path to the header and library files,
@@ -1202,14 +1202,18 @@ following command will configure SUNDIALS with KLU support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KLU=ON \
+     -D SUNDIALS_ENABLE_KLU=ON \
      -D KLU_ROOT=/path/to/suitesparse/installation
 
-.. cmakeoption:: ENABLE_KLU
+.. cmakeoption:: SUNDIALS_ENABLE_KLU
 
    Enable KLU support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KLU``
 
 .. cmakeoption:: KLU_ROOT
 

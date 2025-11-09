@@ -111,7 +111,7 @@ endif()
 # Find (and test) the KLU libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_KLU)
+if(SUNDIALS_ENABLE_KLU)
   include(SundialsKLU)
   list(APPEND SUNDIALS_TPL_LIST "KLU")
 endif()

@@ -851,7 +851,7 @@ def main():
     # KLU
     group = parser.add_argument_group("KLU Options")
 
-    add_arg(group, "--klu", "SUNDIALS_KLU", "ENABLE_KLU", "OFF", "BOOL", "SUNDIALS KLU support")
+    add_arg(group, "--klu", "SUNDIALS_KLU", "SUNDIALS_ENABLE_KLU", "OFF", "BOOL", "SUNDIALS KLU support")
 
     add_arg(
         group,

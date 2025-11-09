@@ -31,15 +31,6 @@ endif()
 # Deprecated TPL options
 #
 
-if(DEFINED HYPRE_ENABLE)
-  message(DEPRECATION "The CMake option HYPRE_ENABLE is deprecated. "
-                      "Use ENABLE_HYPRE instead.")
-  set(ENABLE_HYPRE
-      ${HYPRE_ENABLE}
-      CACHE BOOL "Enable HYPRE support" FORCE)
-  unset(HYPRE_ENABLE CACHE)
-endif()
-
 if(DEFINED PETSC_ENABLE)
   message(DEPRECATION "The CMake option PETSC_ENABLE is deprecated. "
                       "Use ENABLE_PETSC instead.")

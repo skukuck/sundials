@@ -58,7 +58,7 @@ message(STATUS "HYPRE_INCLUDE_DIR: ${HYPRE_INCLUDE_DIR}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(HYPRE_FOUND AND (NOT HYPRE_WORKS))
+if(HYPRE_FOUND AND (NOT SUNDIALS_HYPRE_WORKS))
   # Do any checks which don't require compilation first.
 
   # Create the HYPRE_TEST directory
@@ -109,7 +109,7 @@ if(HYPRE_FOUND AND (NOT HYPRE_WORKS))
   # Process test result
   if(COMPILE_OK)
     message(STATUS "Checking if HYPRE works... OK")
-    set(HYPRE_WORKS
+    set(SUNDIALS_HYPRE_WORKS
         TRUE
         CACHE BOOL "HYPRE works with SUNDIALS as configured" FORCE)
   else()
@@ -119,9 +119,9 @@ if(HYPRE_FOUND AND (NOT HYPRE_WORKS))
     message(FATAL_ERROR "SUNDIALS interface to HYPRE is not functional.")
   endif()
 
-elseif(HYPRE_FOUND AND HYPRE_WORKS)
+elseif(HYPRE_FOUND AND SUNDIALS_HYPRE_WORKS)
   message(
     STATUS
-      "Skipped HYPRE tests, assuming HYPRE works with SUNDIALS. Set HYPRE_WORKS=FALSE to (re)run compatibility test."
+      "Skipped HYPRE tests, assuming HYPRE works with SUNDIALS. Set SUNDIALS_HYPRE_WORKS=FALSE to (re)run compatibility test."
   )
 endif()

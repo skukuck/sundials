@@ -202,7 +202,7 @@ sundials_option(
 # Enable hypre support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_HYPRE BOOL "Enable hypre support" OFF)
+sundials_option(SUNDIALS_ENABLE_HYPRE BOOL "Enable hypre support" OFF DEPRECATED_NAMES ENABLE_HYPRE HYPRE_ENABLE)
 
 sundials_option(HYPRE_DIR PATH "Path to hypre installation" "${HYPRE_DIR}")
 
@@ -213,8 +213,8 @@ sundials_option(HYPRE_LIBRARY_DIR PATH "HYPRE library directory"
                 "${HYPRE_LIBRARY_DIR}")
 
 sundials_option(
-  HYPRE_WORKS BOOL
-  "Set to ON to force CMake to accept a given hypre configuration" OFF ADVANCED)
+  SUNDIALS_HYPRE_WORKS BOOL
+  "Set to ON to force CMake to accept a given hypre configuration" OFF ADVANCED DEPRECATED_NAMES HYPRE_WORKS)
 
 # ---------------------------------------------------------------
 # Enable PETSc support?

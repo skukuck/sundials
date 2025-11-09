@@ -1139,7 +1139,7 @@ will be built (see section
 header file and library).
 
 To enable *hypre* support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_HYPRE` to ``ON``, and set :cmakeop:`HYPRE_DIR` to the root path
+:cmakeop:`SUNDIALS_ENABLE_HYPRE` to ``ON``, and set :cmakeop:`HYPRE_DIR` to the root path
 of the *hypre* installation. For example, the following command will configure
 SUNDIALS with *hypre* support:
 
@@ -1150,7 +1150,7 @@ SUNDIALS with *hypre* support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D ENABLE_HYPRE=ON \
+     -D SUNDIALS_ENABLE_HYPRE=ON \
      -D HYPRE_DIR=/path/to/hypre/installation
 
 .. note::
@@ -1158,11 +1158,15 @@ SUNDIALS with *hypre* support:
    SUNDIALS must be configured so that :cmakeop:`SUNDIALS_INDEX_SIZE` is
    compatible with ``HYPRE_BigInt`` in the *hypre* installation.
 
-.. cmakeoption:: ENABLE_HYPRE
+.. cmakeoption:: SUNDIALS_ENABLE_HYPRE
 
    Enable *hypre* support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_HYPRE``
 
 .. cmakeoption:: HYPRE_DIR
 

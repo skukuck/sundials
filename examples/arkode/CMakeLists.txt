@@ -34,7 +34,7 @@ if(EXAMPLES_ENABLE_C)
   if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
     add_subdirectory(C_parallel)
   endif()
-  if(ENABLE_HYPRE AND HYPRE_FOUND)
+  if(SUNDIALS_ENABLE_HYPRE AND HYPRE_FOUND)
     add_subdirectory(C_parhyp)
   endif()
   if(BUILD_SUNLINSOL_KLU)
@@ -62,7 +62,7 @@ if(EXAMPLES_ENABLE_CXX)
   endif()
   if(SUNDIALS_ENABLE_MPI
      AND MPI_CXX_FOUND
-     AND ENABLE_HYPRE
+     AND SUNDIALS_ENABLE_HYPRE
      AND HYPRE_FOUND)
     add_subdirectory(CXX_parhyp)
   endif()

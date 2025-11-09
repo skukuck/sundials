@@ -38,7 +38,7 @@ if(EXAMPLES_ENABLE_CXX)
   endif()
   if(SUNDIALS_ENABLE_MPI
      AND MPI_CXX_FOUND
-     AND ENABLE_HYPRE
+     AND SUNDIALS_ENABLE_HYPRE
      AND HYPRE_FOUND)
     add_subdirectory(CXX_parhyp)
   endif()

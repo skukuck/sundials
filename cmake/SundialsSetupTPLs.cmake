@@ -84,7 +84,7 @@ endif()
 # Find (and test) the hypre libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_HYPRE)
+if(SUNDIALS_ENABLE_HYPRE)
   include(SundialsHypre)
   list(APPEND SUNDIALS_TPL_LIST "HYPRE")
 endif()

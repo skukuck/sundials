@@ -1063,7 +1063,7 @@ def main():
     group = parser.add_argument_group("hypre Options")
 
     add_arg(
-        group, "--hypre", "SUNDIALS_HYPRE", "ENABLE_HYPRE", "OFF", "BOOL", "SUNDIALS hypre support"
+        group, "--hypre", "SUNDIALS_HYPRE", "SUNDIALS_ENABLE_HYPRE", "OFF", "BOOL", "SUNDIALS hypre support"
     )
 
     add_arg(

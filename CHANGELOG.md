@@ -142,6 +142,8 @@ table below lists the old CMake option names and the new replacements.
 | `SUPERLUMT_WORKS`      | `SUNDIALS_SUPERLUMT_WORKS`      |
 | `ENABLE_KLU`           | `SUNDIALS_ENABLE_KLU`           |
 | `KLU_WORKS`            | `SUNDIALS_KLU_WORKS`            |
+| `ENABLE_HYPRE`         | `SUNDIALS_ENABLE_HYPRE`         |
+| `HYPRE_WORKS`          | `SUNDIALS_HYPRE_WORKS`          |
 
 ## Changes to SUNDIALS in release 7.5.0
 

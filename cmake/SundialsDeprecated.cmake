@@ -14,6 +14,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
+# Deprecated options that can not use the DEPRECATES_NAMES option
+# to sundials_option
+# ---------------------------------------------------------------
 
 # Deprecated with SUNDIALS 6.4.0
 if(DEFINED SUPERLUDIST_LIBRARY_DIR)
@@ -27,10 +30,7 @@ if(DEFINED SUPERLUDIST_LIBRARY_DIR)
   endif()
 endif()
 
-#
 # Deprecated CUDA_ARCH option
-#
-
 if(DEFINED CUDA_ARCH)
   message(DEPRECATION "The CMake option CUDA_ARCH is deprecated. "
                       "Use CMAKE_CUDA_ARCHITECTURES instead.")

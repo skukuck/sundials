@@ -1112,7 +1112,7 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
 
    .. versionadded:: x.y.z
 
-      Replaces the deprecated option ``SUNDIALS_ENABLE_HIP``
+      Replaces the deprecated option ``ENABLE_HIP``
 
 .. cmakeoption:: AMDGPU_TARGETS
 

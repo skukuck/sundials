@@ -150,6 +150,8 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_RAJA`          | `SUNDIALS_ENABLE_RAJA`          |
 | `ENABLE_XBRAID`        | `SUNDIALS_ENABLE_XBRAID`        |
 | `XBRAID_WORKS`         | `SUNDIALS_XBRAID_WORKS`         |
+| `ENABLE_ONEMKL`        | `SUNDIALS_ENABLE_ONEMKL`        |
+| `ONEMKL_WORKS`         | `SUNDIALS_ONEMKL_WORKS`         |
 
 ## Changes to SUNDIALS in release 7.5.0
 

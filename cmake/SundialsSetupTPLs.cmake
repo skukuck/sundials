@@ -138,7 +138,7 @@ endif()
 # Find (and test) the oneMKL libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_ONEMKL)
+if(SUNDIALS_ENABLE_ONEMKL)
   include(SundialsONEMKL)
   list(APPEND SUNDIALS_TPL_LIST "ONEMKL")
 endif()

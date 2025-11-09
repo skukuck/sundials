@@ -1653,7 +1653,7 @@ When oneMKL support is enabled, the :ref:`oneMLK dense SUNMatrix
 respectively, for the corresponding header files and libraries). For more
 information on using SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable the SUNDIALS oneMKL interface set :cmakeop:`ENABLE_ONEMKL` to ``ON``
+To enable the SUNDIALS oneMKL interface set :cmakeop:`SUNDIALS_ENABLE_ONEMKL` to ``ON``
 and :cmakeop:`ONEMKL_DIR` to the root path of oneMKL installation. For example,
 the following command will configure SUNDIALS with oneMKL support:
 
@@ -1663,14 +1663,18 @@ the following command will configure SUNDIALS with oneMKL support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_ONEMKL=ON \
+     -D SUNDIALS_ENABLE_ONEMKL=ON \
      -D ONEMKL_DIR=/path/to/onemkl/installation \
 
-.. cmakeoption:: ENABLE_ONEMKL
+.. cmakeoption:: SUNDIALS_ENABLE_ONEMKL
 
    Enable oneMKL support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ONEMKL``
 
 .. cmakeoption:: ONEMKL_DIR
 

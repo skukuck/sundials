@@ -292,26 +292,26 @@ sundials_option(
 # Enable oneMKL support?
 # -------------------------------------------------------------
 
-sundials_option(ENABLE_ONEMKL BOOL "Enable oneMKL support" OFF)
+sundials_option(SUNDIALS_ENABLE_ONEMKL BOOL "Enable oneMKL support" OFF DEPRECATED_NAMES ENABLE_ONEMKL)
 
 sundials_option(ONEMKL_DIR PATH "Path to root of oneMKL installation"
                 "${ONEMKL_DIR}")
 
 sundials_option(
-  ONEMKL_WORKS BOOL
+  SUNDIALS_ONEMKL_WORKS BOOL
   "Set to ON to force CMake to accept a given oneMKL configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES ONEMKL_WORKS)
 
 sundials_option(
   SUNDIALS_ONEMKL_USE_GETRF_LOOP BOOL
   "Replace batched getrf call with loop over getrf" OFF
-  DEPENDS_ON ENABLE_ONEMKL
+  DEPENDS_ON SUNDIALS_ENABLE_ONEMKL
   ADVANCED)
 
 sundials_option(
   SUNDIALS_ONEMKL_USE_GETRS_LOOP BOOL
   "Replace batched getrs call with loop over getrs" OFF
-  DEPENDS_ON ENABLE_ONEMKL
+  DEPENDS_ON SUNDIALS_ENABLE_ONEMKL
   ADVANCED)
 
 # ---------------------------------------------------------------

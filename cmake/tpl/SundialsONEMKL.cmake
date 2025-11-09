@@ -79,9 +79,9 @@ message(STATUS "MKL Targets: ${MKL_IMPORTED_TARGETS}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(MKL_FOUND AND (NOT ONEMKL_WORKS))
+if(MKL_FOUND AND (NOT SUNDIALS_ONEMKL_WORKS))
   message(STATUS "Checking if oneMKL works... OK")
-  set(ONEMKL_WORKS
+  set(SUNDIALS_ONEMKL_WORKS
       TRUE
       CACHE BOOL "oneMKL works with SUNDIALS as configured" FORCE)
 else()

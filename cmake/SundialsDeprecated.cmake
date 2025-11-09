@@ -31,15 +31,6 @@ endif()
 # Deprecated TPL options
 #
 
-if(DEFINED Trilinos_ENABLE)
-  message(DEPRECATION "The CMake option Trilinos_ENABLE is deprecated. "
-                      "Use ENABLE_TRILINOS instead.")
-  set(ENABLE_TRILINOS
-      ${Trilinos_ENABLE}
-      CACHE BOOL "Enable Trilinos support" FORCE)
-  unset(Trilinos_ENABLE CACHE)
-endif()
-
 if(DEFINED RAJA_ENABLE)
   message(DEPRECATION "The CMake option RAJA_ENABLE is deprecated. "
                       "Use ENABLE_RAJA instead.")

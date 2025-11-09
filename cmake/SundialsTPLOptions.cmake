@@ -260,10 +260,10 @@ sundials_option(
 # Enable Trilinos support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_TRILINOS BOOL "Enable Trilinos support" OFF)
+sundials_option(SUNDIALS_ENABLE_TRILINOS BOOL "Enable Trilinos support" OFF DEPRECATED_NAMES ENABLE_TRILINOS Trilinos_ENABLE)
 
 sundials_option(Trilinos_DIR PATH "Path to root of Trilinos installation"
-                "${Trilinos_DIR}" DEPENDS_ON ENABLE_TRILINOS)
+                "${Trilinos_DIR}")
 
 # ---------------------------------------------------------------
 # Enable XBraid support?

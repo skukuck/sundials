@@ -146,6 +146,7 @@ table below lists the old CMake option names and the new replacements.
 | `HYPRE_WORKS`          | `SUNDIALS_HYPRE_WORKS`          |
 | `ENABLE_PETSC`         | `SUNDIALS_ENABLE_PETSC`         |
 | `PETSC_WORKS`          | `SUNDIALS_PETSC_WORKS`          |
+| `ENABLE_TRILINOS`      | `SUNDIALS_ENABLE_TRILINOS`      |
 
 ## Changes to SUNDIALS in release 7.5.0
 

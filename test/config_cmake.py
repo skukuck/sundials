@@ -1113,7 +1113,7 @@ def main():
         group,
         "--trilinos",
         "SUNDIALS_TRILINOS",
-        "ENABLE_TRILINOS",
+        "SUNDIALS_ENABLE_TRILINOS",
         "OFF",
         "BOOL",
         "SUNDIALS Trilinos support",

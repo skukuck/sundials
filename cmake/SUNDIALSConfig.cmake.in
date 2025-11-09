@@ -174,7 +174,7 @@ if("@ENABLE_RAJA@" AND NOT TARGET RAJA)
   find_dependency(RAJA PATHS "@RAJA_DIR@")
 endif()
 
-if("@ENABLE_TRILINOS@" AND NOT TARGET Tpetra::all_libs)
+if("@SUNDIALS_ENABLE_TRILINOS@" AND NOT TARGET Tpetra::all_libs)
   find_dependency(Trilinos COMPONENTS Tpetra PATHS "@Trilinos_DIR@")
 endif()
 

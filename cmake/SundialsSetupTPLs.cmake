@@ -192,7 +192,7 @@ endif()
 # Find (and test) Trilinos
 # -------------------------------------------------------------
 
-if(ENABLE_TRILINOS)
+if(SUNDIALS_ENABLE_TRILINOS)
   include(SundialsTrilinos)
   list(APPEND SUNDIALS_TPL_LIST "TRILINOS")
 endif()

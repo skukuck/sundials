@@ -2177,7 +2177,7 @@ When Trilinos support is enabled, the :ref:`Trilinos Tpetra NVector
 :numref:`Installation.LibrariesAndHeaders.Vector.Trilinos` for the corresponding
 header file and library).
 
-To enable Trilinos support, set the :cmakeop:`ENABLE_TRILINOS` to ``ON`` and set
+To enable Trilinos support, set the :cmakeop:`SUNDIALS_ENABLE_TRILINOS` to ``ON`` and set
 :cmakeop:`Trilinos_DIR` to root path of the Trilinos installation. For example,
 the following command will configure SUNDIALS with Trilinos support:
 
@@ -2190,11 +2190,15 @@ the following command will configure SUNDIALS with Trilinos support:
      -D ENABLE_TRILONOS=ON \
      -D TRILINOS_DIR=/path/to/trilinos/installation
 
-.. cmakeoption:: ENABLE_TRILINOS
+.. cmakeoption:: SUNDIALS_ENABLE_TRILINOS
 
    Enable Trilinos support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_TRILINOS``
 
 .. cmakeoption:: Trilinos_DIR
 

@@ -445,7 +445,7 @@ C++ Compiler
 
    The C++ standard used when building SUNDIALS C++ source files.
 
-   Default: ``14`` or ``17`` if :cmakeop:`ENABLE_GINKGO` or
+   Default: ``14`` or ``17`` if :cmakeop:`SUNDIALS_ENABLE_GINKGO` or
    :cmakeop:`SUNDIALS_ENABLE_SYCL` are ``ON``
 
    Options: ``14``, ``17``, ``20``, or ``23``
@@ -1016,7 +1016,7 @@ Batch SUNMatrix <SUNMatrix.GinkgoBatch>` and :ref:`SUNLinearSolver
 for the corresponding header files). For more information on using SUNDIALS with
 GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable Ginkgo support, set :cmakeop:`ENABLE_GINKGO` to ``ON`` and set
+To enable Ginkgo support, set :cmakeop:`SUNDIALS_ENABLE_GINKGO` to ``ON`` and set
 :cmakeop:`Ginkgo_DIR` to the root path of the Ginkgo installation. Additionally,
 set :cmakeop:`SUNDIALS_GINKGO_BACKENDS` to a semicolon-separated list of Ginkgo
 target architectures/executors. For example, the following command will
@@ -1029,7 +1029,7 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_GINKGO=ON \
+     -D SUNDIALS_ENABLE_GINKGO=ON \
      -D Ginkgo_DIR=/path/to/ginkgo/installation \
      -D SUNDIALS_GINKGO_BACKENDS="REF;OMP;CUDA" \
      -D SUNDIALS_ENABLE_CUDA=ON \
@@ -1041,11 +1041,15 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
    The SUNDIALS interfaces to Ginkgo are not compatible with extended precision
    (i.e., when :cmakeop:`SUNDIALS_PRECISION` is set to ``extended``).
 
-.. cmakeoption:: ENABLE_GINKGO
+.. cmakeoption:: SUNDIALS_ENABLE_GINKGO
 
    Enable Ginkgo support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_GINKGO``
 
 .. cmakeoption:: Ginkgo_DIR
 

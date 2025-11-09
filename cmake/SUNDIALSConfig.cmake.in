@@ -80,7 +80,7 @@ if("@SUNDIALS_ENABLE_CUDA@" AND NOT (TARGET CUDA::cudart AND TARGET CUDA::cublas
   find_dependency(CUDAToolkit)
 endif()
 
-if("@ENABLE_GINKGO@" AND NOT TARGET Ginkgo::ginkgo)
+if("@SUNDIALS_ENABLE_GINKGO@" AND NOT TARGET Ginkgo::ginkgo)
   if(NOT TARGET hwloc AND NOT HWLOC_DIR)
     set(HWLOC_DIR "@HWLOC_DIR@")
   endif()

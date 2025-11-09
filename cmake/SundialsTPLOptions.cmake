@@ -83,7 +83,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable Ginkgo support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_GINKGO BOOL "Enable Ginkgo support" OFF)
+sundials_option(SUNDIALS_ENABLE_GINKGO BOOL "Enable Ginkgo support" OFF DEPRECATED_NAMES ENABLE_GINKGO)
 
 sundials_option(Ginkgo_DIR PATH "Path to the root of a Ginkgo installation"
                 "${Ginkgo_DIR}")
@@ -93,12 +93,12 @@ sundials_option(
   STRING
   "Which Ginkgo backend(s) to build the SUNDIALS Ginkgo interfaces for (REF, OMP, CUDA, HIP, SYCL)"
   "REF;OMP"
-  DEPENDS_ON ENABLE_GINKGO)
+  DEPENDS_ON SUNDIALS_ENABLE_GINKGO)
 
 sundials_option(
-  GINKGO_WORKS BOOL
+  SUNDIALS_GINKGO_WORKS BOOL
   "Set to ON to force CMake to accept a given Ginkgo configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES GINKGO_WORKS)
 
 # ---------------------------------------------------------------
 # Enable MAGMA support?

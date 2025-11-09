@@ -132,6 +132,8 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_SYCL`          | `SUNDIALS_ENABLE_SYCL`          |
 | `ENABLE_LAPACK`        | `SUNDIALS_ENABLE_LAPACK`        |
 | `LAPACK_WORKS`         | `SUNDIALS_LAPACK_WORKS`         |
+| `ENABLE_GINKGO`        | `SUNDIALS_ENABLE_GINKGO`        |
+| `GINKGO_WORKS`         | `SUNDIALS_GINKGO_WORKS`         |
 
 ## Changes to SUNDIALS in release 7.5.0
 

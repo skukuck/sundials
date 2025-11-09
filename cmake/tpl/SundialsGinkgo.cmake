@@ -99,7 +99,7 @@ endif()
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
+if(Ginkgo_FOUND AND (NOT SUNDIALS_GINKGO_WORKS))
   if(SUNDIALS_PRECISION MATCHES "extended|EXTENDED")
     message(
       FATAL_ERROR
@@ -135,9 +135,9 @@ if(Ginkgo_FOUND AND (NOT GINKGO_WORKS))
   endif()
 
   message(STATUS "Checking if GINKGO works... OK")
-  set(GINKGO_WORKS
+  set(SUNDIALS_GINKGO_WORKS
       TRUE
       CACHE BOOL "GINKGO works with SUNDIALS as configured" FORCE)
-elseif(Ginkgo_FOUND AND GINKGO_WORKS)
+elseif(Ginkgo_FOUND AND SUNDIALS_GINKGO_WORKS)
   message(STATUS "Skipped GINKGO tests, assuming GINKGO works with SUNDIALS.")
 endif()

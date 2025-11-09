@@ -784,7 +784,7 @@ def main():
         group,
         "--ginkgo",
         "SUNDIALS_GINKGO",
-        "ENABLE_GINKGO",
+        "SUNDIALS_ENABLE_GINKGO",
         "OFF",
         "BOOL",
         "SUNDIALS Ginkgo support",

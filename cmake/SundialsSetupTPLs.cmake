@@ -75,7 +75,7 @@ endif()
 # Find (and test) the Ginkgo libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_GINKGO)
+if(SUNDIALS_ENABLE_GINKGO)
   include(SundialsGinkgo)
   list(APPEND SUNDIALS_TPL_LIST "GINKGO")
 endif()

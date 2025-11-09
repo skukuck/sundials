@@ -122,7 +122,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable SuperLU_DIST support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_SUPERLUDIST BOOL "Enable SuperLU_DIST support" OFF)
+sundials_option(SUNDIALS_ENABLE_SUPERLUDIST BOOL "Enable SuperLU_DIST support" OFF DEPRECATED_NAMES ENABLE_SUPERLUDIST SUPERLUDIST_ENABLE)
 
 sundials_option(
   SUPERLUDIST_DIR PATH "Path to the root of the SuperLU_DIST installation"
@@ -130,7 +130,7 @@ sundials_option(
 
 sundials_option(
   SUPERLUDIST_INCLUDE_DIRS PATH "SuperLU_DIST include directories"
-  "${SUPERLUDIST_INCLUDE_DIRS}" ADVANCED)
+  "${SUPERLUDIST_INCLUDE_DIRS}" ADVANCED DEPRECATED_NAMES SUPERLUDIST_INCLUDE_DIR)
 
 sundials_option(
   SUPERLUDIST_LIBRARIES STRING
@@ -142,9 +142,9 @@ sundials_option(
   "Enable SUNDIALS support for SuperLU_DIST OpenMP on-node parallelism" OFF)
 
 sundials_option(
-  SUPERLUDIST_WORKS BOOL
+  SUNDIALS_SUPERLUDIST_WORKS BOOL
   "Set to ON to force CMake to accept a given SuperLU_DIST configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES SUPERLUDIST_WORKS)
 
 # ---------------------------------------------------------------
 # Enable SuperLU_MT support?

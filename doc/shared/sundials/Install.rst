@@ -1924,7 +1924,7 @@ SUNMatrix <SUNMatrix.SLUNRloc>` and :ref:`SuperLU_DIST SUNLinearSolver
 corresponding header files and libraries).
 
 To enable SuperLU_DIST support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
+:cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST` to ``ON``, and set :cmakeop:`SUPERLUDIST_DIR` to
 the path where SuperLU_DIST is installed. If SuperLU_DIST was built with OpenMP
 enabled, set :cmakeop:`SUPERLUDIST_OpenMP` and :cmakeop:`SUNDIALS_ENABLE_OPENMP` to
 ``ON``. For example, the following command will configure SUNDIALS with
@@ -1936,14 +1936,18 @@ SuperLU_DIST support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_SUPERLUDIST=ON \
+     -D SUNDIALS_ENABLE_SUPERLUDIST=ON \
      -D SUPERLUDIST_DIR=/path/to/superludist/installation
 
-.. cmakeoption:: ENABLE_SUPERLUDIST
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUDIST
 
    Enable SuperLU_DIST support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SUPERLUDIST``
 
 .. cmakeoption:: SUPERLUDIST_DIR
 

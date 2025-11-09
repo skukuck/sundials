@@ -136,6 +136,8 @@ table below lists the old CMake option names and the new replacements.
 | `GINKGO_WORKS`         | `SUNDIALS_GINKGO_WORKS`         |
 | `ENABLE_MAGMA`         | `SUNDIALS_ENABLE_MAGMA`         |
 | `MAGMA_WORKS`          | `SUNDIALS_MAGMA_WORKS`          |
+| `ENABLE_SUPERLUDIST`   | `SUNDIALS_ENABLE_SUPERLUDIST`   |
+| `SUPERLUDIST_WORKS`    | `SUNDIALS_SUPERLUDIST_WORKS`    |
 
 ## Changes to SUNDIALS in release 7.5.0
 

@@ -174,7 +174,7 @@ endif()
 # Find (and test) the SuperLUDIST libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_SUPERLUDIST)
+if(SUNDIALS_ENABLE_SUPERLUDIST)
   include(SundialsSuperLUDIST)
   list(APPEND SUNDIALS_TPL_LIST "SUPERLUDIST")
 endif()

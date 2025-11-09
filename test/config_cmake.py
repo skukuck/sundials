@@ -964,7 +964,7 @@ def main():
         group,
         "--superlu-dist",
         "SUNDIALS_SUPERLU_DIST",
-        "ENABLE_SUPERLUDIST",
+        "SUNDIALS_ENABLE_SUPERLUDIST",
         "OFF",
         "BOOL",
         "SUNDIALS SuperLU DIST support",

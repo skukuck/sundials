@@ -47,14 +47,14 @@ if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
 endif()
 
 # Using SUPERLUDIST requires building with MPI enabled
-if(ENABLE_SUPERLUDIST AND NOT SUNDIALS_ENABLE_MPI)
+if(SUNDIALS_ENABLE_SUPERLUDIST AND NOT SUNDIALS_ENABLE_MPI)
   message(
     FATAL_ERROR
       "MPI is required for SuperLU DIST support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # Using SUPERLUDIST with OpenMP requires building with OpenMP enabled
-if(ENABLE_SUPERLUDIST
+if(SUNDIALS_ENABLE_SUPERLUDIST
    AND SUPERLUDIST_OpenMP
    AND NOT SUNDIALS_ENABLE_OPENMP)
   message(
@@ -85,7 +85,7 @@ message(STATUS "SUPERLUDIST_ROCM:           ${SUPERLUDIST_ROCM}")
 # -----------------------------------------------------------------------------
 
 # If we have the SuperLU_DIST libraries, test them
-if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
+if(SUPERLUDIST_FOUND AND (NOT SUNDIALS_SUPERLUDIST_WORKS))
 
   if(SUPERLUDIST_CUDA AND (NOT SUNDIALS_ENABLE_CUDA))
     message(
@@ -116,13 +116,13 @@ if(SUPERLUDIST_FOUND AND (NOT SUPERLUDIST_WORKS))
   endif()
 
   message(STATUS "Checking if SuperLU_DIST works with SUNDIALS... OK")
-  set(SUPERLUDIST_WORKS
+  set(SUNDIALS_SUPERLUDIST_WORKS
       TRUE
       CACHE BOOL "SuperLU_DIST works with SUNDIALS as configured" FORCE)
 
-elseif(SUPERLUDIST_FOUND AND SUPERLUDIST_WORKS)
+elseif(SUPERLUDIST_FOUND AND SUNDIALS_SUPERLUDIST_WORKS)
   message(
     STATUS
-      "Skipped SuperLU_DIST tests, assuming SuperLU_DIST works with SUNDIALS. Set SUPERLUDIST_WORKS=FALSE to (re)run compatibility test."
+      "Skipped SuperLU_DIST tests, assuming SuperLU_DIST works with SUNDIALS. Set SUNDIALS_SUPERLUDIST_WORKS=FALSE to (re)run compatibility test."
   )
 endif()

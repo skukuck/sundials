@@ -75,7 +75,7 @@ if(EXAMPLES_ENABLE_CXX)
       add_subdirectory(CXX_parhyp)
     endif()
     # SuperLU_DIST examples
-    if(ENABLE_SUPERLUDIST AND SUPERLUDIST_FOUND)
+    if(SUNDIALS_ENABLE_SUPERLUDIST AND SUPERLUDIST_FOUND)
       add_subdirectory(superludist)
     endif()
   endif()

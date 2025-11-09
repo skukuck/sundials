@@ -15,19 +15,6 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-#
-# Deprecated TPL options
-#
-
-if(DEFINED SUPERLUDIST_ENABLE)
-  message(DEPRECATION "The CMake option SUPERLUDIST_ENABLE is deprecated. "
-                      "Use ENABLE_SUPERLUDIST instead.")
-  set(ENABLE_SUPERLUDIST
-      ${SUPERLUDIST_ENABLE}
-      CACHE BOOL "Enable SuperLU_DIST support" FORCE)
-  unset(SUPERLUDIST_ENABLE CACHE)
-endif()
-
 # Deprecated with SUNDIALS 6.4.0
 if(DEFINED SUPERLUDIST_LIBRARY_DIR)
   message(DEPRECATION "The CMake option SUPERLUDIST_LIBRARY_DIR is deprecated. "
@@ -35,16 +22,14 @@ if(DEFINED SUPERLUDIST_LIBRARY_DIR)
   set(SUPERLUDIST_DIR
       "${SUPERLUDIST_LIBRARY_DIR}/../"
       CACHE BOOL "SuperLU_DIST root directory" FORCE)
-  unset(SUPERLUDIST_LIBRARY_DIR CACHE)
+  if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
+    unset(SUPERLUDIST_LIBRARY_DIR CACHE)
+  endif()
 endif()
-if(DEFINED SUPERLUDIST_INCLUDE_DIR)
-  message(DEPRECATION "The CMake option SUPERLUDIST_INCLUDE_DIR is deprecated. "
-                      "Use SUPERLUDIST_INCLUDE_DIRS instead.")
-  set(SUPERLUDIST_INCLUDE_DIRS
-      "${SUPERLUDIST_INCLUDE_DIR}"
-      CACHE BOOL "SuperLU_DIST include directoroes" FORCE)
-  unset(SUPERLUDIST_INCLUDE_DIR CACHE)
-endif()
+
+#
+# Deprecated TPL options
+#
 
 if(DEFINED SUPERLUMT_ENABLE)
   message(DEPRECATION "The CMake option SUPERLUMT_ENABLE is deprecated. "

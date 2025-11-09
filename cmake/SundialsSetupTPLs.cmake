@@ -147,7 +147,7 @@ endif()
 # Find (and test) the PETSc libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_PETSC)
+if(SUNDIALS_ENABLE_PETSC)
   include(SundialsPETSC)
   list(APPEND SUNDIALS_TPL_LIST "PETSC")
 endif()

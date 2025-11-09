@@ -1092,7 +1092,7 @@ def main():
     group = parser.add_argument_group("PTESc Options")
 
     add_arg(
-        group, "--petsc", "SUNDIALS_PETSC", "ENABLE_PETSC", "OFF", "BOOL", "SUNDIALS PETSc support"
+        group, "--petsc", "SUNDIALS_PETSC", "SUNDIALS_ENABLE_PETSC", "OFF", "BOOL", "SUNDIALS PETSc support"
     )
 
     add_arg(

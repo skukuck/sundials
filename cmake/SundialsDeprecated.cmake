@@ -31,15 +31,6 @@ endif()
 # Deprecated TPL options
 #
 
-if(DEFINED PETSC_ENABLE)
-  message(DEPRECATION "The CMake option PETSC_ENABLE is deprecated. "
-                      "Use ENABLE_PETSC instead.")
-  set(ENABLE_PETSC
-      ${PETSC_ENABLE}
-      CACHE BOOL "Enable PETSC support" FORCE)
-  unset(PETSC_ENABLE CACHE)
-endif()
-
 if(DEFINED Trilinos_ENABLE)
   message(DEPRECATION "The CMake option Trilinos_ENABLE is deprecated. "
                       "Use ENABLE_TRILINOS instead.")

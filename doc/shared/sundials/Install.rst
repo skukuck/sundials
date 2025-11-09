@@ -1779,7 +1779,7 @@ sections :numref:`Installation.LibrariesAndHeaders.Vector.PETSc` and
 respectively, for the corresponding header files and libraries).
 
 To enable PETSc support, set :cmakeop:`SUNDIALS_ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_PETSC` to ``ON``, and set :cmakeop:`PETSC_DIR` to the path of
+:cmakeop:`SUNDIALS_ENABLE_PETSC` to ``ON``, and set :cmakeop:`PETSC_DIR` to the path of
 the PETSc installation. Alternatively, a user can provide a list of include
 paths in :cmakeop:`PETSC_INCLUDES` and a list of complete paths to the PETSc
 libraries in :cmakeop:`PETSC_LIBRARIES`. For example, the following command will
@@ -1792,14 +1792,18 @@ configure SUNDIALS with PETSc support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_ENABLE_MPI=ON \
-     -D ENABLE_PETSC=ON \
+     -D SUNDIALS_ENABLE_PETSC=ON \
      -D PETSC_DIR=/path/to/petsc/installation
 
-.. cmakeoption:: ENABLE_PETSC
+.. cmakeoption:: SUNDIALS_ENABLE_PETSC
 
    Enable PETSc support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_PETSC``
 
 .. cmakeoption:: PETSC_DIR
 

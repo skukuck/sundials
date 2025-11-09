@@ -220,7 +220,7 @@ sundials_option(
 # Enable PETSc support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_PETSC BOOL "Enable PETSc support" OFF)
+sundials_option(SUNDIALS_ENABLE_PETSC BOOL "Enable PETSc support" OFF DEPRECATED_NAMES ENABLE_PETSC PETSC_ENABLE)
 
 sundials_option(PETSC_DIR PATH "Path to the root of a PETSc installation"
                 "${PETSC_DIR}")
@@ -238,8 +238,8 @@ sundials_option(
   ADVANCED)
 
 sundials_option(
-  PETSC_WORKS BOOL
-  "Set to ON to force CMake to accept a given PETSc configuration" OFF ADVANCED)
+  SUNDIALS_PETSC_WORKS BOOL
+  "Set to ON to force CMake to accept a given PETSc configuration" OFF ADVANCED DEPRECATED_NAMES PETSC_WORKS)
 
 # -------------------------------------------------------------
 # Enable RAJA support?

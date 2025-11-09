@@ -40,7 +40,7 @@ endif()
 # -----------------------------------------------------------------------------
 
 # Using PETSc requires building with MPI enabled
-if(ENABLE_PETSC AND NOT SUNDIALS_ENABLE_MPI)
+if(SUNDIALS_ENABLE_PETSC AND NOT SUNDIALS_ENABLE_MPI)
   message(
     FATAL_ERROR "MPI is required for PETSc support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
@@ -69,7 +69,7 @@ message(STATUS "PETSC_PRECISION:    ${PETSC_PRECISION}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(PETSC_FOUND AND (NOT PETSC_WORKS))
+if(PETSC_FOUND AND (NOT SUNDIALS_PETSC_WORKS))
   # No need for any compile tests because the FindPETSC module does compile
   # tests already.
 
@@ -95,12 +95,12 @@ if(PETSC_FOUND AND (NOT PETSC_WORKS))
     message(FATAL_ERROR "${_err_msg_string}")
   endif()
 
-  set(PETSC_WORKS
+  set(SUNDIALS_PETSC_WORKS
       TRUE
       CACHE BOOL "PETSC works with SUNDIALS as configured" FORCE)
-elseif(PETSC_FOUND AND PETSC_WORKS)
+elseif(PETSC_FOUND AND SUNDIALS_PETSC_WORKS)
   message(
     STATUS
-      "Skipped PETSC tests, assuming PETSC works with SUNDIALS. Set PETSC_WORKS=FALSE to (re)run compatibility test."
+      "Skipped PETSC tests, assuming PETSC works with SUNDIALS. Set SUNDIALS_PETSC_WORKS=FALSE to (re)run compatibility test."
   )
 endif()

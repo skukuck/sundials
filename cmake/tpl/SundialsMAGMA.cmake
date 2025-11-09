@@ -60,7 +60,7 @@ message(STATUS "SUNDIALS_MAGMA_BACKENDS: ${SUNDIALS_MAGMA_BACKENDS}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(MAGMA_FOUND AND (NOT MAGMA_WORKS))
+if(MAGMA_FOUND AND (NOT SUNDIALS_MAGMA_WORKS))
   if(SUNDIALS_MAGMA_BACKENDS MATCHES "CUDA" AND NOT SUNDIALS_ENABLE_CUDA)
     message(
       FATAL_ERROR
@@ -74,9 +74,9 @@ if(MAGMA_FOUND AND (NOT MAGMA_WORKS))
     )
   endif()
 
-  set(MAGMA_WORKS
+  set(SUNDIALS_MAGMA_WORKS
       TRUE
       CACHE BOOL "MAGMA works with SUNDIALS as configured" FORCE)
-elseif(MAGMA_FOUND AND MAGMA_WORKS)
+elseif(MAGMA_FOUND AND SUNDIALS_MAGMA_WORKS)
   message(STATUS "Skipped MAGMA tests, assuming MAGMA works with SUNDIALS.")
 endif()

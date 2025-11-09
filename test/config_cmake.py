@@ -1029,7 +1029,7 @@ def main():
     group = parser.add_argument_group("MAGMA Options")
 
     add_arg(
-        group, "--magma", "SUNDIALS_MAGMA", "ENABLE_MAGMA", "OFF", "BOOL", "SUNDIALS MAGMA support"
+        group, "--magma", "SUNDIALS_MAGMA", "SUNDIALS_ENABLE_MAGMA", "OFF", "BOOL", "SUNDIALS MAGMA support"
     )
 
     add_arg(

@@ -129,7 +129,7 @@ endif()
 # Find (and test) the MAGMA libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_MAGMA)
+if(SUNDIALS_ENABLE_MAGMA)
   include(SundialsMAGMA)
   list(APPEND SUNDIALS_TPL_LIST "MAGMA")
 endif()

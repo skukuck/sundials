@@ -134,6 +134,8 @@ table below lists the old CMake option names and the new replacements.
 | `LAPACK_WORKS`         | `SUNDIALS_LAPACK_WORKS`         |
 | `ENABLE_GINKGO`        | `SUNDIALS_ENABLE_GINKGO`        |
 | `GINKGO_WORKS`         | `SUNDIALS_GINKGO_WORKS`         |
+| `ENABLE_MAGMA`         | `SUNDIALS_ENABLE_MAGMA`         |
+| `MAGMA_WORKS`          | `SUNDIALS_MAGMA_WORKS`          |
 
 ## Changes to SUNDIALS in release 7.5.0
 

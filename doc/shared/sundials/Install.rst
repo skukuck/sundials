@@ -1473,7 +1473,7 @@ When MAGMA support is enabled, the :ref:`MAGMA dense SUNMatrix
 respectively, for the corresponding header files and libraries). For more
 information on using SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable MAGMA support, set :cmakeop:`ENABLE_MAGMA` to ``ON``,
+To enable MAGMA support, set :cmakeop:`SUNDIALS_ENABLE_MAGMA` to ``ON``,
 :cmakeop:`MAGMA_DIR` to the root path of MAGMA installation, and
 :cmakeop:`SUNDIALS_MAGMA_BACKENDS` to the desired MAGMA backend to use. For
 example, the following command will configure SUNDIALS with MAGMA support with
@@ -1485,17 +1485,21 @@ the CUDA backend (targeting Ampere GPUs):
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_MAGMA=ON \
+     -D SUNDIALS_ENABLE_MAGMA=ON \
      -D MAGMA_DIR=/path/to/magma/installation \
      -D SUNDIALS_MAGMA_BACKEND="CUDA" \
      -D SUNDIALS_ENABLE_CUDA=ON \
      -D CMAKE_CUDA_ARCHITECTURES="80"
 
-.. cmakeoption:: ENABLE_MAGMA
+.. cmakeoption:: SUNDIALS_ENABLE_MAGMA
 
    Enable MAGMA support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_MAGMA``
 
 .. cmakeoption:: MAGMA_DIR
 

@@ -103,7 +103,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable MAGMA support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_MAGMA BOOL "Enable MAGMA support" OFF)
+sundials_option(SUNDIALS_ENABLE_MAGMA BOOL "Enable MAGMA support" OFF DEPRECATED_NAMES ENABLE_MAGMA)
 
 sundials_option(MAGMA_DIR PATH "Path to the root of a MAGMA installation"
                 "${MAGMA_DIR}")
@@ -113,11 +113,11 @@ sundials_option(
   "Which MAGMA backend to use under the SUNDIALS MAGMA interfaces (CUDA, HIP)"
   "CUDA"
   OPTIONS "CUDA;HIP"
-  DEPENDS_ON ENABLE_MAGMA)
+  DEPENDS_ON SUNDIALS_ENABLE_MAGMA)
 
 sundials_option(
-  MAGMA_WORKS BOOL
-  "Set to ON to force CMake to accept a given MAGMA configuration" OFF ADVANCED)
+  SUNDIALS_MAGMA_WORKS BOOL
+  "Set to ON to force CMake to accept a given MAGMA configuration" OFF ADVANCED DEPRECATED_NAMES MAGMA_WORKS)
 
 # ---------------------------------------------------------------
 # Enable SuperLU_DIST support?

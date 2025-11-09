@@ -2028,7 +2028,7 @@ When SuperLU_MT support is enabled, the :ref:`SuperLU_MT SUNLinearSolver
 :numref:`Installation.LibrariesAndHeaders.LinearSolver.SuperLU_MT` for the
 corresponding header file and library).
 
-To enable SuperLU_MT support, set :cmakeop:`ENABLE_SUPERLUMT` to ``ON``, set
+To enable SuperLU_MT support, set :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT` to ``ON``, set
 :cmakeop:`SUPERLUMT_INCLUDE_DIR` and :cmakeop:`SUPERLUMT_LIBRARY_DIR` to the
 location of the header and library files, respectively, of the SuperLU_MT
 installation. Depending on the SuperLU_MT installation, it may also be necessary
@@ -2045,7 +2045,7 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_SUPERLUMT=ON \
+     -D SUNDIALS_ENABLE_SUPERLUMT=ON \
      -D SUPERLUMT_INCLUDE_DIR=/path/to/superlumt/installation/include/dir \
      -D SUPERLUMT_LIBRARY_DIR=/path/to/superlumt/installation/library/dir \
      -D SUPERLUMT_THREAD_TYPE="Pthread"
@@ -2056,11 +2056,15 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
    OpenMP or PThreads NVector then the SuperLU_MT installation should use the same
    threading type.
 
-.. cmakeoption:: ENABLE_SUPERLUMT
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUMT
 
    Enable SuperLU_MT support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_SUPERLUMT``
 
 .. cmakeoption:: SUPERLUMT_INCLUDE_DIR
 

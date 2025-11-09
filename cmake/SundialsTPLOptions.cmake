@@ -149,7 +149,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable SuperLU_MT support?
 # ---------------------------------------------------------------
-sundials_option(ENABLE_SUPERLUMT BOOL "Enable SuperLU_MT support" OFF)
+sundials_option(SUNDIALS_ENABLE_SUPERLUMT BOOL "Enable SuperLU_MT support" OFF DEPRECATED_NAMES ENABLE_SUPERLUMT SUPERLUMT_ENABLE)
 
 sundials_option(SUPERLUMT_INCLUDE_DIR PATH "SuperLU_MT include directory"
                 "${SUPERLUMT_INCLUDE_DIR}")
@@ -166,9 +166,9 @@ sundials_option(SUPERLUMT_THREAD_TYPE STRING
                 "SuperLU_MT threading type: OPENMP or PTHREAD" "PTHREAD")
 
 sundials_option(
-  SUPERLUMT_WORKS BOOL
+  SUNDIALS_SUPERLUMT_WORKS BOOL
   "Set to ON to force CMake to accept a given SUPERLUMT configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES SUPERLUMT_WORKS)
 
 # ---------------------------------------------------------------
 # Enable KLU support?

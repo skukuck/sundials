@@ -906,7 +906,7 @@ def main():
         group,
         "--superlu-mt",
         "SUNDIALS_SUPERLU_MT",
-        "ENABLE_SUPERLUMT",
+        "SUNDIALS_ENABLE_SUPERLUMT",
         "OFF",
         "BOOL",
         "SUNDIALS SuperLU MT support",

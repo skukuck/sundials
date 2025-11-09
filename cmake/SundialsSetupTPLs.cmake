@@ -183,7 +183,7 @@ endif()
 # Find (and test) the SUPERLUMT libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUPERLUMT)
   include(SundialsSuperLUMT)
   list(APPEND SUNDIALS_TPL_LIST "SUPERLUMT")
 endif()

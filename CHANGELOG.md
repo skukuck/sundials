@@ -138,6 +138,8 @@ table below lists the old CMake option names and the new replacements.
 | `MAGMA_WORKS`          | `SUNDIALS_MAGMA_WORKS`          |
 | `ENABLE_SUPERLUDIST`   | `SUNDIALS_ENABLE_SUPERLUDIST`   |
 | `SUPERLUDIST_WORKS`    | `SUNDIALS_SUPERLUDIST_WORKS`    |
+| `ENABLE_SUPERLUMT`     | `SUNDIALS_ENABLE_SUPERLUMT`     |
+| `SUPERLUMT_WORKS`      | `SUNDIALS_SUPERLUMT_WORKS`      |
 
 ## Changes to SUNDIALS in release 7.5.0
 

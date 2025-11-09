@@ -31,15 +31,6 @@ endif()
 # Deprecated TPL options
 #
 
-if(DEFINED SUPERLUMT_ENABLE)
-  message(DEPRECATION "The CMake option SUPERLUMT_ENABLE is deprecated. "
-                      "Use ENABLE_SUPERLUMT instead.")
-  set(ENABLE_SUPERLUMT
-      ${SUPERLUMT_ENABLE}
-      CACHE BOOL "Enable SuperLU_MT support" FORCE)
-  unset(SUPERLUMT_ENABLE CACHE)
-endif()
-
 if(DEFINED KLU_ENABLE)
   message(DEPRECATION "The CMake option KLU_ENABLE is deprecated. "
                       "Use ENABLE_KLU instead.")

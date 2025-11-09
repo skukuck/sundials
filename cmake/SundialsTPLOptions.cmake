@@ -20,16 +20,19 @@
 # ---------------------------------------------------------------
 # Enable MPI support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_MPI BOOL "Enable MPI support" OFF DEPRECATED_NAMES ENABLE_MPI MPI_ENABLE)
 
 # ---------------------------------------------------------------
 # Enable OpenMP support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_OPENMP BOOL "Enable OpenMP support" OFF DEPRECATED_NAMES ENABLE_OPENMP OPENMP_ENABLE)
 
 # ---------------------------------------------------------------
 # Enable OpenMP target offloading support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_OPENMP_DEVICE BOOL
                 "Enable OpenMP device offloading support" OFF DEPRECATED_NAMES ENABLE_OPENMP_DEVICE OPENMP_DEVICE_ENABLE)
 
@@ -42,21 +45,25 @@ sundials_option(SUNDIALS_OPENMP_DEVICE_WORKS BOOL
 # ---------------------------------------------------------------
 # Enable Pthread support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_PTHREAD BOOL "Enable Pthreads support" OFF DEPRECATED_NAMES ENABLE_PTHREAD PTHREAD_ENABLE)
 
 # -------------------------------------------------------------
 # Enable CUDA support?
 # -------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_CUDA BOOL "Enable CUDA support" OFF DEPRECATED_NAMES ENABLE_CUDA CUDA_ENABLE)
 
 # -------------------------------------------------------------
 # Enable HIP support?
 # -------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_HIP BOOL "Enable HIP support" OFF DEPRECATED_NAMES ENABLE_HIP)
 
 # -------------------------------------------------------------
 # Enable SYCL support?
 # -------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_SYCL BOOL "Enable SYCL support" OFF DEPRECATED_NAMES ENABLE_SYCL)
 
 sundials_option(
@@ -70,6 +77,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable LAPACK support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_LAPACK BOOL "Enable Lapack support" OFF DEPRECATED ENABLE_LAPACK LAPACK_ENABLE)
 
 sundials_option(LAPACK_LIBRARIES STRING "Lapack and Blas libraries"
@@ -83,6 +91,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable Ginkgo support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_GINKGO BOOL "Enable Ginkgo support" OFF DEPRECATED_NAMES ENABLE_GINKGO)
 
 sundials_option(Ginkgo_DIR PATH "Path to the root of a Ginkgo installation"
@@ -103,6 +112,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable MAGMA support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_MAGMA BOOL "Enable MAGMA support" OFF DEPRECATED_NAMES ENABLE_MAGMA)
 
 sundials_option(MAGMA_DIR PATH "Path to the root of a MAGMA installation"
@@ -122,6 +132,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable SuperLU_DIST support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_SUPERLUDIST BOOL "Enable SuperLU_DIST support" OFF DEPRECATED_NAMES ENABLE_SUPERLUDIST SUPERLUDIST_ENABLE)
 
 sundials_option(
@@ -149,6 +160,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable SuperLU_MT support?
 # ---------------------------------------------------------------
+
 sundials_option(SUNDIALS_ENABLE_SUPERLUMT BOOL "Enable SuperLU_MT support" OFF DEPRECATED_NAMES ENABLE_SUPERLUMT SUPERLUMT_ENABLE)
 
 sundials_option(SUPERLUMT_INCLUDE_DIR PATH "SuperLU_MT include directory"
@@ -173,6 +185,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable KLU support?
 # ---------------------------------------------------------------
+
 sundials_option(ENABLE_KLU BOOL "Enable KLU support" OFF)
 
 sundials_option(KLU_INCLUDE_DIR PATH "KLU include directory"
@@ -188,6 +201,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable hypre support?
 # ---------------------------------------------------------------
+
 sundials_option(ENABLE_HYPRE BOOL "Enable hypre support" OFF)
 
 sundials_option(HYPRE_DIR PATH "Path to hypre installation" "${HYPRE_DIR}")
@@ -230,6 +244,7 @@ sundials_option(
 # -------------------------------------------------------------
 # Enable RAJA support?
 # -------------------------------------------------------------
+
 sundials_option(ENABLE_RAJA BOOL "Enable RAJA support" OFF)
 
 sundials_option(RAJA_DIR PATH "Path to root of RAJA installation" "${RAJA_DIR}")
@@ -244,6 +259,7 @@ sundials_option(
 # ---------------------------------------------------------------
 # Enable Trilinos support?
 # ---------------------------------------------------------------
+
 sundials_option(ENABLE_TRILINOS BOOL "Enable Trilinos support" OFF)
 
 sundials_option(Trilinos_DIR PATH "Path to root of Trilinos installation"

@@ -378,11 +378,12 @@ struct ARKodeMemRec
 {
   SUNContext sunctx;
 
+  void* python;
+
   sunrealtype uround; /* machine unit roundoff */
 
   /* Problem specification data */
   void* user_data;              /* user ptr passed to supplied functions */
-  sunbooleantype own_user_data; /* SUNTRUE if we own user_data and should free it */
   int itol;                     /* itol = ARK_SS (scalar, default),
                                          ARK_SV (vector),
                                          ARK_WF (user weight function)  */
@@ -697,10 +698,6 @@ SUNErrCode arkSUNStepperSelfDestruct(SUNStepper stepper);
 /* XBraid interface functions */
 int arkSetForcePass(void* arkode_mem, sunbooleantype force_pass);
 int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
-
-/* Utility function to tell ARKode to free the user data.
-   This is used by the Python interfaces. */
-int arkSetOwnUserData(void* ark_mem, sunbooleantype own_user_data);
 
 /*===============================================================
   Reusable ARKODE Error Messages

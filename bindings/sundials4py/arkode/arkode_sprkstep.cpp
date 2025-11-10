@@ -51,22 +51,19 @@ void bind_arkode_sprkstep(nb::module_& m)
       }
 
       auto cb_fns    = arkode_user_supplied_fn_table_alloc();
-      int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
+      cb_fns->sprkstep_f1 = nb::cast(f1);
+      cb_fns->sprkstep_f2 = nb::cast(f2);
+
+      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+
+      int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
         throw sundials4py::error_returned(
           "Failed to set user data in SPRKStep memory");
       }
-      ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
-      if (ark_status != ARK_SUCCESS)
-      {
-        free(cb_fns);
-        throw sundials4py::error_returned(
-          "Failed to set user data ownership in SPRKStep memory");
-      }
-      cb_fns->sprkstep_f1 = nb::cast(f1);
-      cb_fns->sprkstep_f2 = nb::cast(f2);
+
       return std::make_shared<ARKodeView>(ark_mem);
     },
     nb::arg("f1"), nb::arg("f2"), nb::arg("t0"), nb::arg("y0"),

@@ -21,6 +21,7 @@
 #include <arkode/arkode_lsrkstep.h>
 #include <sundials/sundials_core.hpp>
 
+#include "arkode_impl.h"
 #include "arkode_usersupplied.hpp"
 
 namespace nb = nanobind;
@@ -44,22 +45,21 @@ void bind_arkode_lsrkstep(nb::module_& m)
       {
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
-      auto cb_fns    = arkode_user_supplied_fn_table_alloc();
-      int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
+
+      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+
+      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+
+      int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
         throw sundials4py::error_returned(
-          "Failed to set user data in LSRKStep memory");
+          "Failed to set user data in ARKODE memory");
       }
-      ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
-      if (ark_status != ARK_SUCCESS)
-      {
-        free(cb_fns);
-        throw sundials4py::error_returned(
-          "Failed to set user data ownership in LSRKStep memory");
-      }
+
       cb_fns->lsrkstep_f = nb::cast(rhs);
+
       return std::make_shared<ARKodeView>(ark_mem);
     },
     nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
@@ -77,22 +77,21 @@ void bind_arkode_lsrkstep(nb::module_& m)
       {
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
-      auto cb_fns    = arkode_user_supplied_fn_table_alloc();
-      int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
+
+      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+
+      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+
+      int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
         throw sundials4py::error_returned(
-          "Failed to set user data in LSRKStep memory");
+          "Failed to set user data in ARKODE memory");
       }
-      ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
-      if (ark_status != ARK_SUCCESS)
-      {
-        free(cb_fns);
-        throw sundials4py::error_returned(
-          "Failed to set user data ownership in LSRKStep memory");
-      }
+
       cb_fns->lsrkstep_f = nb::cast(rhs);
+
       return std::make_shared<ARKodeView>(ark_mem);
     },
     nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
@@ -101,13 +100,8 @@ void bind_arkode_lsrkstep(nb::module_& m)
   m.def("LSRKStepSetDomEigFn",
         [](void* ark_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
         {
-          void* user_data = nullptr;
-          ARKodeGetUserData(ark_mem, &user_data);
-          if (!user_data)
-            throw sundials4py::error_returned(
-              "Failed to get Python function table from ARKODE memory");
-          auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
-          fntable->lsrkstep_domeig = nb::cast(fn);
+          auto fn_table             = get_arkode_fn_table(ark_mem);
+          fn_table->lsrkstep_domeig = nb::cast(fn);
           return LSRKStepSetDomEigFn(ark_mem, &lsrkstep_domeig_wrapper);
         });
 }

@@ -43,7 +43,6 @@ struct arkode_user_supplied_fn_table
   nb::object rootfn;
   nb::object ewtn;
   nb::object rwtn;
-  nb::object expstabfn;
   nb::object vecresizefn;
   nb::object postprocessstepfn;
   nb::object postprocessstagefn;
@@ -117,6 +116,18 @@ inline arkode_user_supplied_fn_table* arkode_user_supplied_fn_table_alloc()
   return fn_table;
 }
 
+inline arkode_user_supplied_fn_table* get_arkode_fn_table(void* ark_mem)
+{
+  auto mem      = static_cast<ARKodeMem>(ark_mem);
+  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(mem->python);
+  if (!fn_table)
+  {
+    throw sundials4py::null_function_table(
+      "Failed to get Python function table from ARKODE memory");
+  }
+  return fn_table;
+}
+
 inline mristepinnerstepper_user_supplied_fn_table* mristepinnerstepper_user_supplied_fn_table_alloc()
 {
   // We must use malloc since ARKodeFree calls free
@@ -129,28 +140,26 @@ inline mristepinnerstepper_user_supplied_fn_table* mristepinnerstepper_user_supp
   return fn_table;
 }
 
-//
-// TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-//
+using ARKRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout,
+                         void* user_data);
 
-// using ARKRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout, void *user_data);
+inline int arkode_rootfn_wrapper(sunrealtype t, N_Vector y,
+                                 sunrealtype* gout_1d, void* user_data)
+{
+  auto fn_table = get_arkode_fn_table(user_data);
+  auto fn       = nb::cast<std::function<ARKRootStdFn>>(fn_table->rootfn);
+  auto nrtfn    = static_cast<ARKodeMem>(user_data)->root_mem->nrtfn;
 
-// inline int arkode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d, void *user_data)
-// {
-//   auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
-//   auto fn       = nb::cast<std::function<ARKRootStdFn>>(fn_table->rootfn);
+  sundials4py::Array1d gout(gout_1d, {static_cast<unsigned long>(nrtfn)});
 
-//   sundials4py::Array1d gout(gout_1d,
-//                              {static_cast<unsigned long>(nrtfn)});
-
-//   return fn(t, y, gout, nullptr);
-// }
+  return fn(t, y, gout, nullptr);
+}
 
 template<typename... Args>
 inline int arkode_ewtfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKEwtFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKEwtFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::ewtn, std::forward<Args>(args)...);
 }
 
@@ -158,24 +167,8 @@ template<typename... Args>
 inline int arkode_rwtfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRwtFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRwtFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::rwtn, std::forward<Args>(args)...);
-}
-
-using ARKExpStabStdFn = std::tuple<int, sunrealtype>(N_Vector y, sunrealtype t,
-                                                     void* user_data);
-
-inline int arkode_expstabfn_wrapper(N_Vector y, sunrealtype t,
-                                    sunrealtype* hstab, void* user_data)
-{
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
-  auto fn       = nb::cast<std::function<ARKExpStabStdFn>>(fn_table->expstabfn);
-
-  auto result = fn(y, t, nullptr);
-
-  *hstab = std::get<1>(result);
-
-  return std::get<0>(result);
 }
 
 template<typename... Args>
@@ -183,7 +176,8 @@ inline int arkode_vecresizefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKVecResizeFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::vecresizefn, std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::vecresizefn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -191,8 +185,8 @@ inline int arkode_postprocessstepfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKPostProcessFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::postprocessstepfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::postprocessstepfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -200,8 +194,8 @@ inline int arkode_postprocessstagefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKPostProcessFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::postprocessstagefn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::postprocessstagefn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -209,15 +203,15 @@ inline int arkode_stagepredictfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKStagePredictFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::stagepredictfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::stagepredictfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline int arkode_nlsrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::nlsfi, std::forward<Args>(args)...);
 }
 
@@ -239,7 +233,7 @@ template<typename... Args>
 inline int arkode_relaxjacfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRelaxJacFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRelaxJacFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::relaxjacfn, std::forward<Args>(args)...);
 }
 
@@ -247,7 +241,7 @@ template<typename... Args>
 inline int arkode_lsjacfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKLsJacFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKLsJacFn>, arkode_user_supplied_fn_table, ARKodeMem,
     4>(&arkode_user_supplied_fn_table::lsjacfn, std::forward<Args>(args)...);
 }
 
@@ -255,7 +249,7 @@ template<typename... Args>
 inline int arkode_lsmassfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKLsMassFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKLsMassFn>, arkode_user_supplied_fn_table, ARKodeMem,
     4>(&arkode_user_supplied_fn_table::lsmassfn, std::forward<Args>(args)...);
 }
 
@@ -283,8 +277,8 @@ inline int arkode_lsprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsPrecSolveFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsprecsolvefn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsprecsolvefn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -292,8 +286,8 @@ inline int arkode_lsjactimessetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsJacTimesSetupFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsjactimessetupfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsjactimessetupfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -301,8 +295,8 @@ inline int arkode_lsjactimesvecfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsJacTimesVecFn>, arkode_user_supplied_fn_table,
-    2>(&arkode_user_supplied_fn_table::lsjactimesvecfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 2>(&arkode_user_supplied_fn_table::lsjactimesvecfn,
+                  std::forward<Args>(args)...);
 }
 
 using ARKLsLinSysStdFn = std::tuple<int, sunbooleantype>(
@@ -331,8 +325,8 @@ inline int arkode_lsmasstimessetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsMassTimesSetupFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsmasstimessetupfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsmasstimessetupfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -340,8 +334,8 @@ inline int arkode_lsmasstimesvecfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsMassTimesVecFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsmasstimesvecfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsmasstimesvecfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -349,8 +343,8 @@ inline int arkode_lsmassprecsetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsMassPrecSetupFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsmassprecsetupfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsmassprecsetupfn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
@@ -358,15 +352,15 @@ inline int arkode_lsmassprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKLsMassPrecSolveFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::lsmassprecsolvefn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::lsmassprecsolvefn,
+                  std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline int arkode_lsjacrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::lsjacrhsfn, std::forward<Args>(args)...);
 }
 
@@ -378,7 +372,7 @@ template<typename... Args>
 inline int erkstep_f_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::erkstep_f, std::forward<Args>(args)...);
 }
 
@@ -386,7 +380,7 @@ template<typename... Args>
 inline int erkstep_adjf_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::erkstep_adjf, std::forward<Args>(args)...);
 }
 
@@ -398,7 +392,7 @@ inline int arkstep_fe_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
                               void* user_data)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::arkstep_fe, t, y, ydot, user_data);
 }
 
@@ -406,7 +400,7 @@ inline int arkstep_fi_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
                               void* user_data)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::arkstep_fi, t, y, ydot, user_data);
 }
 
@@ -415,8 +409,8 @@ inline int arkstep_adjfe_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::arkstep_adjfe, t, y, sens, sens_dot,
-       user_data);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::arkstep_adjfe, t, y, sens,
+                  sens_dot, user_data);
 }
 
 inline int arkstep_adjfi_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
@@ -424,8 +418,8 @@ inline int arkstep_adjfi_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::arkstep_adjfi, t, y, sens, sens_dot,
-       user_data);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::arkstep_adjfi, t, y, sens,
+                  sens_dot, user_data);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -436,7 +430,7 @@ template<typename... Args>
 inline int sprkstep_f1_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::sprkstep_f1, std::forward<Args>(args)...);
 }
 
@@ -444,7 +438,7 @@ template<typename... Args>
 inline int sprkstep_f2_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::sprkstep_f2, std::forward<Args>(args)...);
 }
 
@@ -456,7 +450,7 @@ template<typename... Args>
 inline int lsrkstep_f_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::lsrkstep_f, std::forward<Args>(args)...);
 }
 
@@ -469,7 +463,7 @@ inline int lsrkstep_domeig_wrapper(sunrealtype t, N_Vector y, N_Vector fn,
                                    void* user_data, N_Vector temp1,
                                    N_Vector temp2, N_Vector temp3)
 {
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_arkode_fn_table(user_data);
   auto callback =
     nb::cast<std::function<ARKDomEigStdFn>>(fn_table->lsrkstep_domeig);
 
@@ -489,7 +483,7 @@ inline int mristep_fse_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
                                void* user_data)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::mristep_fse, t, y, ydot, user_data);
 }
 
@@ -497,7 +491,7 @@ inline int mristep_fsi_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
                                void* user_data)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table,
+    std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::mristep_fsi, t, y, ydot, user_data);
 }
 
@@ -521,8 +515,8 @@ inline int mristep_postinnerfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<MRIStepPostInnerFn>, arkode_user_supplied_fn_table,
-    1>(&arkode_user_supplied_fn_table::mristep_postinnerfn,
-       std::forward<Args>(args)...);
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::mristep_postinnerfn,
+                  std::forward<Args>(args)...);
 }
 
 inline int mristepinner_evolvefn_wrapper(MRIStepInnerStepper stepper,

@@ -39,15 +39,14 @@ def test_explicit(sunctx):
     status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 
-    # TODO(CJB): enable rootfinding once we have nrtfn as a callback argument
-    # nrtfn = 2
-    # def rootfn(t, y, gout, _):
-    #     # just a smoke test of the root finding callback
-    #     assert len(gout) == nrtfn
-    #     return 0
+    nrtfn = 2
+    def rootfn(t, y, gout, _):
+        # just a smoke test of the root finding callback
+        assert len(gout) == nrtfn
+        return 0
 
-    # status = ARKodeRootInit(ark.get(), nrtfn, rootfn)
-    # assert status == ARK_SUCCESS
+    status = ARKodeRootInit(ark.get(), nrtfn, rootfn)
+    assert status == ARK_SUCCESS
 
     tout = 10.0
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)

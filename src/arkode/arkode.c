@@ -1280,12 +1280,7 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
-  /* free user data if ARKODE owns it */
-  if (ark_mem->own_user_data && (ark_mem->user_data != NULL))
-  {
-    free(ark_mem->user_data);
-    ark_mem->user_data = NULL;
-  }
+  free(ark_mem->python);
 
   free(*arkode_mem);
   *arkode_mem = NULL;
@@ -1515,6 +1510,9 @@ ARKodeMem arkCreate(SUNContext sunctx)
   /* Set the context */
   ark_mem->sunctx = sunctx;
 
+  /* Set the Python context to NULL */
+  ark_mem->python = NULL;
+
   /* Set uround */
   ark_mem->uround = SUN_UNIT_ROUNDOFF;
 
@@ -1603,7 +1601,6 @@ ARKodeMem arkCreate(SUNContext sunctx)
 
   /* No user_data pointer yet */
   ark_mem->user_data     = NULL;
-  ark_mem->own_user_data = SUNFALSE;
 
   /* Allocate step adaptivity structure and note storage */
   ark_mem->hadapt_mem = arkAdaptInit();

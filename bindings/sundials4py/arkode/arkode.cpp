@@ -46,41 +46,31 @@ void bind_arkode_forcingstep(nb::module_& m);
 void bind_arkode_splittingstep(nb::module_& m);
 
 // ARKODE callback binding macros
-#define BIND_ARKODE_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)               \
-  m.def(                                                                        \
-    #NAME,                                                                      \
-    [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn)         \
-    {                                                                           \
-      void* user_data = nullptr;                                                \
-      ARKodeGetUserData(ark_mem, &user_data);                                   \
-      if (!user_data)                                                           \
-        throw sundials4py::error_returned(                                      \
-          "Failed to get Python function table from ARKODE memory");            \
-      auto fntable    = static_cast<arkode_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER = nb::cast(fn);                                           \
-      if (fn) { return NAME(ark_mem, &WRAPPER); }                               \
-      else { return NAME(ark_mem, nullptr); }                                   \
-    },                                                                          \
+#define BIND_ARKODE_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)       \
+  m.def(                                                                \
+    #NAME,                                                              \
+    [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
+    {                                                                   \
+      auto fn_table    = get_arkode_fn_table(ark_mem);                  \
+      fn_table->MEMBER = nb::cast(fn);                                  \
+      if (fn) { return NAME(ark_mem, &WRAPPER); }                       \
+      else { return NAME(ark_mem, nullptr); }                           \
+    },                                                                  \
     __VA_ARGS__)
 
-#define BIND_ARKODE_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,       \
-                              MEMBER2, WRAPPER2, ...)                            \
-  m.def(                                                                         \
-    #NAME,                                                                       \
-    [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,        \
-       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                       \
-    {                                                                            \
-      void* user_data = nullptr;                                                 \
-      ARKodeGetUserData(ark_mem, &user_data);                                    \
-      if (!user_data)                                                            \
-        throw sundials4py::error_returned(                                       \
-          "Failed to get Python function table from ARKODE memory");             \
-      auto fntable     = static_cast<arkode_user_supplied_fn_table*>(user_data); \
-      fntable->MEMBER1 = nb::cast(fn1);                                          \
-      fntable->MEMBER2 = nb::cast(fn2);                                          \
-      if (fn1) { return NAME(ark_mem, &WRAPPER1, &WRAPPER2); }                   \
-      else { return NAME(ark_mem, nullptr, &WRAPPER2); }                         \
-    },                                                                           \
+#define BIND_ARKODE_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
+                              MEMBER2, WRAPPER2, ...)                      \
+  m.def(                                                                   \
+    #NAME,                                                                 \
+    [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,  \
+       std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
+    {                                                                      \
+      auto fn_table     = get_arkode_fn_table(ark_mem);                    \
+      fn_table->MEMBER1 = nb::cast(fn1);                                   \
+      fn_table->MEMBER2 = nb::cast(fn2);                                   \
+      if (fn1) { return NAME(ark_mem, &WRAPPER1, &WRAPPER2); }             \
+      else { return NAME(ark_mem, nullptr, &WRAPPER2); }                   \
+    },                                                                     \
     __VA_ARGS__)
 
 void bind_arkode(nb::module_& m)
@@ -99,20 +89,14 @@ void bind_arkode(nb::module_& m)
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  // TODO(CJB): add nrtfn to callback signature in SUNDIALS v8.0.0 so we can enable the root finding
-  // m.def("ARKodeRootInit",
-  //       [](void* ark_mem, int nrtfn,
-  //          std::function<std::remove_pointer_t<ARKRootFn>> fn)
-  //       {
-  //         void* user_data = nullptr;
-  //         ARKodeGetUserData(ark_mem, &user_data);
-  //         if (!user_data)
-  //           throw sundials4py::error_returned(
-  //             "Failed to get Python function table from ARKODE memory");
-  //         auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
-  //         fntable->rootfn = nb::cast(fn);
-  //         return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
-  //       });
+  m.def("ARKodeRootInit",
+        [](void* ark_mem, int nrtfn,
+           std::function<std::remove_pointer_t<ARKRootStdFn>> fn)
+        {
+          auto fn_table = get_arkode_fn_table(ark_mem);
+          fn_table->rootfn = nb::cast(fn);
+          return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
+        });
 
   BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKEwtFn, ewtn, arkode_ewtfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("efun").none());
@@ -120,13 +104,18 @@ void bind_arkode(nb::module_& m)
   BIND_ARKODE_CALLBACK(ARKodeResFtolerance, ARKRwtFn, rwtn, arkode_rwtfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("efun").none());
 
-  // TODO(CJB): need do this one manually
-  // BIND_ARKODE_CALLBACK(ARKodeSetStabilityFn, ARKExpStabFn, expstabfn,
-  //                      arkode_expstabfn_wrapper, nb::arg("arkode_mem"),
-  //                      nb::arg("expstabfn").none());
-
-  // TODO(CJB): manually bind ARKodeResize which takes ARKodeVecResizeFn
-  // ARKodeResize
+  m.def(
+    "ARKodeResize",
+    [](void* ark_mem, N_Vector y_new, sunrealtype h_scale, sunrealtype t0,
+       std::function<std::remove_pointer_t<ARKVecResizeFn>> fn)
+    {
+      auto fn_table         = get_arkode_fn_table(ark_mem);
+      fn_table->vecresizefn = nb::cast(fn);
+      return ARKodeResize(ark_mem, y_new, h_scale, t0,
+                          arkode_vecresizefn_wrapper, ark_mem);
+    },
+    nb::arg("arkode_mem"), nb::arg("y_new"), nb::arg("h_scale"), nb::arg("t0"),
+    nb::arg("resize_fn").none());
 
   BIND_ARKODE_CALLBACK2(ARKodeSetRelaxFn, ARKRelaxFn, relaxfn,
                         arkode_relaxfn_wrapper, ARKRelaxJacFn, relaxjacfn,
@@ -185,14 +174,9 @@ void bind_arkode(nb::module_& m)
        std::function<std::remove_pointer_t<ARKLsMassTimesSetupFn>> msetup,
        std::function<std::remove_pointer_t<ARKLsMassTimesVecFn>> mtimes)
     {
-      void* user_data = nullptr;
-      ARKodeGetUserData(ark_mem, &user_data);
-      if (!user_data)
-        throw sundials4py::error_returned(
-          "Failed to get Python function table from ARKODE memory");
-      auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
-      fntable->lsmasstimessetupfn = nb::cast(msetup);
-      fntable->lsmasstimesvecfn   = nb::cast(mtimes);
+      auto fn_table                = get_arkode_fn_table(ark_mem);
+      fn_table->lsmasstimessetupfn = nb::cast(msetup);
+      fn_table->lsmasstimesvecfn   = nb::cast(mtimes);
       return ARKodeSetMassTimes(ark_mem, &arkode_lsmasstimessetupfn_wrapper,
                                 &arkode_lsmasstimesvecfn_wrapper, nullptr);
     },
@@ -210,14 +194,9 @@ void bind_arkode(nb::module_& m)
        std::function<std::remove_pointer_t<ARKLsMassTimesSetupFn>> msetup,
        std::function<std::remove_pointer_t<ARKLsMassTimesVecFn>> mtimes)
     {
-      void* user_data = nullptr;
-      ARKodeGetUserData(ark_mem, &user_data);
-      if (!user_data)
-        throw sundials4py::error_returned(
-          "Failed to get Python function table from ARKODE memory");
-      auto fntable = static_cast<arkode_user_supplied_fn_table*>(user_data);
-      fntable->lsmasstimessetupfn = nb::cast(msetup);
-      fntable->lsmasstimesvecfn   = nb::cast(mtimes);
+      auto fn_table                = get_arkode_fn_table(ark_mem);
+      fn_table->lsmasstimessetupfn = nb::cast(msetup);
+      fn_table->lsmasstimesvecfn   = nb::cast(mtimes);
       return ARKodeSetMassTimes(ark_mem, &arkode_lsmasstimessetupfn_wrapper,
                                 &arkode_lsmasstimesvecfn_wrapper, nullptr);
     },

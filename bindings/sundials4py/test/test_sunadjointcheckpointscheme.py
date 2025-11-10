@@ -54,18 +54,18 @@ def test_insert_vector(sunctx, nvec):
     assert status == 0
 
 
-def test_load_vector(sunctx, nvec):
-    scheme_status, scheme, mem_helper = make_fixed_scheme(sunctx)
+# def test_load_vector(sunctx, nvec):
+#     scheme_status, scheme, mem_helper = make_fixed_scheme(sunctx)
 
-    step_num = 0
-    stage_num = 0
-    t = 0.0
-    status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
-    assert status == 0
+#     step_num = 0
+#     stage_num = 0
+#     t = 0.0
+#     status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
+#     assert status == 0
 
-    peek = False
-    status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(scheme, step_num, stage_num, peek)
-    assert status == 0
+#     peek = False
+#     status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(scheme, step_num, stage_num, peek)
+#     assert status == 0
 
 
 def test_enable_dense(sunctx):

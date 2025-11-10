@@ -21,8 +21,8 @@
 #include <arkode/arkode_erkstep.h>
 #include <sundials/sundials_core.hpp>
 
+#include "arkode_impl.h"
 #include "arkode_usersupplied.hpp"
-
 #include "sundials_adjointstepper_impl.h"
 
 namespace nb = nanobind;
@@ -51,21 +51,13 @@ void bind_arkode_erkstep(nb::module_& m)
       auto cb_fns = arkode_user_supplied_fn_table_alloc();
 
       // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
-      int ark_status = ARKodeSetUserData(ark_mem, static_cast<void*>(cb_fns));
+      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+      int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
         free(cb_fns);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
-      }
-
-      // Ensure ARKodeFree will free the user-supplied function table
-      ark_status = arkSetOwnUserData(ark_mem, SUNTRUE);
-      if (ark_status != ARK_SUCCESS)
-      {
-        free(cb_fns);
-        throw sundials4py::error_returned(
-          "Failed to set user data ownership in ARKODE memory");
       }
 
       // Finally, set the RHS function

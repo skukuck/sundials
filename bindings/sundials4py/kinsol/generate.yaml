@@ -50,5 +50,4 @@ modules:
     - "KINSet.*Fn" 
     - "KINSet.*Preconditioner"
     - "KINSetJacTimes.*"
-    # TODO(CJB): interface this one
     - "KINSetSysFunc"

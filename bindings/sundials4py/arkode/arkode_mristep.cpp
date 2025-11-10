@@ -41,37 +41,54 @@ void bind_arkode_mristep(nb::module_& m)
   // not picked up in any header files by the generator.
   nb::class_<_MRIStepInnerStepper>(m, "_MRIStepInnerStepper");
 
-  m.def(
-    "MRIStepInnerStepper_Create",
-    [](SUNContext sunctx)
-    {
-      MRIStepInnerStepper stepper = nullptr;
+  m.def("MRIStepInnerStepper_Create",
+        [](SUNContext sunctx)
+        {
+          MRIStepInnerStepper stepper = nullptr;
 
-      int status      = MRIStepInnerStepper_Create(sunctx, &stepper);
-      auto cb_fns     = mristepinnerstepper_user_supplied_fn_table_alloc();
-      stepper->python = static_cast<void*>(cb_fns);
+          int status      = MRIStepInnerStepper_Create(sunctx, &stepper);
+          auto cb_fns     = mristepinnerstepper_user_supplied_fn_table_alloc();
+          stepper->python = static_cast<void*>(cb_fns);
 
-      return std::make_tuple(status,
-                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
-                                             MRIStepInnerStepperDeleter>(stepper));
-    },
-    nb::rv_policy::reference);
+          return std::make_tuple(status,
+                                 our_make_shared<
+                                   std::remove_pointer_t<MRIStepInnerStepper>,
+                                   MRIStepInnerStepperDeleter>(stepper));
+        });
 
-  m.def(
-    "MRIStepInnerStepper_CreateFromSUNStepper",
-    [](SUNStepper stepper)
-    {
-      MRIStepInnerStepper inner_stepper = nullptr;
+  m.def("MRIStepInnerStepper_CreateFromSUNStepper",
+        [](SUNStepper stepper)
+        {
+          MRIStepInnerStepper inner_stepper = nullptr;
 
-      int status = MRIStepInnerStepper_CreateFromSUNStepper(stepper,
-                                                            &inner_stepper);
+          int status = MRIStepInnerStepper_CreateFromSUNStepper(stepper,
+                                                                &inner_stepper);
 
-      return std::make_tuple(status,
-                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
-                                             MRIStepInnerStepperDeleter>(
-                               inner_stepper));
-    },
-    nb::rv_policy::reference);
+          return std::make_tuple(status,
+                                 our_make_shared<
+                                   std::remove_pointer_t<MRIStepInnerStepper>,
+                                   MRIStepInnerStepperDeleter>(inner_stepper));
+        });
+
+  // m.def("MRIStepInnerStepper_GetForcingData",
+  //       [](MRIStepInnerStepper stepper) -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int> {
+            
+  //           sunrealtype tshift = 0.0;
+  //           sunrealtype tscale = 0.0;
+  //           N_Vector* forcing_1d  = nullptr;
+  //           int nforcing = 0;
+
+  //           int status = MRIStepInnerStepper_GetForcingData(stepper, &tshift, &tscale, &forcing_1d, &nforcing);
+
+  //           std::vector<N_Vector> forcing(nforcing);
+  //           // TODO(CJB): for some reason this causes a segfault unless you clone
+  //           // for (int i = 0; i < nforcing; i++) { 
+  //           //   // forcing[i] = N_VClone(forcing_1d[i]);
+  //           //   forcing[i] = forcing_1d[i];
+  //           // }
+
+  //           return std::make_tuple(status, tshift, tscale, forcing, nforcing);
+  //       });
 
   m.def(
     "ARKodeCreateMRIStepInnerStepper",
@@ -84,8 +101,7 @@ void bind_arkode_mristep(nb::module_& m)
       return std::make_tuple(status,
                              our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
                                              MRIStepInnerStepperDeleter>(stepper));
-    },
-    nb::rv_policy::reference);
+    });
 
   m.def(
     "MRIStepCreate",

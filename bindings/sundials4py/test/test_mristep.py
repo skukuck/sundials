@@ -18,6 +18,7 @@
 
 
 import pytest
+import weakref
 import numpy as np
 from sundials4py.core import *
 from sundials4py.arkode import *
@@ -34,6 +35,14 @@ def test_multirate(sunctx):
         return ode_problem.f_linear(t, y, ydot)
 
     def ffast(t, y, ydot, _):
+        # inner_stepper = ode_problem.inner_stepper
+
+        # TODO(CJB): fix MRIStepInnerStepper_GetForcingData
+        # # test MRIStepInnerStepper_GetForcingData
+        # status, tshift, tscale, forcing, nforcing = MRIStepInnerStepper_GetForcingData(inner_stepper)
+        # assert status == ARK_SUCCESS
+        # assert len(forcing) == nforcing
+
         return ode_problem.f_nonlinear(t, y, ydot)
 
     y = N_VNew_Serial(1, sunctx)
@@ -50,6 +59,9 @@ def test_multirate(sunctx):
     status, inner_stepper = ARKodeCreateMRIStepInnerStepper(inner_ark.get())
     assert status == ARK_SUCCESS
 
+    # store inner stepper in ode_problem so we can access it in ffast
+    ode_problem.inner_stepper = inner_stepper
+
     # create slow integrator
     ark = MRIStepCreate(fslow, None, t0, y, inner_stepper, sunctx)
     status = ARKodeSetFixedStep(ark.get(), 1e-3)
@@ -62,3 +74,18 @@ def test_multirate(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
     assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+
+    # We must set this to None to ensure inner_stepper can be garbage collected
+    # If we do not do this, then nanobind will warn that references are leaked.
+    # This seems to be unavoidable without setting this to None or using a weakref. 
+    # Its possible newer versions of Python may not result in the warning.
+    ode_problem.inner_stepper = None
+
+# Allow the test to be invoked without pytest
+def main():
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    test_multirate(sunctx)
+
+
+if __name__ == "__main__":
+    main()

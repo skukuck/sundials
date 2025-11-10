@@ -35,6 +35,7 @@ class AnalyticODE(ODEProblem):
 
     def __init__(self, lamb=-10.0):
         self.lamb = lamb
+        self.inner_stepper = None
 
     def f(self, t, yvec, ydotvec):
         y = N_VGetArrayPointer(yvec)

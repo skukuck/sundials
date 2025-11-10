@@ -60,7 +60,6 @@ modules:
     - "^ARKodeWFtolerances$"
     - "^ARKodeResFtolerance$"
     - "^ARKodeRootInit$"
-    # TODO(CJB): add these
     - "^ARKodeResize$"
     # generator cannot handle functions with optional (i.e. NULLable) parameters that is not 
     # followed by only optional parameters, so we have to do something custom

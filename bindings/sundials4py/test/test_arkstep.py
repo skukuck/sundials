@@ -40,6 +40,7 @@ def test_explicit(sunctx):
     assert status == ARK_SUCCESS
 
     nrtfn = 2
+
     def rootfn(t, y, gout, _):
         # just a smoke test of the root finding callback
         assert len(gout) == nrtfn

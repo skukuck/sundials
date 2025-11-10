@@ -77,9 +77,10 @@ def test_multirate(sunctx):
 
     # We must set this to None to ensure inner_stepper can be garbage collected
     # If we do not do this, then nanobind will warn that references are leaked.
-    # This seems to be unavoidable without setting this to None or using a weakref. 
+    # This seems to be unavoidable without setting this to None or using a weakref.
     # Its possible newer versions of Python may not result in the warning.
     ode_problem.inner_stepper = None
+
 
 # Allow the test to be invoked without pytest
 def main():

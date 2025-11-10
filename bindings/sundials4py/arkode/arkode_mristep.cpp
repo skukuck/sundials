@@ -72,7 +72,7 @@ void bind_arkode_mristep(nb::module_& m)
 
   // m.def("MRIStepInnerStepper_GetForcingData",
   //       [](MRIStepInnerStepper stepper) -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int> {
-            
+
   //           sunrealtype tshift = 0.0;
   //           sunrealtype tscale = 0.0;
   //           N_Vector* forcing_1d  = nullptr;
@@ -82,7 +82,7 @@ void bind_arkode_mristep(nb::module_& m)
 
   //           std::vector<N_Vector> forcing(nforcing);
   //           // TODO(CJB): for some reason this causes a segfault unless you clone
-  //           // for (int i = 0; i < nforcing; i++) { 
+  //           // for (int i = 0; i < nforcing; i++) {
   //           //   // forcing[i] = N_VClone(forcing_1d[i]);
   //           //   forcing[i] = forcing_1d[i];
   //           // }
@@ -90,18 +90,19 @@ void bind_arkode_mristep(nb::module_& m)
   //           return std::make_tuple(status, tshift, tscale, forcing, nforcing);
   //       });
 
-  m.def(
-    "ARKodeCreateMRIStepInnerStepper",
-    [](void* inner_arkode_mem)
-    {
-      MRIStepInnerStepper stepper = nullptr;
+  m.def("ARKodeCreateMRIStepInnerStepper",
+        [](void* inner_arkode_mem)
+        {
+          MRIStepInnerStepper stepper = nullptr;
 
-      int status = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
+          int status = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem,
+                                                       &stepper);
 
-      return std::make_tuple(status,
-                             our_make_shared<std::remove_pointer_t<MRIStepInnerStepper>,
-                                             MRIStepInnerStepperDeleter>(stepper));
-    });
+          return std::make_tuple(status,
+                                 our_make_shared<
+                                   std::remove_pointer_t<MRIStepInnerStepper>,
+                                   MRIStepInnerStepperDeleter>(stepper));
+        });
 
   m.def(
     "MRIStepCreate",

@@ -186,4 +186,3 @@ def test_setarraypointer(vector_type, sunctx):
     N_VScale(2.0, nvec, nvec)
 
     assert np.allclose(arr, [2.0, 4.0, 6.0, 8.0, 10.0])
-

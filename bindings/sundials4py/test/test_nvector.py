@@ -77,24 +77,6 @@ def test_make_nvector(vector_type, sunctx):
     assert np.allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
-# @pytest.mark.parametrize("vector_type", ["serial"])
-# def test_setarraypointer(vector_type, sunctx):
-#     if vector_type == "serial":
-#         nvec = N_VNew_Serial(5, sunctx)
-#     else:
-#         raise ValueError("Unknown vector type")
-#     assert nvec is not None
-
-#     arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
-#     N_VSetArrayPointer(arr, nvec)
-
-#     assert np.allclose(N_VGetArrayPointer(nvec), arr)
-
-#     N_VScale(2.0, nvec, nvec)
-
-#     assert np.allclose(arr, [2.0, 4.0, 6.0, 8.0, 10.0])
-
-
 # Test an operation that involves vector arrays
 @pytest.mark.parametrize("vector_type", ["serial"])
 def test_nvlinearcombination(vector_type, sunctx):
@@ -184,3 +166,24 @@ def test_nvlinearcombinationvectorarray_serial(sunctx):
         expected = sum(c_1d[s] * N_VGetArrayPointer(X_2d[s][v]) for s in range(nsum))
         actual = N_VGetArrayPointer(Z_1d[v])
         assert np.allclose(actual, expected)
+
+
+# For some reason this test causes subsequent tests to fail
+# It does not seem to be an issue outside of pytest so we put it last.
+@pytest.mark.parametrize("vector_type", ["serial"])
+def test_setarraypointer(vector_type, sunctx):
+    if vector_type == "serial":
+        nvec = N_VNew_Serial(5, sunctx)
+    else:
+        raise ValueError("Unknown vector type")
+    assert nvec is not None
+
+    arr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype=sunrealtype)
+    N_VSetArrayPointer(arr, nvec)
+
+    assert np.allclose(N_VGetArrayPointer(nvec), arr)
+
+    N_VScale(2.0, nvec, nvec)
+
+    assert np.allclose(arr, [2.0, 4.0, 6.0, 8.0, 10.0])
+

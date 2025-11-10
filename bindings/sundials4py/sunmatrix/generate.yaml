@@ -40,7 +40,7 @@ modules:
       fn_exclude_by_name__regex:
       # We need to wrap the Data function ourselves to ensure translation to a numpy array
       - "^SUNDenseMatrix_Data$"
-      # We don't interface these function in Python. Instead users can index the numpy array returned by Data.
+      # We don't interface these functions to Python. Instead users can index the numpy array returned by Data.
       - "^SUNDenseMatrix_Cols$"
       - "^SUNDenseMatrix_Column$"
   sunmatrix_sparse:
@@ -52,6 +52,3 @@ modules:
       - "^SUNSparseMatrix_Data$"
       - "^SUNSparseMatrix_IndexValues$"
       - "^SUNSparseMatrix_IndexPointers$"
-      # TODO(CJB): support these
-      - "^SUNSparseMatrix_ToCSR$"
-      - "^SUNSparseMatrix_ToCSC$"

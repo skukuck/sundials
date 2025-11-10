@@ -72,6 +72,68 @@ m.def(
   },
   nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"));
 
+m.def(
+  "SUNSparseMatrix_ToCSR",
+  [](const SUNMatrix A)
+    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  {
+    auto SUNSparseMatrix_ToCSR_adapt_modifiable_immutable_to_return =
+      [](const SUNMatrix A) -> std::tuple<SUNErrCode, SUNMatrix>
+    {
+      SUNMatrix Bout_adapt_modifiable;
+
+      SUNErrCode r = SUNSparseMatrix_ToCSR(A, &Bout_adapt_modifiable);
+      return std::make_tuple(r, Bout_adapt_modifiable);
+    };
+    auto SUNSparseMatrix_ToCSR_adapt_return_type_to_shared_ptr =
+      [&SUNSparseMatrix_ToCSR_adapt_modifiable_immutable_to_return](
+        const SUNMatrix A)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result =
+        SUNSparseMatrix_ToCSR_adapt_modifiable_immutable_to_return(A);
+
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNSparseMatrix_ToCSR_adapt_return_type_to_shared_ptr(A);
+  },
+  nb::arg("A"), nb::rv_policy::reference);
+
+m.def(
+  "SUNSparseMatrix_ToCSC",
+  [](const SUNMatrix A)
+    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+  {
+    auto SUNSparseMatrix_ToCSC_adapt_modifiable_immutable_to_return =
+      [](const SUNMatrix A) -> std::tuple<SUNErrCode, SUNMatrix>
+    {
+      SUNMatrix Bout_adapt_modifiable;
+
+      SUNErrCode r = SUNSparseMatrix_ToCSC(A, &Bout_adapt_modifiable);
+      return std::make_tuple(r, Bout_adapt_modifiable);
+    };
+    auto SUNSparseMatrix_ToCSC_adapt_return_type_to_shared_ptr =
+      [&SUNSparseMatrix_ToCSC_adapt_modifiable_immutable_to_return](
+        const SUNMatrix A)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
+    {
+      auto lambda_result =
+        SUNSparseMatrix_ToCSC_adapt_modifiable_immutable_to_return(A);
+
+      return std::make_tuple(std::get<0>(lambda_result),
+                             our_make_shared<std::remove_pointer_t<SUNMatrix>,
+                                             SUNMatrixDeleter>(
+                               std::get<1>(lambda_result)));
+    };
+
+    return SUNSparseMatrix_ToCSC_adapt_return_type_to_shared_ptr(A);
+  },
+  nb::arg("A"), nb::rv_policy::reference);
+
 m.def("SUNSparseMatrix_Realloc", SUNSparseMatrix_Realloc, nb::arg("A"));
 
 m.def("SUNSparseMatrix_Reallocate", SUNSparseMatrix_Reallocate, nb::arg("A"),

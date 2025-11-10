@@ -73,6 +73,55 @@ void bind_nvector(nb::module_& m)
           }
           N_VSetArrayPointer(arr.data(), v);
         });
+
+  m.def(
+    "N_VScaleAddMultiVectorArray",
+    [](int nvec, int nsum, sundials4py::Array1d c_1d,
+       std::vector<N_Vector> X_1d, std::vector<std::vector<N_Vector>> Y_2d,
+       std::vector<std::vector<N_Vector>> Z_2d) -> SUNErrCode
+    {
+      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+      N_Vector* X_1d_ptr =
+        reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
+
+      // Convert Y_2d and Z_2d to N_Vector**
+      std::vector<N_Vector*> Y_2d_ptrs, Z_2d_ptrs;
+      for (auto& row : Y_2d) { Y_2d_ptrs.push_back(row.data()); }
+      for (auto& row : Z_2d) { Z_2d_ptrs.push_back(row.data()); }
+
+      N_Vector** Y_2d_ptr = Y_2d_ptrs.data();
+      N_Vector** Z_2d_ptr = Z_2d_ptrs.data();
+
+      auto lambda_result = N_VScaleAddMultiVectorArray(nvec, nsum, c_1d_ptr,
+                                                       X_1d_ptr, Y_2d_ptr,
+                                                       Z_2d_ptr);
+      return lambda_result;
+    },
+    nb::arg("nvec"), nb::arg("nsum"), nb::arg("c_1d"), nb::arg("X_1d"),
+    nb::arg("Y_2d"), nb::arg("Z_2d"));
+
+  m.def(
+    "N_VLinearCombinationVectorArray",
+    [](int nvec, int nsum, sundials4py::Array1d c_1d,
+       std::vector<std::vector<N_Vector>> X_2d,
+       std::vector<N_Vector> Z_1d) -> SUNErrCode
+    {
+      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+
+      // Convert X_2d to N_Vector**
+      std::vector<N_Vector*> X_2d_ptrs;
+      for (auto& row : X_2d) { X_2d_ptrs.push_back(row.data()); }
+      N_Vector** X_2d_ptr = X_2d_ptrs.data();
+
+      N_Vector* Z_1d_ptr =
+        reinterpret_cast<N_Vector*>(Z_1d.empty() ? nullptr : Z_1d.data());
+
+      auto lambda_result = N_VLinearCombinationVectorArray(nvec, nsum, c_1d_ptr,
+                                                           X_2d_ptr, Z_1d_ptr);
+      return lambda_result;
+    },
+    nb::arg("nvec"), nb::arg("nsum"), nb::arg("c_1d"), nb::arg("X_2d"),
+    nb::arg("Z_1d"));
 }
 
 } // namespace sundials4py

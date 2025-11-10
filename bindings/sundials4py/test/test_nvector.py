@@ -119,3 +119,68 @@ def test_nvlinearcombination(vector_type, sunctx):
     N_VLinearCombination(2, c, X, z)
 
     assert np.allclose(N_VGetArrayPointer(z), [2.0, 4.0, 6.0, 8.0, 10.0])
+
+
+def test_nvscaleaddmultivectorarray_serial(sunctx):
+    nvec = 2
+    nsum = 2
+    length = 3
+
+    # c_1d shape (nsum,)
+    c_1d = np.array([2.0, 3.0], dtype=sunrealtype)
+
+    # X_1d shape (nvec,)
+    X_1d = [N_VNew_Serial(length, sunctx) for _ in range(nvec)]
+
+    for i, x in enumerate(X_1d):
+        N_VConst(float(i + 1), x)
+
+    # Y_2d shape (nsum, nvec)
+    Y_2d = [[N_VNew_Serial(length, sunctx) for _ in range(nvec)] for _ in range(nsum)]
+    for s in range(nsum):
+        for v in range(nvec):
+            N_VConst(float((s + 1) * 10 + v), Y_2d[s][v])
+
+    # Z_2d shape (nsum, nvec)
+    Z_2d = [[N_VNew_Serial(length, sunctx) for _ in range(nvec)] for _ in range(nsum)]
+
+    err = N_VScaleAddMultiVectorArray(nvec, nsum, c_1d, X_1d, Y_2d, Z_2d)
+    assert err == 0
+
+    # Check Z_2d[s][v] = c_1d[s] * X_1d[v] + Y_2d[s][v]
+    for s in range(nsum):
+        for v in range(nvec):
+            expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(Y_2d[s][v])
+            actual = N_VGetArrayPointer(Z_2d[s][v])
+            assert np.allclose(actual, expected)
+
+
+def test_nvlinearcombinationvectorarray_serial(sunctx):
+    nvec = 2
+    nsum = 2
+    length = 3
+
+    # c_1d shape (nsum,)
+    c_1d = np.array([2.0, 3.0], dtype=sunrealtype)
+
+    # X_2d shape (nsum, nvec)
+    X_2d = []
+    for s in range(nsum):
+        row = []
+        for v in range(nvec):
+            x = N_VNew_Serial(length, sunctx)
+            N_VConst(float((s + 1) * 10 + v), x)
+            row.append(x)
+        X_2d.append(row)
+
+    # Z_1d shape (nvec,)
+    Z_1d = [N_VNew_Serial(length, sunctx) for _ in range(nvec)]
+
+    err = N_VLinearCombinationVectorArray(nvec, nsum, c_1d, X_2d, Z_1d)
+    assert err == 0
+
+    # Check Z_1d[v] = sum_s c_1d[s] * X_2d[s][v]
+    for v in range(nvec):
+        expected = sum(c_1d[s] * N_VGetArrayPointer(X_2d[s][v]) for s in range(nsum))
+        actual = N_VGetArrayPointer(Z_1d[v])
+        assert np.allclose(actual, expected)

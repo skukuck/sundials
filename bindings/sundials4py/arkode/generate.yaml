@@ -128,8 +128,7 @@ modules:
     - "^MRIStepInnerStepper_Set.*Fn$"
     - "^MRIStepSetPreInnerFn$"
     - "^MRIStepSetPostInnerFn$"
-    # TODO(CJB): interface this manually
-    # generator cannot yet handle mixing pointer outputs and ** in the same function
+    # This function takes a pointer to a pointer which the generator cannot yet handle, so we do custom handling
     - "^MRIStepInnerStepper_GetForcingData$"
   forcingstep:
     path: arkode/arkode_forcingstep_generated.hpp

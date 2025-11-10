@@ -71,12 +71,6 @@ modules:
     - ../../include/sundials/sundials_linearsolver.h
     fn_exclude_by_name__regex:
     # TODO(CJB): interface these
-    # ** parameters are not yet supported by litgen
-    - "^SUNModifiedGS$"
-    - "^SUNClassicalGS$"
-    - "^SUNQRfact$"
-    - "^SUNQRsol$"
-    # TODO(CJB): interface these
     # need to do custom handling of functions which take a function pointer
     - "^SUNLinSolSetATimes$"
     - "^SUNLinSolSetPreconditioner$"

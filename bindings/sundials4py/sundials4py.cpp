@@ -71,6 +71,11 @@ void bind_sunnonlinsol_newton(nb::module_& m);
 
 NB_MODULE(sundials4py, m)
 {
+#ifdef NDEBUG
+  // The nanobind leak warnings can be quite noisy due to leaks within Python itself, so we disable them for Release builds.
+  nb::set_leak_warnings(false);
+#endif
+
   nb::module_ core_m = m.def_submodule("core", "A submodule of 'sundials4py'");
   sundials4py::bind_core(core_m);
 

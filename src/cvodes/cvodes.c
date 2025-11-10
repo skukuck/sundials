@@ -508,7 +508,6 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_sunctx = sunctx;
   cv_mem->cv_lmm    = lmm;
 
-
   /* Set uround */
   cv_mem->cv_uround = SUN_UNIT_ROUNDOFF;
 

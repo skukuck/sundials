@@ -81,9 +81,9 @@ typedef struct KINMemRec
 
   /* problem specification data */
 
-  KINSysFn kin_func;   /* nonlinear system function implementation     */
-  void* kin_user_data; /* work space available to func routine         */
-  sunrealtype kin_fnormtol;         /* stopping tolerance on L2-norm of function
+  KINSysFn kin_func;         /* nonlinear system function implementation     */
+  void* kin_user_data;       /* work space available to func routine         */
+  sunrealtype kin_fnormtol;  /* stopping tolerance on L2-norm of function
                                   value                                        */
   sunrealtype kin_scsteptol; /* scaled step length tolerance                 */
   int kin_globalstrategy;    /* choices are KIN_NONE, KIN_LINESEARCH

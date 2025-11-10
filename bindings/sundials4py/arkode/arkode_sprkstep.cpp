@@ -50,7 +50,7 @@ void bind_arkode_sprkstep(nb::module_& m)
         throw sundials4py::error_returned("Failed to create SPRKStep memory");
       }
 
-      auto cb_fns    = arkode_user_supplied_fn_table_alloc();
+      auto cb_fns         = arkode_user_supplied_fn_table_alloc();
       cb_fns->sprkstep_f1 = nb::cast(f1);
       cb_fns->sprkstep_f2 = nb::cast(f2);
 

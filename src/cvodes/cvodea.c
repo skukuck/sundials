@@ -715,7 +715,7 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
 
   /* We need to ensure Ns is set in the new CVODES object so that Ns is accessible 
      in the Python callbacks which only have access to cvodeB_mem, not the original cvode_mem */
-  ((CVodeMem) cvodeB_mem)->cv_Ns = cv_mem->cv_Ns;
+  ((CVodeMem)cvodeB_mem)->cv_Ns = cv_mem->cv_Ns;
 
   CVodeSetUserData(cvodeB_mem, cvode_mem);
 

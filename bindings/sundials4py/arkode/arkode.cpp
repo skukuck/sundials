@@ -93,7 +93,7 @@ void bind_arkode(nb::module_& m)
         [](void* ark_mem, int nrtfn,
            std::function<std::remove_pointer_t<ARKRootStdFn>> fn)
         {
-          auto fn_table = get_arkode_fn_table(ark_mem);
+          auto fn_table    = get_arkode_fn_table(ark_mem);
           fn_table->rootfn = nb::cast(fn);
           return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
         });

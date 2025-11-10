@@ -1600,7 +1600,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->ProcessStage = NULL;
 
   /* No user_data pointer yet */
-  ark_mem->user_data     = NULL;
+  ark_mem->user_data = NULL;
 
   /* Allocate step adaptivity structure and note storage */
   ark_mem->hadapt_mem = arkAdaptInit();

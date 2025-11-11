@@ -58,7 +58,7 @@ jobs:
       - name: Run generator on code
         run: |
           cd bindings/sundials4py
-          python sundials4py-generate/generate.py .
+          python3 sundials4py-generate/generate.py .
 
       - name: Run formatter on code
         run: ./scripts/format.sh bindings/sundials4py

@@ -880,20 +880,16 @@ Caliper support:
 
 .. cmakeoption:: ENABLE_CALIPER
 
-   Enable CALIPER support
+   Enable Caliper support
 
    Default: ``OFF``
 
-   .. note::
-
-      Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
-      ``ON``.
-
 .. cmakeoption:: CALIPER_DIR
 
-   Path to the root of a Caliper installation
+   Path to the root of an Caliper installation
 
    Default: None
+
 
 .. _Installation.Options.CUDA:
 
@@ -2176,6 +2172,7 @@ SUNDIALS with XBraid support:
    :cmakeop:`XBRAID_DIR`.
 
    Default: None
+
 
 .. _Installation.Options.xSDK:
 

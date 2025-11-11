@@ -216,5 +216,4 @@ the ODE and the :c:type:`SUNStepper` objects used to evolve each partition.
       will be reset since they are no longer compatible. Otherwise, all
       previously set options are retained but may be updated by calling the
       appropriate "Set" functions.
-
    .. versionadded:: 6.2.0

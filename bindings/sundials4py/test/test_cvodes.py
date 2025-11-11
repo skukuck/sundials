@@ -50,7 +50,7 @@ def test_cvodes_ivp(sunctx):
 
     def rootfn(t, y, gout, _):
         # just a smoke test of the root finding callback
-        gout[:] = 0.0
+        gout[:] = 1.0
         assert len(gout) == nrtfn
         return 0
 

@@ -48,20 +48,20 @@ void bind_arkode_erkstep(nb::module_& m)
       }
 
       // Create the user-supplied function table to store the Python user functions
-      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = arkode_user_supplied_fn_table_alloc();
 
       // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
-      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+      static_cast<ARKodeMem>(ark_mem)->python = fn_table;
       int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
-        free(cb_fns);
+        free(fn_table);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
       }
 
       // Finally, set the RHS function
-      cb_fns->erkstep_f = nb::cast(rhs);
+      fn_table->erkstep_f = nb::cast(rhs);
 
       return std::make_shared<ARKodeView>(ark_mem);
     },
@@ -82,21 +82,12 @@ void bind_arkode_erkstep(nb::module_& m)
                                                                   sunctx, &adj_stepper);
       if (ark_status != ARK_SUCCESS)
       {
-        throw sundials4py::error_returned(
-          "Failed to create adjoint stepper in py-sundials memory");
+        throw sundials4py::error_returned("Failed to create adjoint stepper");
       }
 
-      // Finally, set the RHS functions
-      void* user_data = nullptr;
-      ark_status      = ARKodeGetUserData(arkode_mem, &user_data);
-      if (ark_status != ARK_SUCCESS)
-      {
-        throw sundials4py::error_returned("Failed to extract ARKODE user data");
-      }
+      auto fn_table = get_arkode_fn_table(arkode_mem);
 
-      auto cb_fns = static_cast<arkode_user_supplied_fn_table*>(user_data);
-
-      cb_fns->erkstep_adjf = nb::cast(adj_f);
+      fn_table->erkstep_adjf = nb::cast(adj_f);
 
       return std::make_tuple(ark_status, adj_stepper);
     },

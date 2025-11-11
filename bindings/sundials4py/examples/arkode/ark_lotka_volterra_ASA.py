@@ -133,11 +133,14 @@ def main():
     tret = t0
     status, tret = ark.ARKodeEvolve(arkode.get(), tf, y, ark.ARK_NORMAL)
     assert status == ark.ARK_SUCCESS
+
     print("Forward Solution:")
     print(sun.N_VGetArrayPointer(y))
-    # print("ARKODE Stats for Forward Solution:")
-    # ARKodePrintAllStats(arkode.get(), None, 0)
-    # print()
+
+    print("ARKODE Stats for Forward Solution:")
+    status, file_ptr = sun.SUNFileOpen("stdout", "w+")
+    assert status == ark.ARK_SUCCESS
+    ark.ARKodePrintAllStats(arkode.get(), file_ptr, sun.SUN_OUTPUTFORMAT_TABLE)
 
     #
     # Create the adjoint stepper

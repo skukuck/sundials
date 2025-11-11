@@ -125,14 +125,20 @@ inline int kinsol_depthfn_wrapper(long int iter, N_Vector u_val, N_Vector g_val,
   std::vector<N_Vector> df(df_1d, df_1d + depth);
   sundials4py::Array1d R_mat(R_mat_1d,
                              {static_cast<unsigned long>(depth * depth)});
-  // TODO(CJB): enable this if it becomes used in the future
-  std::vector<sunbooleantype> remove_indices(0);
+  if (remove_indices_1d)
+  {
+    std::vector<sunbooleantype> remove_indices(remove_indices_1d,
+                                               remove_indices_1d + depth);
+    auto result = fn(iter, u_val, g_val, f_val, df, R_mat, depth, nullptr,
+                     remove_indices);
+    *new_depth  = std::get<1>(result);
+    return std::get<0>(result);
+  }
 
+  std::vector<sunbooleantype> remove_indices(0);
   auto result = fn(iter, u_val, g_val, f_val, df, R_mat, depth, nullptr,
                    remove_indices);
-
-  *new_depth = std::get<1>(result);
-
+  *new_depth  = std::get<1>(result);
   return std::get<0>(result);
 }
 

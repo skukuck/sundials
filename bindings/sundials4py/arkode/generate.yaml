@@ -64,7 +64,7 @@ modules:
     # generator cannot handle functions with optional (i.e. NULLable) parameters that is not 
     # followed by only optional parameters, so we have to do something custom
     - "^ARKodeSetMassLinearSolver$"
-    # TODO(CJB): interface this (now or in the future?)
+    # TODO(CJB): interface this (in the future?)
     # generator cannot yet handle mixing pointer outputs and ** in the same function
     - "^ARKodeGetNonlinearSystemData$"
   arkstep:

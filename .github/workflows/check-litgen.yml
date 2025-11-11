@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  swig_check:
+  litgen_check:
     runs-on: ubuntu-latest
     steps:
       - name: Install sundials generator+litgen

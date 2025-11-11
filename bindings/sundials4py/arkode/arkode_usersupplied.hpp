@@ -29,6 +29,7 @@
 
 #include "arkode_mristep_impl.h"
 
+#include "sundials/sundials_nvector.h"
 #include "sundials4py_helpers.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -150,9 +151,12 @@ inline int arkode_rootfn_wrapper(sunrealtype t, N_Vector y,
   auto fn       = nb::cast<std::function<ARKRootStdFn>>(fn_table->rootfn);
   auto nrtfn    = static_cast<ARKodeMem>(user_data)->root_mem->nrtfn;
 
-  sundials4py::Array1d gout(gout_1d, {static_cast<unsigned long>(nrtfn)});
+  sundials4py::Array1d gout(gout_1d, {static_cast<unsigned long>(nrtfn)},
+                            nb::find(gout_1d));
 
-  return fn(t, y, gout, nullptr);
+  int status = fn(t, y, gout, nullptr);
+
+  return status;
 }
 
 template<typename... Args>

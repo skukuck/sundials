@@ -94,7 +94,8 @@ inline int idas_rootfn_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
   auto fn       = nb::cast<std::function<IDARootStdFn>>(fn_table->rootfn);
   auto nrtfn    = ida_mem->ida_nrtfn;
 
-  sundials4py::Array1d gout(gout_1d, {static_cast<unsigned long>(nrtfn)});
+  sundials4py::Array1d gout(gout_1d, {static_cast<unsigned long>(nrtfn)},
+                            nb::find(gout_1d));
 
   return fn(t, y, yp, gout, nullptr);
 }

@@ -99,7 +99,8 @@ inline int kinsol_dampingfn_wrapper(long int iter, N_Vector u_val, N_Vector g_va
   auto fn_table = get_kinsol_fn_table(user_data);
   auto fn       = nb::cast<std::function<KINDampingStdFn>>(fn_table->dampingfn);
 
-  sundials4py::Array1d qt_fn(qt_fn_1d, {static_cast<unsigned long>(depth)});
+  sundials4py::Array1d qt_fn(qt_fn_1d, {static_cast<unsigned long>(depth)},
+                             nb::find(qt_fn_1d));
 
   auto result = fn(iter, u_val, g_val, qt_fn, depth, nullptr);
 
@@ -124,7 +125,8 @@ inline int kinsol_depthfn_wrapper(long int iter, N_Vector u_val, N_Vector g_val,
 
   std::vector<N_Vector> df(df_1d, df_1d + depth);
   sundials4py::Array1d R_mat(R_mat_1d,
-                             {static_cast<unsigned long>(depth * depth)});
+                             {static_cast<unsigned long>(depth * depth)},
+                             nb::find(R_mat_1d));
   if (remove_indices_1d)
   {
     std::vector<sunbooleantype> remove_indices(remove_indices_1d,

@@ -96,7 +96,8 @@ inline int cvode_rootfn_wrapper(sunrealtype t, N_Vector y, sunrealtype* gout_1d,
   auto fn       = nb::cast<std::function<CVRootStdFn>>(fn_table->rootfn);
 
   sundials4py::Array1d gout(gout_1d,
-                            {static_cast<unsigned long>(cv_mem->cv_nrtfn)});
+                            {static_cast<unsigned long>(cv_mem->cv_nrtfn)},
+                            nb::find(gout_1d));
 
   return fn(t, y, gout, nullptr);
 }

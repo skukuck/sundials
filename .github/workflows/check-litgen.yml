@@ -17,7 +17,7 @@ jobs:
     container:
       image: ghcr.io/llnl/sundials_spack_cache:llvm-17.0.4-h4lflucc3v2vage45opbo2didtcuigsn.spack
     steps:
-      - name: Install git
+      - name: Install dependencies with apt
         run: |
           apt update
           apt install -y git python3 python3-pip

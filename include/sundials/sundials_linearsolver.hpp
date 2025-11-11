@@ -38,6 +38,9 @@ struct SUNLinearSolverDeleter
   void operator()(SUNLinearSolver LS) { SUNLinSolFree(LS); }
 };
 
+using SUNLinearSolverView =
+  ClassView<SUNLinearSolver, SUNLinearSolverDeleter>;
+
 } // namespace experimental
 } // namespace sundials
 

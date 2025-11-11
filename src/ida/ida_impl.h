@@ -91,6 +91,8 @@ typedef struct IDAMemRec
 {
   SUNContext ida_sunctx;
 
+  void* python;
+
   sunrealtype ida_uround; /* machine unit roundoff */
 
   /*--------------------------
@@ -448,6 +450,11 @@ sunrealtype IDAWrmsNorm(IDAMem IDA_mem, N_Vector x, N_Vector w,
 /* Nonlinear solver initialization */
 
 int idaNlsInit(IDAMem IDA_mem);
+
+/* Utility function to tell IDA to free the user data.
+   This is used by the Python interfaces. */
+
+int idaSetOwnUserData(void* ida_mem, sunbooleantype own_user_data);
 
 /*
  * =================================================================

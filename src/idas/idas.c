@@ -427,6 +427,7 @@ void* IDACreate(SUNContext sunctx)
   memset(IDA_mem, 0, sizeof(struct IDAMemRec));
 
   IDA_mem->ida_sunctx = sunctx;
+  IDA_mem->python     = NULL;
 
   /* Set unit roundoff in IDA_mem */
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;

@@ -197,6 +197,8 @@ typedef struct CVodeMemRec
 {
   SUNContext cv_sunctx;
 
+  void* python;
+
   sunrealtype cv_uround; /* machine unit roundoff */
 
   /*--------------------------
@@ -663,6 +665,11 @@ int cvDiagSetup_buildM(const sunrealtype fract, const sunrealtype uround,
 
 int cvDiagSolve_updateM(const sunrealtype r, N_Vector M);
 #endif
+
+/* Utility function to tell CVODE to free the user data.
+   This is used by the Python interfaces. */
+
+int cvSetOwnUserData(void* cvode_mem, sunbooleantype own_user_data);
 
 /*
  * =================================================================

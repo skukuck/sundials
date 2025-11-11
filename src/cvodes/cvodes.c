@@ -502,6 +502,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
 
   maxord = (lmm == CV_ADAMS) ? ADAMS_Q_MAX : BDF_Q_MAX;
 
+  cv_mem->python = NULL;
+
   /* Copy input parameters into cv_mem */
   cv_mem->cv_sunctx = sunctx;
   cv_mem->cv_lmm    = lmm;

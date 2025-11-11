@@ -34,6 +34,8 @@ namespace nb = nanobind;
 using namespace sundials::experimental;
 using sundials::SUNContextDeleter;
 
+#include "sundials_context_usersupplied.hpp"
+
 namespace sundials4py {
 
 using namespace sundials::experimental;
@@ -43,6 +45,32 @@ void bind_suncontext(nb::module_& m)
 #include "sundials_context_generated.hpp"
 
   nb::class_<SUNContext_>(m, "SUNContext_");
+
+  // Note: only one error handler can be pushed from python
+  m.def("SUNContext_PushErrHandler",
+        [](SUNContext sunctx,
+           std::function<std::remove_pointer_t<SUNErrHandlerFn>> err_fn)
+        {
+          if (!sunctx->python)
+          {
+            sunctx->python = SUNContextFunctionTable_Alloc();
+          }
+          auto fn_table = static_cast<SUNContextFunctionTable*>(sunctx->python);
+
+          if (fn_table->err_handler)
+          {
+            throw sundials4py::illegal_value(
+              "SUNContext_PushErrHandler was already called. sundials4py only "
+              "allows for SUNContext_PushErrHandler to be called once. Call "
+              "SUNContext_PopErrHandler first, then call "
+              "SUNContext_PushErrHandler again.")
+          }
+
+          fn_table->err_handler = nb::cast(err_fn);
+
+          return SUNContext_PushErrHandler(sunctx, suncontext_errhandler_wrapper,
+                                           sunctx->python);
+        });
 }
 
 } // namespace sundials4py

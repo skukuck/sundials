@@ -878,6 +878,19 @@ Caliper support:
      -D ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
+.. cmakeoption:: ENABLE_CALIPER
+
+   Enable Caliper support
+
+   Default: ``OFF``
+
+.. cmakeoption:: CALIPER_DIR
+
+   Path to the root of an Caliper installation
+
+   Default: None
+
+
 .. _Installation.Options.XBraid:
 
 Building with XBraid

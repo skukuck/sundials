@@ -98,6 +98,27 @@ void bind_idas(nb::module_& m)
          nb::rv_policy::reference);
 
   m.def(
+    "IDASetOptions",
+    [](void* ida_mem, const std::string& idaid, const std::string& file_name,
+       int argc, const std::vector<std::string>& args)
+    {
+      std::vector<char*> argv;
+
+      for (const auto& arg : args)
+      {
+        // We need a non-const char*, so we use data() and an explicit cast.
+        // This is safe as long as the underlying std::string is not modified.
+        argv.push_back(const_cast<char*>(arg.data()));
+      }
+
+      return IDASetOptions(ida_mem, idaid.empty() ? nullptr : idaid.c_str(),
+                           file_name.empty() ? nullptr : file_name.c_str(),
+                           argc, argv.data());
+    },
+    nb::arg("ida_mem"), nb::arg("idaid"), nb::arg("file_name"), nb::arg("argc"),
+    nb::arg("args"));
+
+  m.def(
     "IDACreate",
     [](SUNContext sunctx)
     { return std::make_shared<IDAView>(IDACreate(sunctx)); },

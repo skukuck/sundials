@@ -20,6 +20,7 @@
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
+#include "sundials/sundials_nonlinearsolver.h"
 #include "sundials4py.hpp"
 
 #include <sundials/sundials_nonlinearsolver.hpp>
@@ -34,6 +35,29 @@ namespace sundials4py {
 void bind_sunnonlinearsolver(nb::module_& m)
 {
 #include "sundials_nonlinearsolver_generated.hpp"
+
+  m.def(
+    "SUNNonlinSolSetOptions",
+    [](SUNNonlinearSolver self, const std::string& id,
+       const std::string& file_name, int argc,
+       const std::vector<std::string>& args)
+    {
+      std::vector<char*> argv;
+
+      for (const auto& arg : args)
+      {
+        // We need a non-const char*, so we use data() and an explicit cast.
+        // This is safe as long as the underlying std::string is not modified.
+        argv.push_back(const_cast<char*>(arg.data()));
+      }
+
+      return SUNNonlinSolSetOptions(self, id.empty() ? nullptr : id.c_str(),
+                                    file_name.empty() ? nullptr
+                                                      : file_name.c_str(),
+                                    argc, argv.data());
+    },
+    nb::arg("self"), nb::arg("id"), nb::arg("file_name"), nb::arg("argc"),
+    nb::arg("args"));
 
   m.def(
     "SUNNonlinSolSetup",

@@ -99,6 +99,27 @@ void bind_cvodes(nb::module_& m)
          nb::rv_policy::reference);
 
   m.def(
+    "CVodeSetOptions",
+    [](void* cv_mem, const std::string& cvid, const std::string& file_name,
+       int argc, const std::vector<std::string>& args)
+    {
+      std::vector<char*> argv;
+
+      for (const auto& arg : args)
+      {
+        // We need a non-const char*, so we use data() and an explicit cast.
+        // This is safe as long as the underlying std::string is not modified.
+        argv.push_back(const_cast<char*>(arg.data()));
+      }
+
+      return CVodeSetOptions(cv_mem, cvid.empty() ? nullptr : cvid.c_str(),
+                             file_name.empty() ? nullptr : file_name.c_str(),
+                             argc, argv.data());
+    },
+    nb::arg("cv_mem"), nb::arg("cvid"), nb::arg("file_name"), nb::arg("argc"),
+    nb::arg("args"));
+
+  m.def(
     "CVodeCreate",
     [](int lmm, SUNContext sunctx)
     { return std::make_shared<CVodeView>(CVodeCreate(lmm, sunctx)); },

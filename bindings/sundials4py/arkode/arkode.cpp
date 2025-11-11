@@ -206,6 +206,27 @@ void bind_arkode(nb::module_& m)
   // Additional functions that litgen cannot generate
   /////////////////////////////////////////////////////////////////////////////
 
+  m.def(
+    "ARKodeSetOptions",
+    [](void* ark_mem, const std::string& arkid, const std::string& file_name,
+       int argc, const std::vector<std::string>& args)
+    {
+      std::vector<char*> argv;
+
+      for (const auto& arg : args)
+      {
+        // We need a non-const char*, so we use data() and an explicit cast.
+        // This is safe as long as the underlying std::string is not modified.
+        argv.push_back(const_cast<char*>(arg.data()));
+      }
+
+      return ARKodeSetOptions(ark_mem, arkid.empty() ? nullptr : arkid.c_str(),
+                              file_name.empty() ? nullptr : file_name.c_str(),
+                              argc, argv.data());
+    },
+    nb::arg("ark_mem"), nb::arg("arkid"), nb::arg("file_name"), nb::arg("argc"),
+    nb::arg("args"));
+
   // This function has optional arguments which litgen cannot deal with because they are followed by non-optional arguments.
   m.def("ARKodeSetMassLinearSolver", ARKodeSetMassLinearSolver,
         nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),

@@ -68,6 +68,27 @@ void bind_kinsol(nb::module_& m)
          nb::rv_policy::reference);
 
   m.def(
+    "KINSetOptions",
+    [](void* kin_mem, const std::string& kinid, const std::string& file_name,
+       int argc, const std::vector<std::string>& args)
+    {
+      std::vector<char*> argv;
+
+      for (const auto& arg : args)
+      {
+        // We need a non-const char*, so we use data() and an explicit cast.
+        // This is safe as long as the underlying std::string is not modified.
+        argv.push_back(const_cast<char*>(arg.data()));
+      }
+
+      return KINSetOptions(kin_mem, kinid.empty() ? nullptr : kinid.c_str(),
+                           file_name.empty() ? nullptr : file_name.c_str(),
+                           argc, argv.data());
+    },
+    nb::arg("kin_mem"), nb::arg("kinid"), nb::arg("file_name"), nb::arg("argc"),
+    nb::arg("args"));
+
+  m.def(
     "KINCreate",
     [](SUNContext sunctx)
     { return std::make_shared<KINView>(KINCreate(sunctx)); },

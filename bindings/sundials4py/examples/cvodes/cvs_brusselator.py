@@ -42,6 +42,7 @@
 # are printed at the end.
 # -----------------------------------------------------------------
 
+import sys
 import numpy as np
 from sundials4py.core import *
 from sundials4py.cvodes import *
@@ -131,6 +132,10 @@ def main():
             t, yvec, fyvec, J, tmp1, tmp2, tmp3
         ),
     )
+    assert status == CV_SUCCESS
+
+    # Parse any command line arguments
+    status = CVodeSetOptions(cvode.get(), "", "", len(sys.argv), sys.argv)
     assert status == CV_SUCCESS
 
     # Initial problem output

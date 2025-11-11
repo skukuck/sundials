@@ -4,6 +4,9 @@ permissions:
   contents: read
 
 on:
+  push: # TODO(CJB): remove before merging
+    branches:
+      - feature/python-nanobind 
   pull_request:
   workflow_dispatch:
 

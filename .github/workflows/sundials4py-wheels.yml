@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - develop
+      - feature/python-nanobind # TODO(CJB): remove before merging
   pull_request:
   merge_group:
   workflow_dispatch:

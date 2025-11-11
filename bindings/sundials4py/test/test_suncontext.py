@@ -54,7 +54,3 @@ def test_push_pop_err_handlers():
     # Popping again should do nothing
     status = SUNContext_PopErrHandler(sunctx)
     assert status == SUN_SUCCESS
-
-
-if __name__ == "__main__":
-    test_push_pop_err_handlers()

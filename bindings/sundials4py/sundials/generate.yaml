@@ -70,10 +70,14 @@ modules:
     - ../../include/sundials/sundials_iterative.h
     - ../../include/sundials/sundials_linearsolver.h
     fn_exclude_by_name__regex:
-    # TODO(CJB): interface these
+    # SUNLinSolSolve has an optional argument, A, followed by non-optional. Litgen can't handle this yet, so we just manually wrap it.
+    - "^SUNLinSolSolve$" 
     # need to do custom handling of functions which take a function pointer
     - "^SUNLinSolSetATimes$"
     - "^SUNLinSolSetPreconditioner$"
+    fn_params_optional_with_default_null:
+      "SUNLinSolSetup":
+      - "A" 
   sundials_logger:
     path: sundials/sundials_logger_generated.hpp
     headers:

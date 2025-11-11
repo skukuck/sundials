@@ -356,10 +356,23 @@ m.def("SUNLinSolSetZeroGuess", SUNLinSolSetZeroGuess, nb::arg("S"),
 
 m.def("SUNLinSolInitialize", SUNLinSolInitialize, nb::arg("S"));
 
-m.def("SUNLinSolSetup", SUNLinSolSetup, nb::arg("S"), nb::arg("A"));
+m.def(
+  "SUNLinSolSetup",
+  [](SUNLinearSolver S, std::optional<SUNMatrix> A = std::nullopt) -> int
+  {
+    auto SUNLinSolSetup_adapt_optional_arg_with_default_null =
+      [](SUNLinearSolver S, std::optional<SUNMatrix> A = std::nullopt) -> int
+    {
+      SUNMatrix A_adapt_default_null = nullptr;
+      if (A.has_value()) A_adapt_default_null = A.value();
 
-m.def("SUNLinSolSolve", SUNLinSolSolve, nb::arg("S"), nb::arg("A"),
-      nb::arg("x"), nb::arg("b"), nb::arg("tol"));
+      auto lambda_result = SUNLinSolSetup(S, A_adapt_default_null);
+      return lambda_result;
+    };
+
+    return SUNLinSolSetup_adapt_optional_arg_with_default_null(S, A);
+  },
+  nb::arg("S"), nb::arg("A").none() = nb::none());
 
 m.def("SUNLinSolNumIters", SUNLinSolNumIters, nb::arg("S"));
 

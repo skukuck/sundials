@@ -23,39 +23,39 @@ from sundials4py.core import *
 # we dont properly mock some of the requirements
 
 
-def test_smoke_create_dense(sunctx, nvec):
+def test_create_dense(sunctx, nvec):
     A = SUNDenseMatrix(2, 2, sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     assert LS is not None
 
 
-def test_smoke_create_band(sunctx, nvec):
+def test_create_band(sunctx, nvec):
     A = SUNBandMatrix(2, 1, 1, sunctx)
     LS = SUNLinSol_Band(nvec, A, sunctx)
     assert LS is not None
 
 
-def test_smoke_create_spgmr(sunctx, nvec):
+def test_create_spgmr(sunctx, nvec):
     LS = SUNLinSol_SPGMR(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
-def test_smoke_create_pcg(sunctx, nvec):
+def test_create_pcg(sunctx, nvec):
     LS = SUNLinSol_PCG(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
-def test_smoke_create_spbcgs(sunctx, nvec):
+def test_create_spbcgs(sunctx, nvec):
     LS = SUNLinSol_SPBCGS(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
-def test_smoke_create_sptfqmr(sunctx, nvec):
+def test_create_sptfqmr(sunctx, nvec):
     LS = SUNLinSol_SPTFQMR(nvec, SUN_PREC_NONE, 0, sunctx)
     assert LS is not None
 
 
-def test_smoke_get_type_and_id(sunctx, nvec):
+def test_get_type_and_id(sunctx, nvec):
     A = SUNDenseMatrix(2, 2, sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     typ = SUNLinSolGetType(LS)
@@ -64,7 +64,7 @@ def test_smoke_get_type_and_id(sunctx, nvec):
     assert isinstance(id_, int)
 
 
-def test_smoke_initialize_setup(sunctx, nvec):
+def test_initialize_setup(sunctx, nvec):
     A = SUNDenseMatrix(2, 2, sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     ret_init = SUNLinSolInitialize(LS)
@@ -73,7 +73,7 @@ def test_smoke_initialize_setup(sunctx, nvec):
     assert isinstance(ret_setup, int)
 
 
-def test_smoke_num_iters_resnorm_lastflag(sunctx, nvec):
+def test_num_iters_resnorm_lastflag(sunctx, nvec):
     LS = SUNLinSol_SPGMR(nvec, 0, 0, sunctx)
     niters = SUNLinSolNumIters(LS)
     resnorm = SUNLinSolResNorm(LS)
@@ -81,3 +81,64 @@ def test_smoke_num_iters_resnorm_lastflag(sunctx, nvec):
     assert isinstance(niters, int)
     assert isinstance(resnorm, float)
     assert isinstance(lastflag, int)
+
+
+def test_sunlinsol_set_atimes(sunctx):
+    x = N_VNew_Serial(1, sunctx)
+    y = N_VNew_Serial(1, sunctx)
+
+    # Create a simple dense matrix and linear solver
+    LS = SUNLinSol_SPGMR(x, 0, 0, sunctx)
+    assert LS is not None
+
+    # Define a dummy ATimes function
+    called = {"flag": False}
+
+    def atimes(LS, x, y):
+        called["flag"] = True
+        return 0
+
+    # Set the ATimes function
+    ret = SUNLinSolSetATimes(LS, atimes)
+    assert isinstance(ret, int)
+
+    SUNLinSolInitialize(LS)
+    SUNLinSolSetup(LS, None)
+    SUNLinSolSolve(LS, None, x, y, 1e-2)
+    assert called["flag"]
+
+
+def test_sunlinsol_set_preconditioner(sunctx):
+    x = N_VNew_Serial(1, sunctx)
+    y = N_VNew_Serial(1, sunctx)
+
+    # Create a simple dense matrix and linear solver
+    LS = SUNLinSol_SPGMR(x, SUN_PREC_LEFT, 0, sunctx)
+    assert LS is not None
+
+    def atimes(_, x, y):
+        return 0
+
+    # Define a dummy preconditioner functions
+    called = {"psetup": False, "psolve": False}
+
+    def psetup(_):
+        called["psetup"] = True
+        return 0
+
+    def psolve(_, r, z, tol, lr):
+        called["psolve"] = True
+        return 0
+
+    # Set the ATimes function
+    ret = SUNLinSolSetATimes(LS, atimes)
+    assert ret == SUN_SUCCESS
+
+    ret = SUNLinSolSetPreconditioner(LS, psetup, psolve)
+    assert ret == SUN_SUCCESS
+
+    SUNLinSolInitialize(LS)
+    SUNLinSolSetup(LS, None)
+    SUNLinSolSolve(LS, None, x, y, 1e-2)
+    assert called["psetup"]
+    assert called["psolve"]

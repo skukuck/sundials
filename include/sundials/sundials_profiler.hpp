@@ -34,8 +34,6 @@
 #define SUNDIALS_CXX_MARK_FUNCTION(profobj)
 #endif
 
-#include "sundials_profiler_impl.h"
-
 namespace sundials {
 /* Convenience class for C++ codes.
    Allows for simpler profiler statements using C++ scoping rules. */

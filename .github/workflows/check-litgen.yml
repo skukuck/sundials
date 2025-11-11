@@ -22,9 +22,9 @@ jobs:
         run: |
           pip install black isort pyyaml litgen@git+https://github.com/sundials-codes/litgen.git
 
-      - name: Check out repository code
-        uses: actions/checkout@v5
-        submodules: true
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
 
       - name: Add safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"

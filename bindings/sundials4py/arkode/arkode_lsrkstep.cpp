@@ -46,19 +46,19 @@ void bind_arkode_lsrkstep(nb::module_& m)
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
 
-      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = arkode_user_supplied_fn_table_alloc();
 
-      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+      static_cast<ARKodeMem>(ark_mem)->python = fn_table;
 
       int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
-        free(cb_fns);
+        free(fn_table);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
       }
 
-      cb_fns->lsrkstep_f = nb::cast(rhs);
+      fn_table->lsrkstep_f = nb::cast(rhs);
 
       return std::make_shared<ARKodeView>(ark_mem);
     },
@@ -78,19 +78,19 @@ void bind_arkode_lsrkstep(nb::module_& m)
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
 
-      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = arkode_user_supplied_fn_table_alloc();
 
-      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+      static_cast<ARKodeMem>(ark_mem)->python = fn_table;
 
       int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
-        free(cb_fns);
+        free(fn_table);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
       }
 
-      cb_fns->lsrkstep_f = nb::cast(rhs);
+      fn_table->lsrkstep_f = nb::cast(rhs);
 
       return std::make_shared<ARKodeView>(ark_mem);
     },

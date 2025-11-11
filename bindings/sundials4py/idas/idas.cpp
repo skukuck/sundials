@@ -109,18 +109,18 @@ void bind_idas(nb::module_& m)
         {
           int ida_status = IDAInit(ida_mem, idas_res_wrapper, t0, yy0, yp0);
 
-          auto cb_fns = idas_user_supplied_fn_table_alloc();
-          static_cast<IDAMem>(ida_mem)->python = cb_fns;
+          auto fn_table = idas_user_supplied_fn_table_alloc();
+          static_cast<IDAMem>(ida_mem)->python = fn_table;
 
           ida_status = IDASetUserData(ida_mem, ida_mem);
           if (ida_status != IDA_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in IDAS memory");
           }
 
-          cb_fns->res = nb::cast(res);
+          fn_table->res = nb::cast(res);
 
           return ida_status;
         });
@@ -202,19 +202,19 @@ void bind_idas(nb::module_& m)
           int ida_status = IDAInitB(ida_mem, which, idas_resB_wrapper, tB0,
                                     yyB0, ypB0);
 
-          auto cb_fns   = idasa_user_supplied_fn_table_alloc();
+          auto fn_table = idasa_user_supplied_fn_table_alloc();
           auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
-          idab_mem->python = cb_fns;
+          idab_mem->python = fn_table;
 
           ida_status = IDASetUserDataB(ida_mem, which, idab_mem);
           if (ida_status != IDA_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in IDAS memory");
           }
 
-          cb_fns->resB = nb::cast(resB);
+          fn_table->resB = nb::cast(resB);
           return ida_status;
         });
 
@@ -251,19 +251,19 @@ void bind_idas(nb::module_& m)
           int ida_status = IDAInitBS(ida_mem, which, ida_resBS_wrapper, tB0,
                                      yyB0, ypB0);
 
-          auto cb_fns   = idasa_user_supplied_fn_table_alloc();
+          auto fn_table = idasa_user_supplied_fn_table_alloc();
           auto idab_mem = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
-          idab_mem->python = cb_fns;
+          idab_mem->python = fn_table;
 
           ida_status = IDASetUserDataB(ida_mem, which, idab_mem);
           if (ida_status != IDA_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in IDA memory");
           }
 
-          cb_fns->resBS = nb::cast(resBS);
+          fn_table->resBS = nb::cast(resBS);
           return ida_status;
         });
 

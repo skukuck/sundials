@@ -111,21 +111,21 @@ void bind_cvodes(nb::module_& m)
           int cv_status = CVodeInit(cv_mem, cvode_f_wrapper, t0, y0);
 
           // Create the user-supplied function table to store the Python user functions
-          auto cb_fns = cvode_user_supplied_fn_table_alloc();
+          auto fn_table = cvode_user_supplied_fn_table_alloc();
 
-          static_cast<CVodeMem>(cv_mem)->python = cb_fns;
+          static_cast<CVodeMem>(cv_mem)->python = fn_table;
 
           // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
           cv_status = CVodeSetUserData(cv_mem, cv_mem);
           if (cv_status != CV_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in CVODE memory");
           }
 
           // Finally, set the RHS function
-          cb_fns->f = nb::cast(rhs);
+          fn_table->f = nb::cast(rhs);
 
           return cv_status;
         });
@@ -219,20 +219,20 @@ void bind_cvodes(nb::module_& m)
         {
           int cv_status = CVodeInitB(cv_mem, which, cvode_fB_wrapper, tB0, yB0);
 
-          auto cb_fns = cvodea_user_supplied_fn_table_alloc();
+          auto fn_table = cvodea_user_supplied_fn_table_alloc();
           auto cvb_mem =
             static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
-          cvb_mem->python = cb_fns;
+          cvb_mem->python = fn_table;
 
           cv_status = CVodeSetUserDataB(cv_mem, which, cvb_mem);
           if (cv_status != CV_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in CVODE memory");
           }
 
-          cb_fns->fB = nb::cast(fB);
+          fn_table->fB = nb::cast(fB);
           return cv_status;
         });
 
@@ -272,20 +272,20 @@ void bind_cvodes(nb::module_& m)
         {
           int cv_status = CVodeInitBS(cv_mem, which, cvode_fBS_wrapper, tB0, yB0);
 
-          auto cb_fns = cvodea_user_supplied_fn_table_alloc();
+          auto fn_table = cvodea_user_supplied_fn_table_alloc();
           auto cvb_mem =
             static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
-          cvb_mem->python = cb_fns;
+          cvb_mem->python = fn_table;
 
           cv_status = CVodeSetUserDataB(cv_mem, which, cvb_mem);
           if (cv_status != CV_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in CVODE memory");
           }
 
-          cb_fns->fBS = nb::cast(fBS);
+          fn_table->fBS = nb::cast(fBS);
           return cv_status;
         });
 

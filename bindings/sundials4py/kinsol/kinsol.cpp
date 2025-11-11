@@ -79,18 +79,18 @@ void bind_kinsol(nb::module_& m)
         {
           int kin_status = KINInit(kin_mem, kinsol_sysfn_wrapper, tmpl);
 
-          auto cb_fns        = kinsol_user_supplied_fn_table_alloc();
+          auto fn_table      = kinsol_user_supplied_fn_table_alloc();
           auto kinsol_mem    = static_cast<KINMem>(kin_mem);
-          kinsol_mem->python = cb_fns;
+          kinsol_mem->python = fn_table;
           kin_status         = KINSetUserData(kin_mem, kin_mem);
           if (kin_status != KIN_SUCCESS)
           {
-            free(cb_fns);
+            free(fn_table);
             throw sundials4py::error_returned(
               "Failed to set user data in KINSOL memory");
           }
 
-          cb_fns->sysfn = nb::cast(sysfn);
+          fn_table->sysfn = nb::cast(sysfn);
           return kin_status;
         });
 

@@ -47,8 +47,8 @@ void bind_arkode_mristep(nb::module_& m)
           MRIStepInnerStepper stepper = nullptr;
 
           int status      = MRIStepInnerStepper_Create(sunctx, &stepper);
-          auto cb_fns     = mristepinnerstepper_user_supplied_fn_table_alloc();
-          stepper->python = static_cast<void*>(cb_fns);
+          auto fn_table   = mristepinnerstepper_user_supplied_fn_table_alloc();
+          stepper->python = static_cast<void*>(fn_table);
 
           return std::make_tuple(status,
                                  our_make_shared<
@@ -121,21 +121,21 @@ void bind_arkode_mristep(nb::module_& m)
       }
 
       // Create the user-supplied function table to store the Python user functions
-      auto cb_fns = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = arkode_user_supplied_fn_table_alloc();
 
       // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
-      static_cast<ARKodeMem>(ark_mem)->python = cb_fns;
+      static_cast<ARKodeMem>(ark_mem)->python = fn_table;
       int ark_status = ARKodeSetUserData(ark_mem, ark_mem);
       if (ark_status != ARK_SUCCESS)
       {
-        free(cb_fns);
+        free(fn_table);
         throw sundials4py::error_returned(
           "Failed to set user data in ARKODE memory");
       }
 
       // Finally, set the RHS function
-      cb_fns->mristep_fse = nb::cast(fse);
-      cb_fns->mristep_fsi = nb::cast(fsi);
+      fn_table->mristep_fse = nb::cast(fse);
+      fn_table->mristep_fsi = nb::cast(fsi);
 
       return std::make_shared<ARKodeView>(ark_mem);
     },

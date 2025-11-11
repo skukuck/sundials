@@ -46,7 +46,6 @@ void bind_core(nb::module_& m)
 #include "sundials_errors.hpp"
 #include "sundials_types_generated.hpp"
 
-  // TODO(CJB): fix this
   // handle opening and closing C files
   nb::class_<FILE>(m, "FILE");
   m.def("SUNFileOpen",

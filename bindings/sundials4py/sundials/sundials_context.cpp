@@ -20,6 +20,7 @@
  * code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 
+#include "sundials/sundials_errors.h"
 #include "sundials4py.hpp"
 
 #include <sundials/sundials_context.hpp>
@@ -54,23 +55,56 @@ void bind_suncontext(nb::module_& m)
           if (!sunctx->python)
           {
             sunctx->python = SUNContextFunctionTable_Alloc();
+
+            // Only push the wrapper the first time this is called
+            SUNErrCode status =
+              SUNContext_PushErrHandler(sunctx, suncontext_errhandler_wrapper,
+                                        sunctx->python);
+            if (status)
+            {
+              throw sundials4py::error_returned(
+                "SUNContext_PushErrHandler returned an error");
+            }
           }
+
           auto fn_table = static_cast<SUNContextFunctionTable*>(sunctx->python);
 
-          if (fn_table->err_handler)
+          fn_table->err_handlers.push_back(nb::cast(err_fn));
+
+          return SUN_SUCCESS;
+        });
+
+  m.def("SUNContext_PopErrHandler",
+        [](SUNContext sunctx) -> SUNErrCode
+        {
+          if (!sunctx->python) { return SUN_SUCCESS; }
+
+          auto fn_table = static_cast<SUNContextFunctionTable*>(sunctx->python);
+
+          if (fn_table->err_handlers.size() > 0)
           {
-            throw sundials4py::illegal_value(
-              "SUNContext_PushErrHandler was already called. sundials4py only "
-              "allows for SUNContext_PushErrHandler to be called once. Call "
-              "SUNContext_PopErrHandler first, then call "
-              "SUNContext_PushErrHandler again.")
+            // pop the python functions off the interface layer stack
+            fn_table->err_handlers.pop_back();
           }
 
-          fn_table->err_handler = nb::cast(err_fn);
+          if (fn_table->err_handlers.size() == 0)
+          {
+            // now we can pop the suncontext_errhandler_wrapper off the C side stack
+            return SUNContext_PopErrHandler(sunctx);
+          }
 
-          return SUNContext_PushErrHandler(sunctx, suncontext_errhandler_wrapper,
-                                           sunctx->python);
+          return SUN_SUCCESS;
         });
+
+  m.def(
+    "SUNContext_TestErrHandler",
+    [](SUNContext sunctx)
+    {
+      SUNHandleErrWithMsg(__LINE__, __func__, __FILE__,
+                          "create an error to test the error handlers",
+                          SUN_ERR_ARG_CORRUPT, sunctx);
+    },
+    "This function is for testing purposes and should not be called.");
 }
 
 } // namespace sundials4py

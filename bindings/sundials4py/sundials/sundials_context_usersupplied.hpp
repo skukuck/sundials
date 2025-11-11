@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <ranges>
 #include <vector>
 
 #include <sundials/sundials_context.h>
@@ -32,7 +33,7 @@ using namespace sundials::experimental;
 // Function table for user-supplied error handler for SUNContext
 struct SUNContextFunctionTable
 {
-  nb::object err_handler;
+  std::vector<nb::object> err_handlers;
 };
 
 inline SUNContextFunctionTable* SUNContextFunctionTable_Alloc()
@@ -49,7 +50,10 @@ inline void suncontext_errhandler_wrapper(int line, const char* func,
                                           void* err_user_data, SUNContext sunctx)
 {
   auto fn_table = static_cast<SUNContextFunctionTable*>(err_user_data);
-  fn_table->err_handler(line, func, file, msg, err_code, nullptr, sunctx);
+  for (int i = fn_table->err_handlers.size() - 1; i >= 0; i--)
+  {
+    fn_table->err_handlers[i](line, func, file, msg, err_code, nullptr, sunctx);
+  }
 }
 
 #endif

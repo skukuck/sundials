@@ -45,7 +45,7 @@ public:
   {
     SUNContext sunctx = nullptr;
     SUNContext_Create(comm, &sunctx);
-    object_.reset(sunctx);
+    object_.reset(sunctx, SUNContextDeleter{});
   }
 };
 

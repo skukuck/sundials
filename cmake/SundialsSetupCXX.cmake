@@ -45,14 +45,19 @@ set(DOCSTR "Enable C++ compiler specific extensions")
 sundials_option(CMAKE_CXX_EXTENSIONS BOOL "${DOCSTR}" ON)
 message(STATUS "C++ extensions set to ${CMAKE_CXX_EXTENSIONS}")
 
-# Python interface code requires C++20
-if(ENABLE_SYCL AND (CMAKE_CXX_STANDARD LESS "20"))
+# Python interface code requires C++17
+if(SUNDIALS_ENABLE_PYTHON AND (CMAKE_CXX_STANDARD LESS "17"))
   message(
     SEND_ERROR
-      "CMAKE_CXX_STANDARD must be >= 20 because SUNDIALS_ENABLE_PYTHON=ON")
+      "CMAKE_CXX_STANDARD must be >= 17 because SUNDIALS_ENABLE_PYTHON=ON")
 endif()
 
 # SYCL requires C++17
 if(ENABLE_SYCL AND (CMAKE_CXX_STANDARD LESS "17"))
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_SYCL=ON")
+endif()
+
+# Ginkgo requires C++17
+if(ENABLE_GINKGO AND (CMAKE_CXX_STANDARD LESS "17"))
+  message(FATAL_ERROR "CMAKE_CXX_STANDARD must be >= 17 because ENABLE_GINKGO=ON")
 endif()

@@ -85,6 +85,7 @@ SplittingStep initialization functions
    **Example codes:**
       * ``examples/arkode/C_serial/ark_advection_diffusion_reaction_splitting.c``
       * ``examples/arkode/C_serial/ark_analytic_partitioned.c``
+
    .. versionadded:: 6.2.0
 
 
@@ -140,6 +141,7 @@ Optional output functions
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the SplittingStep memory was ``NULL``
    :retval ARK_ILL_INPUT: if *partition* was out of bounds
+
    .. versionadded:: 6.2.0
 
 

@@ -891,33 +891,6 @@ Caliper support:
    Default: None
 
 
-.. _Installation.Options.XBraid:
-
-Building with XBraid
-^^^^^^^^^^^^^^^^^^^^
-
-   Default: ``OFF``
-
-To enable XBraid support, set :cmakeop:`ENABLE_MPI` to ``ON``, set
-:cmakeop:`ENABLE_XBRAID` to ``ON``, set :cmakeop:`XBRAID_DIR` to the root path
-of the XBraid installation. For example, the following command will configure
-SUNDIALS with XBraid support:
-
-.. code-block:: bash
-
-   cmake \
-     -S SOLVER_DIR \
-     -B BUILD_DIR \
-     -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D SUNDIALS_INDEX_SIZE="32" \
-     -D ENABLE_MPI=ON \
-     -D ENABLE_XBRAID=ON \
-     -D XBRAID_DIR=/path/to/xbraid/installation
-
-.. note::
-
-   Default: None
-
 .. _Installation.Options.CUDA:
 
 Building with CUDA
@@ -2200,14 +2173,6 @@ SUNDIALS with XBraid support:
 
    Default: None
 
-.. _Installation.Options.xSDK:
-
-Building with xSDK Defaults
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The `Extreme-scale Scientific Software Development Kit (xSDK)
-<https://xsdk.info>`__ is a community of HPC libraries and applications
-developing best practices and standards for scientific software.
 
 .. _Installation.Options.xSDK:
 

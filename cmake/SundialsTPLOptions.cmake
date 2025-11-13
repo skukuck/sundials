@@ -343,13 +343,13 @@ sundials_option(adiak_DIR PATH "Path to the root of an Adiak installation"
 # Enable Kokkos support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_KOKKOS BOOL "Enable Kokkos support" OFF)
+sundials_option(SUNDIALS_ENABLE_KOKKOS BOOL "Enable Kokkos support" OFF DEPRECATED_NAMES ENABLE_KOKKOS)
 
 sundials_option(Kokkos_DIR PATH "Path to the root of a Kokkos installation"
                 "${Kokkos_DIR}")
 
 sundials_option(
-  KOKKOS_WORKS BOOL
+  SUNDIALS_KOKKOS_WORKS BOOL
   "Set to ON to force CMake to accept a given Kokkos configuration" OFF
   ADVANCED)
 
@@ -357,13 +357,13 @@ sundials_option(
 # Enable Kokkos Kernels support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_KOKKOS_KERNELS BOOL "Enable Kokkos Kernels support" OFF)
+sundials_option(SUNDIALS_ENABLE_KOKKOS_KERNELS BOOL "Enable Kokkos Kernels support" OFF DEPRECATED_NAMES ENABLE_KOKKOS_KERNELS)
 
 sundials_option(
   KokkosKernels_DIR PATH "Path to the root of a Kokkos Kernels installation"
   "${KokkosKernels_DIR}")
 
 sundials_option(
-  KOKKOS_KERNELS_WORKS BOOL
+  SUNDIALS_KOKKOS_KERNELS_WORKS BOOL
   "Set to ON to force CMake to accept a given Kokkos configuration" OFF
   ADVANCED)

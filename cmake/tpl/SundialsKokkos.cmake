@@ -56,11 +56,11 @@ message(STATUS "Kokkos VERSION: ${Kokkos_VERSION}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(Kokkos_FOUND AND (NOT KOKKOS_WORKS))
+if(Kokkos_FOUND AND (NOT SUNDIALS_KOKKOS_WORKS))
   message(STATUS "Checking if Kokkos works... OK")
-  set(KOKKOS_WORKS
+  set(SUNDIALS_KOKKOS_WORKS
       TRUE
       CACHE BOOL "Kokkos works with SUNDIALS as configured" FORCE)
-elseif(Kokkos_FOUND AND KOKKOS_WORKS)
+elseif(Kokkos_FOUND AND SUNDIALS_KOKKOS_WORKS)
   message(STATUS "Skipped Kokkos tests, assuming Kokkos works with SUNDIALS.")
 endif()

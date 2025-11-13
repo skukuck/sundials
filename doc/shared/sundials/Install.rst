@@ -1264,7 +1264,7 @@ header file will be installed (see section
 header file). For more information on using SUNDIALS with GPUs, see
 :ref:`SUNDIALS.GPU`.
 
-To enable Kokkos support, set the :cmakeop:`ENABLE_KOKKOS` to ``ON`` and set
+To enable Kokkos support, set the :cmakeop:`SUNDIALS_ENABLE_KOKKOS` to ``ON`` and set
 :cmakeop:`Kokkos_DIR` to root path of the Kokkos installation. For example, the
 following command will configure SUNDIALS with Kokkos support:
 
@@ -1274,14 +1274,18 @@ following command will configure SUNDIALS with Kokkos support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KOKKOS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS=ON \
      -D Kokkos_DIR=/path/to/kokkos/installation
 
-.. cmakeoption:: ENABLE_KOKKOS
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS
 
    Enable Kokkos support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KOKKOS``
 
 .. cmakeoption:: Kokkos_DIR
 
@@ -1310,8 +1314,8 @@ header files will be installed (see sections
 respectively, for the corresponding header files). For more information on using
 SUNDIALS with GPUs, see :ref:`SUNDIALS.GPU`.
 
-To enable KokkosKernels support, set :cmakeop:`ENABLE_KOKKOS` and
-:cmakeop:`ENABLE_KOKKOS_KERNELS` to ``ON`` and set :cmakeop:`Kokkos_DIR` and
+To enable KokkosKernels support, set :cmakeop:`SUNDIALS_ENABLE_KOKKOS` and
+:cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS` to ``ON`` and set :cmakeop:`Kokkos_DIR` and
 :cmakeop:`KokkosKernels_DIR` to the root paths for the Kokkos and KokkosKernels
 installations, respectively. For example, the following command will configure
 SUNDIALS with Kokkos and KokkosKernels support:
@@ -1322,16 +1326,20 @@ SUNDIALS with Kokkos and KokkosKernels support:
      -S SOLVER_DIR \
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
-     -D ENABLE_KOKKOS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS=ON \
      -D Kokkos_DIR=/path/to/kokkos/installation \
-     -D ENABLE_KOKKOS_KERNELS=ON \
+     -D SUNDIALS_ENABLE_KOKKOS_KERNELS=ON \
      -D KokkosKernels_DIR=/path/to/kokkoskernels/installation
 
-.. cmakeoption:: ENABLE_KOKKOS_KERNELS
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_KERNELS
 
    Enable KokkosKernels support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_KOKKOS_KERNELS``
 
 .. cmakeoption:: KokkosKernels_DIR
 

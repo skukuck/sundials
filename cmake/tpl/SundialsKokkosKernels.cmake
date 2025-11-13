@@ -51,12 +51,12 @@ message(STATUS "Kokkos Kernels VERSION: ${KokkosKernels_VERSION}")
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(KokkosKernels_FOUND AND (NOT KOKKOS_KERNELS_WORKS))
+if(KokkosKernels_FOUND AND (NOT SUNDIALS_KOKKOS_KERNELS_WORKS))
   message(STATUS "Checking if Kokkos Kernels works... OK")
-  set(KOKKOS_KERNELS_WORKS
+  set(SUNDIALS_KOKKOS_KERNELS_WORKS
       TRUE
       CACHE BOOL "Kokkos Kernels works with SUNDIALS as configured" FORCE)
-elseif(KokkosKernels_FOUND AND KOKKOS_WORKS)
+elseif(KokkosKernels_FOUND AND SUNDIALS_KOKKOS_KERNELS_WORKS)
   message(
     STATUS
       "Skipped Kokkos Kernels tests, assuming Kokkos Kernels works with SUNDIALS."

@@ -71,7 +71,7 @@ if("@SUNDIALS_ENABLE_CALIPER@" AND NOT TARGET caliper)
   find_dependency(CALIPER PATHS "@CALIPER_DIR@")
 endif()
 
-if("@ENABLE_ADIAK@" AND NOT TARGET adiak::adiak)
+if("@SUNDIALS_ENABLE_ADIAK@" AND NOT TARGET adiak::adiak)
   find_dependency(adiak PATHS "@adiak_DIR@")
 endif()
 

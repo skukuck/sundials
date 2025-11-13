@@ -333,8 +333,8 @@ sundials_option(
 # Enable Adiak support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_ADIAK BOOL "Enable Adiak support" OFF
-                DEPENDS_ON SUNDIALS_BUILD_WITH_PROFILING)
+sundials_option(SUNDIALS_ENABLE_ADIAK BOOL "Enable Adiak support" OFF
+                DEPENDS_ON SUNDIALS_BUILD_WITH_PROFILING DEPRECATED_NAMES ENABLE_ADIAK)
 
 sundials_option(adiak_DIR PATH "Path to the root of an Adiak installation"
                 "${ADIAK_DIR}")

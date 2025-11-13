@@ -153,6 +153,7 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_ONEMKL`        | `SUNDIALS_ENABLE_ONEMKL`        |
 | `ONEMKL_WORKS`         | `SUNDIALS_ONEMKL_WORKS`         |
 | `ENABLE_CALIPER`       | `SUNDIALS_ENABLE_CALIPER`       |
+| `ENABLE_ADIAK`         | `SUNDIALS_ENABLE_ADIAK`         |
 
 ## Changes to SUNDIALS in release 7.5.0
 

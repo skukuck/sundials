@@ -865,11 +865,15 @@ about HPC simulations. Adiak is developed by Lawrence Livermore National
 Laboratory and can be obtained from the `Adiak GitHub repository
 <https://github.com/LLNL/Adiak>`__.
 
-.. cmakeoption:: ENABLE_ADIAK
+.. cmakeoption:: SUNDIALS_ENABLE_ADIAK
 
    Enable Adiak support
 
    Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_ADIAK``
 
 .. cmakeoption:: adiak_DIR
 

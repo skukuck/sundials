@@ -57,7 +57,7 @@ endif()
 # Find (and test) the Adiak libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_ADIAK)
+if(SUNDIALS_ENABLE_ADIAK)
   include(SundialsAdiak)
   list(APPEND SUNDIALS_TPL_LIST "ADIAK")
 endif()

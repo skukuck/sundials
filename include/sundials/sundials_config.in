@@ -101,7 +101,7 @@
 #cmakedefine SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
 
 /* BUILD SUNDIALS with monitoring functionalities */
-#cmakedefine SUNDIALS_BUILD_WITH_MONITORING
+#cmakedefine SUNDIALS_ENABLE_MONITORING
 
 /* BUILD SUNDIALS with profiling functionalities */
 #cmakedefine SUNDIALS_BUILD_WITH_PROFILING

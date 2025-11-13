@@ -413,7 +413,7 @@ def main():
         group,
         "--monitoring",
         "SUNDIALS_MONITORING",
-        "SUNDIALS_BUILD_WITH_MONITORING",
+        "SUNDIALS_ENABLE_MONITORING",
         "OFF",
         "BOOL",
         "integrator and solver monitoring",

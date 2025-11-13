@@ -66,7 +66,7 @@ endif()
 # Find (and test) the Caliper libraries
 # ---------------------------------------------------------------
 
-if(ENABLE_CALIPER)
+if(SUNDIALS_ENABLE_CALIPER)
   include(SundialsCaliper)
   list(APPEND SUNDIALS_TPL_LIST "CALIPER")
 endif()

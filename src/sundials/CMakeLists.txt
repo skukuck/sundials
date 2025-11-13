@@ -132,7 +132,7 @@ if(SUNDIALS_ENABLE_MPI)
 endif()
 
 if(SUNDIALS_BUILD_WITH_PROFILING)
-  if(ENABLE_CALIPER)
+  if(SUNDIALS_ENABLE_CALIPER)
     set(_link_caliper_if_needed PUBLIC caliper)
   endif()
   if(ENABLE_ADIAK)

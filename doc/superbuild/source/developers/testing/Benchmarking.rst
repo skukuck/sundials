@@ -52,7 +52,7 @@ Adiak enabled for the CPT suite by setting the CMake options
 
   $ cmake \
   > -DSUNDIALS_BUILD_WITH_PROFILING=ON \
-  > -DENABLE_CALIPER=ON \
+  > -DSUNDIALS_ENABLE_CALIPER=ON \
   > -DCaliper_DIR=/path/to/caliper \
   > -DENABLE_ADIAK=ON \
   > -Dadiak_DIR=/path/to/adiak/lib/cmake/adiak \

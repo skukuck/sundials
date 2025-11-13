@@ -152,6 +152,7 @@ table below lists the old CMake option names and the new replacements.
 | `XBRAID_WORKS`         | `SUNDIALS_XBRAID_WORKS`         |
 | `ENABLE_ONEMKL`        | `SUNDIALS_ENABLE_ONEMKL`        |
 | `ONEMKL_WORKS`         | `SUNDIALS_ONEMKL_WORKS`         |
+| `ENABLE_CALIPER`       | `SUNDIALS_ENABLE_CALIPER`       |
 
 ## Changes to SUNDIALS in release 7.5.0
 

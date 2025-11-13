@@ -49,7 +49,7 @@ find_package(CALIPER PATHS "${CALIPER_DIR}" REQUIRED)
 # Section 4: Test the TPL
 # -----------------------------------------------------------------------------
 
-if(CALIPER_FOUND AND (NOT CALIPER_WORKS))
+if(CALIPER_FOUND AND (NOT SUNDIALS_CALIPER_WORKS))
   # Do any checks which don't require compilation first.
 
   # Create the CALIPER_TEST directory
@@ -86,7 +86,7 @@ if(CALIPER_FOUND AND (NOT CALIPER_WORKS))
   # Process test result
   if(COMPILE_OK)
     message(STATUS "Checking if CALIPER works with SUNDIALS... OK")
-    set(CALIPER_WORKS
+    set(SUNDIALS_CALIPER_WORKS
         TRUE
         CACHE BOOL "CALIPER works with SUNDIALS as configured" FORCE)
   else()
@@ -96,6 +96,6 @@ if(CALIPER_FOUND AND (NOT CALIPER_WORKS))
     message(FATAL_ERROR "SUNDIALS interface to CALIPER is not functional.")
   endif()
 
-elseif(CALIPER_FOUND AND CALIPER_WORKS)
+elseif(CALIPER_FOUND AND SUNDIALS_CALIPER_WORKS)
   message(STATUS "Skipped CALIPER tests, assuming CALIPER works with SUNDIALS.")
 endif()

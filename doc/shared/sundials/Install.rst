@@ -847,7 +847,7 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
    Build SUNDIALS with capabilities for fine-grained profiling. This requires
    POSIX timers, the Windows ``profileapi.h`` timers, or enabling Caliper with
-   :cmakeop:`ENABLE_CALIPER`.
+   :cmakeop:`SUNDIALS_ENABLE_CALIPER`.
 
    Default: ``OFF``
 
@@ -891,8 +891,8 @@ Laboratory and can be obtained from the `Caliper GitHub repository
 When profiling and Caliper are both enabled, SUNDIALS will utilize Caliper for
 performance profiling.
 
-To enable Caliper support, set the :cmakeop:`ENABLE_CALIPER` to ``ON`` and set
-:cmakeop:`CALIPER_DIR` to the root path of the Caliper installation. For
+To enable Caliper support, set the :cmakeop:`SUNDIALS_ENABLE_CALIPER` to ``ON``
+and set :cmakeop:`CALIPER_DIR` to the root path of the Caliper installation. For
 example, the following command will configure SUNDIALS with profiling and
 Caliper support:
 
@@ -903,10 +903,10 @@ Caliper support:
      -B BUILD_DIR \
      -D CMAKE_INSTALL_PREFIX=INSTALL_DIR \
      -D SUNDIALS_BUILD_WITH_PROFILING=ON \
-     -D ENABLE_CALIPER=ON \
+     -D SUNDIALS_ENABLE_CALIPER=ON \
      -D CALIPER_DIR=/path/to/caliper/installation
 
-.. cmakeoption:: ENABLE_CALIPER
+.. cmakeoption:: SUNDIALS_ENABLE_CALIPER
 
    Enable Caliper support
 
@@ -916,6 +916,10 @@ Caliper support:
 
       Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
       ``ON``.
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ENABLE_CALIPER``
 
 .. cmakeoption:: CALIPER_DIR
 

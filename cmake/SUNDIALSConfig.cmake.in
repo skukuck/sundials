@@ -67,7 +67,7 @@ if("@SUNDIALS_ENABLE_OPENMP@" AND NOT TARGET OpenMP::OpenMP_C)
   find_dependency(OpenMP)
 endif()
 
-if("@ENABLE_CALIPER@" AND NOT TARGET caliper)
+if("@SUNDIALS_ENABLE_CALIPER@" AND NOT TARGET caliper)
   find_dependency(CALIPER PATHS "@CALIPER_DIR@")
 endif()
 

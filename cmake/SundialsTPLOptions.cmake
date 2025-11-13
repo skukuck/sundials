@@ -318,16 +318,16 @@ sundials_option(
 # Enable Caliper support?
 # ---------------------------------------------------------------
 
-sundials_option(ENABLE_CALIPER BOOL "Enable CALIPER support" OFF
-                DEPENDS_ON SUNDIALS_BUILD_WITH_PROFILING)
+sundials_option(SUNDIALS_ENABLE_CALIPER BOOL "Enable CALIPER support" OFF
+                DEPENDS_ON SUNDIALS_BUILD_WITH_PROFILING DEPRECATED_NAMES ENABLE_CALIPER)
 
 sundials_option(CALIPER_DIR PATH "Path to the root of an CALIPER installation"
                 "${CALIPER_DIR}")
 
 sundials_option(
-  CALIPER_WORKS BOOL
+  SUNDIALS_CALIPER_WORKS BOOL
   "Set to ON to force CMake to accept a given CALIPER configuration" OFF
-  ADVANCED)
+  ADVANCED DEPRECATED_NAMES CALIPER_WORKS)
 
 # ---------------------------------------------------------------
 # Enable Adiak support?

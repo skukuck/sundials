@@ -159,6 +159,7 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_KOKKOS_KERNELS`          | `SUNDIALS_ENABLE_KOKKOS_KERNELS` |
 | `KOKKOS_KERNELS_WORKS`           | `SUNDIALS_KOKKOS_KERNELS_WORKS`  |
 | `SUNDIALS_BUILD_WITH_MONITORING` | `SUNDIALS_ENABLE_MONITORING`     |
+| `SUNDIALS_BUILD_WITH_PROFILING`  | `SUNDIALS_ENABLE_PROFILING`      |
 
 ## Changes to SUNDIALS in release 7.5.0
 

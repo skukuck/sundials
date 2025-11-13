@@ -104,7 +104,7 @@
 #cmakedefine SUNDIALS_ENABLE_MONITORING
 
 /* BUILD SUNDIALS with profiling functionalities */
-#cmakedefine SUNDIALS_BUILD_WITH_PROFILING
+#cmakedefine SUNDIALS_ENABLE_PROFILING
 
 /* Enable error checking within SUNDIALS */
 #cmakedefine SUNDIALS_ENABLE_ERROR_CHECKS

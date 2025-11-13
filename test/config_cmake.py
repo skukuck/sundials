@@ -424,7 +424,7 @@ def main():
         group,
         "--profiling",
         "SUNDIALS_PROFILING",
-        "SUNDIALS_BUILD_WITH_PROFILING",
+        "SUNDIALS_ENABLE_PROFILING",
         "OFF",
         "BOOL",
         "fine-grained profiling",

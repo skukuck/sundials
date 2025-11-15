@@ -56,6 +56,6 @@ foreach(backend ${SUNDIALS_RAJA_BACKENDS})
   endif()
 
   install(TARGETS ${example_target}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/benchmarks/nvector/raja")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/benchmarks/nvector/raja")
 
 endforeach()

@@ -539,7 +539,7 @@ def main():
         group,
         "--benchmarks",
         "SUNDIALS_BENCHMARKS",
-        "BUILD_BENCHMARKS",
+        "SUNDIALS_ENABLE_BENCHMARKS",
         "OFF",
         "BOOL",
         "Benchmarks",

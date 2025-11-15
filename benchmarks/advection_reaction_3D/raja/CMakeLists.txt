@@ -67,11 +67,11 @@ if(SUNDIALS_ENABLE_ARKODE
             ${OTHER_LIBS})
 
   install(TARGETS advection_reaction_3D_raja
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
   install(FILES README.md ../scripts/compare_error.py
                 ../scripts/compute_error.py ../scripts/pickle_solution_output.py
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
   foreach(benchmark_tuple ${BENCHMARK_VAR})
     list(GET benchmark_tuple 0 benchmark_args)
@@ -131,7 +131,7 @@ if(SUNDIALS_ENABLE_ARKODE
                                PRIVATE USE_CUDA_NVEC)
 
     install(TARGETS advection_reaction_3D_raja_mpicuda
-            DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+            DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
     foreach(benchmark_tuple ${BENCHMARK_VAR})
       list(GET benchmark_tuple 0 benchmark_args)
@@ -184,7 +184,7 @@ if(SUNDIALS_ENABLE_ARKODE
                                PRIVATE USE_HIP_NVEC)
 
     install(TARGETS advection_reaction_3D_raja_mpihip
-            DESTINATION "${BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
+            DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/advection_reaction_3D/raja")
 
     foreach(benchmark_tuple ${BENCHMARK_VAR})
       list(GET benchmark_tuple 0 benchmark_args)

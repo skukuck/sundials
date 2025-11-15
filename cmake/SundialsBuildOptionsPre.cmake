@@ -250,12 +250,13 @@ sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
 # Options for benchmark suite
 # ---------------------------------------------------------------
 
-sundials_option(BUILD_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF)
+sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
-  BENCHMARKS_INSTALL_PATH PATH
+  SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
   "Output directory for installing benchmark executables"
-  "${CMAKE_INSTALL_PREFIX}/benchmarks")
+  "${CMAKE_INSTALL_PREFIX}/benchmarks"
+  DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
 
 # ---------------------------------------------------------------
 # Options for CMake config installation

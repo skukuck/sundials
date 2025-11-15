@@ -113,6 +113,6 @@ foreach(test_tuple ${tests})
   target_link_libraries(${target} PRIVATE ${MPI_CXX_LIBRARIES})
 
   install(TARGETS ${target}
-          DESTINATION "${BENCHMARKS_INSTALL_PATH}/diffusion_2D")
+          DESTINATION "${SUNDIALS_BENCHMARKS_INSTALL_PATH}/diffusion_2D")
 
 endforeach()

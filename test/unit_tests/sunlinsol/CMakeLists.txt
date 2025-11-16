@@ -51,7 +51,7 @@ if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
   add_subdirectory(sptfqmr/parallel)
 endif()
 
-if(BUILD_SUNMATRIX_CUSPARSE)
+if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   if(SUNDIALS_INDEX_SIZE MATCHES "32")
     add_subdirectory(cusolversp)
   endif()

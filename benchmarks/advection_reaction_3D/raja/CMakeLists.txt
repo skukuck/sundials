@@ -89,7 +89,7 @@ if(SUNDIALS_ENABLE_ARKODE
   # MPI + CUDA
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_CUDA)
+  if(SUNDIALS_ENABLE_NVECTOR_CUDA)
 
     set_source_files_properties(advection_reaction_3D.cpp PROPERTIES LANGUAGE
                                                                      CUDA)
@@ -150,7 +150,7 @@ if(SUNDIALS_ENABLE_ARKODE
   # MPI + HIP
   # ----------------------------------------------------------------------------
 
-  if(BUILD_NVECTOR_HIP)
+  if(SUNDIALS_ENABLE_NVECTOR_HIP)
 
     sundials_add_executable(
       advection_reaction_3D_raja_mpihip

@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
   if(SUNDIALS_ENABLE_OPENMP AND OPENMP_FOUND)
     add_subdirectory(C_openmp)
@@ -33,7 +33,7 @@ if(EXAMPLES_ENABLE_C)
 endif()
 
 # C++ examples
-if(EXAMPLES_ENABLE_CXX)
+if(SUNDIALS_EXAMPLES_ENABLE_CXX)
   if(SUNDIALS_ENABLE_RAJA AND RAJA_FOUND)
     add_subdirectory(raja)
     if(SUNDIALS_ENABLE_MPI
@@ -48,7 +48,7 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # Fortran examples
-if(SUNDIALS_ENABLE_FORTRAN AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN AND SUNDIALS_EXAMPLES_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)
@@ -59,7 +59,7 @@ if(SUNDIALS_ENABLE_FORTRAN AND EXAMPLES_ENABLE_F2003)
 endif()
 
 # cuda examples
-if(EXAMPLES_ENABLE_CUDA)
+if(SUNDIALS_EXAMPLES_ENABLE_CUDA)
 
   if(SUNDIALS_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
     add_subdirectory(cuda)

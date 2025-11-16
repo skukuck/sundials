@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
   if(SUNDIALS_ENABLE_MPI AND MPI_C_FOUND)
     add_subdirectory(parallel)
@@ -28,6 +28,6 @@ if(EXAMPLES_ENABLE_C)
   endif()
 endif()
 
-if(SUNDIALS_ENABLE_FORTRAN AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN AND SUNDIALS_EXAMPLES_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
 endif()

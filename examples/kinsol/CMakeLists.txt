@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------
 
 # C examples
-if(EXAMPLES_ENABLE_C)
+if(SUNDIALS_EXAMPLES_ENABLE_C)
   add_subdirectory(serial)
   if(SUNDIALS_ENABLE_OPENMP AND OPENMP_FOUND)
     # the only example here need special handling from testrunner (not yet
@@ -32,7 +32,7 @@ if(EXAMPLES_ENABLE_C)
 endif()
 
 # C++ examples
-if(EXAMPLES_ENABLE_CXX)
+if(SUNDIALS_EXAMPLES_ENABLE_CXX)
   if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
     add_subdirectory(CXX_parallel)
   endif()
@@ -45,14 +45,14 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # CUDA examples
-if(EXAMPLES_ENABLE_CUDA)
+if(SUNDIALS_EXAMPLES_ENABLE_CUDA)
   if(SUNDIALS_ENABLE_MPI AND MPI_CXX_FOUND)
     add_subdirectory(CUDA_mpi)
   endif()
 endif()
 
 # Fortran examples
-if(SUNDIALS_ENABLE_FORTRAN AND EXAMPLES_ENABLE_F2003)
+if(SUNDIALS_ENABLE_FORTRAN AND SUNDIALS_EXAMPLES_ENABLE_FORTRAN)
   add_subdirectory(F2003_serial)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(F2003_parallel)

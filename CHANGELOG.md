@@ -168,6 +168,11 @@ table below lists the old CMake option names and the new replacements.
 | `ENABLE_MEMORY_SANITIZER`             | `SUNDIALS_ENABLE_MEMORY_SANITIZER`             |
 | `ENABLE_LEAK_SANITIZER`               | `SUNDIALS_ENABLE_LEAK_SANITIZER`               |
 | `ENABLE_UNDEFINED_BEHAVIOR_SANITIZER` | `SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER` |
+| `EXAMPLES_ENABLE_C`                   | `SUNDIALS_EXAMPLES_ENABLE_C`                   |
+| `EXAMPLES_ENABLE_CXX`                 | `SUNDIALS_EXAMPLES_ENABLE_CXX`                 |
+| `EXAMPLES_ENABLE_F2003`               | `SUNDIALS_EXAMPLES_ENABLE_FORTRAN`             |
+| `EXAMPLES_INSTALL`                    | `SUNDIALS_EXAMPLES_ENABLE_INSTALL`             |
+| `EXAMPLES_INSTALL_PATH`               | `SUNDIALS_EXAMPLES_INSTALL_PATH`               |
 
 ## Changes to SUNDIALS in release 7.5.0
 

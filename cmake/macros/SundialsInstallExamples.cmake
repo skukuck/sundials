@@ -33,7 +33,7 @@
 # Adds an install target for examples in EXAMPLES_VAR that go with MODULE (e.g.
 # arkode, nvecserial).
 #
-# The DESTINATION option is the path *within* EXAMPLES_INSTALL_PATH that the
+# The DESTINATION option is the path *within* SUNDIALS_EXAMPLES_INSTALL_PATH that the
 # files should be installed under.
 #
 # The CMAKE_TEMPLATE option is the name of the examples/templates CMake template
@@ -88,7 +88,7 @@ macro(sundials_install_examples MODULE EXAMPLES_VAR)
     install(
       FILES ${file}
       DESTINATION
-        ${EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
+        ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
   endforeach()
 
   # Install the examples
@@ -101,7 +101,7 @@ macro(sundials_install_examples MODULE EXAMPLES_VAR)
     install(
       FILES ${example} ${example_header} ${example_out}
       DESTINATION
-        ${EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
+        ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -150,7 +150,7 @@ macro(sundials_install_examples MODULE EXAMPLES_VAR)
     FILES
       ${PROJECT_BINARY_DIR}/examples/${sundials_install_examples_DESTINATION}/CMakeLists.txt
     DESTINATION
-      ${EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
+      ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION})
 
   # On UNIX-type platforms, we also  generate and install a makefile for
   # building the examples. This makefile can then be used as a template for the
@@ -167,7 +167,7 @@ macro(sundials_install_examples MODULE EXAMPLES_VAR)
       FILES
         ${PROJECT_BINARY_DIR}/examples/${sundials_install_examples_DESTINATION}/Makefile_ex
       DESTINATION
-        ${EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION}
+        ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${sundials_install_examples_DESTINATION}
       RENAME Makefile)
   endif()
 

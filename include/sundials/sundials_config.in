@@ -98,7 +98,7 @@
 #cmakedefine SUNDIALS_HAVE_POSIX_TIMERS
 
 /* BUILD CVODE with fused kernel functionality */
-#cmakedefine SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS
+#cmakedefine SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
 
 /* BUILD SUNDIALS with monitoring functionalities */
 #cmakedefine SUNDIALS_ENABLE_MONITORING

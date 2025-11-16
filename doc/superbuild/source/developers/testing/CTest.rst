@@ -136,13 +136,13 @@ real type precision, index size, and if the Fortran interfaces are enabled. See
 ``cmake/SundialsSetupCompilers.cmake`` for the exact set of flags. The current
 set of flags is compatible with with GNU and Clang compilers.
 
-.. cmakeoption:: ENABLE_ALL_WARNINGS
+.. cmakeoption:: SUNDIALS_ENABLE_ALL_WARNINGS
 
    Enable additional compiler warnings
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_WARNINGS_AS_ERRORS
+.. cmakeoption:: CMAKE_COMPILE_WARNING_AS_ERROR
 
    Treat compiler warnings as errors
 
@@ -151,7 +151,7 @@ set of flags is compatible with with GNU and Clang compilers.
 Additionally, the CI will run a subset of tests (no TPLs) using different
 sanitizers. These can be enabled with the following CMake options.
 
-.. cmakeoption:: ENABLE_ADDRESS_SANITIZER
+.. cmakeoption:: SUNDIALS_ENABLE_ADDRESS_SANITIZER
 
    Enable sanitizer to detect memory errors, adds the ``-fsanitize=address``
    flag. Depending on the compiler, this may also detect memory leaks.

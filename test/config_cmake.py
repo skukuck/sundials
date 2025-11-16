@@ -197,7 +197,7 @@ def main():
     add_arg(
         group,
         "--Werror",
-        "SUNDIALS_ENABLE_WARNINGS_AS_ERRORS",
+        "CMAKE_ENABLE_WARNINGS_AS_ERRORS",
         "ENABLE_WARNINGS_AS_ERRORS",
         "OFF",
         "BOOL",

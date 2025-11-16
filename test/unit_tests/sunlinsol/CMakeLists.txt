@@ -57,38 +57,38 @@ if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   endif()
 endif()
 
-if(BUILD_SUNLINSOL_GINKGO)
+if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
   add_subdirectory(ginkgo)
 endif()
 
-if(BUILD_SUNLINSOL_KLU)
+if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   add_subdirectory(klu)
 endif()
 
-if(BUILD_SUNLINSOL_KOKKOSDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
   add_subdirectory(kokkos)
 endif()
 
-if(BUILD_SUNLINSOL_LAPACKBAND)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND)
   add_subdirectory(lapackband)
 endif()
 
-if(BUILD_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
   add_subdirectory(lapackdense)
 endif()
 
-if(BUILD_SUNLINSOL_MAGMADENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_MAGMADENSE)
   add_subdirectory(magmadense)
 endif()
 
-if(BUILD_SUNLINSOL_ONEMKLDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE)
   add_subdirectory(onemkldense)
 endif()
 
-if(BUILD_SUNLINSOL_SUPERLUMT)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
   add_subdirectory(superlumt)
 endif()
 
-if(BUILD_SUNLINSOL_SUPERLUDIST)
+if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUDIST)
   add_subdirectory(superludist)
 endif()

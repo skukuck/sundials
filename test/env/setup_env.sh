@@ -122,7 +122,7 @@ export CMAKE_CXX_EXTENSIONS="OFF"
 
 # Enable compiler warnings (the environment script may disable)
 export SUNDIALS_ENABLE_ALL_WARNINGS=ON
-export CMAKE_ENABLE_WARNINGS_AS_ERRORS=ON
+export SUNDIALS_ENABLE_WARNINGS_AS_ERRORS=ON
 
 # Enable address sanitizer (environment script may disable)
 # TODO(DJG): Always enable sanitizer not just when TPLs are OFF

@@ -197,7 +197,7 @@ def main():
     add_arg(
         group,
         "--Werror",
-        "CMAKE_ENABLE_WARNINGS_AS_ERRORS",
+        "SUNDIALS_ENABLE_WARNINGS_AS_ERRORS",
         "ENABLE_WARNINGS_AS_ERRORS",
         "OFF",
         "BOOL",
@@ -340,35 +340,35 @@ def main():
         group,
         "--arkode",
         "SUNDIALS_ARKODE",
-        "SUNDIALS_ENABLE_ARKODE",
+        "BUILD_ARKODE",
         "ON",
         "BOOL",
         "Build the ARKODE library",
     )
 
     add_arg(
-        group, "--cvode", "SUNDIALS_CVODE", "SUNDIALS_ENABLE_CVODE", "ON", "BOOL", "Build the CVODE library"
+        group, "--cvode", "SUNDIALS_CVODE", "BUILD_CVODE", "ON", "BOOL", "Build the CVODE library"
     )
 
     add_arg(
         group,
         "--cvodes",
         "SUNDIALS_CVODES",
-        "SUNDIALS_ENABLE_CVODES",
+        "BUILD_CVODES",
         "ON",
         "BOOL",
         "Build the CVODES library",
     )
 
-    add_arg(group, "--ida", "SUNDIALS_IDA", "SUNDIALS_ENABLE_IDA", "ON", "BOOL", "Build the IDA library")
+    add_arg(group, "--ida", "SUNDIALS_IDA", "BUILD_IDA", "ON", "BOOL", "Build the IDA library")
 
-    add_arg(group, "--idas", "SUNDIALS_IDAS", "SUNDIALS_ENABLE_IDAS", "ON", "BOOL", "Build the IDAS library")
+    add_arg(group, "--idas", "SUNDIALS_IDAS", "BUILD_IDAS", "ON", "BOOL", "Build the IDAS library")
 
     add_arg(
         group,
         "--kinsol",
         "SUNDIALS_KINSOL",
-        "SUNDIALS_ENABLE_KINSOL",
+        "BUILD_KINSOL",
         "ON",
         "BOOL",
         "Build the KINSOL library",
@@ -413,7 +413,7 @@ def main():
         group,
         "--monitoring",
         "SUNDIALS_MONITORING",
-        "SUNDIALS_ENABLE_MONITORING",
+        "SUNDIALS_BUILD_WITH_MONITORING",
         "OFF",
         "BOOL",
         "integrator and solver monitoring",
@@ -424,7 +424,7 @@ def main():
         group,
         "--profiling",
         "SUNDIALS_PROFILING",
-        "SUNDIALS_ENABLE_PROFILING",
+        "SUNDIALS_BUILD_WITH_PROFILING",
         "OFF",
         "BOOL",
         "fine-grained profiling",
@@ -478,7 +478,7 @@ def main():
         group,
         "--fmod-interface",
         "SUNDIALS_FMOD_INTERFACE",
-        "SUNDIALS_ENABLE_FORTRAN",
+        "BUILD_FORTRAN_MODULE_INTERFACE",
         "OFF",
         "BOOL",
         "Fortran module interface",
@@ -539,7 +539,7 @@ def main():
         group,
         "--benchmarks",
         "SUNDIALS_BENCHMARKS",
-        "SUNDIALS_ENABLE_BENCHMARKS",
+        "BUILD_BENCHMARKS",
         "OFF",
         "BOOL",
         "Benchmarks",
@@ -561,7 +561,7 @@ def main():
     )
 
     add_arg(
-        group, "--mpi", "SUNDIALS_MPI", "SUNDIALS_ENABLE_MPI", "OFF", "FILEPATH", "SUNDIALS MPI support"
+        group, "--mpi", "SUNDIALS_MPI", "ENABLE_MPI", "OFF", "FILEPATH", "SUNDIALS MPI support"
     )
 
     add_arg(
@@ -634,7 +634,7 @@ def main():
         group,
         "--openmp",
         "SUNDIALS_OPENMP",
-        "SUNDIALS_ENABLE_OPENMP",
+        "ENABLE_OPENMP",
         "OFF",
         "BOOL",
         "SUNDIALS OpenMP support",
@@ -644,7 +644,7 @@ def main():
         group,
         "--openmp-device-works",
         "SUNDIALS_OPENMP_DEVICE_WORKS",
-        "SUNDIALS_OPENMP_DEVICE_WORKS",
+        "OPENMP_DEVICE_WORKS",
         "OFF",
         "BOOL",
         "Disable OpenMP Device Support Checks (assume OpenMP 4.5+)",
@@ -661,7 +661,7 @@ def main():
         group,
         "--pthread",
         "SUNDIALS_PTHREAD",
-        "SUNDIALS_ENABLE_PTHREAD",
+        "ENABLE_PTHREAD",
         "OFF",
         "BOOL",
         "SUNDIALS PThread support",
@@ -679,7 +679,7 @@ def main():
                                       SUNDIALS""",
     )
     add_arg(
-        group, "--cuda", "SUNDIALS_CUDA", "SUNDIALS_ENABLE_CUDA", "OFF", "BOOL", "SUNDIALS CUDA support"
+        group, "--cuda", "SUNDIALS_CUDA", "ENABLE_CUDA", "OFF", "BOOL", "SUNDIALS CUDA support"
     )
 
     # HIP
@@ -689,7 +689,7 @@ def main():
                                       SUNDIALS.""",
     )
 
-    add_arg(group, "--hip", "SUNDIALS_HIP", "SUNDIALS_ENABLE_HIP", "OFF", "BOOL", "SUNDIALS HIP support")
+    add_arg(group, "--hip", "SUNDIALS_HIP", "ENABLE_HIP", "OFF", "BOOL", "SUNDIALS HIP support")
 
     # OpenMP Offload
     group = parser.add_argument_group(
@@ -702,7 +702,7 @@ def main():
         group,
         "--openmp-offload",
         "SUNDIALS_OPENMP_OFFLOAD",
-        "SUNDIALS_ENABLE_OPENMP_DEVICE",
+        "ENABLE_OPENMP_DEVICE",
         "OFF",
         "BOOL",
         "SUNDIALS OpenMP offload support",
@@ -719,7 +719,7 @@ def main():
         group,
         "--kokkos",
         "SUNDIALS_KOKKOS",
-        "SUNDIALS_ENABLE_KOKKOS",
+        "ENABLE_KOKKOS",
         "OFF",
         "BOOL",
         "SUNDIALS Kokkos support",
@@ -740,7 +740,7 @@ def main():
     group = parser.add_argument_group("RAJA Options")
 
     add_arg(
-        group, "--raja", "SUNDIALS_RAJA", "SUNDIALS_ENABLE_RAJA", "OFF", "BOOL", "SUNDIALS Raja support"
+        group, "--raja", "SUNDIALS_RAJA", "ENABLE_RAJA", "OFF", "BOOL", "SUNDIALS Raja support"
     )
 
     add_arg(
@@ -770,7 +770,7 @@ def main():
     group = parser.add_argument_group("SYCL Options")
 
     add_arg(
-        group, "--sycl", "SUNDIALS_SYCL", "SUNDIALS_ENABLE_SYCL", "OFF", "BOOL", "SUNDIALS SYCL support"
+        group, "--sycl", "SUNDIALS_SYCL", "ENABLE_SYCL", "OFF", "BOOL", "SUNDIALS SYCL support"
     )
 
     # ------------------------
@@ -784,7 +784,7 @@ def main():
         group,
         "--ginkgo",
         "SUNDIALS_GINKGO",
-        "SUNDIALS_ENABLE_GINKGO",
+        "ENABLE_GINKGO",
         "OFF",
         "BOOL",
         "SUNDIALS Ginkgo support",
@@ -820,7 +820,7 @@ def main():
         group,
         "--lapack",
         "SUNDIALS_LAPACK",
-        "SUNDIALS_ENABLE_LAPACK",
+        "ENABLE_LAPACK",
         "OFF",
         "BOOL",
         "SUNDIALS LAPACK support",
@@ -851,7 +851,7 @@ def main():
     # KLU
     group = parser.add_argument_group("KLU Options")
 
-    add_arg(group, "--klu", "SUNDIALS_KLU", "SUNDIALS_ENABLE_KLU", "OFF", "BOOL", "SUNDIALS KLU support")
+    add_arg(group, "--klu", "SUNDIALS_KLU", "ENABLE_KLU", "OFF", "BOOL", "SUNDIALS KLU support")
 
     add_arg(
         group,
@@ -882,7 +882,7 @@ def main():
         group,
         "--kokkos-kernels",
         "SUNDIALS_KOKKOS_KERNELS",
-        "SUNDIALS_ENABLE_KOKKOS_KERNELS",
+        "ENABLE_KOKKOS_KERNELS",
         "OFF",
         "BOOL",
         "SUNDIALS Kokkos-Kernels support",
@@ -906,7 +906,7 @@ def main():
         group,
         "--superlu-mt",
         "SUNDIALS_SUPERLU_MT",
-        "SUNDIALS_ENABLE_SUPERLUMT",
+        "ENABLE_SUPERLUMT",
         "OFF",
         "BOOL",
         "SUNDIALS SuperLU MT support",
@@ -964,7 +964,7 @@ def main():
         group,
         "--superlu-dist",
         "SUNDIALS_SUPERLU_DIST",
-        "SUNDIALS_ENABLE_SUPERLUDIST",
+        "ENABLE_SUPERLUDIST",
         "OFF",
         "BOOL",
         "SUNDIALS SuperLU DIST support",
@@ -1029,7 +1029,7 @@ def main():
     group = parser.add_argument_group("MAGMA Options")
 
     add_arg(
-        group, "--magma", "SUNDIALS_MAGMA", "SUNDIALS_ENABLE_MAGMA", "OFF", "BOOL", "SUNDIALS MAGMA support"
+        group, "--magma", "SUNDIALS_MAGMA", "ENABLE_MAGMA", "OFF", "BOOL", "SUNDIALS MAGMA support"
     )
 
     add_arg(
@@ -1063,7 +1063,7 @@ def main():
     group = parser.add_argument_group("hypre Options")
 
     add_arg(
-        group, "--hypre", "SUNDIALS_HYPRE", "SUNDIALS_ENABLE_HYPRE", "OFF", "BOOL", "SUNDIALS hypre support"
+        group, "--hypre", "SUNDIALS_HYPRE", "ENABLE_HYPRE", "OFF", "BOOL", "SUNDIALS hypre support"
     )
 
     add_arg(
@@ -1092,7 +1092,7 @@ def main():
     group = parser.add_argument_group("PTESc Options")
 
     add_arg(
-        group, "--petsc", "SUNDIALS_PETSC", "SUNDIALS_ENABLE_PETSC", "OFF", "BOOL", "SUNDIALS PETSc support"
+        group, "--petsc", "SUNDIALS_PETSC", "ENABLE_PETSC", "OFF", "BOOL", "SUNDIALS PETSc support"
     )
 
     add_arg(
@@ -1113,7 +1113,7 @@ def main():
         group,
         "--trilinos",
         "SUNDIALS_TRILINOS",
-        "SUNDIALS_ENABLE_TRILINOS",
+        "ENABLE_TRILINOS",
         "OFF",
         "BOOL",
         "SUNDIALS Trilinos support",
@@ -1137,7 +1137,7 @@ def main():
         group,
         "--xbraid",
         "SUNDIALS_XBRAID",
-        "SUNDIALS_ENABLE_XBRAID",
+        "ENABLE_XBRAID",
         "OFF",
         "BOOL",
         "SUNDIALS XBraid support",

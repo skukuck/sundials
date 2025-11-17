@@ -71,8 +71,8 @@ typedef _SUNDIALS_STRUCT_ ARKodeSPRKTableMem* ARKodeSPRKTable;
 
 /* Utility routines to allocate/free/output SPRK structures */
 SUNDIALS_EXPORT
-ARKodeSPRKTable ARKodeSPRKTable_Create(int s, int q, sunrealtype* a_1d,
-                                       sunrealtype* ahat_1d);
+ARKodeSPRKTable ARKodeSPRKTable_Create(int s, int q, const sunrealtype* a_1d,
+                                       const sunrealtype* ahat_1d);
 
 SUNDIALS_EXPORT
 ARKodeSPRKTable ARKodeSPRKTable_Alloc(int stages);

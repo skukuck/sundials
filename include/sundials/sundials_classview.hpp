@@ -40,11 +40,12 @@ template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>
 {
 public:
+  static_assert(std::is_pointer_v<T>, "ClassView type must be a pointer");
+
   ClassView() : object_(nullptr, Deleter{}) {}
 
   ClassView(T& object) : object_(std::forward<T>(object), Deleter{}) {}
-{
-  static_assert(std::is_pointer_v<T>, "ClassView type must be a pointer");
+
   ClassView(T&& object) : object_(std::forward<T>(object), Deleter{}) {}
 
   ClassView(const ClassView&) = delete;

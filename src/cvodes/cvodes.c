@@ -4460,6 +4460,8 @@ void CVodeFree(void** cvode_mem)
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
 
+  free(cv_mem->python);
+
   free(*cvode_mem);
   *cvode_mem = NULL;
 }

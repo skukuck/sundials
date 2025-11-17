@@ -58,7 +58,7 @@ m.def(
 
     return N_VClone_adapt_return_type_to_shared_ptr(w);
   },
-  nb::arg("w"), "py::return_value_policy::reference", nb::rv_policy::reference);
+  nb::arg("w"));
 
 m.def(
   "N_VCloneEmpty",
@@ -75,7 +75,7 @@ m.def(
 
     return N_VCloneEmpty_adapt_return_type_to_shared_ptr(w);
   },
-  nb::arg("w"), "py::return_value_policy::reference", nb::rv_policy::reference);
+  nb::arg("w"));
 
 m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
 

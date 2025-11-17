@@ -20,10 +20,7 @@
 #ifndef _SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
 #define _SUNDIALS_ADJOINTCHECKPOINTSCHEME_HPP
 
-#include <utility>
-
 #include <sundials/sundials_adjointcheckpointscheme.h>
-#include <sundials/sundials_classview.hpp>
 
 namespace sundials {
 namespace experimental {

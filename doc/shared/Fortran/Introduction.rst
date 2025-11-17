@@ -18,15 +18,6 @@
 Introduction
 ============
 
-SUNDIALS provides modern, Fortran 2003 based, interfaces as Fortran modules to
-most of the C API (see :numref:`Fortran.Table`).
-
-.. note::
-
-   Fortran users should first read the :ref:`General User Guide <SUNDIALS>`.
-   The Fortran interfaces closely follow the C/C++ usage of SUNDIALS, so the
-   Fortran User Guide primarily covers differences.
-
 An interface module can be accessed with the ``use`` statement, e.g.
 
 .. code-block:: fortran
@@ -198,10 +189,10 @@ The Spack variant is ``+fortran``.
 
 Important notes on portability
 ------------------------------
-
-The SUNDIALS Fortran 2003 interface *should* be compatible with any compiler
-supporting the Fortran 2003 ISO standard.
-
+The installation procedure for the Fortran interfaces is the same as for the
+C/C++ core of SUNDIALS, refer to :numref:`Installation`.  The CMake option to
+turn on the Fortran interfaces in a SUNDIALS build is
+:cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`.  The Spack variant is ``+fortran``.
 Upon compilation of SUNDIALS, Fortran module (``.mod``) files are generated for
 each Fortran 2003 interface. These files are highly compiler specific, and thus
 it is almost always necessary to compile a consuming application with the same

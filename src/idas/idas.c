@@ -4099,6 +4099,8 @@ void IDAFree(void** ida_mem)
   free(IDA_mem->ida_Zvecs);
   IDA_mem->ida_Zvecs = NULL;
 
+  free(IDA_mem->python);
+
   free(*ida_mem);
   *ida_mem = NULL;
 }

@@ -213,7 +213,7 @@ struct _generic_N_Vector
  * Functions exported by NVECTOR module
  * ----------------------------------------------------------------- */
 
-SUNDIALS_EXPORT N_Vector N_VNewEmpty(SUNContext sunctx); // py::return_value_policy::reference
+SUNDIALS_EXPORT N_Vector N_VNewEmpty(SUNContext sunctx); // nb::rv_policy::reference
 SUNDIALS_EXPORT void N_VFreeEmpty(N_Vector v);
 SUNDIALS_EXPORT SUNErrCode N_VCopyOps(N_Vector w, N_Vector v);
 
@@ -222,8 +222,8 @@ SUNDIALS_EXPORT SUNErrCode N_VCopyOps(N_Vector w, N_Vector v);
  */
 
 SUNDIALS_EXPORT N_Vector_ID N_VGetVectorID(N_Vector w);
-SUNDIALS_EXPORT N_Vector N_VClone(N_Vector w); // py::return_value_policy::reference
-SUNDIALS_EXPORT N_Vector N_VCloneEmpty(N_Vector w); // py::return_value_policy::reference
+SUNDIALS_EXPORT N_Vector N_VClone(N_Vector w); // nb::rv_policy::reference
+SUNDIALS_EXPORT N_Vector N_VCloneEmpty(N_Vector w); // nb::rv_policy::reference
 SUNDIALS_EXPORT void N_VDestroy(N_Vector v);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
   "Work space functions will be removed in version 8.0.0")

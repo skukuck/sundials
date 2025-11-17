@@ -64,6 +64,10 @@ enum SUNPrecType
   SUN_PREC_BOTH
 };
 
+#ifndef SWIG
+typedef enum SUNPrecType SUNPrecType;
+#endif
+
 /*
  * -----------------------------------------------------------------
  * enum : types of Gram-Schmidt routines
@@ -83,6 +87,10 @@ enum SUNGramSchmidtType
   SUN_MODIFIED_GS  = 1,
   SUN_CLASSICAL_GS = 2
 };
+
+#ifndef SWIG
+typedef enum SUNGramSchmidtType SUNGramSchmidtType;
+#endif
 
 /*
  * -----------------------------------------------------------------

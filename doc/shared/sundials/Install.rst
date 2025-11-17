@@ -886,9 +886,14 @@ Caliper support:
 
 .. cmakeoption:: CALIPER_DIR
 
-   Path to the root of an Caliper installation
+   Path to the root of a Caliper installation
 
    Default: None
+
+ .. note::
+
+      Using Caliper requires setting :cmakeop:`SUNDIALS_BUILD_WITH_PROFILING` to
+      ``ON``.
 
 
 .. _Installation.Options.CUDA:

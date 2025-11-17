@@ -22,7 +22,6 @@
 
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_splittingstep.h>
-#include "arkode_splittingstep.h"
 
 namespace sundials {
 namespace experimental {

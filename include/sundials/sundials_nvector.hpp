@@ -40,7 +40,7 @@ struct N_VectorDeleter
   void operator()(N_Vector v) { N_VDestroy(v); }
 };
 
-using NVectorView = ClassView<N_Vector, N_VectorDeleter>;
+using N_VectorView = ClassView<N_Vector, N_VectorDeleter>;
 } // namespace experimental
 } // namespace sundials
 

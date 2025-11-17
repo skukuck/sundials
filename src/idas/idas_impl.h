@@ -979,11 +979,6 @@ int IDASensResDQ(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
                  N_Vector* resvalS, void* user_dataS, N_Vector ytemp,
                  N_Vector yptemp, N_Vector restemp);
 
-/* Utility function to tell IDA to free the user data.
-   This is used by the Python interfaces. */
-
-int idaSetOwnUserData(void* ida_mem, sunbooleantype own_user_data);
-int idaSetOwnUserDataB(void* ida_mem, int which, sunbooleantype own_user_data);
 
 /*
  * =================================================================

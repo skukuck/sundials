@@ -20,10 +20,7 @@
 #ifndef _SUNDIALS_ADAPTCONTROLLER_HPP
 #define _SUNDIALS_ADAPTCONTROLLER_HPP
 
-#include <utility>
-
 #include <sundials/sundials_adaptcontroller.h>
-#include <sundials/sundials_classview.hpp>
 
 namespace sundials {
 namespace experimental {

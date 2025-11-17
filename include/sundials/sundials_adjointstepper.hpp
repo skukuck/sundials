@@ -20,10 +20,7 @@
 #ifndef _SUNDIALS_ADJOINTSTEPPER_HPP
 #define _SUNDIALS_ADJOINTSTEPPER_HPP
 
-#include <utility>
-
 #include <sundials/sundials_adjointstepper.h>
-#include <sundials/sundials_classview.hpp>
 
 namespace sundials {
 namespace experimental {

@@ -19,6 +19,7 @@
 
 #include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
 #include <sundials/sundials_adaptcontroller.hpp>
+#include <sundials/sundials_classview.hpp>
 
 namespace nb = nanobind;
 using namespace sundials::experimental;

@@ -23,6 +23,7 @@
 #include "sundials4py.hpp"
 
 #include <sundials/sundials_adjointstepper.hpp>
+#include <sundials/sundials_classview.hpp>
 
 #include "sundials_adjointcheckpointscheme_impl.h"
 #include "sundials_adjointstepper_impl.h"

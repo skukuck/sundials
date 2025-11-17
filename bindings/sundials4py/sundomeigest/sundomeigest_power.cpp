@@ -15,6 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_domeigestimator.hpp>
 #include <sundomeigest/sundomeigest_power.h>
 

@@ -25,6 +25,7 @@
 
 #include "sundials4py.hpp"
 
+#include <sundials/sundials_classview.hpp>
 #include <sundials/sundials_domeigestimator.hpp>
 
 #include "sundials_domeigestimator_usersupplied.hpp"

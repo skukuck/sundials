@@ -11,12 +11,20 @@ auto pyEnumSUNPrecType = nb::enum_<SUNPrecType>(m, "SUNPrecType",
                            .value("SUN_PREC_RIGHT", SUN_PREC_RIGHT, "")
                            .value("SUN_PREC_BOTH", SUN_PREC_BOTH, "")
                            .export_values();
+// #ifndef SWIG
+//
+// #endif
+//
 
 auto pyEnumSUNGramSchmidtType =
   nb::enum_<SUNGramSchmidtType>(m, "SUNGramSchmidtType", nb::is_arithmetic(), "")
     .value("SUN_MODIFIED_GS", SUN_MODIFIED_GS, "")
     .value("SUN_CLASSICAL_GS", SUN_CLASSICAL_GS, "")
     .export_values();
+// #ifndef SWIG
+//
+// #endif
+//
 
 m.def(
   "SUNModifiedGS",

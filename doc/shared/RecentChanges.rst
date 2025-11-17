@@ -26,7 +26,7 @@ managed view and the data would be freed unexpectedly.
 
 **Deprecation Notices**
 
-:c:func:`SUNDIALSFileOpen` and :c:func:`SUNDIALSFileClose` will be removed in the next major release. 
+``SUNDIALSFileOpen`` and ``SUNDIALSFileClose`` will be removed in the next major release. 
 Use :c:func:`SUNFileOpen` and :c:func:`SUNFileClose` instead.
 
 The ``Convert`` methods on the ``sundials::kokkos:Vector``, ``sundials::kokkos::DenseMatrix``,

@@ -23,7 +23,6 @@
 #include <arkode/arkode.hpp>
 #include <arkode/arkode_mristep.h>
 
-
 namespace sundials {
 namespace experimental {
 

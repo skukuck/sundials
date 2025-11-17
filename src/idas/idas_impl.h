@@ -979,7 +979,6 @@ int IDASensResDQ(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
                  N_Vector* resvalS, void* user_dataS, N_Vector ytemp,
                  N_Vector yptemp, N_Vector restemp);
 
-
 /*
  * =================================================================
  *    E R R O R    M E S S A G E S

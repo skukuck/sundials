@@ -41,11 +41,14 @@ class SUNContextView
 public:
   using ClassView<SUNContext, SUNContextDeleter>::ClassView;
 
-  SUNContextView(SUNComm comm = SUN_COMM_NULL)
+  SUNContextView(SUNComm comm = SUN_COMM_NULL) : SUNContextView(create(comm)) {}
+
+private:
+  static SUNContext create(SUNComm comm) noexcept
   {
     SUNContext sunctx = nullptr;
     SUNContext_Create(comm, &sunctx);
-    object_.reset(sunctx, SUNContextDeleter{});
+    return sunctx;
   }
 };
 

@@ -27,19 +27,19 @@ class ConvertibleTo
 {
 public:
   // Explicit conversion to the underlying type
-  virtual T get()       = 0;
-  virtual T get() const = 0;
+  virtual T get() noexcept       = 0;
+  virtual T get() const noexcept = 0;
 
   [[deprecated("This function will be removed in the next major release, use "
                "get() instead.")]] T
-  Convert()
+  Convert() noexcept
   {
     return get();
   }
 
   [[deprecated("This function will be removed in the next major release, use "
                "get() instead.")]] T
-  Convert() const
+  Convert() const noexcept
   {
     return get();
   }

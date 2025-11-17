@@ -798,6 +798,7 @@ void KINFree(void** kinmem)
   KINFreeOrth(kin_mem);
 
   free(kin_mem->python);
+  kin_mem->python = NULL;
 
   free(*kinmem);
   *kinmem = NULL;

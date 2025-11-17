@@ -1724,6 +1724,7 @@ void IDAFree(void** ida_mem)
   }
 
   free(IDA_mem->python);
+  IDA_mem->python = NULL;
 
   free(*ida_mem);
   *ida_mem = NULL;

@@ -39,7 +39,7 @@ template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>
 {
 public:
-  static_assert(std::is_pointer_v<T>, "ClassView type must be a pointer");
+  static_assert(std::is_pointer<T>::value, "ClassView type must be a pointer");
 
   ClassView(T object = nullptr) noexcept : object_(object, Deleter{}) {}
 

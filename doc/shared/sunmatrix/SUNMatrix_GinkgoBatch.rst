@@ -127,7 +127,7 @@ In this section we list the public API of the
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: SUNMatrix get() const override
 
@@ -135,4 +135,4 @@ In this section we list the public API of the
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.

@@ -228,7 +228,7 @@ The public API of the :cpp:type:`sundials::ginkgo::BatchLinearSolver` class is a
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: SUNLinearSolver get() const override
 
@@ -236,7 +236,7 @@ The public API of the :cpp:type:`sundials::ginkgo::BatchLinearSolver` class is a
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: std::shared_ptr<const gko::Executor> GkoExec() const
 

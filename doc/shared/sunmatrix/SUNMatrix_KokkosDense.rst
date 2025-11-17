@@ -241,7 +241,7 @@ class.
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.
 
    .. cpp:function:: SUNMatrix get() const override
 
@@ -249,7 +249,7 @@ class.
 
       .. versionadded:: x.y.z
       
-         Replaces the ``Convert`` method which was deprecated and moved to the ``ConvertibleTo`` class.
+         Replaces the ``Convert`` method which was deprecated.
 
 .. cpp:function:: template<class ExecutionSpace = Kokkos::DefaultExecutionSpace, \
                            class MemorySpace = typename ExecutionSpace::memory_space> \

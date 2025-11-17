@@ -297,6 +297,7 @@ SUNErrCode SUNContext_Free(SUNContext* sunctx)
   SUNContext_ClearErrHandlers(*sunctx);
 
   free((*sunctx)->python);
+  (*sunctx)->python = NULL;
 
   free(*sunctx);
   *sunctx = NULL;

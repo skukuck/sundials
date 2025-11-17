@@ -61,6 +61,7 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
     if (ops && ops->destroy) { ops->destroy(*stepper_ptr); }
     free(ops);
     free((*stepper_ptr)->python);
+    (*stepper_ptr)->python = NULL;
     free(*stepper_ptr);
     *stepper_ptr = NULL;
   }

@@ -29,7 +29,6 @@
 namespace sundials {
 namespace experimental {
 
-
 template<class T, class Deleter>
 std::shared_ptr<T> our_make_shared(T* ptr)
 {
@@ -42,42 +41,36 @@ class ClassView : public sundials::ConvertibleTo<T>
 public:
   static_assert(std::is_pointer_v<T>, "ClassView type must be a pointer");
 
-  ClassView() : object_(nullptr, Deleter{}) {}
-
-  ClassView(T& object) : object_(std::forward<T>(object), Deleter{}) {}
-
-  ClassView(T&& object) : object_(std::forward<T>(object), Deleter{}) {}
+  ClassView(T object = nullptr) noexcept : object_(object, Deleter{}) {}
 
   ClassView(const ClassView&) = delete;
 
-  ClassView(ClassView&& other) { this->object_ = std::move(other.object_); };
+  ClassView(ClassView&& other) = default;
 
   ClassView& operator=(const ClassView&) = delete;
 
   ClassView& operator=(ClassView&& rhs) = default;
 
-  ~ClassView() { object_.reset(); };
+  ~ClassView() = default;
 
   // Override ConvertibleTo functions
-  T get() override { return object_.get(); }
+  T get() noexcept override { return object_.get(); }
 
-  T get() const override { return object_.get(); }
+  T get() const noexcept override { return object_.get(); }
 
-  operator T() override { return object_.get(); }
+  operator T() noexcept override { return object_.get(); }
 
-  operator T() const override { return object_.get(); }
+  operator T() const noexcept override { return object_.get(); }
 
 protected:
-  std::shared_ptr<std::remove_pointer_t<T>> object_;
+  const std::unique_ptr<std::remove_pointer_t<T>, Deleter> object_;
 };
 
 template<class Deleter>
 class ClassView<void*, Deleter> : public sundials::ConvertibleTo<void*>
 {
 public:
-  ClassView() : object_(nullptr) {}
-
-  ClassView(void* object) : object_(object) {}
+  ClassView(void* object = nullptr) noexcept : object_(object) {}
 
   ClassView(const ClassView&) = delete;
 
@@ -99,13 +92,13 @@ public:
     if (object_) { Deleter{}(this->get()); }
   };
 
-  void* get() override { return object_; }
+  void* get() noexcept override { return object_; }
 
-  void* get() const override { return object_; }
+  void* get() const noexcept override { return object_; }
 
-  operator void*() override { return object_; }
+  operator void*() noexcept override { return object_; }
 
-  operator void*() const override { return object_; }
+  operator void*() const noexcept override { return object_; }
 
 protected:
   void* object_;

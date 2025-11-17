@@ -92,7 +92,7 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
 
-  if (DEE->python) { free(DEE->python); }
+  free(DEE->python);
   DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */

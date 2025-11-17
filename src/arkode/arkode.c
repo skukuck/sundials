@@ -1281,6 +1281,7 @@ void ARKodeFree(void** arkode_mem)
   }
 
   free(ark_mem->python);
+  ark_mem->python = NULL;
 
   free(*arkode_mem);
   *arkode_mem = NULL;

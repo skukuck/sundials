@@ -41,7 +41,7 @@ class ClassView : public sundials::ConvertibleTo<T>
 public:
   static_assert(std::is_pointer<T>::value, "ClassView type must be a pointer");
 
-  ClassView(T object = nullptr) noexcept : object_(object, Deleter{}) {}
+  ClassView(T object = nullptr) noexcept : object_(object) {}
 
   ClassView(const ClassView&) = delete;
 

@@ -24,6 +24,7 @@ It is a C++ library, i.e. you write your binding code in C++. Nanobind does have
 
 - Cannot bind to functions which take double, or more pointer arguments. I.e., it cannot bind to `**` or `***` and so on. These have to be flattened somehow.
 - Cannot implicitly convert between a "View" container class and the underlying C type. I.e., it cannot implicitly convert ``ARKodeView`` to ``void*``.
+   This means user must explicitly convert from the "View" class by calling the ``get`` member function.
 
 We use `litgen <https://github.com/pthom/litgen>__` to generate a large portion of the nanobind code.
 
@@ -119,8 +120,8 @@ not the correctness of SUNDIALS itself.
 --------------
 
 All user-supplied Python functions have to be wrapped with a functions which converts between a ``std::function`` and a raw C function pointer.
-This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in the ``user_data`` pointer (for the integrator memory structures), or in 
-the ``python`` member of the struct for modules which don't provide ``user_data`` back to their callbacks. 
+This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in python member of the integrator memory structures, and then storing the integrator memory structure in the ``user_data`` pointer. For the objects which are
+not the integrator, we still stuff the function table in the ``python`` member of the struct so it will be available in all of the module/class methods.
 The upshot is that every time we add a user-supplied function, we need to add a new member to the function table struct,
 and add a wrapper for it. We also have to add a wrapper for the "Set" function that takes the user-supplied function.
 
@@ -146,7 +147,7 @@ In ``bindings/sundials4py/arkode/arkode_usersupplied.hpp``, the function table s
       nb::object relaxjacfn;
       nb::object nlsfi;
 
-      // truncated ... 
+      // truncated ...
    };
 
 
@@ -154,12 +155,13 @@ Then each one of the functions in the table has a wrapper function defined below
 
 .. code-block:: cpp
 
-   inline int arkode_postprocessstepfn_wrapper(sunrealtype t, N_Vector y,
-                                             void* user_data)
+   template<typename... Args>
+   inline int arkode_postprocessstepfn_wrapper(Args... args)
    {
    return sundials4py::user_supplied_fn_caller<
       std::remove_pointer_t<ARKPostProcessFn>, arkode_user_supplied_fn_table,
-      1>(&arkode_user_supplied_fn_table::postprocessstepfn, t, y, user_data);
+      ARKodeMem, 1>(&arkode_user_supplied_fn_table::postprocessstepfn,
+                     std::forward<Args>(args)...);
    }
 
 Finally, in ``bindings/sundials4py/arkode/arkode.cpp``, the Set function is registered with nanobind:
@@ -178,12 +180,8 @@ Finally, in ``bindings/sundials4py/arkode/arkode.cpp``, the Set function is regi
       ARKodeSetPostprocessStepFn,
       [](void* ark_mem, std::function<std::remove_pointer_t<ARKPostProcessFn>> fn)
       {
-         void* user_data = nullptr;
-         ARKodeGetUserData(ark_mem, &user_data);
-         if (!user_data)
-         throw std::runtime_error(
-            "Failed to get Python function table from ARKODE memory");
-         auto fntable    = static_cast<arkode_user_supplied_fn_table*>(user_data);
+         auto fn_table    = get_arkode_fn_table(ark_mem);
+         fn_table->MEMBER = nb::cast(fn);
          fntable->postprocessstepfn = nb::cast(fn);
          if (fn) { return NAME(ark_mem, &arkode_postprocessstepfn_wrapper); }
          else { return NAME(ark_mem, nullptr); }
@@ -245,4 +243,4 @@ From ``sundials_stepper.cpp``,
       nb::arg("stepper"), nb::arg("fn").none());
 
 We are again creating a nanobind wrapper for :c:func:`SUNStepper_SetEvolveFn`, but this time,
-the function table is smuggled inside of the SUNStepper structure's ``python`` member. 
+the function table is smuggled inside of the SUNStepper structure's ``python`` member.

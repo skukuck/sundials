@@ -568,13 +568,13 @@ public:
 
   // Override ConvertibleTo operations
 
-  operator N_Vector() override { return object_.get(); }
+  operator N_Vector() noexcept override { return object_.get(); }
 
-  operator N_Vector() const override { return object_.get(); }
+  operator N_Vector() const noexcept override { return object_.get(); }
 
-  N_Vector get() override { return object_.get(); }
+  N_Vector get() noexcept override { return object_.get(); }
 
-  N_Vector get() const override { return object_.get(); }
+  N_Vector get() const noexcept override { return object_.get(); }
 
   // Static routines to create clones of the vector that are always managed
 

@@ -23,8 +23,7 @@ We use `nanobind <https://github.com/wjakob/nanobind>__` for the Python bindings
 It is a C++ library, i.e. you write your binding code in C++. Nanobind does have some restrictions:
 
 - Cannot bind to functions which take double, or more pointer arguments. I.e., it cannot bind to `**` or `***` and so on. These have to be flattened somehow.
-- Cannot implicitly convert between a "View" container class and the underlying C type. I.e., it cannot implicitly convert ``NVectorView`` to ``N_Vector``.
-   This means user must explicitly convert from the "View" class by calling the ``get`` member function.
+- Cannot implicitly convert between a "View" container class and the underlying C type. I.e., it cannot implicitly convert ``ARKodeView`` to ``void*``.
 
 We use `litgen <https://github.com/pthom/litgen>__` to generate a large portion of the nanobind code.
 

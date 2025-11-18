@@ -203,13 +203,13 @@ public:
   using sundials::impl::BaseMatrix::sunctx;
 
   // Override the ConvertibleTo methods
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
-  SUNMatrix get() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
-  SUNMatrix get() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoBatchMatType> gkomtx_;

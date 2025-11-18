@@ -39,7 +39,7 @@ template<class T, class Deleter>
 class ClassView : public sundials::ConvertibleTo<T>
 {
 public:
-  static_assert(std::is_pointer_v<T>, "ClassView type must be a pointer");
+  static_assert(std::is_pointer<T>::value, "ClassView type must be a pointer");
 
   ClassView(T object = nullptr) noexcept : object_(object, Deleter{}) {}
 
@@ -64,44 +64,6 @@ public:
 
 protected:
   const std::unique_ptr<std::remove_pointer_t<T>, Deleter> object_;
-};
-
-template<class Deleter>
-class ClassView<void*, Deleter> : public sundials::ConvertibleTo<void*>
-{
-public:
-  ClassView(void* object = nullptr) noexcept : object_(object) {}
-
-  ClassView(const ClassView&) = delete;
-
-  ClassView(ClassView&& other) noexcept
-    : object_(std::exchange(other.object_, nullptr))
-  {}
-
-  ClassView& operator=(const ClassView&) = delete;
-
-  ClassView& operator=(ClassView&& rhs) noexcept
-  {
-    if (object_) { Deleter{}(this->get()); }
-    this->object_ = std::exchange(rhs.object_, nullptr);
-    return *this;
-  };
-
-  ~ClassView()
-  {
-    if (object_) { Deleter{}(this->get()); }
-  };
-
-  void* get() noexcept override { return object_; }
-
-  void* get() const noexcept override { return object_; }
-
-  operator void*() noexcept override { return object_; }
-
-  operator void*() const noexcept override { return object_; }
-
-protected:
-  void* object_;
 };
 
 } // namespace experimental

@@ -226,16 +226,16 @@ public:
   // Override the ConvertibleTo methods
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() override { return object_.get(); }
+  operator SUNMatrix() noexcept override { return object_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNMatrix`
-  operator SUNMatrix() const override { return object_.get(); }
+  operator SUNMatrix() const noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix get() override { return object_.get(); }
+  SUNMatrix get() noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNMatrix`
-  SUNMatrix get() const override { return object_.get(); }
+  SUNMatrix get() const noexcept override { return object_.get(); }
 
 private:
   std::shared_ptr<GkoMatType> gkomtx_;

@@ -223,16 +223,16 @@ public:
   // Override the ConvertibleTo methods
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() override { return object_.get(); }
+  operator SUNLinearSolver() noexcept override { return object_.get(); }
 
   /// Implicit conversion to a :c:type:`SUNLinearSolver`
-  operator SUNLinearSolver() const override { return object_.get(); }
+  operator SUNLinearSolver() const noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver get() override { return object_.get(); }
+  SUNLinearSolver get() noexcept override { return object_.get(); }
 
   /// Explicit conversion to a :c:type:`SUNLinearSolver`
-  SUNLinearSolver get() const override { return object_.get(); }
+  SUNLinearSolver get() const noexcept override { return object_.get(); }
 
   /// Get the underlying Ginkgo solver
   /// \note This will be `nullptr` until the linear solver setup phase.

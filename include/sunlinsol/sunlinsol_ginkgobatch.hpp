@@ -270,7 +270,7 @@ public:
 
       if (!s2inv_.get())
       {
-        s2inv_ = sundials::experimental::NVectorView(N_VClone(s2));
+        s2inv_ = sundials::experimental::N_VectorView(N_VClone(s2));
       }
 
       // SUNLinearSolver API wants s2inv_
@@ -473,7 +473,7 @@ private:
   sunrealtype sum_of_avg_iters_;
   sunrealtype stddev_iter_count_;
   N_Vector s1_;
-  sundials::experimental::NVectorView s2inv_;
+  sundials::experimental::N_VectorView s2inv_;
   int scaling_mode_;
   bool scaling_initialized_;
   bool do_setup_;

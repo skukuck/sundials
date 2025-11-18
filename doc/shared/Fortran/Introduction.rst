@@ -189,6 +189,9 @@ is :cmakeop:`BUILD_FORTRAN_MODULE_INTERFACE`. The Spack variant is ``+fortran``.
 Important notes on portability
 ------------------------------
 
+The SUNDIALS Fortran 2003 interface *should* be compatible with any compiler
+supporting the Fortran 2003 ISO standard.
+
 Upon compilation of SUNDIALS, Fortran module (``.mod``) files are generated for
 each Fortran 2003 interface. These files are highly compiler specific, and thus
 it is almost always necessary to compile a consuming application with the same

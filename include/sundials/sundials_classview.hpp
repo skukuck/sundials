@@ -63,7 +63,7 @@ public:
   operator T() const noexcept override { return object_.get(); }
 
 protected:
-  const std::unique_ptr<std::remove_pointer_t<T>, Deleter> object_;
+  std::unique_ptr<std::remove_pointer_t<T>, Deleter> object_;
 };
 
 } // namespace experimental

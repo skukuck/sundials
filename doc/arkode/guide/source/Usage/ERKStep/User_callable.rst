@@ -1128,10 +1128,6 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 5.7.0
 
       Use the SUNAdaptController infrastructure instead (see :numref:`SUNAdaptController.Description`).
-      
-   .. versionchanged:: 6.3.0
-
-      The default value was changed from 1.5 to 1.0
 
    .. versionchanged:: 6.3.0
 
@@ -1159,10 +1155,6 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetFixedStepBounds` instead.
-      
-   .. versionchanged:: 6.3.0
-
-      The default upper bound was changed from 1.5 to 1.0
 
    .. versionchanged:: 6.3.0
 
@@ -1288,11 +1280,6 @@ the code, is provided in :numref:`ARKODE.Mathematics.Adaptivity`.
    .. deprecated:: 6.1.0
 
       Use :c:func:`ARKodeSetSafetyFactor` instead.
-      
-   .. versionchanged:: 6.3.0
-
-      The default default was changed from 0.96 to 0.9. The maximum value is now
-      exactly 1.0 rather than strictly less than 1.0.
 
    .. versionchanged:: 6.3.0
 

@@ -41,7 +41,7 @@ endif()
 
 # nanobind needs the Python Interpreter and Development components
 find_package(
-  Python 3.8
+  Python 3.12
   COMPONENTS Interpreter Development.Module
   OPTIONAL_COMPONENTS Development.SABIModule
   REQUIRED)
@@ -137,14 +137,3 @@ target_link_libraries(
 
 # Install directive for scikit-build-core
 install(TARGETS sundials4py LIBRARY DESTINATION .)
-
-# # Setup tests find_program(PYTEST_EXECUTABLE pytest)
-
-# # Copy tests to the build directory add_custom_target( copy-python-tests ALL
-# COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/tests
-# ${CMAKE_CURRENT_BINARY_DIR})
-
-# add_dependencies(sundials4py copy-python-tests)
-
-# add_test(NAME python-tests COMMAND ${Python_EXECUTABLE} -m pytest
-# WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )

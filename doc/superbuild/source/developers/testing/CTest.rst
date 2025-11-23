@@ -158,7 +158,7 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_LEAK_SANITIZER
+.. cmakeoption:: SUNDIALS_ENABLE_LEAK_SANITIZER
 
    Enable sanitizer to detect memory leaks, adds the ``-fsanitize=leak``
    flag. Depending on the compiler, the leak sanitizer may be part of the
@@ -166,14 +166,14 @@ sanitizers. These can be enabled with the following CMake options.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_MEMORY_SANITIZER
+.. cmakeoption:: SUNDIALS_ENABLE_MEMORY_SANITIZER
 
    Enable sanitizer to detect uninitialized memory errors, adds the
    ``-fsanitize=memory`` flag.
 
    Default: OFF
 
-.. cmakeoption:: ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
+.. cmakeoption:: SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
 
    Enable sanitizer to detect undefined behavior errors, adds the
    ``-fsanitize=undefined`` flag.

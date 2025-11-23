@@ -63,19 +63,7 @@ if(DEFINED CUDA_ARCH)
   endif()
 endif()
 
-#
 # Deprecated Testing Options
-#
-
-if(SUNDIALS_TEST_PROFILE)
-  message(DEPRECATION "The CMake option SUNDIALS_TEST_PROFILE is deprecated. "
-                      "Use SUNDIALS_TEST_ENABLE_PROFILING instead.")
-  set(SUNDIALS_TEST_ENABLE_PROFILING
-      ${SUNDIALS_TEST_PROFILE}
-      CACHE BOOL "Profile tests" FORCE)
-  unset(SUNDIALS_TEST_PROFILE)
-endif()
-
 if(SUNDIALS_TEST_NODIFF)
   message(DEPRECATION "The CMake option SUNDIALS_TEST_NODIFF is deprecated. "
                       "Use SUNDIALS_TEST_ENABLE_DIFF_OUTPUT instead.")
@@ -91,24 +79,6 @@ if(SUNDIALS_TEST_NODIFF)
     unset(SUNDIALS_TEST_NODIFF)
   endif()
   unset(_new_value)
-endif()
-
-if(SUNDIALS_TEST_DEVTESTS)
-  message(DEPRECATION "The CMake option SUNDIALS_TEST_DEVTESTS is deprecated. "
-                      "Use SUNDIALS_TEST_ENABLE_DEV_TESTS instead.")
-  set(SUNDIALS_TEST_ENABLE_DEV_TESTS
-      ${SUNDIALS_TEST_DEVTESTS}
-      CACHE BOOL "Include development tests" FORCE)
-  unset(SUNDIALS_TEST_DEVTESTS)
-endif()
-
-if(SUNDIALS_TEST_UNITTESTS)
-  message(DEPRECATION "The CMake option SUNDIALS_TEST_UNITTESTS is deprecated. "
-                      "Use SUNDIALS_TEST_ENABLE_UNIT_TESTS instead.")
-  set(SUNDIALS_TEST_ENABLE_UNIT_TESTS
-      ${SUNDIALS_TEST_UNITTESTS}
-      CACHE BOOL "Include units tests" FORCE)
-  unset(SUNDIALS_TEST_UNITTESTS)
 endif()
 
 if(SUNDIALS_CALIPER_OUTPUT_DIR)

@@ -357,11 +357,11 @@ endif()
 # Options for SUNDIALS testing
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Include development tests"
-                OFF ADVANCED)
+sundials_option(SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Enable development tests"
+                OFF ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_DEVTESTS)
 
-sundials_option(SUNDIALS_TEST_ENABLE_UNIT_TESTS BOOL "Include unit tests" OFF
-                ADVANCED)
+sundials_option(SUNDIALS_TEST_ENABLE_UNIT_TESTS BOOL "Enable unit tests" OFF
+                ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_UNITTESTS)
 
 if(SUNDIALS_TEST_ENABLE_UNIT_TESTS)
   set(_default_gtest ON)
@@ -427,7 +427,7 @@ if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT SUNDIALS_TEST_ANSWER_DIR)
 endif()
 
 sundials_option(SUNDIALS_TEST_ENABLE_PROFILING BOOL "Profile tests" OFF
-                ADVANCED)
+                ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_PROFILE)
 
 sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"

@@ -14,6 +14,25 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
+
+# ---------------------------------------------------------------
+# Option for testing CI deprecated options
+# ---------------------------------------------------------------
+
+if(DEFINED ENV{SUNDIALS_ENABLE_UNSET_DEPRECATED})
+  set(_sundials_enable_unset_deprecated_default "$ENV{SUNDIALS_ENABLE_UNSET_DEPRECATED}")
+else()
+  set(_sundials_enable_unset_deprecated_default OFF)
+endif()
+
+sundials_option(SUNDIALS_ENABLE_UNSET_DEPRECATED BOOL
+                "Unset deprecated CMake options" ${_sundials_enable_unset_deprecated_default} ADVANCED)
+
+if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
+  message(WARNING "Unsetting deprecated SUNDIALS options.")
+endif()
+
+# ---------------------------------------------------------------
 # Deprecated options that can not use the DEPRECATES_NAMES option
 # to sundials_option
 # ---------------------------------------------------------------

@@ -433,9 +433,6 @@ sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"
   "${PROJECT_BINARY_DIR}/Testing/caliper" ADVANCED)
 
-sundials_option(SUNDIALS_ENABLE_UNSET_DEPRECATED BOOL
-                "Unset deprecated CMake options" OFF ADVANCED)
-
 # ---------------------------------------------------------------
 # Options for SUNDIALS testing with containers
 # ---------------------------------------------------------------

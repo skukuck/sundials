@@ -58,7 +58,9 @@ if(DEFINED CUDA_ARCH)
   set(CMAKE_CUDA_ARCHITECTURES
       ${arch_name}
       CACHE STRING "CUDA Architectures" FORCE)
-  unset(CUDA_ARCH)
+  if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
+    unset(CUDA_ARCH)
+  endif()
 endif()
 
 #
@@ -85,7 +87,9 @@ if(SUNDIALS_TEST_NODIFF)
   set(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT
       ${_new_value}
       CACHE BOOL "Compare test output with saved answer files" FORCE)
-  unset(SUNDIALS_TEST_NODIFF)
+  if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
+    unset(SUNDIALS_TEST_NODIFF)
+  endif()
   unset(_new_value)
 endif()
 
@@ -119,5 +123,7 @@ if(SUNDIALS_CALIPER_OUTPUT_DIR)
   set(SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR
       ${SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR}
       CACHE PATH "Location to write benchmark caliper files" FORCE)
-  unset(SUNDIALS_CALIPER_OUTPUT_DIR)
+  if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
+    unset(SUNDIALS_CALIPER_OUTPUT_DIR)
+  endif()
 endif()

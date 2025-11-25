@@ -40,10 +40,8 @@
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix       */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-#define ESYM "Le"
 #define GSYM "Lg"
 #else
-#define ESYM "e"
 #define GSYM "g"
 #endif
 

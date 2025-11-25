@@ -40,6 +40,15 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype   */
 #include <sunlinsol/sunlinsol_superlumt.h> /* access to SuperLUMT linear solver */
 #include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix        */
+#include "sundials/sundials_nvector.h"
+
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#define GSYM "Lg"
+#else
+#define ESYM "e"
+#define GSYM "g"
+#endif
 
 /* Problem Constants */
 
@@ -52,8 +61,6 @@
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
 #define TWO  SUN_RCONST(2.0)
-
-#define Ith(v, i) NV_Ith_S(v, i - 1)
 
 static int func(N_Vector y, N_Vector f, void* user_data);
 static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
@@ -115,7 +122,8 @@ int main(void)
   /* Set optional inputs */
 
   N_VConst(ZERO, constraints);
-  for (i = NVAR + 1; i <= NEQ; i++) { Ith(constraints, i) = ONE; }
+  sunrealtype* c_data = N_VGetArrayPointer(constraints);
+  for (i = NVAR; i < NEQ; i++) { c_data[i] = ONE; }
 
   retval = KINSetConstraints(kmem, constraints);
   if (check_retval(&retval, "KINSetConstraints", 1)) { return (1); }
@@ -155,7 +163,8 @@ int main(void)
   /* Initial guess */
 
   N_VConst(ONE, y);
-  for (i = 1; i <= NVAR; i++) { Ith(y, i) = SUNRsqrt(TWO) / TWO; }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  for (i = 0; i < NVAR; i++) { y_data[i] = SUNRsqrt(TWO) / TWO; }
 
   printf("Initial guess:\n");
   PrintOutput(y);
@@ -578,23 +587,15 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
 
 static void PrintOutput(N_Vector y)
 {
-  int i;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   printf("     l=x+1          x         u=1-x\n");
   printf("   ----------------------------------\n");
 
-  for (i = 1; i <= NVAR; i++)
+  for (int i = 0; i < NVAR; i++)
   {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-    printf(" %10.6Lg   %10.6Lg   %10.6Lg\n", Ith(y, i + NVAR), Ith(y, i),
-           Ith(y, i + 2 * NVAR));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),
-           Ith(y, i + 2 * NVAR));
-#else
-    printf(" %10.6g   %10.6g   %10.6g\n", Ith(y, i + NVAR), Ith(y, i),
-           Ith(y, i + 2 * NVAR));
-#endif
+    printf(" %10.6" GSYM "   %10.6" GSYM "   %10.6" GSYM "\n", y_data[i + NVAR],
+           y_data[i], y_data[i + 2 * NVAR]);
   }
 }
 

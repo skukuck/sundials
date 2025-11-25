@@ -13,13 +13,11 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-.. _Python:
+.. _Python.Introduction:
 
 Introduction
 ============
 
-
-sundials4py provides official (supported by the SUNDIALS team) Python bindings to much of the SUNDIALS library, allowing you to use SUNDIALS directly from Python.
 sundials4py is designed to be easy to use from Python in conjunction with ubiquitous libraries in the Python scientific computing and machine learning ecosystems.
 To that end, it supports:
 
@@ -29,10 +27,6 @@ To that end, it supports:
 
 sundials4py is built using `nanobind <https://nanobind.readthedocs.io/en/latest/index.html#>`__ and `litgen <https://pthom.github.io/litgen/litgen_book/00_00_intro.html>`__.
 **It requires Python 3.12+**.
-
-.. note::
-
-   New SUNDIALS users should first read the :ref:`General User Guide <SUNDIALS>`. The Python User Guide focuses on specific aspects of using SUNDIALS from Python and assumes the user is familiar with SUNDIALS. 
 
 
 Installation

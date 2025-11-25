@@ -12,21 +12,21 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-.. __Developer.Python:
+.. _Developer.Python:
 
 Python Interfaces
 =================
 
 This chapter covers details developers need to know about the SUNDIALS Python interfaces, distributed as the Python package sundials4py.
 
-We use `nanobind <https://github.com/wjakob/nanobind>__` for the Python bindings. nanobind is a sleeker, faster ``pybind11``.
+We use `nanobind <https://github.com/wjakob/nanobind>`__ for the Python bindings. nanobind is a sleeker, faster ``pybind11``.
 It is a C++ library, i.e. you write your binding code in C++. Nanobind does have some restrictions:
 
 - Cannot bind to functions which take double, or more pointer arguments. I.e., it cannot bind to `**` or `***` and so on. These have to be flattened somehow.
 - Cannot implicitly convert between a "View" container class and the underlying C type. I.e., it cannot implicitly convert ``ARKodeView`` to ``void*``.
    This means user must explicitly convert from the "View" class by calling the ``get`` member function.
 
-We use `litgen <https://github.com/pthom/litgen>__` to generate a large portion of the nanobind code.
+We use `litgen <https://github.com/pthom/litgen>`__ to generate a large portion of the nanobind code.
 
 - We have ``generate.yaml`` files designate headers to generate bindings from and functions to exclude.
 - A ``generate.py`` script uses litgen to generate the bindings as a C++ header according to the ``generate.yaml``.
@@ -65,6 +65,7 @@ sundials4py consists of 5 modules. Below we list how each one maps to the direct
 - **sundials.core**:
   - All SUNDIALS shared classes/modules and implementations.
   - Source directories:
+
     - `nvector/`
     - `sunadaptcontroller/`
     - `sunadjointcheckpointscheme/`
@@ -78,6 +79,13 @@ sundials4py consists of 5 modules. Below we list how each one maps to the direct
 
 Development
 -----------
+
+sundials4py requires Python 3.12+ and the Interpreter/Development components. E.g., if you were installing Python on a RedHat Linux system,
+you could install Python 3.12 with these modules like this:
+
+.. code-block:: shell
+
+   yum install python3.12 python3.12-devel
 
 The recommended method for development is to use a typical Python development workflow with ``pip`` rather than invoking CMake directly.
 

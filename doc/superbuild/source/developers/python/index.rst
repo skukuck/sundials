@@ -24,7 +24,7 @@ It is a C++ library, i.e. you write your binding code in C++. Nanobind does have
 
 - Cannot bind to functions which take double, or more pointer arguments. I.e., it cannot bind to `**` or `***` and so on. These have to be flattened somehow.
 - Cannot implicitly convert between a "View" container class and the underlying C type. I.e., it cannot implicitly convert ``ARKodeView`` to ``void*``.
-   This means user must explicitly convert from the "View" class by calling the ``get`` member function.
+   This means that users must explicitly convert from the "View" class by calling the ``get`` member function.
 
 We use `litgen <https://github.com/pthom/litgen>`__ to generate a large portion of the nanobind code.
 
@@ -127,8 +127,8 @@ not the correctness of SUNDIALS itself.
 
 --------------
 
-All user-supplied Python functions have to be wrapped with a functions which converts between a ``std::function`` and a raw C function pointer.
-This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in python member of the integrator memory structures, and then storing the integrator memory structure in the ``user_data`` pointer. For the objects which are
+All user-supplied Python functions have to be wrapped with functions that convert between a ``std::function`` and a raw C function pointer.
+This is done by smuggling in a "function table" -- a struct of ``std::function`` members -- in a ``python`` member inside each integrator memory structure, and then storing the integrator memory structure in the ``user_data`` pointer. For the objects which are
 not the integrator, we still stuff the function table in the ``python`` member of the struct so it will be available in all of the module/class methods.
 The upshot is that every time we add a user-supplied function, we need to add a new member to the function table struct,
 and add a wrapper for it. We also have to add a wrapper for the "Set" function that takes the user-supplied function.

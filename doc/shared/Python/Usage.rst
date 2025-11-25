@@ -60,7 +60,7 @@ C:
 Python:
    .. code-block:: python
 
-      retval, numsteps = CVodeGetNumSteps(cvode_mem)
+      retval, numsteps = CVodeGetNumSteps(cvode_mem.get())
       print(f"Number of steps: {numsteps}")
 
 **Example 2: Multiple Return-by-Pointer Values**
@@ -77,7 +77,7 @@ C:
 Python:
    .. code-block:: python
 
-      retval, nsteps, nfevals, nlinsetups, netfails = CVodeGetIntegratorStats(cvode_mem)
+      retval, nsteps, nfevals, nlinsetups, netfails = CVodeGetIntegratorStats(cvode_mem.get())
       print(f"Steps: {nsteps}, Function evals: {nfevals}, Linear setups: {nlinsetups}, Error test fails: {netfails}")
 
 
@@ -114,7 +114,7 @@ User-Supplied Callback Functions
 
 SUNDIALS packages and several modules/classes require user-supplied callback functions to define problem-specific behavior, 
 such as the right-hand side of an ODE or a nonlinear system function. In sundials4py, you can provide these as standard Python functions or lambdas.
-Somethings to note:
+Some things to note:
 
 - The callback signatures follow the C API. As such, ``N_Vector`` arguments are passed as ``N_Vector`` objects and the underlying ndarray must be extracted in the user code. The only caveat is that return-by-pointer parameters are removed from the signature, and instead become return values (mirroring how return-by-pointer parameters for other functions are handled)
 - Most callback signatures include a ``void* user_data`` argument. In Python, this argument must be present in the signature, but it should be ignored.
@@ -165,7 +165,7 @@ Somethings to note:
 
 .. warning::
 
-   The ``user_data`` argument is should always be ``None`` on the Python side, but if it is not it should be ignored to avoid causing catastrophic errors.
+   The ``user_data`` argument should always be ``None`` or ``_`` on the Python side.  If it is listed otherwise then it should be ignored to avoid causing catastrophic errors.
 
 
 Examples

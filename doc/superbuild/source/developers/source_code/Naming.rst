@@ -68,7 +68,7 @@ Variables which are purely pointers should use the suffix, ``_ptr``, e.g.
 .. code-block:: c
 
    N_Vector y = N_VNew_Serial(2, sunctx);
-   N_Vector y_ptr = &y;
+   N_Vector* y_ptr = &y;
 
 When combining the two rules, the ``_ptr`` suffix should come last, e.g.
 

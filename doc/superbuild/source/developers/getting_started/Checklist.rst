@@ -99,10 +99,14 @@ system, etc. developers should adhere to the following checklist.
    under the job artifacts (if there were in fact changes that required updates
    to the Fortran).
 
-#. Similarly, re-run the Python interface generator to generate updated Python
-   interfaces. This is done by navigating to the ``bindings/sundials4py/``
-   directory and running ``python generate.py``. 
+#. Similarly, re-run the Python interface generator (sundials4py-generate) to generate 
+   updated Python interfaces. This is done by navigating to the ``bindings/sundials4py/``
+   directory and running ``python sundials4py-generate/generate.py``. 
 
    * If you added a new user-supplied function, or new module, then there will be manual
      changes to make in the ``bindings/sundials4py/`` directory. See the
      :ref:`Python` section for more details.
+   
+   * There is a 'litgen' GitHub action that we run on all pull requests. This action will,
+     like with the SWIG action, run the generator and create a git patch file that you
+     can apply locally. This is helpful if you are unable to setup sundials4py-generate locally.

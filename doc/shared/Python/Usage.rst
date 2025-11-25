@@ -36,10 +36,14 @@ extract the ``void*`` "capsule" from the view object by calling the view's ``get
    from sundials4py.core import *
    from sundials4py.cvode import *
 
+   ode_problem = MyODEProblemClass()
+
    sunctx = SUNContext_Create(SUN_COMM_NULL)
+   
    cvode = CVodeCreate(CV_BDF, sunctx)
+
    # notice we need to call cvode.get()
-   status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y)
+   status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot, _), T0, y)
 
 
 Return-by-Pointer Parameters
@@ -94,17 +98,17 @@ and modify the underlying data directly using :py:func:`N_VGetArrayPointer`, whi
 
 .. code-block:: python
 
-   y_nvec = NVectorView.Create(N_VNew_Serial(10, sunctx.get()))
-   y = N_VGetArrayPointer(y_nvec.get())
+   y_nvec = N_VNew_Serial(10, sunctx)
+   y = N_VGetArrayPointer(y_nvec)
    y[:] = np.linspace(0, 1, 10)  # Set values using numpy
 
 **Example: Using a matrix as a numpy array**
 
 .. code-block:: python
 
-   mat = SUNMatrixView.Create(SUNDenseMatrix(3, 3, sunctx.get()))
-   arr = SUNDenseMatrix_Data(mat.get())
-   arr = np.eye(3)  # Set to identity matrix
+   mat = SUNDenseMatrix(3, 3, sunctx)
+   arr = SUNDenseMatrix_Data(mat)
+   arr[:] = np.eye(3)  # Set to identity matrix
 
 This allows you to use numpy operations for vector and matrix data, and to pass numpy arrays to and from SUNDIALS routines efficiently and without unnecessary copies.
 
@@ -130,7 +134,7 @@ Some things to note:
       ydot[:] = -y
       return 0
 
-   ark = ARKodeView.Create(ARKStepCreate(rhs, None, t0, y.get(), sunctx.get()))
+   ark = ARKStepCreate(rhs, None, t0, y, sunctx)
 
 **Example: Nonlinear system for KINSOL**
 
@@ -143,8 +147,8 @@ Some things to note:
       g[:] = u**2 - 1
       return 0
 
-   kin = KINView.Create(KINCreate(sunctx.get()))
-   KINInit(kin.get(), fp_function, u.get())
+   kin = KINCreate(sunctx)
+   KINInit(kin.get(), fp_function, u)
 
 **Example: ARKODE LSRKStep dominant eigenvalue estimation function with return-by-pointer parameters**
 

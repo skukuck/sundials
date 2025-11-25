@@ -21,18 +21,21 @@ Introduction
 sundials4py is designed to be easy to use from Python in conjunction with ubiquitous libraries in the Python scientific computing and machine learning ecosystems.
 To that end, it supports:
 
-- Python's automatic memory management via "View" classes which wrap the plain SUNDIALS C objects
+- Python's automatic memory management
 - Python definitions of user-supplied callback functions
 - Zero-copy exchange of arrays (CPU and Device) through DLPack protocol and numpy's ndarray
 
 sundials4py is built using `nanobind <https://nanobind.readthedocs.io/en/latest/index.html#>`__ and `litgen <https://pthom.github.io/litgen/litgen_book/00_00_intro.html>`__.
-**It requires Python 3.12+**.
+
+.. note::
+
+   sundials4py requires Python 3.12+
 
 
 Installation
 ------------
 
-You can install sundials4py directly from PyPI using pip:
+You can install sundials4py directly from `PyPI <https://pypi.org/project/sundials4py/>`__ using pip:
 
 .. code-block:: bash
 

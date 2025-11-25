@@ -58,19 +58,6 @@
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
 
-/* User-defined vector accessor macro: Ith */
-
-/* This macro is defined in order to write code which exactly matches
-   the mathematical problem description given above.
-
-   Ith(v,i) references the ith component of the vector v, where i is in
-   the range [1..NEQ] and NEQ is defined above. The Ith macro is defined
-   using the N_VIth macro in nvector.h. N_VIth numbers the components of
-   a vector starting from 0.
-*/
-
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* Ith numbers components 1..NEQ */
-
 /* Private functions */
 
 static int funcRoberts(N_Vector u, N_Vector f, void* user_data);
@@ -160,7 +147,8 @@ int main(int argc, char* argv[])
    * ------------- */
 
   N_VConst(ZERO, y);
-  Ith(y, 1) = ONE;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  y_data[0] = ONE;
 
   /* ----------------------------
    * Call KINSol to solve problem
@@ -222,19 +210,19 @@ int main(int argc, char* argv[])
 
 static int funcRoberts(N_Vector y, N_Vector g, void* user_data)
 {
-  sunrealtype y1, y2, y3;
-  sunrealtype yd1, yd3;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* g_data = N_VGetArrayPointer(g);
 
-  y1 = Ith(y, 1);
-  y2 = Ith(y, 2);
-  y3 = Ith(y, 3);
+  const sunrealtype y1 = y_data[0];
+  const sunrealtype y2 = y_data[1];
+  const sunrealtype y3 = y_data[2];
 
-  yd1 = DSTEP * (SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3);
-  yd3 = DSTEP * SUN_RCONST(3.0e2) * y2 * y2;
+  const sunrealtype yd1 = DSTEP * (SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3);
+  const sunrealtype yd3 = DSTEP * SUN_RCONST(3.0e2) * y2 * y2;
 
-  Ith(g, 1) = yd1 + Y10;
-  Ith(g, 2) = -yd1 - yd3 + Y20;
-  Ith(g, 3) = yd3 + Y30;
+  g_data[0] = yd1 + Y10;
+  g_data[1] = -yd1 - yd3 + Y20;
+  g_data[2] = yd3 + Y30;
 
   return (0);
 }
@@ -245,11 +233,11 @@ static int funcRoberts(N_Vector y, N_Vector g, void* user_data)
 
 static void PrintOutput(N_Vector y)
 {
-  sunrealtype y1, y2, y3;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y1 = Ith(y, 1);
-  y2 = Ith(y, 2);
-  y3 = Ith(y, 3);
+  const sunrealtype y1 = y_data[0];
+  const sunrealtype y2 = y_data[1];
+  const sunrealtype y3 = y_data[2];
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
   printf("y =%14.6Le  %14.6Le  %14.6Le\n", y1, y2, y3);
@@ -341,9 +329,11 @@ static int check_ans(N_Vector u, sunrealtype rtol, sunrealtype atol)
   ewt = N_VClone(u);
 
   /* set the reference solution data */
-  NV_Ith_S(ref, 0) = SUN_RCONST(9.9678538655358029e-01);
-  NV_Ith_S(ref, 1) = SUN_RCONST(2.9530060962800345e-03);
-  NV_Ith_S(ref, 2) = SUN_RCONST(2.6160735013975683e-04);
+  sunrealtype* r_data = N_VGetArrayPointer(ref);
+
+  r_data[0] = SUN_RCONST(9.9678538655358029e-01);
+  r_data[1] = SUN_RCONST(2.9530060962800345e-03);
+  r_data[2] = SUN_RCONST(2.6160735013975683e-04);
 
   /* compute the error weight vector */
   N_VAbs(ref, ewt);

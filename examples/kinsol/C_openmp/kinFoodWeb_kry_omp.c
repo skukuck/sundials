@@ -116,6 +116,12 @@
 
 /* helpful macros */
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define GSYM "Lg"
+#else
+#define GSYM "g"
+#endif
+
 #ifndef MAX
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 #endif
@@ -155,7 +161,7 @@
    IJ_Vptr(vv,i,j) returns a pointer to the location in vv corresponding to
    indices is = 0, jx = i, jy = j.    */
 
-#define IJ_Vptr(vv, i, j) (&NV_Ith_OMP(vv, i * NUM_SPECIES + j * NSMX))
+#define IJ_Vptr(vv, i, j) ((vv) + i * NUM_SPECIES + j * NSMX)
 
 /* Type : UserData
    contains preconditioner blocks, pivot arrays, and problem constants */
@@ -357,6 +363,10 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
   delx = data->dx;
   dely = data->dy;
 
+  sunrealtype* cc_data = N_VGetArrayPointer(cc);
+  sunrealtype* r_data  = N_VGetArrayPointer(data->rates);
+  sunrealtype* f_data  = N_VGetArrayPointer(fval);
+
   /* Loop over all mesh points, evaluating rate array at each point*/
   for (jy = 0; jy < MY; jy++)
   {
@@ -374,9 +384,9 @@ static int func(N_Vector cc, N_Vector fval, void* user_data)
       idxl = (jx != 0) ? NUM_SPECIES : -NUM_SPECIES;
       idxr = (jx != MX - 1) ? NUM_SPECIES : -NUM_SPECIES;
 
-      cxy = IJ_Vptr(cc, jx, jy);
-      rxy = IJ_Vptr(data->rates, jx, jy);
-      fxy = IJ_Vptr(fval, jx, jy);
+      cxy = IJ_Vptr(cc_data, jx, jy);
+      rxy = IJ_Vptr(r_data, jx, jy);
+      fxy = IJ_Vptr(f_data, jx, jy);
 
       /* Get species interaction rate array at (xx,yy) */
       WebRate(xx, yy, cxy, rxy, user_data);
@@ -428,6 +438,10 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
   r0        = THOUSAND * uround * fac * NEQ;
   if (r0 == ZERO) { r0 = ONE; }
 
+  sunrealtype* cc_data     = N_VGetArrayPointer(cc);
+  sunrealtype* cscale_data = N_VGetArrayPointer(cscale);
+  sunrealtype* r_data      = N_VGetArrayPointer(data->rates);
+
   /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
   for (jy = 0; jy < MY; jy++)
   {
@@ -437,9 +451,9 @@ static int PrecSetupBD(N_Vector cc, N_Vector cscale, N_Vector fval,
     {
       xx      = jx * delx;
       Pxy     = (data->P)[jx][jy];
-      cxy     = IJ_Vptr(cc, jx, jy);
-      scxy    = IJ_Vptr(cscale, jx, jy);
-      ratesxy = IJ_Vptr((data->rates), jx, jy);
+      cxy     = IJ_Vptr(cc_data, jx, jy);
+      scxy    = IJ_Vptr(cscale_data, jx, jy);
+      ratesxy = IJ_Vptr(r_data, jx, jy);
 
       /* Compute difference quotients of interaction rate fn. */
       for (j = 0; j < NUM_SPECIES; j++)
@@ -492,6 +506,8 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
 
   data = (UserData)user_data;
 
+  sunrealtype* vv_data = N_VGetArrayPointer(vv);
+
 #pragma omp parallel for collapse(2) default( \
     shared) private(jx, jy, Pxy, piv, vxy) schedule(static)
   for (jx = 0; jx < MX; jx++)
@@ -502,7 +518,7 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale, N_Vector fval,
          vxy is the address of the corresponding portion of the vector vv;
          Pxy is the address of the corresponding block of the matrix P;
          piv is the address of the corresponding block of the array pivot. */
-      vxy = IJ_Vptr(vv, jx, jy);
+      vxy = IJ_Vptr(vv_data, jx, jy);
       Pxy = (data->P)[jx][jy];
       piv = (data->pivot)[jx][jy];
       SUNDlsMat_denseGETRS(Pxy, NUM_SPECIES, piv, vxy);
@@ -695,13 +711,16 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
     stemp[i] = SUN_RCONST(0.00001);
   }
 
+  sunrealtype* cc_data = N_VGetArrayPointer(cc);
+  sunrealtype* sc_data = N_VGetArrayPointer(sc);
+
   /* Load initial profiles into cc and sc vector from ctemp and stemp. */
   for (jy = 0; jy < MY; jy++)
   {
     for (jx = 0; jx < MX; jx++)
     {
-      cloc = IJ_Vptr(cc, jx, jy);
-      sloc = IJ_Vptr(sc, jx, jy);
+      cloc = IJ_Vptr(cc_data, jx, jy);
+      sloc = IJ_Vptr(sc_data, jx, jy);
       for (i = 0; i < NUM_SPECIES; i++)
       {
         cloc[i] = ctemp[i];
@@ -726,28 +745,12 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
   printf("Linear solver is SPGMR with maxl = %d, maxlrst = %d\n", maxl, maxlrst);
   printf("Preconditioning uses interaction-only block-diagonal matrix\n");
   printf("Positivity constraints imposed on all components \n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n", fnormtol,
+  printf("Tolerance parameters:  fnormtol = %" GSYM "   scsteptol = %" GSYM "\n", fnormtol,
          scsteptol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
-         scsteptol);
-#else
-  printf("Tolerance parameters:  fnormtol = %g   scsteptol = %g\n", fnormtol,
-         scsteptol);
-#endif
 
   printf("\nInitial profile of concentration\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", PREYIN, PREYIN,
+  printf("At all mesh points:  %" GSYM " %" GSYM " %" GSYM "   %" GSYM " %" GSYM " %" GSYM "\n", PREYIN, PREYIN,
          PREYIN, PREDIN, PREDIN, PREDIN);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
-         PREDIN, PREDIN, PREDIN);
-#else
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", PREYIN, PREYIN, PREYIN,
-         PREDIN, PREDIN, PREDIN);
-#endif
 }
 
 /*
@@ -759,40 +762,30 @@ static void PrintOutput(N_Vector cc)
   int is, jx, jy;
   sunrealtype* ct;
 
+  sunrealtype* cc_data = N_VGetArrayPointer(cc);
+
   jy = 0;
   jx = 0;
-  ct = IJ_Vptr(cc, jx, jy);
+  ct = IJ_Vptr(cc_data, jx, jy);
   printf("\nAt bottom left:");
 
   /* Print out lines with up to 6 values per line */
   for (is = 0; is < NUM_SPECIES; is++)
   {
     if ((is % 6) * 6 == is) { printf("\n"); }
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-    printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
-#else
-    printf(" %g", ct[is]);
-#endif
+    printf(" %" GSYM, ct[is]);
   }
 
   jy = MY - 1;
   jx = MX - 1;
-  ct = IJ_Vptr(cc, jx, jy);
+  ct = IJ_Vptr(cc_data, jx, jy);
   printf("\n\nAt top right:");
 
   /* Print out lines with up to 6 values per line */
   for (is = 0; is < NUM_SPECIES; is++)
   {
     if ((is % 6) * 6 == is) { printf("\n"); }
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-    printf(" %Lg", ct[is]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-    printf(" %g", ct[is]);
-#else
-    printf(" %g", ct[is]);
-#endif
+    printf(" %" GSYM, ct[is]);
   }
   printf("\n\n");
 }

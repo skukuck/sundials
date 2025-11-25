@@ -39,8 +39,10 @@
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype */
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
 #define GSYM "Lg"
 #else
+#define ESYM "e"
 #define GSYM "g"
 #endif
 
@@ -174,11 +176,7 @@ int main(int argc, char* argv[])
   retval = KINGetFuncNorm(kmem, &fnorm);
   if (check_retval(&retval, "KINGetfuncNorm", 1)) { return (1); }
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("\nComputed solution (||F|| = %Lg):\n\n", fnorm);
-#else
-  printf("\nComputed solution (||F|| = %g):\n\n", fnorm);
-#endif
+  printf("\nComputed solution (||F|| = %" GSYM "):\n\n", fnorm);
   PrintOutput(y);
 
   PrintFinalStats(kmem);
@@ -239,13 +237,7 @@ static void PrintOutput(N_Vector y)
   const sunrealtype y2 = y_data[1];
   const sunrealtype y3 = y_data[2];
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("y =%14.6Le  %14.6Le  %14.6Le\n", y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
-#else
-  printf("y =%14.6e  %14.6e  %14.6e\n", y1, y2, y3);
-#endif
+  printf("y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", y1, y2, y3);
 
   return;
 }

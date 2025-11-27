@@ -954,9 +954,9 @@ Caliper support:
       Using Caliper requires setting :cmakeop:`SUNDIALS_ENABLE_PROFILING` to
       ``ON``.
 
-   .. versionadded:: x.y.z
+ .. versionadded:: x.y.z
 
-      Replaces the deprecated option ``ENABLE_CALIPER``
+    Replaces the deprecated option ``ENABLE_CALIPER``
 
 .. cmakeoption:: CALIPER_DIR
 

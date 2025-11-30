@@ -247,18 +247,6 @@ set(DOCSTR "Enable Python interfaces")
 sundials_option(SUNDIALS_ENABLE_PYTHON BOOL "${DOCSTR}" OFF)
 
 # ---------------------------------------------------------------
-# Options for benchmark suite
-# ---------------------------------------------------------------
-
-sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
-
-sundials_option(
-  SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
-  "Output directory for installing benchmark executables"
-  "${CMAKE_INSTALL_PREFIX}/benchmarks"
-  DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
-
-# ---------------------------------------------------------------
 # Options for CMake config installation
 # ---------------------------------------------------------------
 
@@ -461,6 +449,14 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # ---------------------------------------------------------------
 # Options for SUNDIALS benchmarks
 # ---------------------------------------------------------------
+
+sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
+
+sundials_option(
+  SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
+  "Output directory for installing benchmark executables"
+  "${CMAKE_INSTALL_PREFIX}/benchmarks"
+  DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
 
 sundials_option(
   SUNDIALS_SCHEDULER_COMMAND STRING

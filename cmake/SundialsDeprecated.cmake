@@ -33,7 +33,7 @@ if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
 endif()
 
 # ---------------------------------------------------------------
-# Deprecated options that can not use the DEPRECATES_NAMES option
+# Deprecated options that can not use the DEPRECATED_NAMES option
 # to sundials_option
 # ---------------------------------------------------------------
 

@@ -15,27 +15,82 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------------------
 
-# ~~~
-# sundials_option(<variable> <type> <docstring> <default value>
-#                 [DEPENDS_ON dependencies]
-#                 [DEPNDS_ON_THROW_ERROR])
-# ~~~
-#
-# Within CMake creates a cache variable <variable> and sets it to the value
-# <default value> if <variable> is not yet defined and, if provided, all of its
-# dependencies evaluate to true. Otherwise, <variable> is not created. <type>
-# may be any of the types valid for CMake's set command (FILEPATH, PATH, STRING,
-# BOOL, INTERNAL). <docstring> is a description of the <variable>.
-#
-# The DEPENDS_ON option can be used to provide variables which must evaluate to
-# true for <variable> to be created. If the dependencies do not all evaluate to
-# true and <variable> exists, then a warning is printed and <variable> is unset.
-#
-# The DEPENDS_ON_THROW_ERROR option will change the warning to be an error.
-#
-# The OPTIONS option can be used to provide a list of valid <variable> values.
-#
-# The ADVANCED option can be used to make <variable> an advanced CMake option.
+#[=======================================================================[.rst:
+SundialsOption
+--------------
+
+This module provides a command for setting SUNDIALS cache variables
+(configuration options).
+
+Load this module in with:
+
+.. code-block:: cmake
+
+   include(SundialsOption)
+
+Commands
+^^^^^^^^
+
+This module provides the following command:
+
+.. cmake:command:: sundials_option
+
+   Set a SUNDIALS cache variable (configuration option) to a given value.
+
+   .. code-block:: cmake
+
+      sundials_option(<variable> <type> <help string> <default value>
+                      [ADVANCED]
+                      [OPTIONS options]
+                      [DEPENDS_ON dependencies]
+                      [DEPENDS_ON_THROW_ERROR]
+                      [DEPRECATED_NAMES names])
+
+   Wraps the CMake :cmake:command:`set() <cmake:command:set>` command to set the
+   given cache variable.
+
+   The arguments are:
+
+   ``<variable>``
+     The name of a variable that stores the option value.
+
+   ``<type>``
+     The type of the cache entry.
+
+   ``<help string>``
+     Text providing a quick summary of the option for CMake GUIs.
+
+   ``<default value>``
+     The default value for the cache variable. If the cache entry does not exist
+     prior to the call, then it will be set to the default value.
+
+   The options are:
+
+   ``ADVANCED``
+     Mark the cache variable as advanced.
+
+   ``OPTIONS <options>...``
+     A list of valid values for the cache variable. If an invalid value is set,
+     the configuration is halted and an error message printed.
+
+   ``DEPENDS_ON <dependencies>...``
+     A list of variables which must evaluate to true for the cache variable to
+     be set. If any of the dependencies evalute to false, then the cache
+     variable will be unset and a warning message printed.
+
+   ``DEPENDS_ON_THROW_ERROR``
+     Throw an error if the option dependencies are not met.
+
+   ``DEPRECATED_NAMES <variables>...``
+     A list of deprecated variable names for the cache variable. If the cache
+     variable is already defined and any deprecated variables is defined, the
+     deprecated variable is ignored and a warning message is printed. If the
+     cache variable is not defined and a deprecated cache variable is defined,
+     the value of the deprecated entry is copied to the cache variable and a
+     warning message is printed. If there are multiple deprecated variable names
+     and more than one of them is defined, an error is printed if the values
+     differ.
+#]=======================================================================]
 
 function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 

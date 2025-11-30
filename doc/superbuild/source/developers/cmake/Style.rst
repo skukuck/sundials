@@ -20,12 +20,56 @@
 Style
 =====
 
-In this chapter we describe the CMake style conventions and guidelines for
+In this section we describe the CMake style conventions and guidelines for
 SUNDIALS.
+
+Naming
+------
+
+SUNDIALS CMake cache variables (configuration options) must adhere to the
+following naming conventions:
+
+#. To avoid naming collisions with other projects that include SUNDIALS as part
+   of their CMake build system, SUNDIALS CMake cache variables are prefixed with
+   ``SUNDIALS_``.
+
+#. Cache variables use screaming snake case, ``SUNDIALS_OPTION_NAME``.
+
+#. The ``SUNDIALS_`` prefix may be followed by a category name for grouping
+   related options, ``SUNDIALS_CATEGORY_OPTION_NAME``. For example,
+
+   * ``SUNDIALS_TEST_`` for SUNDIALS testing options
+
+   * ``SUNDIALS_EXAMPLES_`` for options related to the SUNDIALS examples
+
+   * ``SUNDIALS_BENCHMARKS_`` for options related to SUNDIALS benchmarks
+
+   * ``SUNDIALS_DEV_`` for development options
+
+   * ``SUNDIALS_DEBUG_`` for debugging options
+
+#. Boolean options are named ``SUNDIALS_ENABLE_OPTION_NAME`` or
+   ``SUNDIALS_CATEGORY_ENABLE_OPTION_NAME``.
+
+#. Options to enable third party libraries are named
+   ``SUNDIALS_ENABLE_LIBRARY_NAME``.
 
 Formatting
 ----------
 
-All new CMake files should be formatted with `cmake-format
-<https://cmake-format.readthedocs.io>`_. The ``.cmake-format.py`` file in the
-root of the project defines our configuration for cmake-format.
+CMake files should be formatted with `cmake-format
+<https://cmake-format.readthedocs.io>`__. ``cmake-format`` can be installed with
+``pip``:
+
+.. code-block:: console
+
+   pip install cmake-format
+
+Individual files can be formatted with the command:
+
+.. code-block:: console
+
+   cmake-format -i <cmake file>
+
+The ``.cmake-format.py`` file in the root of the project defines our
+configuration for ``cmake-format``.

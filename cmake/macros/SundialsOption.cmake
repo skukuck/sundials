@@ -61,8 +61,10 @@ This module provides the following command:
      Text providing a quick summary of the option for CMake GUIs.
 
    ``<default value>``
-     The default value for the cache variable. If the cache entry does not exist
-     prior to the call, then it will be set to the default value.
+     The default value for the cache variable.
+
+     * If the cache entry does not exist prior to the call, then it will be set
+       to the default value.
 
    The options are:
 
@@ -70,26 +72,38 @@ This module provides the following command:
      Mark the cache variable as advanced.
 
    ``OPTIONS <options>...``
-     A list of valid values for the cache variable. If an invalid value is set,
-     the configuration is halted and an error message printed.
+     A list of valid values for the cache variable.
+
+     * If a user set the variable to a value not in the list of options, the
+       configuration is halted and an error message is printed.
 
    ``DEPENDS_ON <dependencies>...``
      A list of variables which must evaluate to true for the cache variable to
-     be set. If any of the dependencies evalute to false, then the cache
-     variable will be unset and a warning message printed.
+     be set.
+
+     * If any of the dependencies evalute to false, then the cache variable will
+       be unset and a warning message is printed.
 
    ``DEPENDS_ON_THROW_ERROR``
      Throw an error if the option dependencies are not met.
 
    ``DEPRECATED_NAMES <variables>...``
-     A list of deprecated variable names for the cache variable. If the cache
-     variable is already defined and any deprecated variables is defined, the
-     deprecated variable is ignored and a warning message is printed. If the
-     cache variable is not defined and a deprecated cache variable is defined,
-     the value of the deprecated entry is copied to the cache variable and a
-     warning message is printed. If there are multiple deprecated variable names
-     and more than one of them is defined, an error is printed if the values
-     differ.
+     A list of deprecated cache variable names for the cache variable.
+
+     * If the cache variable is already defined and any of the deprecated
+       cache variables are also defined, the deprecated variables are
+       ignored and a warning message is printed.
+
+     * If the cache variable is not defined and a deprecated cache variable is
+       defined, the value of the deprecated variable is copied to the cache
+       variable and a warning message is printed.
+
+     * If multiple deprecated cache variable names are provided and more than
+       one of them is defined, an error is printed if the deprecated variables
+       do not all have the same value.
+
+     * If ``SUNDIALS_ENABLE_UNSET_DEPRECATED`` is true, any deprecated variables
+       will be unset after checking the value for the cases above.
 #]=======================================================================]
 
 function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)

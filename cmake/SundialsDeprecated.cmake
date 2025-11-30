@@ -63,24 +63,6 @@ if(DEFINED CUDA_ARCH)
   endif()
 endif()
 
-# Deprecated Testing Options
-if(SUNDIALS_TEST_NODIFF)
-  message(DEPRECATION "The CMake option SUNDIALS_TEST_NODIFF is deprecated. "
-                      "Use SUNDIALS_TEST_ENABLE_DIFF_OUTPUT instead.")
-  if(SUNDIALS_TEST_NODIFF)
-    set(_new_value OFF)
-  else()
-    set(_new_value ON)
-  endif()
-  set(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT
-      ${_new_value}
-      CACHE BOOL "Compare test output with saved answer files" FORCE)
-  if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
-    unset(SUNDIALS_TEST_NODIFF)
-  endif()
-  unset(_new_value)
-endif()
-
 if(SUNDIALS_CALIPER_OUTPUT_DIR)
   message(
     DEPRECATION

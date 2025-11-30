@@ -44,7 +44,8 @@ This module provides the following command:
                       [OPTIONS options]
                       [DEPENDS_ON dependencies]
                       [DEPENDS_ON_THROW_ERROR]
-                      [DEPRECATED_NAMES names])
+                      [DEPRECATED_NAMES names]
+                      [NEGATE_DEPRECATED])
 
    Wraps the CMake :cmake:command:`set() <cmake:command:set>` command to set the
    given cache variable.
@@ -104,12 +105,16 @@ This module provides the following command:
 
      * If ``SUNDIALS_ENABLE_UNSET_DEPRECATED`` is true, any deprecated variables
        will be unset after checking the value for the cases above.
+
+   ``NEGATE_DEPRECATED``
+     Negate the value of deprecated boolean cache variables when setting a cache
+     variable that is not already defined.
 #]=======================================================================]
 
 function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
 
   # macro options and keyword inputs followed by multiple values
-  set(options DEPENDS_ON_THROW_ERROR ADVANCED)
+  set(options DEPENDS_ON_THROW_ERROR ADVANCED NEGATE_DEPRECATED)
   set(multiValueArgs OPTIONS DEPENDS_ON DEPRECATED_NAMES)
 
   # parse inputs and create variables arg_<keyword>
@@ -162,7 +167,15 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
             "Both ${NAME} and ${_save_name} (deprecated) are defined. Ignoring "
             "${_save_name}.")
       else()
-        set(${NAME} ${_save_value})
+        if((TYPE STREQUAL BOOL) AND arg_NEGATE_DEPRECATED)
+          if(${_save_value})
+            set(${NAME} FALSE CACHE ${TYPE} ${DOCSTR})
+          else()
+            set(${NAME} TRUE CACHE ${TYPE} ${DOCSTR})
+          endif()
+        else()
+          set(${NAME} "${_save_value}" CACHE ${TYPE} ${DOCSTR})
+        endif()
       endif()
     endif()
   endif()
@@ -187,7 +200,7 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
     else()
       set(${NAME}
           "${${NAME}}"
-          CACHE ${TYPE} ${DOCSTR})
+          CACHE ${TYPE} ${DOCSTR} FORCE)
     endif()
 
     # make the option advanced if necessary

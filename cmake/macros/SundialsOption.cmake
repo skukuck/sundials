@@ -44,8 +44,8 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
   set(multiValueArgs OPTIONS DEPENDS_ON DEPRECATED_NAMES)
 
   # parse inputs and create variables arg_<keyword>
-  cmake_parse_arguments(arg "${options}" "${oneValueArgs}"
-                        "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
+                        ${ARGN})
 
   # check for deprecated options
   if(arg_DEPRECATED_NAMES)
@@ -54,7 +54,7 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
       if(DEFINED ${_deprecated_name})
         message(
           WARNING
-          "The option ${_deprecated_name} is deprecated. Use ${NAME} instead."
+            "The option ${_deprecated_name} is deprecated. Use ${NAME} instead."
         )
         if(NOT DEFINED _save_name)
           # save name and value separately in case unset below
@@ -63,19 +63,23 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
         else()
           if(TYPE STREQUAL BOOL)
             # Check if boolean values match
-            if(NOT (${_save_value} AND ${${_deprecated_name}}) AND (${_save_value} OR ${${_deprecated_name}}))
-              message(FATAL_ERROR "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}.")
+            if(NOT (${_save_value} AND ${${_deprecated_name}})
+               AND (${_save_value} OR ${${_deprecated_name}}))
+              message(
+                FATAL_ERROR
+                  "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}."
+              )
             endif()
           else()
             # Check if filepath/string/path match
             if(NOT (${_save_value} STREQUAL ${${_deprecated_name}}))
-              message(FATAL_ERROR "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}.")
+              message(
+                FATAL_ERROR
+                  "Inconsistent deprecated options: ${_save_name} = ${_save_value} and ${_deprecated_name} = ${${_deprecated_name}}."
+              )
             endif()
           endif()
-          message(
-            WARNING
-            "Multiple deprecated options for ${NAME} provided."
-          )
+          message(WARNING "Multiple deprecated options for ${NAME} provided.")
         endif()
         if(SUNDIALS_ENABLE_UNSET_DEPRECATED)
           unset(${_deprecated_name} CACHE)
@@ -86,9 +90,8 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
       if(DEFINED ${NAME})
         message(
           WARNING
-          "Both ${NAME} and ${_save_name} (deprecated) are defined. Ignoring "
-          "${_save_name}."
-        )
+            "Both ${NAME} and ${_save_name} (deprecated) are defined. Ignoring "
+            "${_save_name}.")
       else()
         set(${NAME} ${_save_value})
       endif()

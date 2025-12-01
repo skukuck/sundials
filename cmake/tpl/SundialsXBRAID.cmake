@@ -78,11 +78,12 @@ if(SUNDIALS_ENABLE_XBRAID_CHECKS)
     "return 0;\n"
     "}\n")
 
-  # Attempt to build and link the "ltest" executable
+  # Attempt to build and link the test executable, pass --debug-trycompile to
+  # the cmake command to save build files for debugging
   try_compile(
     COMPILE_OK ${TEST_DIR}
     ${TEST_DIR}/test.c
-    LINK_LIBRARIES SUNDIALS::XBRAID
+    LINK_LIBRARIES SUNDIALS::XBRAID MPI::MPI_C
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Process test result
@@ -98,5 +99,5 @@ if(SUNDIALS_ENABLE_XBRAID_CHECKS)
   endif()
 
 else()
-  message(STATUS "Skipped XBRAID checks.")
+  message(STATUS "Skipped XBraid checks.")
 endif()

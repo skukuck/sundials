@@ -53,8 +53,7 @@ if(SUNDIALS_ENABLE_HYPRE_CHECKS)
   # Create the test directory
   set(TEST_DIR ${PROJECT_BINARY_DIR}/HYPRE_TEST)
 
-  # Attempt to build and link the test executable, pass --debug-trycompile to
-  # the cmake command to save build files for debugging
+  # Create a C source file
   file(
     WRITE ${TEST_DIR}/test.c
     "\#include \"HYPRE_parcsr_ls.h\"\n"
@@ -67,7 +66,8 @@ if(SUNDIALS_ENABLE_HYPRE_CHECKS)
     "else return(0);\n"
     "}\n")
 
-  # Attempt to build and link the "ltest" executable
+  # Attempt to build and link the test executable, pass --debug-trycompile to
+  # the cmake command to save build files for debugging
   try_compile(
     COMPILE_OK ${TEST_DIR}
     ${TEST_DIR}/test.c

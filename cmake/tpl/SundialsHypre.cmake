@@ -50,12 +50,11 @@ if(SUNDIALS_ENABLE_HYPRE_CHECKS)
 
   message(CHECK_START "Testing hypre")
 
-  # Do any checks which don't require compilation first.
-
-  # Create the HYPRE_TEST directory
+  # Create the test directory
   set(TEST_DIR ${PROJECT_BINARY_DIR}/HYPRE_TEST)
 
-  # Create a C source file calling hypre
+  # Attempt to build and link the test executable, pass --debug-trycompile to
+  # the cmake command to save build files for debugging
   file(
     WRITE ${TEST_DIR}/test.c
     "\#include \"HYPRE_parcsr_ls.h\"\n"
@@ -72,7 +71,7 @@ if(SUNDIALS_ENABLE_HYPRE_CHECKS)
   try_compile(
     COMPILE_OK ${TEST_DIR}
     ${TEST_DIR}/test.c
-    LINK_LIBRARIES SUNDIALS::HYPRE
+    LINK_LIBRARIES SUNDIALS::HYPRE MPI::MPI_C
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Process test result

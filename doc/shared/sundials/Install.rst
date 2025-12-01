@@ -888,6 +888,21 @@ For more information on profiling in SUNDIALS, see :ref:`SUNDIALS.Profiling`.
 
       Replaces the deprecated option ``SUNDIALS_BUILD_WITH_PROFILING``
 
+.. _Installation.Options.FusedKernels:
+
+Fused Kernels
+^^^^^^^^^^^^^
+
+.. cmakeoption:: SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS
+
+   Enable fused kernels in SUNDIALS packages
+
+   Default: ``OFF``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS``
+
 .. _Installation.Options.Adiak:
 
 Building with Adiak
@@ -1653,6 +1668,16 @@ the CUDA backend (targeting Ampere GPUs):
 
    .. TODO(DJG): Change this options so it is HIP or SYCL if those options are
       enabled
+
+.. cmakeoption:: SUNDIALS_ENABLE_MAGMA_CHECKS
+
+   Perform MAGMA compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``MAGMA_WORKS``
 
 .. _Installation.Options.MPI:
 

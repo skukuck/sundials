@@ -36,7 +36,7 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_OPENMP_DEVICE``                 | :cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE`                |
 +------------------------------------------+---------------------------------------------------------+
-| ``OPENMP_DEVICE_WORKS``                  | :cmakeop:`SUNDIALS_OPENMP_DEVICE_WORKS`                 |
+| ``OPENMP_DEVICE_WORKS``                  | :cmakeop:`SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS`         |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_PTHREAD``                       | :cmakeop:`SUNDIALS_ENABLE_PTHREAD`                      |
 +------------------------------------------+---------------------------------------------------------+
@@ -48,35 +48,35 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_LAPACK``                        | :cmakeop:`SUNDIALS_ENABLE_LAPACK`                       |
 +------------------------------------------+---------------------------------------------------------+
-| ``LAPACK_WORKS``                         | :cmakeop:`SUNDIALS_LAPACK_WORKS`                        |
+| ``LAPACK_WORKS``                         | :cmakeop:`SUNDIALS_ENABLE_LAPACK_CHECKS`                |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_GINKGO``                        | :cmakeop:`SUNDIALS_ENABLE_GINKGO`                       |
 +------------------------------------------+---------------------------------------------------------+
-| ``GINKGO_WORKS``                         | :cmakeop:`SUNDIALS_GINKGO_WORKS`                        |
+| ``GINKGO_WORKS``                         | :cmakeop:`SUNDIALS_ENABLE_GINKGO_CHECKS`                |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_MAGMA``                         | :cmakeop:`SUNDIALS_ENABLE_MAGMA`                        |
 +------------------------------------------+---------------------------------------------------------+
-| ``MAGMA_WORKS``                          | :cmakeop:`SUNDIALS_MAGMA_WORKS`                         |
+| ``MAGMA_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_MAGMA_CHECKS`                 |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_SUPERLUDIST``                   | :cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST`                  |
 +------------------------------------------+---------------------------------------------------------+
-| ``SUPERLUDIST_WORKS``                    | :cmakeop:`SUNDIALS_SUPERLUDIST_WORKS`                   |
+| ``SUPERLUDIST_WORKS``                    | :cmakeop:`SUNDIALS_ENABLE_SUPERLUDIST_CHECKS`           |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_SUPERLUMT``                     | :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT`                    |
 +------------------------------------------+---------------------------------------------------------+
-| ``SUPERLUMT_WORKS``                      | :cmakeop:`SUNDIALS_SUPERLUMT_WORKS`                     |
+| ``SUPERLUMT_WORKS``                      | :cmakeop:`SUNDIALS_ENABLE_SUPERLUMT_CHECKS`             |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_KLU``                           | :cmakeop:`SUNDIALS_ENABLE_KLU`                          |
 +------------------------------------------+---------------------------------------------------------+
-| ``KLU_WORKS``                            | :cmakeop:`SUNDIALS_KLU_WORKS`                           |
+| ``KLU_WORKS``                            | :cmakeop:`SUNDIALS_ENABLE_KLU_CHECKS`                   |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_HYPRE``                         | :cmakeop:`SUNDIALS_ENABLE_HYPRE`                        |
 +------------------------------------------+---------------------------------------------------------+
-| ``HYPRE_WORKS``                          | :cmakeop:`SUNDIALS_HYPRE_WORKS`                         |
+| ``HYPRE_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_HYPRE_CHECKS`                 |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_PETSC``                         | :cmakeop:`SUNDIALS_ENABLE_PETSC`                        |
 +------------------------------------------+---------------------------------------------------------+
-| ``PETSC_WORKS``                          | :cmakeop:`SUNDIALS_PETSC_WORKS`                         |
+| ``PETSC_WORKS``                          | :cmakeop:`SUNDIALS_ENABLE_PETSC_CHECKS`                 |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_TRILINOS``                      | :cmakeop:`SUNDIALS_ENABLE_TRILINOS`                     |
 +------------------------------------------+---------------------------------------------------------+
@@ -84,11 +84,11 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_XBRAID``                        | :cmakeop:`SUNDIALS_ENABLE_XBRAID`                       |
 +------------------------------------------+---------------------------------------------------------+
-| ``XBRAID_WORKS``                         | :cmakeop:`SUNDIALS_XBRAID_WORKS`                        |
+| ``XBRAID_WORKS``                         | :cmakeop:`SUNDIALS_ENABLE_XBRAID_CHECKS`                |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_ONEMKL``                        | :cmakeop:`SUNDIALS_ENABLE_ONEMKL`                       |
 +------------------------------------------+---------------------------------------------------------+
-| ``ONEMKL_WORKS``                         | :cmakeop:`SUNDIALS_ONEMKL_WORKS`                        |
+| ``ONEMKL_WORKS``                         | :cmakeop:`SUNDIALS_ENABLE_ONEMKL_CHECKS`                |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_CALIPER``                       | :cmakeop:`SUNDIALS_ENABLE_CALIPER`                      |
 +------------------------------------------+---------------------------------------------------------+
@@ -96,11 +96,11 @@ table below lists the old CMake option names and the new replacements.
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_KOKKOS``                        | :cmakeop:`SUNDIALS_ENABLE_KOKKOS`                       |
 +------------------------------------------+---------------------------------------------------------+
-| ``KOKKOS_WORKS``                         | :cmakeop:`SUNDIALS_KOKKOS_WORKS`                        |
+| ``KOKKOS_WORKS``                         | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_CHECKS`                |
 +------------------------------------------+---------------------------------------------------------+
 | ``ENABLE_KOKKOS_KERNELS``                | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS`               |
 +------------------------------------------+---------------------------------------------------------+
-| ``KOKKOS_KERNELS_WORKS``                 | :cmakeop:`SUNDIALS_KOKKOS_KERNELS_WORKS`                |
+| ``KOKKOS_KERNELS_WORKS``                 | :cmakeop:`SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS`        |
 +------------------------------------------+---------------------------------------------------------+
 | ``SUNDIALS_BUILD_WITH_MONITORING``       | :cmakeop:`SUNDIALS_ENABLE_MONITORING`                   |
 +------------------------------------------+---------------------------------------------------------+

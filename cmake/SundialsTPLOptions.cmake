@@ -39,8 +39,8 @@ sundials_option(SUNDIALS_ENABLE_OPENMP_DEVICE BOOL
 # Advanced option to skip OpenMP device offloading support check. This is needed
 # for a specific compiler that doesn't correctly report its OpenMP spec date
 # (with CMake >= 3.9).
-sundials_option(SUNDIALS_OPENMP_DEVICE_WORKS BOOL
-                "Skip the OpenMP device offloading support check" OFF ADVANCED OPENMP_DEVICE_WORKS SKIP_OPENMP_DEVICE_CHECK)
+sundials_option(SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS BOOL
+                "Enable OpenMP device offloading compatibility checks" ON ADVANCED DEPRECATED_NAMES OPENMP_DEVICE_WORKS SKIP_OPENMP_DEVICE_CHECK NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable Pthread support?
@@ -84,9 +84,9 @@ sundials_option(LAPACK_LIBRARIES STRING "Lapack and Blas libraries"
                 "${LAPACK_LIBRARIES}")
 
 sundials_option(
-  SUNDIALS_LAPACK_WORKS BOOL
-  "Set to ON to force CMake to accept a given LAPACK configuration" OFF
-  ADVANCED DEPRECATED_NAMES LAPACK_WORKS)
+  SUNDIALS_ENABLE_LAPACK_CHECKS BOOL
+  "Enable LAPACK compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES LAPACK_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable Ginkgo support?
@@ -105,9 +105,9 @@ sundials_option(
   DEPENDS_ON SUNDIALS_ENABLE_GINKGO)
 
 sundials_option(
-  SUNDIALS_GINKGO_WORKS BOOL
-  "Set to ON to force CMake to accept a given Ginkgo configuration" OFF
-  ADVANCED DEPRECATED_NAMES GINKGO_WORKS)
+  SUNDIALS_ENABLE_GINKGO_CHECKS BOOL
+  "Enable Ginkgo compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES GINKGO_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable MAGMA support?
@@ -126,8 +126,8 @@ sundials_option(
   DEPENDS_ON SUNDIALS_ENABLE_MAGMA)
 
 sundials_option(
-  SUNDIALS_MAGMA_WORKS BOOL
-  "Set to ON to force CMake to accept a given MAGMA configuration" OFF ADVANCED DEPRECATED_NAMES MAGMA_WORKS)
+  SUNDIALS_ENABLE_MAGMA_CHECKS BOOL
+  "Enable MAGMA compatibility checks" ON ADVANCED DEPRECATED_NAMES MAGMA_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable SuperLU_DIST support?
@@ -153,9 +153,9 @@ sundials_option(
   "Enable SUNDIALS support for SuperLU_DIST OpenMP on-node parallelism" OFF)
 
 sundials_option(
-  SUNDIALS_SUPERLUDIST_WORKS BOOL
-  "Set to ON to force CMake to accept a given SuperLU_DIST configuration" OFF
-  ADVANCED DEPRECATED_NAMES SUPERLUDIST_WORKS)
+  SUNDIALS_ENABLE_SUPERLUDIST_CHECKS BOOL
+  "Enable SuperLU_DIST compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES SUPERLUDIST_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable SuperLU_MT support?
@@ -178,9 +178,9 @@ sundials_option(SUPERLUMT_THREAD_TYPE STRING
                 "SuperLU_MT threading type: OPENMP or PTHREAD" "PTHREAD")
 
 sundials_option(
-  SUNDIALS_SUPERLUMT_WORKS BOOL
-  "Set to ON to force CMake to accept a given SUPERLUMT configuration" OFF
-  ADVANCED DEPRECATED_NAMES SUPERLUMT_WORKS)
+  SUNDIALS_ENABLE_SUPERLUMT_CHECKS BOOL
+  "Enable SuperLU_MT compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES SUPERLUMT_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable KLU support?
@@ -195,8 +195,8 @@ sundials_option(KLU_LIBRARY_DIR PATH "KLU library directory"
                 "${KLU_LIBRARY_DIR}")
 
 sundials_option(
-  SUNDIALS_KLU_WORKS BOOL "Set to ON to force CMake to accept a given KLU configuration"
-  OFF ADVANCED DEPRECATED_NAMES KLU_WORKS)
+  SUNDIALS_ENABLE_KLU_CHECKS BOOL "Enable KLU compatibility checks"
+  ON ADVANCED DEPRECATED_NAMES KLU_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable hypre support?
@@ -213,8 +213,8 @@ sundials_option(HYPRE_LIBRARY_DIR PATH "HYPRE library directory"
                 "${HYPRE_LIBRARY_DIR}")
 
 sundials_option(
-  SUNDIALS_HYPRE_WORKS BOOL
-  "Set to ON to force CMake to accept a given hypre configuration" OFF ADVANCED DEPRECATED_NAMES HYPRE_WORKS)
+  SUNDIALS_ENABLE_HYPRE_CHECKS BOOL
+  "Enable hypre compatibility checks" ON ADVANCED DEPRECATED_NAMES HYPRE_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable PETSc support?
@@ -238,8 +238,8 @@ sundials_option(
   ADVANCED)
 
 sundials_option(
-  SUNDIALS_PETSC_WORKS BOOL
-  "Set to ON to force CMake to accept a given PETSc configuration" OFF ADVANCED DEPRECATED_NAMES PETSC_WORKS)
+  SUNDIALS_ENABLE_PETSC_CHECKS BOOL
+  "Enable PETSc compatibility checks" ON ADVANCED DEPRECATED_NAMES PETSC_WORKS NEGATE_DEPRECATED)
 
 # -------------------------------------------------------------
 # Enable RAJA support?
@@ -284,9 +284,9 @@ sundials_option(
   "${XBRAID_INCLUDES}" ADVANCED)
 
 sundials_option(
-  SUNDIALS_XBRAID_WORKS BOOL
-  "Set to ON to force CMake to accept a given XBraid configuration" OFF
-  ADVANCED DEPRECATED_NAMES XBRAID_WORKS)
+  SUNDIALS_ENABLE_XBRAID_CHECKS BOOL
+  "Enable XBraid compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES XBRAID_WORKS NEGATE_DEPRECATED)
 
 # -------------------------------------------------------------
 # Enable oneMKL support?
@@ -298,9 +298,9 @@ sundials_option(ONEMKL_DIR PATH "Path to root of oneMKL installation"
                 "${ONEMKL_DIR}")
 
 sundials_option(
-  SUNDIALS_ONEMKL_WORKS BOOL
-  "Set to ON to force CMake to accept a given oneMKL configuration" OFF
-  ADVANCED DEPRECATED_NAMES ONEMKL_WORKS)
+  SUNDIALS_ENABLE_ONEMKL_CHECKS BOOL
+  "Enable oneMKL compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES ONEMKL_WORKS NEGATE_DEPRECATED)
 
 sundials_option(
   SUNDIALS_ONEMKL_USE_GETRF_LOOP BOOL
@@ -325,9 +325,9 @@ sundials_option(CALIPER_DIR PATH "Path to the root of an CALIPER installation"
                 "${CALIPER_DIR}")
 
 sundials_option(
-  SUNDIALS_CALIPER_WORKS BOOL
-  "Set to ON to force CMake to accept a given CALIPER configuration" OFF
-  ADVANCED DEPRECATED_NAMES CALIPER_WORKS)
+  SUNDIALS_ENABLE_CALIPER_CHECKS BOOL
+  "Enable Caliper compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES CALIPER_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable Adiak support?
@@ -339,6 +339,11 @@ sundials_option(SUNDIALS_ENABLE_ADIAK BOOL "Enable Adiak support" OFF
 sundials_option(adiak_DIR PATH "Path to the root of an Adiak installation"
                 "${ADIAK_DIR}")
 
+sundials_option(
+  SUNDIALS_ENABLE_ADIAK_CHECKS BOOL
+  "Enable Adiak compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES adiak_WORKS NEGATE_DEPRECATED)
+
 # ---------------------------------------------------------------
 # Enable Kokkos support?
 # ---------------------------------------------------------------
@@ -349,9 +354,9 @@ sundials_option(Kokkos_DIR PATH "Path to the root of a Kokkos installation"
                 "${Kokkos_DIR}")
 
 sundials_option(
-  SUNDIALS_KOKKOS_WORKS BOOL
-  "Set to ON to force CMake to accept a given Kokkos configuration" OFF
-  ADVANCED)
+  SUNDIALS_ENABLE_KOKKOS_CHECKS BOOL
+  "Enable Kokkos compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES KOKKOS_WORKS NEGATE_DEPRECATED)
 
 # ---------------------------------------------------------------
 # Enable Kokkos Kernels support?
@@ -364,6 +369,6 @@ sundials_option(
   "${KokkosKernels_DIR}")
 
 sundials_option(
-  SUNDIALS_KOKKOS_KERNELS_WORKS BOOL
-  "Set to ON to force CMake to accept a given Kokkos configuration" OFF
-  ADVANCED)
+  SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS BOOL
+  "Enable Kokkos Kernels compatibility checks" ON
+  ADVANCED DEPRECATED_NAMES KOKKOS_KERNELS_WORKS NEGATE_DEPRECATED)

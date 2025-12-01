@@ -914,6 +914,16 @@ Laboratory and can be obtained from the `Adiak GitHub repository
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_ADIAK_CHECKS
+
+   Perform Adiak compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``adiak_WORKS``
+
 .. _Installation.Options.Caliper:
 
 Building with Caliper
@@ -963,6 +973,16 @@ Caliper support:
    Path to the root of a Caliper installation
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_CALIPER_CHECKS
+
+   Perform Caliper compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``CALIPER_WORKS``
 
 .. _Installation.Options.CUDA:
 
@@ -1111,6 +1131,16 @@ configure SUNDIALS with Ginkgo support using the reference, OpenMP, and CUDA
       The ``DPCPP`` option was changed to ``SYCL`` to align with Ginkgo's naming
       convention.
 
+.. cmakeoption:: SUNDIALS_ENABLE_GINKGO_CHECKS
+
+   Perform Ginkgo compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``GINKGO_WORKS``
+
 .. _Installation.Options.HIP:
 
 Building with HIP
@@ -1215,6 +1245,16 @@ SUNDIALS with *hypre* support:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_HYPRE_CHECKS
+
+   Perform *hypre* compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``HYPRE_WORKS``
+
 .. _Installation.Options.KLU:
 
 Building with KLU
@@ -1278,6 +1318,16 @@ following command will configure SUNDIALS with KLU support:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_KLU_CHECKS
+
+   Perform KLU compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KLU_WORKS``
+
 .. _Installation.Options.Kokkos:
 
 Building with Kokkos
@@ -1325,6 +1375,16 @@ following command will configure SUNDIALS with Kokkos support:
    Path to the Kokkos installation.
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_CHECKS
+
+   Perform Kokkos compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KOKKOS_WORKS``
 
 .. _Installation.Options.KokkosKernels:
 
@@ -1379,6 +1439,16 @@ SUNDIALS with Kokkos and KokkosKernels support:
    Path to the KokkosKernels installation.
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_KOKKOS_KERNELS_CHECKS
+
+   Perform KokkosKernels compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``KOKKOS_KERNELS_WORKS``
 
 .. _Installation.Options.LAPACK:
 
@@ -1509,6 +1579,16 @@ build. For example, this is sometimes needed when using OpenBLAS:
       compiler is not available or to override the inferred or default (``one``)
       scheme if one can not be determined. If used,
       :cmakeop:`SUNDIALS_LAPACK_CASE` must also be set.
+
+.. cmakeoption:: SUNDIALS_ENABLE_LAPACK_CHECKS
+
+   Perform LAPACK compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``LAPACK_WORKS``
 
 .. _Installation.Options.MAGMA:
 
@@ -1745,6 +1825,16 @@ the following command will configure SUNDIALS with oneMKL support:
 
    Default: ``OFF``
 
+.. cmakeoption:: SUNDIALS_ENABLE_ONEMKL_CHECKS
+
+   Perform oneMKL compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``ONEMKL_WORKS``
+
 .. _Installation.Options.OpenMP:
 
 Building with OpenMP
@@ -1811,6 +1901,16 @@ will configure SUNDIALS with OpenMP device offloading support:
    .. versionadded:: x.y.z
 
       Replaces the deprecated option ``ENABLE_OPENMP_DEVICE``
+
+.. cmakeoption:: SUNDIALS_ENABLE_OPENMP_DEVICE_CHECKS
+
+   Perform OpenMP device offloading compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``OPENMP_DEVICE_WORKS``
 
 .. _Installation.Options.PETSc:
 
@@ -1879,6 +1979,16 @@ configure SUNDIALS with PETSc support:
    :cmakeop:`PETSC_DIR`.
 
    Default: None
+
+.. cmakeoption:: SUNDIALS_ENABLE_PETSC_CHECKS
+
+   Perform PETSc compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``PETSC_WORKS``
 
 .. _Installation.Options.PThreads:
 
@@ -2079,6 +2189,16 @@ SuperLU_DIST support:
 
       This option is deprecated. Use :cmakeop:`SUPERLUDIST_DIR`.
 
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUDIST_CHECKS
+
+   Perform SuperLU_DIST compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUPERLUDIST_WORKS``
+
 .. _Installation.Options.SuperLU_MT:
 
 Building with SuperLU_MT
@@ -2159,6 +2279,16 @@ configure SUNDIALS with SuperLU_MT support using PThreads:
    Must be set to Pthread or OpenMP, depending on how SuperLU_MT was compiled.
 
    Default: Pthread
+
+.. cmakeoption:: SUNDIALS_ENABLE_SUPERLUMT_CHECKS
+
+   Perform SuperLU_MT compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``SUPERLUMT_WORKS``
 
 .. _Installation.Options.SYCL:
 
@@ -2330,6 +2460,15 @@ SUNDIALS with XBraid support:
 
    Default: None
 
+.. cmakeoption:: SUNDIALS_ENABLE_XBRAID_CHECKS
+
+   Perform XBraid compatibility checks
+
+   Default: ``ON``
+
+   .. versionadded:: x.y.z
+
+      Replaces the deprecated option ``XBRAID_WORKS``
 
 .. _Installation.Options.xSDK:
 

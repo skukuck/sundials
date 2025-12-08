@@ -89,7 +89,7 @@ if(ENABLE_ALL_WARNINGS)
       "-Wno-unknown-warning-option -Wall -Wpedantic -Wextra -Wshadow \
 -Wwrite-strings -Wcast-align -Wdisabled-optimization -Wvla -Walloca \
 -Wduplicated-cond -Wduplicated-branches -Wunused-macros \
--Wunused-local-typedefs")
+-Wunused-local-typedefs -Wundef")
   # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
   # CI tests
 

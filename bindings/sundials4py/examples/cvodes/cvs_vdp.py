@@ -14,6 +14,10 @@ class VanDerPolODE:
         self.mu = mu
         self.y10 = y10
         self.y20 = y20
+        self.eig_log_file = "jac_eigenvalues.txt"
+        # Overwrite file at start
+        with open(self.eig_log_file, "w") as f:
+            f.write("# t min_eig max_eig\n")
 
     def set_init_cond(self, yvec):
         y = N_VGetArrayPointer(yvec)
@@ -37,15 +41,23 @@ class VanDerPolODE:
         Jdata[0, 1] = 1.0
         Jdata[1, 0] = -2.0 * mu * y[0] * y[1] - 1.0
         Jdata[1, 1] = mu * (1.0 - y[0]**2)
+
+        # Compute eigenvalues
+        eigvals = np.linalg.eigvals(np.array(Jdata))
+        min_eig = np.min(np.real(eigvals))
+        max_eig = np.max(np.real(eigvals))
+        # Log to file
+        with open(self.eig_log_file, "a") as f:
+            f.write(f"{t:.16e} {min_eig:.16e} {max_eig:.16e}\n")
         return 0
 
 def main():
-    mu = 2.0
+    mu = 10.0
     y10 = 2.0
     y20 = 0.0
     T0 = 0.0
-    Tf = 10.0
-    dTout = 0.1
+    Tf = 300.0
+    dTout = 0.01
     NEQ = 2
     Nt = int(np.ceil(Tf / dTout))
     reltol = 1e-6
@@ -67,8 +79,10 @@ def main():
 
     A = SUNDenseMatrix(NEQ, NEQ, sunctx)
     LS = SUNLinSol_Dense(y, A, sunctx)
+
     status = CVodeSetLinearSolver(cvode.get(), LS, A)
     assert status == CV_SUCCESS
+
     status = CVodeSetJacFn(cvode.get(), lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode.jac(t, yvec, fyvec, J, tmp1, tmp2, tmp3))
     assert status == CV_SUCCESS
 

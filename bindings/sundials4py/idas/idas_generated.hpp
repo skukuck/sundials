@@ -56,6 +56,7 @@ m.attr("IDA_NO_QUADSENS")        = -50;
 m.attr("IDA_QSRHS_FAIL")         = -51;
 m.attr("IDA_FIRST_QSRHS_ERR")    = -52;
 m.attr("IDA_REP_QSRHS_ERR")      = -53;
+m.attr("IDA_TOO_CLOSE")          = -60;
 m.attr("IDA_UNRECOGNIZED_ERROR") = -99;
 m.attr("IDA_NO_ADJ")             = -101;
 m.attr("IDA_NO_FWD")             = -102;

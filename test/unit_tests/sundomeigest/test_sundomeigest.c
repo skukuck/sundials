@@ -202,6 +202,37 @@ int Test_SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q,
 }
 
 /* ----------------------------------------------------------------------
+ * SUNDomEigEstimator_SetComplex Test
+ * --------------------------------------------------------------------*/
+int Test_SUNDomEigEstimator_SetComplex(SUNDomEigEstimator DEE, int myid)
+{
+  int failure;
+  double start_time, stop_time;
+
+  /* try calling SUNDomEigEstimator_SetComplex routine: should pass/fail based on expected input */
+  start_time = get_time();
+  failure    = SUNDomEigEstimator_SetComplex(DEE);
+  stop_time  = get_time();
+
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNDomEigEstimator_SetComplex check, Proc %d \n",
+           myid);
+    PRINT_TIME("    SUNDomEigEstimator_SetComplex Time: %22.15e \n \n",
+               stop_time - start_time);
+    return (1);
+  }
+  else if (myid == 0)
+  {
+    printf("    PASSED test -- SUNDomEigEstimator_SetComplex \n");
+    PRINT_TIME("    SUNDomEigEstimator_SetComplex Time: %22.15e \n \n",
+               stop_time - start_time);
+  }
+
+  return (0);
+}
+
+/* ----------------------------------------------------------------------
  * SUNDomEigEstimator_Initialize Test
  * --------------------------------------------------------------------*/
 int Test_SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE, int myid)

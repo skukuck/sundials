@@ -257,6 +257,16 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q
   return (ier);
 }
 
+SUNErrCode SUNDomEigEstimator_SetComplex(SUNDomEigEstimator DEE)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->setcomplex) { ier = DEE->ops->setcomplex(DEE); }
+  else { ier = SUN_SUCCESS; }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
 SUNErrCode SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE)
 {
   SUNErrCode ier;

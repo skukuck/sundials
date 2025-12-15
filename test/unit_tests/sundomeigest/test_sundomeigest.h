@@ -41,6 +41,7 @@ int Test_SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype tol,
                                       int myid);
 int Test_SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q,
                                             int myid);
+int Test_SUNDomEigEstimator_SetComplex(SUNDomEigEstimator DEE, int myid);
 int Test_SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE, int myid);
 int Test_SUNDomEigEstimator_Estimate(SUNDomEigEstimator DEE, sunrealtype* lambdaR,
                                      sunrealtype* lambdaI, int myid);

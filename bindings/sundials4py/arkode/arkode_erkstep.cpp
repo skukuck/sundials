@@ -39,7 +39,7 @@ void bind_arkode_erkstep(nb::module_& m)
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      if (!rhs) { throw sundials4py::illegal_value("rhs was null"); }
+      if (!rhs) { throw sundials4py::illegal_value("rhs was None"); }
 
       void* ark_mem = ERKStepCreate(erkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)

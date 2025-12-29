@@ -38,7 +38,7 @@ void bind_arkode_lsrkstep(nb::module_& m)
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      if (!rhs) { throw sundials4py::illegal_value("rhs was null"); }
+      if (!rhs) { throw sundials4py::illegal_value("rhs was None"); }
 
       void* ark_mem = LSRKStepCreateSTS(lsrkstep_f_wrapper, t0, y0, sunctx);
       if (ark_mem == nullptr)
@@ -97,13 +97,15 @@ void bind_arkode_lsrkstep(nb::module_& m)
     nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
     nb::keep_alive<0, 4>());
 
-  m.def("LSRKStepSetDomEigFn",
-        [](void* ark_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
-        {
-          auto fn_table             = get_arkode_fn_table(ark_mem);
-          fn_table->lsrkstep_domeig = nb::cast(fn);
-          return LSRKStepSetDomEigFn(ark_mem, &lsrkstep_domeig_wrapper);
-        });
+  m.def(
+    "LSRKStepSetDomEigFn",
+    [](void* ark_mem, std::function<std::remove_pointer_t<ARKDomEigFn>> fn)
+    {
+      auto fn_table             = get_arkode_fn_table(ark_mem);
+      fn_table->lsrkstep_domeig = nb::cast(fn);
+      return LSRKStepSetDomEigFn(ark_mem, &lsrkstep_domeig_wrapper);
+    },
+    nb::arg("arkode_mem"), nb::arg("eig_fn"));
 }
 
 } // namespace sundials4py

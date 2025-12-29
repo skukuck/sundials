@@ -38,8 +38,11 @@ void bind_arkode_forcingstep(nb::module_& m)
     [](SUNStepper stepper1, SUNStepper stepper2, sunrealtype t0, N_Vector y0,
        SUNContext sunctx)
     {
-      return std::make_shared<ARKodeView>(
-        ForcingStepCreate(stepper1, stepper2, t0, y0, sunctx));
+      auto stepper = ForcingStepCreate(stepper1, stepper2, t0, y0, sunctx);
+      if (!stepper) {
+        throw sundials4py::error_returned("ForcingStepCreate returned NULL");
+      }
+      return std::make_shared<ARKodeView>(stepper);
     },
     nb::arg("stepper1"), nb::arg("stepper2"), nb::arg("t0"), nb::arg("y0"),
     nb::arg("sunctx"), nb::keep_alive<0, 5>());

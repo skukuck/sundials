@@ -55,6 +55,14 @@ def main():
         help="Time range to plot",
     )
 
+    # draw a vertical line representing the shock position to determine the step size history on either side of the shock
+    parser.add_argument(
+        "--tstar",
+        type=float,
+        default=None,
+        help="Vertical line to determine time history before and after shock."
+    )
+
     parser.add_argument("--step-number", action="store_true", help="Plot value vs step number")
 
     parser.add_argument("--scatter", action="store_true", help="Create scatter plot")
@@ -162,9 +170,15 @@ def main():
     elif args.val == "dsm":
         ax.set_ylabel("LTE estimate")
 
-    ax.legend(loc="best")
+    # ax.legend(loc="best")
 
     ax.grid(alpha=0.3, linestyle="--")
+
+    # draw a vertical line representing the shock position to determine the step size history on either side of the shock
+    if args.tstar is not None:
+       ax.axvline(x=args.tstar, color='blue', linestyle='--', linewidth = 2.0, label='shock crosses interface')
+
+    ax.legend(loc="best")
 
     if args.save:
         plt.savefig(args.save, bbox_inches="tight")

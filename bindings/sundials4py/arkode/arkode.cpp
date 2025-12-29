@@ -68,8 +68,10 @@ void bind_arkode_splittingstep(nb::module_& m);
       auto fn_table     = get_arkode_fn_table(ark_mem);                    \
       fn_table->MEMBER1 = nb::cast(fn1);                                   \
       fn_table->MEMBER2 = nb::cast(fn2);                                   \
-      if (fn1) { return NAME(ark_mem, &WRAPPER1, &WRAPPER2); }             \
-      else { return NAME(ark_mem, nullptr, &WRAPPER2); }                   \
+      if (fn1 && fn2) { return NAME(ark_mem, &WRAPPER1, &WRAPPER2); }      \
+      else if (fn1) { return NAME(ark_mem, &WRAPPER1, nullptr); }          \
+      else if (fn2) { return NAME(ark_mem, nullptr, &WRAPPER2); }          \
+      else { return NAME(ark_mem, nullptr, nullptr); }                     \
     },                                                                     \
     __VA_ARGS__)
 
@@ -89,14 +91,16 @@ void bind_arkode(nb::module_& m)
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def("ARKodeRootInit",
-        [](void* ark_mem, int nrtfn,
-           std::function<std::remove_pointer_t<ARKRootStdFn>> fn)
-        {
-          auto fn_table    = get_arkode_fn_table(ark_mem);
-          fn_table->rootfn = nb::cast(fn);
-          return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
-        });
+  m.def(
+    "ARKodeRootInit",
+    [](void* ark_mem, int nrtfn,
+       std::function<std::remove_pointer_t<ARKRootStdFn>> fn)
+    {
+      auto fn_table    = get_arkode_fn_table(ark_mem);
+      fn_table->rootfn = nb::cast(fn);
+      return ARKodeRootInit(ark_mem, nrtfn, &arkode_rootfn_wrapper);
+    },
+    nb::arg("arkode_mem"), nb::arg("nrtfn"), nb::arg("root_fn").none());
 
   BIND_ARKODE_CALLBACK(ARKodeWFtolerances, ARKEwtFn, ewtn, arkode_ewtfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("efun").none());
@@ -168,20 +172,6 @@ void bind_arkode(nb::module_& m)
                        arkode_lsjacrhsfn_wrapper, nb::arg("arkode_mem"),
                        nb::arg("jtimesRhsFn").none());
 
-  m.def(
-    "ARKodeSetMassTimes",
-    [](void* ark_mem,
-       std::function<std::remove_pointer_t<ARKLsMassTimesSetupFn>> msetup,
-       std::function<std::remove_pointer_t<ARKLsMassTimesVecFn>> mtimes)
-    {
-      auto fn_table                = get_arkode_fn_table(ark_mem);
-      fn_table->lsmasstimessetupfn = nb::cast(msetup);
-      fn_table->lsmasstimesvecfn   = nb::cast(mtimes);
-      return ARKodeSetMassTimes(ark_mem, &arkode_lsmasstimessetupfn_wrapper,
-                                &arkode_lsmasstimesvecfn_wrapper, nullptr);
-    },
-    nb::arg("arkode_mem"), nb::arg("msetup").none(), nb::arg("mtimes").none());
-
   BIND_ARKODE_CALLBACK(ARKodeSetLinSysFn, ARKLsLinSysFn, lslinsysfn,
                        arkode_lslinsysfn_wrapper, nb::arg("arkode_mem"),
                        nb::arg("linsys").none());
@@ -194,11 +184,28 @@ void bind_arkode(nb::module_& m)
        std::function<std::remove_pointer_t<ARKLsMassTimesSetupFn>> msetup,
        std::function<std::remove_pointer_t<ARKLsMassTimesVecFn>> mtimes)
     {
-      auto fn_table                = get_arkode_fn_table(ark_mem);
-      fn_table->lsmasstimessetupfn = nb::cast(msetup);
-      fn_table->lsmasstimesvecfn   = nb::cast(mtimes);
-      return ARKodeSetMassTimes(ark_mem, &arkode_lsmasstimessetupfn_wrapper,
-                                &arkode_lsmasstimesvecfn_wrapper, nullptr);
+      auto fn_table = get_arkode_fn_table(ark_mem);
+
+      if (msetup && mtimes)
+      {
+        fn_table->lsmasstimessetupfn = nb::cast(msetup);
+        fn_table->lsmasstimesvecfn   = nb::cast(mtimes);
+        return ARKodeSetMassTimes(ark_mem, arkode_lsmasstimessetupfn_wrapper,
+                                  arkode_lsmasstimesvecfn_wrapper, nullptr);
+      }
+      else if (msetup)
+      {
+        fn_table->lsmasstimessetupfn = nb::cast(msetup);
+        return ARKodeSetMassTimes(ark_mem, arkode_lsmasstimessetupfn_wrapper,
+                                  nullptr, nullptr);
+      }
+      else if (mtimes)
+      {
+        fn_table->lsmasstimesvecfn = nb::cast(mtimes);
+        return ARKodeSetMassTimes(ark_mem, nullptr,
+                                  arkode_lsmasstimesvecfn_wrapper, nullptr);
+      }
+      else { return ARKodeSetMassTimes(ark_mem, nullptr, nullptr, nullptr); }
     },
     nb::arg("ark_mem"), nb::arg("msetup").none(), nb::arg("mtimes").none());
 

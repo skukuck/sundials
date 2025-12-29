@@ -13,6 +13,10 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
+if(NOT (BUILD_ARKODE AND BUILD_CVODES AND BUILD_IDAS AND BUILD_KINSOL))
+  message(FATAL_ERROR "sundials4py requires ARKODE, CVODES, IDAS, and KINSOL to be enabled" )
+endif()
+
 # Warn if the user invokes CMake directly
 if(NOT SKBUILD)
   message(

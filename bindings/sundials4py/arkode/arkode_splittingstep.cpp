@@ -21,7 +21,7 @@
 #include <arkode/arkode_splittingstep.hpp>
 #include <sundials/sundials_core.hpp>
 
-#include "arkode_mristep_impl.h"
+#include "sundials_stepper_impl.h"
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
@@ -37,19 +37,26 @@ void bind_arkode_splittingstep(nb::module_& m)
     [](std::vector<SUNStepper> steppers, int partitions, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
-      return std::make_shared<ARKodeView>(
-        SplittingStepCreate(steppers.data(), partitions, t0, y0, sunctx));
+      auto stepper = SplittingStepCreate(steppers.data(), partitions, t0, y0,
+                                         sunctx);
+      if (!stepper)
+      {
+        throw sundials4py::error_returned("SplittingStepCreate returned NULL");
+      }
+      return std::make_shared<ARKodeView>(stepper);
     },
     nb::arg("steppers"), nb::arg("partitions"), nb::arg("t0"), nb::arg("y0"),
     nb::arg("sunctx"), nb::keep_alive<0, 5>());
 
-  m.def("SplittingStepReInit",
-        [](void* arkode_mem, std::vector<SUNStepper> steppers, int partitions,
-           sunrealtype t0, N_Vector y0) -> int
-        {
-          return SplittingStepReInit(arkode_mem, steppers.data(), partitions,
-                                     t0, y0);
-        });
+  m.def(
+    "SplittingStepReInit",
+    [](void* arkode_mem, std::vector<SUNStepper> steppers, int partitions,
+       sunrealtype t0, N_Vector y0) -> int
+    {
+      return SplittingStepReInit(arkode_mem, steppers.data(), partitions, t0, y0);
+    },
+    nb::arg("arkode_mem"), nb::arg("steppers"), nb::arg("partitions"),
+    nb::arg("t0"), nb::arg("y0"));
 }
 
 } // namespace sundials4py

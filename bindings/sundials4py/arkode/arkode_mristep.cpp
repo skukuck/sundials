@@ -28,8 +28,6 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 namespace sundials4py {
 
 void bind_arkode_mristep(nb::module_& m)
@@ -54,7 +52,7 @@ void bind_arkode_mristep(nb::module_& m)
                                  our_make_shared<
                                    std::remove_pointer_t<MRIStepInnerStepper>,
                                    MRIStepInnerStepperDeleter>(stepper));
-        });
+        }, nb::arg("sunctx"));
 
   m.def("MRIStepInnerStepper_CreateFromSUNStepper",
         [](SUNStepper stepper)
@@ -68,7 +66,7 @@ void bind_arkode_mristep(nb::module_& m)
                                  our_make_shared<
                                    std::remove_pointer_t<MRIStepInnerStepper>,
                                    MRIStepInnerStepperDeleter>(inner_stepper));
-        });
+        }, nb::arg("stepper"));
 
   // m.def("MRIStepInnerStepper_GetForcingData",
   //       [](MRIStepInnerStepper stepper) -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int> {
@@ -102,7 +100,7 @@ void bind_arkode_mristep(nb::module_& m)
                                  our_make_shared<
                                    std::remove_pointer_t<MRIStepInnerStepper>,
                                    MRIStepInnerStepperDeleter>(stepper));
-        });
+        }, nb::arg("inner_arkode_mem"));
 
   m.def(
     "MRIStepCreate",
@@ -117,7 +115,7 @@ void bind_arkode_mristep(nb::module_& m)
                                     sunctx);
       if (ark_mem == nullptr)
       {
-        throw sundials4py::error_returned("Failed to create ARKODE memory");
+        throw sundials4py::error_returned("MRIStepCreate returned NULL");
       }
 
       // Create the user-supplied function table to store the Python user functions

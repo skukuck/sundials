@@ -82,7 +82,7 @@ inline int cvode_f_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::f, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::f, args...);
 }
 
 using CVRootStdFn = int(sunrealtype t, N_Vector y, sundials4py::Array1d gout,
@@ -107,7 +107,7 @@ inline int cvode_ewtfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVEwtFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::ewtn, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::ewtn, args...);
 }
 
 template<typename... Args>
@@ -115,7 +115,7 @@ inline int cvode_nlsrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::fNLS, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::fNLS, args...);
 }
 
 template<typename... Args>
@@ -123,7 +123,7 @@ inline int cvode_lsjacfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacFn>, cvode_user_supplied_fn_table, CVodeMem,
-    4>(&cvode_user_supplied_fn_table::lsjacfn, std::forward<Args>(args)...);
+    4>(&cvode_user_supplied_fn_table::lsjacfn, args...);
 }
 
 using CVLsPrecSetupStdFn = std::tuple<int, sunbooleantype>(
@@ -150,8 +150,7 @@ inline int cvode_lsprecsolvefn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsPrecSolveFn>, cvode_user_supplied_fn_table,
-    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsprecsolvefn,
-                 std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsprecsolvefn, args...);
 }
 
 template<typename... Args>
@@ -159,8 +158,7 @@ inline int cvode_lsjactimessetupfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesSetupFn>, cvode_user_supplied_fn_table,
-    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsjactimessetupfn,
-                 std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsjactimessetupfn, args...);
 }
 
 template<typename... Args>
@@ -168,8 +166,7 @@ inline int cvode_lsjactimesvecfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesVecFn>, cvode_user_supplied_fn_table,
-    CVodeMem, 2>(&cvode_user_supplied_fn_table::lsjactimesvecfn,
-                 std::forward<Args>(args)...);
+    CVodeMem, 2>(&cvode_user_supplied_fn_table::lsjactimesvecfn, args...);
 }
 
 using CVLsLinSysStdFn = std::tuple<int, sunbooleantype>(
@@ -198,7 +195,7 @@ inline int cvode_lsjacrhsfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::lsjacrhsfn, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::lsjacrhsfn, args...);
 }
 
 template<typename... Args>
@@ -206,7 +203,7 @@ inline int cvode_projfn_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVProjFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::projfn, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::projfn, args...);
 }
 
 template<typename... Args>
@@ -214,7 +211,7 @@ inline int cvode_fQ_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVQuadRhsFn>, cvode_user_supplied_fn_table, CVodeMem,
-    1>(&cvode_user_supplied_fn_table::fQ, std::forward<Args>(args)...);
+    1>(&cvode_user_supplied_fn_table::fQ, args...);
 }
 
 using CVQuadSensRhsStdFn = int(int Ns, sunrealtype t, N_Vector y,
@@ -257,7 +254,7 @@ inline int cvode_fS1_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVSensRhs1Fn>, cvode_user_supplied_fn_table, CVodeMem,
-    3>(&cvode_user_supplied_fn_table::fS1, std::forward<Args>(args)...);
+    3>(&cvode_user_supplied_fn_table::fS1, args...);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -316,15 +313,15 @@ inline int cvode_fB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVRhsFnB>, cvodea_user_supplied_fn_table, CVodeMem,
-    1>(&cvodea_user_supplied_fn_table::fB, std::forward<Args>(args)...);
+    1>(&cvodea_user_supplied_fn_table::fB, args...);
 }
 
 template<typename... Args>
 inline int cvode_fQB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVQuadRhsFnB>, cvodea_user_supplied_fn_table, CVodeMem,
-    1>(&cvodea_user_supplied_fn_table::fQB, std::forward<Args>(args)...);
+    std::remove_pointer_t<CVQuadRhsFnB>, cvodea_user_supplied_fn_table,
+    CVodeMem, 1>(&cvodea_user_supplied_fn_table::fQB, args...);
 }
 
 template<typename... Args>
@@ -332,7 +329,7 @@ inline int cvode_lsjacfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacFnB>, cvodea_user_supplied_fn_table, CVodeMem,
-    4>(&cvodea_user_supplied_fn_table::lsjacfnB, std::forward<Args>(args)...);
+    4>(&cvodea_user_supplied_fn_table::lsjacfnB, args...);
 }
 
 using CVLsPrecSetupStdFnB = std::tuple<int, sunbooleantype>(
@@ -359,8 +356,7 @@ inline int cvode_lsprecsolvefnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsPrecSolveFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsprecsolvefnB,
-                 std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsprecsolvefnB, args...);
 }
 
 template<typename... Args>
@@ -368,8 +364,7 @@ inline int cvode_lsjactimessetupfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesSetupFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsjactimessetupfnB,
-                 std::forward<Args>(args)...);
+    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsjactimessetupfnB, args...);
 }
 
 template<typename... Args>
@@ -377,8 +372,7 @@ inline int cvode_lsjactimesvecfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<CVLsJacTimesVecFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 2>(&cvodea_user_supplied_fn_table::lsjactimesvecfnB,
-                 std::forward<Args>(args)...);
+    CVodeMem, 2>(&cvodea_user_supplied_fn_table::lsjactimesvecfnB, args...);
 }
 
 using CVLsLinSysStdFnB = std::tuple<int, sunbooleantype>(

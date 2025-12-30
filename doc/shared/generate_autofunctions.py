@@ -29,6 +29,15 @@ def generate_autofunctions_for_submodule(module_name: str):
         os.path.dirname(__file__), f"./Python/sundials4py-{module_name}-functions.rst"
     )
     with open(autogen_file, "w") as f:
+        header = f"{module_name} Submodule"
+        f.write(f"{header}\n")
+        f.write(f"{('').join('=' for i in range(len(header)))}\n\n")
+        f.write("Classes\n")
+        f.write("^^^^^^^\n\n")
+        f.write(f".. automodule:: sundials4py.{module_name}\n")
+        f.write("   :members:\n")
+        f.write("   :undoc-members:\n")
+        f.write("   :private-members:\n\n")
         f.write("Functions\n")
         f.write("^^^^^^^^^\n\n")
         for func_name in dir(module):

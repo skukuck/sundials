@@ -157,20 +157,21 @@ m.def("IDASetNonlinearSolver", IDASetNonlinearSolver, nb::arg("ida_mem"),
 
 m.def(
   "IDASetRootDirection",
-  [](void* ida_mem) -> std::tuple<int, int>
+  [](void* ida_mem, std::vector<int> rootdir_1d) -> int
   {
-    auto IDASetRootDirection_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem) -> std::tuple<int, int>
+    auto IDASetRootDirection_adapt_arr_ptr_to_std_vector =
+      [](void* ida_mem, std::vector<int> rootdir_1d) -> int
     {
-      int rootdir_adapt_modifiable;
+      int* rootdir_1d_ptr =
+        reinterpret_cast<int*>(rootdir_1d.empty() ? nullptr : rootdir_1d.data());
 
-      int r = IDASetRootDirection(ida_mem, &rootdir_adapt_modifiable);
-      return std::make_tuple(r, rootdir_adapt_modifiable);
+      auto lambda_result = IDASetRootDirection(ida_mem, rootdir_1d_ptr);
+      return lambda_result;
     };
 
-    return IDASetRootDirection_adapt_modifiable_immutable_to_return(ida_mem);
+    return IDASetRootDirection_adapt_arr_ptr_to_std_vector(ida_mem, rootdir_1d);
   },
-  nb::arg("ida_mem"));
+  nb::arg("ida_mem"), nb::arg("rootdir_1d"));
 
 m.def("IDASetNoInactiveRootWarn", IDASetNoInactiveRootWarn, nb::arg("ida_mem"));
 
@@ -246,7 +247,7 @@ m.def(
   nb::arg("ida_mem"), nb::arg("ycor_1d"), nb::arg("ypS_1d"));
 
 m.def("IDAGetDky", IDAGetDky, nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"),
-      nb::arg("dky"), "Dense output function");
+      nb::arg("dky"));
 
 m.def(
   "IDAGetNumSteps",
@@ -531,20 +532,21 @@ m.def(
 
 m.def(
   "IDAGetRootInfo",
-  [](void* ida_mem) -> std::tuple<int, int>
+  [](void* ida_mem, std::vector<int> rootsfound_1d) -> int
   {
-    auto IDAGetRootInfo_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem) -> std::tuple<int, int>
+    auto IDAGetRootInfo_adapt_arr_ptr_to_std_vector =
+      [](void* ida_mem, std::vector<int> rootsfound_1d) -> int
     {
-      int rootsfound_adapt_modifiable;
+      int* rootsfound_1d_ptr = reinterpret_cast<int*>(
+        rootsfound_1d.empty() ? nullptr : rootsfound_1d.data());
 
-      int r = IDAGetRootInfo(ida_mem, &rootsfound_adapt_modifiable);
-      return std::make_tuple(r, rootsfound_adapt_modifiable);
+      auto lambda_result = IDAGetRootInfo(ida_mem, rootsfound_1d_ptr);
+      return lambda_result;
     };
 
-    return IDAGetRootInfo_adapt_modifiable_immutable_to_return(ida_mem);
+    return IDAGetRootInfo_adapt_arr_ptr_to_std_vector(ida_mem, rootsfound_1d);
   },
-  nb::arg("ida_mem"));
+  nb::arg("ida_mem"), nb::arg("rootsfound_1d"));
 
 m.def(
   "IDAGetIntegratorStats",
@@ -673,7 +675,7 @@ m.def("IDAQuadSVtolerances", IDAQuadSVtolerances, nb::arg("ida_mem"),
       nb::arg("reltolQ"), nb::arg("abstolQ"));
 
 m.def("IDASetQuadErrCon", IDASetQuadErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQ"), "Optional input specification functions");
+      nb::arg("errconQ"));
 
 m.def(
   "IDAGetQuad",
@@ -838,8 +840,7 @@ m.def(
     return IDAGetSensConsistentIC_adapt_arr_ptr_to_std_vector(ida_mem, yyS0_1d,
                                                               ypS0_1d);
   },
-  nb::arg("ida_mem"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"),
-  "Initial condition calculation function");
+  nb::arg("ida_mem"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"));
 
 m.def("IDASetSensDQMethod", IDASetSensDQMethod, nb::arg("ida_mem"),
       nb::arg("DQtype"), nb::arg("DQrhomax"));
@@ -882,8 +883,7 @@ m.def("IDASetNonlinearSolverSensSim", IDASetNonlinearSolverSensSim,
 m.def("IDASetNonlinearSolverSensStg", IDASetNonlinearSolverSensStg,
       nb::arg("ida_mem"), nb::arg("NLS"));
 
-m.def("IDASensToggleOff", IDASensToggleOff, nb::arg("ida_mem"),
-      "Enable/disable sensitivities");
+m.def("IDASensToggleOff", IDASensToggleOff, nb::arg("ida_mem"));
 
 m.def(
   "IDAGetSens",
@@ -1161,22 +1161,24 @@ m.def(
 
 m.def(
   "IDAQuadSensSStolerances",
-  [](void* ida_mem, sunrealtype reltolQS) -> std::tuple<int, sunrealtype>
+  [](void* ida_mem, sunrealtype reltolQS, sundials4py::Array1d abstolQS_1d) -> int
   {
-    auto IDAQuadSensSStolerances_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem, sunrealtype reltolQS) -> std::tuple<int, sunrealtype>
+    auto IDAQuadSensSStolerances_adapt_arr_ptr_to_std_vector =
+      [](void* ida_mem, sunrealtype reltolQS,
+         sundials4py::Array1d abstolQS_1d) -> int
     {
-      sunrealtype abstolQS_adapt_modifiable;
+      sunrealtype* abstolQS_1d_ptr = reinterpret_cast<sunrealtype*>(
+        abstolQS_1d.size() == 0 ? nullptr : abstolQS_1d.data());
 
-      int r = IDAQuadSensSStolerances(ida_mem, reltolQS,
-                                      &abstolQS_adapt_modifiable);
-      return std::make_tuple(r, abstolQS_adapt_modifiable);
+      auto lambda_result = IDAQuadSensSStolerances(ida_mem, reltolQS,
+                                                   abstolQS_1d_ptr);
+      return lambda_result;
     };
 
-    return IDAQuadSensSStolerances_adapt_modifiable_immutable_to_return(ida_mem,
-                                                                        reltolQS);
+    return IDAQuadSensSStolerances_adapt_arr_ptr_to_std_vector(ida_mem, reltolQS,
+                                                               abstolQS_1d);
   },
-  nb::arg("ida_mem"), nb::arg("reltolQS"));
+  nb::arg("ida_mem"), nb::arg("reltolQS"), nb::arg("abstolQS_1d"));
 
 m.def(
   "IDAQuadSensSVtolerances",
@@ -1202,7 +1204,7 @@ m.def(
 m.def("IDAQuadSensEEtolerances", IDAQuadSensEEtolerances, nb::arg("ida_mem"));
 
 m.def("IDASetQuadSensErrCon", IDASetQuadSensErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQS"), "Optional input specification functions");
+      nb::arg("errconQS"));
 
 m.def(
   "IDAGetQuadSens",
@@ -1518,13 +1520,10 @@ m.def("IDAGetConsistentICB", IDAGetConsistentICB, nb::arg("ida_mem"),
 m.def("IDAGetAdjY", IDAGetAdjY, nb::arg("ida_mem"), nb::arg("t"), nb::arg("yy"),
       nb::arg("yp"));
 
-m.def("IDAGetAdjCheckPointsInfo", IDAGetAdjCheckPointsInfo, nb::arg("ida_mem"),
-      nb::arg("ckpnt"));
-
 m.def(
   "IDAGetAdjDataPointHermite",
-  [](void* ida_mem, int which, N_Vector yy,
-     N_Vector yd) -> std::tuple<int, sunrealtype>
+  [](void* ida_mem, int which, std::optional<N_Vector> yy = std::nullopt,
+     std::optional<N_Vector> yd = std::nullopt) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetAdjDataPointHermite_adapt_modifiable_immutable_to_return =
       [](void* ida_mem, int which, N_Vector yy,
@@ -1536,16 +1535,41 @@ m.def(
                                         yd);
       return std::make_tuple(r, t_adapt_modifiable);
     };
+    auto IDAGetAdjDataPointHermite_adapt_optional_arg_with_default_null =
+      [&IDAGetAdjDataPointHermite_adapt_modifiable_immutable_to_return](void* ida_mem,
+                                                                        int which,
+                                                                        std::optional<N_Vector>
+                                                                          yy =
+                                                                            std::nullopt,
+                                                                        std::optional<N_Vector>
+                                                                          yd =
+                                                                            std::nullopt)
+      -> std::tuple<int, sunrealtype>
+    {
+      N_Vector yy_adapt_default_null = nullptr;
+      if (yy.has_value()) yy_adapt_default_null = yy.value();
+      N_Vector yd_adapt_default_null = nullptr;
+      if (yd.has_value()) yd_adapt_default_null = yd.value();
 
-    return IDAGetAdjDataPointHermite_adapt_modifiable_immutable_to_return(ida_mem,
+      auto lambda_result =
+        IDAGetAdjDataPointHermite_adapt_modifiable_immutable_to_return(ida_mem,
+                                                                       which,
+                                                                       yy_adapt_default_null,
+                                                                       yd_adapt_default_null);
+      return lambda_result;
+    };
+
+    return IDAGetAdjDataPointHermite_adapt_optional_arg_with_default_null(ida_mem,
                                                                           which,
                                                                           yy, yd);
   },
-  nb::arg("ida_mem"), nb::arg("which"), nb::arg("yy"), nb::arg("yd"));
+  nb::arg("ida_mem"), nb::arg("which"), nb::arg("yy").none() = nb::none(),
+  nb::arg("yd").none() = nb::none());
 
 m.def(
   "IDAGetAdjDataPointPolynomial",
-  [](void* ida_mem, int which, N_Vector y) -> std::tuple<int, sunrealtype, int>
+  [](void* ida_mem, int which,
+     std::optional<N_Vector> y = std::nullopt) -> std::tuple<int, sunrealtype, int>
   {
     auto IDAGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return =
       [](void* ida_mem, int which, N_Vector y) -> std::tuple<int, sunrealtype, int>
@@ -1557,12 +1581,29 @@ m.def(
                                            &order_adapt_modifiable, y);
       return std::make_tuple(r, t_adapt_modifiable, order_adapt_modifiable);
     };
+    auto IDAGetAdjDataPointPolynomial_adapt_optional_arg_with_default_null =
+      [&IDAGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return](void* ida_mem,
+                                                                           int which,
+                                                                           std::optional<N_Vector>
+                                                                             y =
+                                                                               std::nullopt)
+      -> std::tuple<int, sunrealtype, int>
+    {
+      N_Vector y_adapt_default_null = nullptr;
+      if (y.has_value()) y_adapt_default_null = y.value();
 
-    return IDAGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return(ida_mem,
+      auto lambda_result =
+        IDAGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return(ida_mem,
+                                                                          which,
+                                                                          y_adapt_default_null);
+      return lambda_result;
+    };
+
+    return IDAGetAdjDataPointPolynomial_adapt_optional_arg_with_default_null(ida_mem,
                                                                              which,
                                                                              y);
   },
-  nb::arg("ida_mem"), nb::arg("which"), nb::arg("y"));
+  nb::arg("ida_mem"), nb::arg("which"), nb::arg("y").none() = nb::none());
 // #ifdef __cplusplus
 //
 // #endif

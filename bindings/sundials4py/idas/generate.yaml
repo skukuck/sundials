@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # -----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -36,22 +39,24 @@ modules:
     # this option describes the functions which have optional pointer arguments,
     # i.e., one where you could provide NULL
     fn_params_optional_with_default_null:
-      "SetLinearSolver":
-      - "A" 
+      "IDASetLinearSolver":
+      - "A"
+      "IDAGetAdjDataPointHermite": 
+      - "y"
+      - "yd"
+      "IDAGetAdjDataPointPolynomial":
+      - "y"
     fn_exclude_by_name__regex:
-    # We do custom handling of Create so we can wrap the void* in a CVodeView
+    # We do custom handling of Create so we can wrap the void* in a IDAView
     - "^IDACreate$"
     # we use user_data for sneaking in python contexts, users can instead capture their states in a class
     - "^IDAGetUserData$" 
     - "^IDASetUserData$" 
     - "^IDAGetUserDataB$" 
     - "^IDASetUserDataB$"
-    # this function should be deprecated, so we don't interface it
-    - "^IDASetMonitorFn$"
     # generator cannot handle setting of function pointers, so we do something custom
     - "IDAInit.*"
     - "^IDASensInit$"
-    - "^IDASensInit1$"
     - "IDAQuadInit.*"
     - "IDAQuadSensInit.*"
     - "IDASet.*Fn" 
@@ -59,6 +64,8 @@ modules:
     - "IDASetJacTimes.*"
     - "^IDARootInit$"
     - "^IDAWFtolerances$"
+    # these functions are not useful from Python
+    - "^IDAGetAdjCheckPointsInfo$"
     # TODO(CJB): interface these (in the future?)
     # generator cannot yet handle mixing pointer outputs and ** in the same function
     - "^IDAGetAdjCurrentCheckPoint$"

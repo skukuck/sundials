@@ -18,8 +18,8 @@ void bind_nvector_manyvector(nb::module_& m)
     [](sunindextype num_subvectors, std::vector<N_Vector> vec_array_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
-      N_Vector* vec_array_1d_ptr = reinterpret_cast<N_Vector*>(
-        vec_array_1d.empty() ? nullptr : vec_array_1d.data());
+      N_Vector* vec_array_1d_ptr = vec_array_1d.empty() ? nullptr
+                                                        : vec_array_1d.data();
       return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
         N_VNew_ManyVector(num_subvectors, vec_array_1d_ptr, sunctx));
     },

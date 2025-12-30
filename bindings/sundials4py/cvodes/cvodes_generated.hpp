@@ -87,8 +87,8 @@ m.def(
          std::vector<N_Vector> y_hist_1d, std::vector<N_Vector> f_hist_1d,
          int num_y_hist, int num_f_hist) -> int
     {
-      sunrealtype* t_hist_1d_ptr =
-        reinterpret_cast<sunrealtype*>(t_hist_1d.data());
+      sunrealtype* t_hist_1d_ptr = reinterpret_cast<sunrealtype*>(
+        t_hist_1d.size() == 0 ? nullptr : t_hist_1d.data());
       N_Vector* y_hist_1d_ptr = reinterpret_cast<N_Vector*>(
         y_hist_1d.empty() ? nullptr : y_hist_1d.data());
       N_Vector* f_hist_1d_ptr = reinterpret_cast<N_Vector*>(
@@ -196,20 +196,22 @@ m.def("CVodeSetEtaConvFail", CVodeSetEtaConvFail, nb::arg("cvode_mem"),
 
 m.def(
   "CVodeSetRootDirection",
-  [](void* cvode_mem) -> std::tuple<int, int>
+  [](void* cvode_mem, std::vector<int> rootdir_1d) -> int
   {
-    auto CVodeSetRootDirection_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, int>
+    auto CVodeSetRootDirection_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<int> rootdir_1d) -> int
     {
-      int rootdir_adapt_modifiable;
+      int* rootdir_1d_ptr =
+        reinterpret_cast<int*>(rootdir_1d.empty() ? nullptr : rootdir_1d.data());
 
-      int r = CVodeSetRootDirection(cvode_mem, &rootdir_adapt_modifiable);
-      return std::make_tuple(r, rootdir_adapt_modifiable);
+      auto lambda_result = CVodeSetRootDirection(cvode_mem, rootdir_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeSetRootDirection_adapt_modifiable_immutable_to_return(cvode_mem);
+    return CVodeSetRootDirection_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                             rootdir_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("rootdir_1d"));
 
 m.def("CVodeSetNoInactiveRootWarn", CVodeSetNoInactiveRootWarn,
       nb::arg("cvode_mem"));
@@ -551,20 +553,21 @@ m.def(
 
 m.def(
   "CVodeGetRootInfo",
-  [](void* cvode_mem) -> std::tuple<int, int>
+  [](void* cvode_mem, std::vector<int> rootsfound_1d) -> int
   {
-    auto CVodeGetRootInfo_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, int>
+    auto CVodeGetRootInfo_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<int> rootsfound_1d) -> int
     {
-      int rootsfound_adapt_modifiable;
+      int* rootsfound_1d_ptr = reinterpret_cast<int*>(
+        rootsfound_1d.empty() ? nullptr : rootsfound_1d.data());
 
-      int r = CVodeGetRootInfo(cvode_mem, &rootsfound_adapt_modifiable);
-      return std::make_tuple(r, rootsfound_adapt_modifiable);
+      auto lambda_result = CVodeGetRootInfo(cvode_mem, rootsfound_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeGetRootInfo_adapt_modifiable_immutable_to_return(cvode_mem);
+    return CVodeGetRootInfo_adapt_arr_ptr_to_std_vector(cvode_mem, rootsfound_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("rootsfound_1d"));
 
 m.def(
   "CVodeGetIntegratorStats",
@@ -697,7 +700,7 @@ m.def("CVodeQuadSVtolerances", CVodeQuadSVtolerances, nb::arg("cvode_mem"),
       nb::arg("reltolQ"), nb::arg("abstolQ"));
 
 m.def("CVodeSetQuadErrCon", CVodeSetQuadErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQ"), "Optional input specification functions");
+      nb::arg("errconQ"));
 
 m.def(
   "CVodeGetQuad",
@@ -803,8 +806,8 @@ m.def(
       [](void* cvode_mem, sunrealtype reltolS,
          sundials4py::Array1d abstolS_1d) -> int
     {
-      sunrealtype* abstolS_1d_ptr =
-        reinterpret_cast<sunrealtype*>(abstolS_1d.data());
+      sunrealtype* abstolS_1d_ptr = reinterpret_cast<sunrealtype*>(
+        abstolS_1d.size() == 0 ? nullptr : abstolS_1d.data());
 
       auto lambda_result = CVodeSensSStolerances(cvode_mem, reltolS,
                                                  abstolS_1d_ptr);
@@ -857,8 +860,10 @@ m.def(
       [](void* cvode_mem, sundials4py::Array1d p_1d,
          sundials4py::Array1d pbar_1d, std::vector<int> plist_1d) -> int
     {
-      sunrealtype* p_1d_ptr    = reinterpret_cast<sunrealtype*>(p_1d.data());
-      sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(pbar_1d.data());
+      sunrealtype* p_1d_ptr =
+        reinterpret_cast<sunrealtype*>(p_1d.size() == 0 ? nullptr : p_1d.data());
+      sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(
+        pbar_1d.size() == 0 ? nullptr : pbar_1d.data());
       int* plist_1d_ptr =
         reinterpret_cast<int*>(plist_1d.empty() ? nullptr : plist_1d.data());
 
@@ -881,8 +886,7 @@ m.def("CVodeSetNonlinearSolverSensStg", CVodeSetNonlinearSolverSensStg,
 m.def("CVodeSetNonlinearSolverSensStg1", CVodeSetNonlinearSolverSensStg1,
       nb::arg("cvode_mem"), nb::arg("NLS"));
 
-m.def("CVodeSensToggleOff", CVodeSensToggleOff, nb::arg("cvode_mem"),
-      "Enable/disable sensitivities");
+m.def("CVodeSensToggleOff", CVodeSensToggleOff, nb::arg("cvode_mem"));
 
 m.def(
   "CVodeGetSens",
@@ -1151,83 +1155,89 @@ m.def(
 
 m.def(
   "CVodeGetStgrSensNumNonlinSolvIters",
-  [](void* cvode_mem) -> std::tuple<int, long>
+  [](void* cvode_mem, std::vector<long> nSTGR1niters_1d) -> int
   {
-    auto CVodeGetStgrSensNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, long>
+    auto CVodeGetStgrSensNumNonlinSolvIters_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<long> nSTGR1niters_1d) -> int
     {
-      long nSTGR1niters_adapt_modifiable;
+      long* nSTGR1niters_1d_ptr = reinterpret_cast<long*>(
+        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data());
 
-      int r = CVodeGetStgrSensNumNonlinSolvIters(cvode_mem,
-                                                 &nSTGR1niters_adapt_modifiable);
-      return std::make_tuple(r, nSTGR1niters_adapt_modifiable);
+      auto lambda_result =
+        CVodeGetStgrSensNumNonlinSolvIters(cvode_mem, nSTGR1niters_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeGetStgrSensNumNonlinSolvIters_adapt_modifiable_immutable_to_return(
-      cvode_mem);
+    return CVodeGetStgrSensNumNonlinSolvIters_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                                          nSTGR1niters_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("nSTGR1niters_1d"));
 
 m.def(
   "CVodeGetStgrSensNumNonlinSolvConvFails",
-  [](void* cvode_mem) -> std::tuple<int, long>
+  [](void* cvode_mem, std::vector<long> nSTGR1nfails_1d) -> int
   {
-    auto CVodeGetStgrSensNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, long>
+    auto CVodeGetStgrSensNumNonlinSolvConvFails_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<long> nSTGR1nfails_1d) -> int
     {
-      long nSTGR1nfails_adapt_modifiable;
+      long* nSTGR1nfails_1d_ptr = reinterpret_cast<long*>(
+        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data());
 
-      int r =
-        CVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem,
-                                               &nSTGR1nfails_adapt_modifiable);
-      return std::make_tuple(r, nSTGR1nfails_adapt_modifiable);
+      auto lambda_result =
+        CVodeGetStgrSensNumNonlinSolvConvFails(cvode_mem, nSTGR1nfails_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeGetStgrSensNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return(
-      cvode_mem);
+    return CVodeGetStgrSensNumNonlinSolvConvFails_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                                              nSTGR1nfails_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("nSTGR1nfails_1d"));
 
 m.def(
   "CVodeGetStgrSensNonlinSolvStats",
-  [](void* cvode_mem) -> std::tuple<int, long, long>
+  [](void* cvode_mem, std::vector<long> nSTGR1niters_1d,
+     std::vector<long> nSTGR1nfails_1d) -> int
   {
-    auto CVodeGetStgrSensNonlinSolvStats_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, long, long>
+    auto CVodeGetStgrSensNonlinSolvStats_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<long> nSTGR1niters_1d,
+         std::vector<long> nSTGR1nfails_1d) -> int
     {
-      long nSTGR1niters_adapt_modifiable;
-      long nSTGR1nfails_adapt_modifiable;
+      long* nSTGR1niters_1d_ptr = reinterpret_cast<long*>(
+        nSTGR1niters_1d.empty() ? nullptr : nSTGR1niters_1d.data());
+      long* nSTGR1nfails_1d_ptr = reinterpret_cast<long*>(
+        nSTGR1nfails_1d.empty() ? nullptr : nSTGR1nfails_1d.data());
 
-      int r = CVodeGetStgrSensNonlinSolvStats(cvode_mem,
-                                              &nSTGR1niters_adapt_modifiable,
-                                              &nSTGR1nfails_adapt_modifiable);
-      return std::make_tuple(r, nSTGR1niters_adapt_modifiable,
-                             nSTGR1nfails_adapt_modifiable);
+      auto lambda_result = CVodeGetStgrSensNonlinSolvStats(cvode_mem,
+                                                           nSTGR1niters_1d_ptr,
+                                                           nSTGR1nfails_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeGetStgrSensNonlinSolvStats_adapt_modifiable_immutable_to_return(
-      cvode_mem);
+    return CVodeGetStgrSensNonlinSolvStats_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                                       nSTGR1niters_1d,
+                                                                       nSTGR1nfails_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("nSTGR1niters_1d"), nb::arg("nSTGR1nfails_1d"));
 
 m.def(
   "CVodeGetNumStepStgrSensSolveFails",
-  [](void* cvode_mem) -> std::tuple<int, long>
+  [](void* cvode_mem, std::vector<long> nSTGR1ncfails_1d) -> int
   {
-    auto CVodeGetNumStepStgrSensSolveFails_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem) -> std::tuple<int, long>
+    auto CVodeGetNumStepStgrSensSolveFails_adapt_arr_ptr_to_std_vector =
+      [](void* cvode_mem, std::vector<long> nSTGR1ncfails_1d) -> int
     {
-      long nSTGR1ncfails_adapt_modifiable;
+      long* nSTGR1ncfails_1d_ptr = reinterpret_cast<long*>(
+        nSTGR1ncfails_1d.empty() ? nullptr : nSTGR1ncfails_1d.data());
 
-      int r = CVodeGetNumStepStgrSensSolveFails(cvode_mem,
-                                                &nSTGR1ncfails_adapt_modifiable);
-      return std::make_tuple(r, nSTGR1ncfails_adapt_modifiable);
+      auto lambda_result =
+        CVodeGetNumStepStgrSensSolveFails(cvode_mem, nSTGR1ncfails_1d_ptr);
+      return lambda_result;
     };
 
-    return CVodeGetNumStepStgrSensSolveFails_adapt_modifiable_immutable_to_return(
-      cvode_mem);
+    return CVodeGetNumStepStgrSensSolveFails_adapt_arr_ptr_to_std_vector(cvode_mem,
+                                                                         nSTGR1ncfails_1d);
   },
-  nb::arg("cvode_mem"));
+  nb::arg("cvode_mem"), nb::arg("nSTGR1ncfails_1d"));
 
 m.def(
   "CVodeQuadSensReInit",
@@ -1255,8 +1265,8 @@ m.def(
       [](void* cvode_mem, sunrealtype reltolQS,
          sundials4py::Array1d abstolQS_1d) -> int
     {
-      sunrealtype* abstolQS_1d_ptr =
-        reinterpret_cast<sunrealtype*>(abstolQS_1d.data());
+      sunrealtype* abstolQS_1d_ptr = reinterpret_cast<sunrealtype*>(
+        abstolQS_1d.size() == 0 ? nullptr : abstolQS_1d.data());
 
       auto lambda_result = CVodeQuadSensSStolerances(cvode_mem, reltolQS,
                                                      abstolQS_1d_ptr);
@@ -1295,7 +1305,7 @@ m.def("CVodeQuadSensEEtolerances", CVodeQuadSensEEtolerances,
       nb::arg("cvode_mem"));
 
 m.def("CVodeSetQuadSensErrCon", CVodeSetQuadSensErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQS"), "Optional input specification functions");
+      nb::arg("errconQS"));
 
 m.def(
   "CVodeGetQuadSens",
@@ -1584,13 +1594,10 @@ m.def("CVodeGetAdjCVodeBmem", CVodeGetAdjCVodeBmem, nb::arg("cvode_mem"),
 m.def("CVodeGetAdjY", CVodeGetAdjY, nb::arg("cvode_mem"), nb::arg("t"),
       nb::arg("y"));
 
-m.def("CVodeGetAdjCheckPointsInfo", CVodeGetAdjCheckPointsInfo,
-      nb::arg("cvode_mem"), nb::arg("ckpnt"));
-
 m.def(
   "CVodeGetAdjDataPointHermite",
-  [](void* cvode_mem, int which, N_Vector y,
-     N_Vector yd) -> std::tuple<int, sunrealtype>
+  [](void* cvode_mem, int which, std::optional<N_Vector> y = std::nullopt,
+     std::optional<N_Vector> yd = std::nullopt) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetAdjDataPointHermite_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem, int which, N_Vector y,
@@ -1602,17 +1609,42 @@ m.def(
                                           y, yd);
       return std::make_tuple(r, t_adapt_modifiable);
     };
+    auto CVodeGetAdjDataPointHermite_adapt_optional_arg_with_default_null =
+      [&CVodeGetAdjDataPointHermite_adapt_modifiable_immutable_to_return](void* cvode_mem,
+                                                                          int which,
+                                                                          std::optional<N_Vector>
+                                                                            y =
+                                                                              std::nullopt,
+                                                                          std::optional<N_Vector>
+                                                                            yd =
+                                                                              std::nullopt)
+      -> std::tuple<int, sunrealtype>
+    {
+      N_Vector y_adapt_default_null = nullptr;
+      if (y.has_value()) y_adapt_default_null = y.value();
+      N_Vector yd_adapt_default_null = nullptr;
+      if (yd.has_value()) yd_adapt_default_null = yd.value();
 
-    return CVodeGetAdjDataPointHermite_adapt_modifiable_immutable_to_return(cvode_mem,
+      auto lambda_result =
+        CVodeGetAdjDataPointHermite_adapt_modifiable_immutable_to_return(cvode_mem,
+                                                                         which,
+                                                                         y_adapt_default_null,
+                                                                         yd_adapt_default_null);
+      return lambda_result;
+    };
+
+    return CVodeGetAdjDataPointHermite_adapt_optional_arg_with_default_null(cvode_mem,
                                                                             which,
                                                                             y,
                                                                             yd);
   },
-  nb::arg("cvode_mem"), nb::arg("which"), nb::arg("y"), nb::arg("yd"));
+  nb::arg("cvode_mem"), nb::arg("which"), nb::arg("y").none() = nb::none(),
+  nb::arg("yd").none() = nb::none());
 
 m.def(
   "CVodeGetAdjDataPointPolynomial",
-  [](void* cvode_mem, int which, N_Vector y) -> std::tuple<int, sunrealtype, int>
+  [](void* cvode_mem, int which,
+     std::optional<N_Vector> y = std::nullopt) -> std::tuple<int, sunrealtype, int>
   {
     auto CVodeGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return =
       [](void* cvode_mem, int which,
@@ -1626,12 +1658,29 @@ m.def(
                                              &order_adapt_modifiable, y);
       return std::make_tuple(r, t_adapt_modifiable, order_adapt_modifiable);
     };
+    auto CVodeGetAdjDataPointPolynomial_adapt_optional_arg_with_default_null =
+      [&CVodeGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return](void* cvode_mem,
+                                                                             int which,
+                                                                             std::optional<N_Vector>
+                                                                               y =
+                                                                                 std::nullopt)
+      -> std::tuple<int, sunrealtype, int>
+    {
+      N_Vector y_adapt_default_null = nullptr;
+      if (y.has_value()) y_adapt_default_null = y.value();
 
-    return CVodeGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return(cvode_mem,
+      auto lambda_result =
+        CVodeGetAdjDataPointPolynomial_adapt_modifiable_immutable_to_return(cvode_mem,
+                                                                            which,
+                                                                            y_adapt_default_null);
+      return lambda_result;
+    };
+
+    return CVodeGetAdjDataPointPolynomial_adapt_optional_arg_with_default_null(cvode_mem,
                                                                                which,
                                                                                y);
   },
-  nb::arg("cvode_mem"), nb::arg("which"), nb::arg("y"));
+  nb::arg("cvode_mem"), nb::arg("which"), nb::arg("y").none() = nb::none());
 // #ifdef __cplusplus
 //
 // #endif

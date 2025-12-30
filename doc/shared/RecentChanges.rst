@@ -56,3 +56,6 @@ The ``CSC_MAT`` and ``CSR_MAT`` macros defined in ``sunmatrix_sparse.h`` will be
 the next major release. Use ``SUN_CSC_MAT`` and ``SUN_CSR_MAT`` instead.
 
 The ``N_Vector_S`` typedef to ``N_Vector*`` is deprecated and will be removed in the next major release.
+
+The ``CVodeSetMonitorFn`` and ``CVodeSetMonitorFrequency`` functions have been deprecated and will be
+removed in the next major release.

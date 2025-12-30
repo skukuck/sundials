@@ -124,6 +124,7 @@ def main():
         y,
         sunctx,
     )
+    assert ark is not None
 
     status = ARKodeSStolerances(ark.get(), reltol, abstol)
     assert status == ARK_SUCCESS
@@ -134,9 +135,11 @@ def main():
     status = ARKodeSetDeduceImplicitRhs(ark.get(), 1)
     assert status == ARK_SUCCESS
 
-    # Dense matrix and linear solver
     A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    assert A is not None
+    
     LS = SUNLinSol_Dense(y, A, sunctx)
+    assert LS is not None
 
     status = ARKodeSetLinearSolver(ark.get(), LS, A)
     assert status == ARK_SUCCESS
@@ -219,6 +222,7 @@ def main():
     print(f"   Total number of failed steps from solver failure = {ncfn}")
 
 
+# This function allows pytest to discover the example as a test
 def test_ark_brusselator():
     main()
 

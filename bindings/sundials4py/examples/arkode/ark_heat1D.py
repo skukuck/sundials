@@ -25,7 +25,7 @@
 # Dirichlet boundary conditions, i.e.
 #    u_t(t,0) = u_t(t,1) = 0,
 # and a point-source heating term,
-#    f = 1 for x=0.5.
+#    f = 0.01 for x=0.5.
 #
 # The spatial derivatives are computed using second-order
 # centered differences, with the data distributed over N points
@@ -98,6 +98,9 @@ def main():
     abstol = 1e-10
 
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    assert status == SUN_SUCCESS
+    assert sunctx is not None
+
     y = N_VNew_Serial(N, sunctx)
 
     problem = Heat1DProblem(N, k)
@@ -106,7 +109,7 @@ def main():
     # Call ARKStepCreate to initialize the ARK timestepper module and
     # specify the right-hand side function in y'=f(t,y), the initial time
     # T0, and the initial dependent variable vector y.  Note: since this
-    # problem is fully implicit, we set f_E to NULL and f_I to f. */
+    # problem is fully implicit, we set f_E to None and f_I to f. */
     ark = ARKStepCreate(
         None,  # f_E (explicit)
         lambda t, yvec, ydotvec, _: problem.f(t, yvec, ydotvec),  # f_I (implicit)
@@ -114,6 +117,7 @@ def main():
         y,
         sunctx,
     )
+    assert ark is not None
 
     # Set routines
     status = ARKodeSStolerances(ark.get(), reltol, abstol)
@@ -126,7 +130,7 @@ def main():
     assert status == ARK_SUCCESS
 
     # PCG linear solver with no preconditioning, with up to N iterations
-    LS = SUNLinSol_PCG(y, 0, N, sunctx)
+    LS = SUNLinSol_PCG(y, SUN_PREC_NONE, N, sunctx)
     status = ARKodeSetLinearSolver(ark.get(), LS, None)
     assert status == ARK_SUCCESS
 

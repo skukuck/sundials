@@ -200,6 +200,7 @@ typedef _SUNDIALS_STRUCT_ _MRIStepInnerStepper* MRIStepInnerStepper;
 /* --------------------------
  * Relaxation Solver Options
  * -------------------------- */
+
 enum ARKRelaxSolver
 {
   ARK_RELAX_BRENT,
@@ -259,7 +260,7 @@ SUNDIALS_EXPORT int ARKodeResFtolerance(void* arkode_mem, ARKRwtFn rfun);
 
 /* Rootfinding */
 SUNDIALS_EXPORT int ARKodeRootInit(void* arkode_mem, int nrtfn, ARKRootFn g);
-SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir);
+SUNDIALS_EXPORT int ARKodeSetRootDirection(void* arkode_mem, int* rootdir_1d);
 SUNDIALS_EXPORT int ARKodeSetNoInactiveRootWarn(void* arkode_mem);
 
 /* Optional input functions (general) */

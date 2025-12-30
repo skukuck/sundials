@@ -782,8 +782,8 @@ m.def(
     auto IDASensSStolerances_adapt_arr_ptr_to_std_vector =
       [](void* ida_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
     {
-      sunrealtype* abstolS_1d_ptr =
-        reinterpret_cast<sunrealtype*>(abstolS_1d.data());
+      sunrealtype* abstolS_1d_ptr = reinterpret_cast<sunrealtype*>(
+        abstolS_1d.size() == 0 ? nullptr : abstolS_1d.data());
 
       auto lambda_result = IDASensSStolerances(ida_mem, reltolS, abstolS_1d_ptr);
       return lambda_result;
@@ -859,8 +859,10 @@ m.def(
       [](void* ida_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
          std::vector<int> plist_1d) -> int
     {
-      sunrealtype* p_1d_ptr    = reinterpret_cast<sunrealtype*>(p_1d.data());
-      sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(pbar_1d.data());
+      sunrealtype* p_1d_ptr =
+        reinterpret_cast<sunrealtype*>(p_1d.size() == 0 ? nullptr : p_1d.data());
+      sunrealtype* pbar_1d_ptr = reinterpret_cast<sunrealtype*>(
+        pbar_1d.size() == 0 ? nullptr : pbar_1d.data());
       int* plist_1d_ptr =
         reinterpret_cast<int*>(plist_1d.empty() ? nullptr : plist_1d.data());
 

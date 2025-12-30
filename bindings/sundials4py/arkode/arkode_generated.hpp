@@ -1459,10 +1459,14 @@ m.def(
          sundials4py::Array1d A_1d, sundials4py::Array1d b_1d,
          sundials4py::Array1d d_1d) -> ARKodeButcherTable
     {
-      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
-      sunrealtype* A_1d_ptr = reinterpret_cast<sunrealtype*>(A_1d.data());
-      sunrealtype* b_1d_ptr = reinterpret_cast<sunrealtype*>(b_1d.data());
-      sunrealtype* d_1d_ptr = reinterpret_cast<sunrealtype*>(d_1d.data());
+      sunrealtype* c_1d_ptr =
+        reinterpret_cast<sunrealtype*>(c_1d.size() == 0 ? nullptr : c_1d.data());
+      sunrealtype* A_1d_ptr =
+        reinterpret_cast<sunrealtype*>(A_1d.size() == 0 ? nullptr : A_1d.data());
+      sunrealtype* b_1d_ptr =
+        reinterpret_cast<sunrealtype*>(b_1d.size() == 0 ? nullptr : b_1d.data());
+      sunrealtype* d_1d_ptr =
+        reinterpret_cast<sunrealtype*>(d_1d.size() == 0 ? nullptr : d_1d.data());
 
       auto lambda_result = ARKodeButcherTable_Create(s, q, p, c_1d_ptr, A_1d_ptr,
                                                      b_1d_ptr, d_1d_ptr);
@@ -1791,8 +1795,10 @@ m.def(
       [](int s, int q, sundials4py::Array1d a_1d,
          sundials4py::Array1d ahat_1d) -> ARKodeSPRKTable
     {
-      sunrealtype* a_1d_ptr    = reinterpret_cast<sunrealtype*>(a_1d.data());
-      sunrealtype* ahat_1d_ptr = reinterpret_cast<sunrealtype*>(ahat_1d.data());
+      sunrealtype* a_1d_ptr =
+        reinterpret_cast<sunrealtype*>(a_1d.size() == 0 ? nullptr : a_1d.data());
+      sunrealtype* ahat_1d_ptr = reinterpret_cast<sunrealtype*>(
+        ahat_1d.size() == 0 ? nullptr : ahat_1d.data());
 
       auto lambda_result = ARKodeSPRKTable_Create(s, q, a_1d_ptr, ahat_1d_ptr);
       return lambda_result;

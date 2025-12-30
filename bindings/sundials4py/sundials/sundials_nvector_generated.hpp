@@ -132,7 +132,8 @@ m.def(
       [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
          N_Vector z) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+      sunrealtype* c_1d_ptr =
+        reinterpret_cast<sunrealtype*>(c_1d.size() == 0 ? nullptr : c_1d.data());
       N_Vector* X_1d_ptr =
         reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
 
@@ -153,7 +154,8 @@ m.def(
       [](int nvec, sundials4py::Array1d a_1d, N_Vector x,
          std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
-      sunrealtype* a_1d_ptr = reinterpret_cast<sunrealtype*>(a_1d.data());
+      sunrealtype* a_1d_ptr =
+        reinterpret_cast<sunrealtype*>(a_1d.size() == 0 ? nullptr : a_1d.data());
       N_Vector* Y_1d_ptr =
         reinterpret_cast<N_Vector*>(Y_1d.empty() ? nullptr : Y_1d.data());
       N_Vector* Z_1d_ptr =
@@ -181,8 +183,8 @@ m.def(
     {
       N_Vector* Y_1d_ptr =
         reinterpret_cast<N_Vector*>(Y_1d.empty() ? nullptr : Y_1d.data());
-      sunrealtype* dotprods_1d_ptr =
-        reinterpret_cast<sunrealtype*>(dotprods_1d.data());
+      sunrealtype* dotprods_1d_ptr = reinterpret_cast<sunrealtype*>(
+        dotprods_1d.size() == 0 ? nullptr : dotprods_1d.data());
 
       auto lambda_result = N_VDotProdMulti(nvec, x, Y_1d_ptr, dotprods_1d_ptr);
       return lambda_result;
@@ -229,7 +231,8 @@ m.def(
       [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
          std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+      sunrealtype* c_1d_ptr =
+        reinterpret_cast<sunrealtype*>(c_1d.size() == 0 ? nullptr : c_1d.data());
       N_Vector* X_1d_ptr =
         reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
       N_Vector* Z_1d_ptr =
@@ -276,7 +279,8 @@ m.def(
         reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
       N_Vector* W_1d_ptr =
         reinterpret_cast<N_Vector*>(W_1d.empty() ? nullptr : W_1d.data());
-      sunrealtype* nrm_1d_ptr = reinterpret_cast<sunrealtype*>(nrm_1d.data());
+      sunrealtype* nrm_1d_ptr = reinterpret_cast<sunrealtype*>(
+        nrm_1d.size() == 0 ? nullptr : nrm_1d.data());
 
       auto lambda_result = N_VWrmsNormVectorArray(nvec, X_1d_ptr, W_1d_ptr,
                                                   nrm_1d_ptr);
@@ -301,7 +305,8 @@ m.def(
         reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
       N_Vector* W_1d_ptr =
         reinterpret_cast<N_Vector*>(W_1d.empty() ? nullptr : W_1d.data());
-      sunrealtype* nrm_1d_ptr = reinterpret_cast<sunrealtype*>(nrm_1d.data());
+      sunrealtype* nrm_1d_ptr = reinterpret_cast<sunrealtype*>(
+        nrm_1d.size() == 0 ? nullptr : nrm_1d.data());
 
       auto lambda_result = N_VWrmsNormMaskVectorArray(nvec, X_1d_ptr, W_1d_ptr,
                                                       id, nrm_1d_ptr);
@@ -347,8 +352,8 @@ m.def(
     {
       N_Vector* Y_1d_ptr =
         reinterpret_cast<N_Vector*>(Y_1d.empty() ? nullptr : Y_1d.data());
-      sunrealtype* dotprods_1d_ptr =
-        reinterpret_cast<sunrealtype*>(dotprods_1d.data());
+      sunrealtype* dotprods_1d_ptr = reinterpret_cast<sunrealtype*>(
+        dotprods_1d.size() == 0 ? nullptr : dotprods_1d.data());
 
       auto lambda_result = N_VDotProdMultiLocal(nvec, x, Y_1d_ptr,
                                                 dotprods_1d_ptr);
@@ -367,7 +372,8 @@ m.def(
     auto N_VDotProdMultiAllReduce_adapt_arr_ptr_to_std_vector =
       [](int nvec_total, N_Vector x, sundials4py::Array1d sum_1d) -> SUNErrCode
     {
-      sunrealtype* sum_1d_ptr = reinterpret_cast<sunrealtype*>(sum_1d.data());
+      sunrealtype* sum_1d_ptr = reinterpret_cast<sunrealtype*>(
+        sum_1d.size() == 0 ? nullptr : sum_1d.data());
 
       auto lambda_result = N_VDotProdMultiAllReduce(nvec_total, x, sum_1d_ptr);
       return lambda_result;

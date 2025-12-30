@@ -52,8 +52,10 @@ using namespace sundials::experimental;
       auto fntable     = get_kinsol_fn_table(kin_mem);                     \
       fntable->MEMBER1 = nb::cast(fn1);                                    \
       fntable->MEMBER2 = nb::cast(fn2);                                    \
-      if (fn1) { return NAME(kin_mem, WRAPPER1, WRAPPER2); }               \
-      else { return NAME(kin_mem, nullptr, WRAPPER2); }                    \
+      if (fn1 && fn2) { return NAME(kin_mem, WRAPPER1, WRAPPER2); }        \
+      else if (fn1) { return NAME(kin_mem, WRAPPER1, nullptr); }           \
+      else if (fn2) { return NAME(kin_mem, nullptr, WRAPPER2); }           \
+      else { return NAME(kin_mem, nullptr, nullptr); }                     \
     },                                                                     \
     __VA_ARGS__)
 
@@ -94,26 +96,29 @@ void bind_kinsol(nb::module_& m)
     { return std::make_shared<KINView>(KINCreate(sunctx)); },
     nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
-  m.def("KINInit",
-        [](void* kin_mem, std::function<std::remove_pointer_t<KINSysFn>> sysfn,
-           N_Vector tmpl)
-        {
-          int kin_status = KINInit(kin_mem, kinsol_sysfn_wrapper, tmpl);
+  m.def(
+    "KINInit",
+    [](void* kin_mem, std::function<std::remove_pointer_t<KINSysFn>> sysfn,
+       N_Vector tmpl)
+    {
+      if (!sysfn) { throw sundials4py::illegal_value("sysfn was null"); }
+      int kin_status = KINInit(kin_mem, kinsol_sysfn_wrapper, tmpl);
+      if (kin_status != KIN_SUCCESS) { return kin_status; }
 
-          auto fn_table      = kinsol_user_supplied_fn_table_alloc();
-          auto kinsol_mem    = static_cast<KINMem>(kin_mem);
-          kinsol_mem->python = fn_table;
-          kin_status         = KINSetUserData(kin_mem, kin_mem);
-          if (kin_status != KIN_SUCCESS)
-          {
-            free(fn_table);
-            throw sundials4py::error_returned(
-              "Failed to set user data in KINSOL memory");
-          }
+      auto fn_table      = kinsol_user_supplied_fn_table_alloc();
+      auto kinsol_mem    = static_cast<KINMem>(kin_mem);
+      kinsol_mem->python = fn_table;
+      kin_status         = KINSetUserData(kin_mem, kin_mem);
+      if (kin_status != KIN_SUCCESS)
+      {
+        free(fn_table);
+        return kin_status;
+      }
 
-          fn_table->sysfn = nb::cast(sysfn);
-          return kin_status;
-        });
+      fn_table->sysfn = nb::cast(sysfn);
+      return kin_status;
+    },
+    nb::arg("kin_mem"), nb::arg("sysfn"), nb::arg("tmpl"));
 
   BIND_KINSOL_CALLBACK(KINSetSysFunc, KINSysFn, sysfn, kinsol_sysfn_wrapper,
                        nb::arg("kin_mem"), nb::arg("sysfn"));

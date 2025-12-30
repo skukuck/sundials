@@ -256,3 +256,47 @@ From ``sundials_stepper.cpp``,
 
 We are again creating a nanobind wrapper for :c:func:`SUNStepper_SetEvolveFn`, but this time,
 the function table is smuggled inside of the SUNStepper structure's ``python`` member.
+
+Special user-supplied functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some user-supplied functions take parameters that need special treatment. These parameters
+are generally:
+
+- arrays or array-like pointers, 
+- or output parameters (pointers used for the purpose of returning a value).
+
+In this case, we need to wriet a custom ``std::function`` type which mirrors the C function typedef,
+but uses C++ analogs for the special parameters. 
+E.g.,
+
+.. code-block:: cpp
+
+   // This std::function type mirrors the C typedef with C++ analogs for
+   // the array of N_Vector and the jcurPtrB out parameter moved to a return value
+   // packed into a tuple.
+   using CVLsPrecSetupStdFnBS = std::tuple<int, sunbooleantype>(
+      sunrealtype t, N_Vector y, std::vector<N_Vector> yS_1d, N_Vector yB,
+      N_Vector fyB, sunbooleantype jokB, sunrealtype gammaB, void* user_dataB);
+
+   // This wrapper function fits the C typedef
+   inline int cvode_lsprecsetupfnBS_wrapper(sunrealtype t, N_Vector y,
+                                            N_Vector* yS_1d, N_Vector yB,
+                                            N_Vector fyB, sunbooleantype jokB,
+                                            sunbooleantype* jcurPtrB,
+                                            sunrealtype gammaB, void* user_dataB)
+   {
+      auto cv_mem   = static_cast<CVodeMem>(user_dataB);
+      auto fn_table = get_cvodea_fn_table(user_dataB);
+      auto fn =
+         nb::cast<std::function<CVLsPrecSetupStdFnBS>>(fn_table->lsprecsetupfnBS);
+      auto Ns = cv_mem->cv_Ns;
+
+      std::vector<N_Vector> yS(yS_1d, yS_1d + Ns);
+
+      auto result = fn(t, y, yS, yB, fyB, jokB, gammaB, nullptr);
+
+      *jcurPtrB = std::get<1>(result);
+
+      return std::get<0>(result);
+   }

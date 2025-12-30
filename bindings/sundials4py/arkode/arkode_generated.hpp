@@ -82,13 +82,11 @@ m.attr("ARK_SUNADJSTEPPER_ERR")      = -55;
 m.attr("ARK_DEE_FAIL")               = -56;
 m.attr("ARK_UNRECOGNIZED_ERROR")     = -99;
 
-auto pyEnumARKRelaxSolver =
-  nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver", nb::is_arithmetic(),
-                            " --------------------------\n * Relaxation Solver "
-                            "Options\n * --------------------------")
-    .value("ARK_RELAX_BRENT", ARK_RELAX_BRENT, "")
-    .value("ARK_RELAX_NEWTON", ARK_RELAX_NEWTON, "")
-    .export_values();
+auto pyEnumARKRelaxSolver = nb::enum_<ARKRelaxSolver>(m, "ARKRelaxSolver",
+                                                      nb::is_arithmetic(), "")
+                              .value("ARK_RELAX_BRENT", ARK_RELAX_BRENT, "")
+                              .value("ARK_RELAX_NEWTON", ARK_RELAX_NEWTON, "")
+                              .export_values();
 // #ifndef SWIG
 //
 // #endif
@@ -158,20 +156,22 @@ m.def("ARKodeResVtolerance", ARKodeResVtolerance, nb::arg("arkode_mem"),
 
 m.def(
   "ARKodeSetRootDirection",
-  [](void* arkode_mem) -> std::tuple<int, int>
+  [](void* arkode_mem, std::vector<int> rootdir_1d) -> int
   {
-    auto ARKodeSetRootDirection_adapt_modifiable_immutable_to_return =
-      [](void* arkode_mem) -> std::tuple<int, int>
+    auto ARKodeSetRootDirection_adapt_arr_ptr_to_std_vector =
+      [](void* arkode_mem, std::vector<int> rootdir_1d) -> int
     {
-      int rootdir_adapt_modifiable;
+      int* rootdir_1d_ptr =
+        reinterpret_cast<int*>(rootdir_1d.empty() ? nullptr : rootdir_1d.data());
 
-      int r = ARKodeSetRootDirection(arkode_mem, &rootdir_adapt_modifiable);
-      return std::make_tuple(r, rootdir_adapt_modifiable);
+      auto lambda_result = ARKodeSetRootDirection(arkode_mem, rootdir_1d_ptr);
+      return lambda_result;
     };
 
-    return ARKodeSetRootDirection_adapt_modifiable_immutable_to_return(arkode_mem);
+    return ARKodeSetRootDirection_adapt_arr_ptr_to_std_vector(arkode_mem,
+                                                              rootdir_1d);
   },
-  nb::arg("arkode_mem"));
+  nb::arg("arkode_mem"), nb::arg("rootdir_1d"));
 
 m.def("ARKodeSetNoInactiveRootWarn", ARKodeSetNoInactiveRootWarn,
       nb::arg("arkode_mem"));
@@ -1444,8 +1444,7 @@ m.def("ARKodeSetMassLSNormFactor", ARKodeSetMassLSNormFactor,
 //
 
 auto pyClassARKodeButcherTableMem =
-  nb::class_<ARKodeButcherTableMem>(m,
-                                    "ARKodeButcherTableMem", "---------------------------------------------------------------\n  Types : struct ARKodeButcherTableMem, ARKodeButcherTable\n  ---------------------------------------------------------------")
+  nb::class_<ARKodeButcherTableMem>(m, "ARKodeButcherTableMem", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

@@ -5,8 +5,7 @@
 //
 
 auto pyEnumMRISTEP_METHOD_TYPE =
-  nb::enum_<MRISTEP_METHOD_TYPE>(m, "MRISTEP_METHOD_TYPE", nb::is_arithmetic(),
-                                 "MRIStep method types")
+  nb::enum_<MRISTEP_METHOD_TYPE>(m, "MRISTEP_METHOD_TYPE", nb::is_arithmetic(), "")
     .value("MRISTEP_EXPLICIT", MRISTEP_EXPLICIT, "")
     .value("MRISTEP_IMPLICIT", MRISTEP_IMPLICIT, "")
     .value("MRISTEP_IMEX", MRISTEP_IMEX, "")
@@ -59,8 +58,7 @@ auto pyEnumARKODE_MRITableID =
 //
 
 auto pyClassMRIStepCouplingMem =
-  nb::class_<MRIStepCouplingMem>(m,
-                                 "MRIStepCouplingMem", "---------------------------------------------------------------\n  MRI coupling data structure and associated utility routines\n  ---------------------------------------------------------------")
+  nb::class_<MRIStepCouplingMem>(m, "MRIStepCouplingMem", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

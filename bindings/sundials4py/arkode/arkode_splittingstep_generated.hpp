@@ -5,14 +5,13 @@
 //
 
 auto pyClassSplittingStepCoefficientsMem =
-  nb::class_<SplittingStepCoefficientsMem>(m,
-                                           "SplittingStepCoefficientsMem", "---------------------------------------------------------------\n  Types : struct SplittingStepCoefficientsMem, SplittingStepCoefficients\n  ---------------------------------------------------------------")
+  nb::class_<SplittingStepCoefficientsMem>(m, "SplittingStepCoefficientsMem", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 
 auto pyEnumARKODE_SplittingCoefficientsID =
   nb::enum_<ARKODE_SplittingCoefficientsID>(m, "ARKODE_SplittingCoefficientsID",
-                                            nb::is_arithmetic(), " Splitting names use the convention\n * ARKODE_SPLITTING_<name>_<stages>_<order>_<partitions>")
+                                            nb::is_arithmetic(), "")
     .value("ARKODE_SPLITTING_NONE", ARKODE_SPLITTING_NONE,
            "ensure enum is signed int")
     .value("ARKODE_SPLITTING_LIE_TROTTER_1_1_2",

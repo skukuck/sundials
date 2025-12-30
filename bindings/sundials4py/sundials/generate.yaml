@@ -31,6 +31,7 @@ modules:
     - "SetOptions" 
     macro_define_include_by_name__regex:
     - "^SUN_"
+    - "^SUNDIALS_"
   sundials_adaptcontroller:
     path: sundials/sundials_adaptcontroller_generated.hpp
     headers:

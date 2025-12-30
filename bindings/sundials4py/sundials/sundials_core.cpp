@@ -46,6 +46,9 @@ void bind_core(nb::module_& m)
 #include "sundials_errors.hpp"
 #include "sundials_types_generated.hpp"
 
+  m.attr("SUNDIALS_VERSION")     = SUNDIALS_VERSION;
+  m.attr("SUNDIALS_GIT_VERSION") = SUNDIALS_GIT_VERSION;
+
   // handle opening and closing C files
   nb::class_<FILE>(m, "FILE");
   m.def("SUNFileOpen",

@@ -19,6 +19,7 @@
  * -----------------------------------------------------------------*/
 
 #include "sundials4py.hpp"
+#include "sundials/sundials_config.h"
 
 namespace nb = nanobind;
 
@@ -75,6 +76,9 @@ NB_MODULE(sundials4py, m)
   // The nanobind leak warnings can be quite noisy due to leaks within Python itself, so we disable them for Release builds.
   nb::set_leak_warnings(false);
 #endif
+
+  // Setting the version in __version__ is a quasi-standard practice for Python modules
+  m.attr("__version__") = SUNDIALS_VERSION;
 
   nb::module_ core_m = m.def_submodule("core", "A submodule of 'sundials4py'");
   sundials4py::bind_core(core_m);

@@ -18,7 +18,7 @@
 # Python port of the SUNDIALS slider-crank DAE example in IDAS
 # (idasSlCrank_dns.c).
 #
-# Simulation of a slider-crank mechanism modelled with 3 generalized
+# Simulation of a slider-crank mechanism modeled with 3 generalized
 # coordinates: crank angle, connecting bar angle, and slider location.
 # The mechanism moves under the action of a constant horizontal force
 # applied to the connecting rod and a spring-damper connecting the crank
@@ -144,12 +144,16 @@ def main():
 
     # SUNDIALS context
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    assert status == SUN_SUCCESS
 
-    # Create N_Vectors
     id = N_VNew_Serial(NEQ, sunctx)
+    assert id is not None
     yy = N_VClone(id)
+    assert yy is not None
     yp = N_VClone(id)
+    assert yp is not None
     q = N_VNew_Serial(1, sunctx)
+    assert q is not None
 
     # Consistent IC
     id_arr = N_VGetArrayPointer(id)
@@ -159,6 +163,7 @@ def main():
 
     # IDAS initialization
     ida = IDACreate(sunctx)
+    assert ida is not None
     status = IDAInit(
         ida.get(), lambda t, yv, ypv, rv, _: dae.residual(t, yv, ypv, rv), TBEGIN, yy, yp
     )
@@ -172,11 +177,13 @@ def main():
     status = IDASetMaxNumSteps(ida.get(), 20000)
     assert status == IDA_SUCCESS
 
-    # Create dense SUNMatrix to use with dense linear solver
-    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    # Create dense SUNMatrix to use with dense linear solver  
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)  
+    assert A is not None  
 
-    # Create dense linear solver
-    LS = SUNLinSol_Dense(yy, A, sunctx)
+    # Create dense linear solver  
+    LS = SUNLinSol_Dense(yy, A, sunctx)  
+    assert LS is not None  
 
     # Attach the matrix and linear solver
     status = IDASetLinearSolver(ida.get(), LS, A)
@@ -186,7 +193,7 @@ def main():
     N_VConst(0.0, q)
     status = IDAQuadInit(ida.get(), lambda t, yv, ypv, qv, _: dae.rhsQ(t, yv, ypv, qv), q)
     assert status == IDA_SUCCESS
-    status = IDASetQuadErrCon(ida.get(), 1)
+    status = IDASetQuadErrCon(ida.get(), True)
     assert status == IDA_SUCCESS
     status = IDAQuadSStolerances(ida.get(), RTOLQ, ATOLQ)
     assert status == IDA_SUCCESS
@@ -245,10 +252,11 @@ def main():
 
     status, tret = IDAGetQuad(ida.get(), q)
     print("--------------------------------------------")
-    print(f"  G = {N_VGetArrayPointer(q)[0]:24.16f}")
+    print(f"  G = {N_VGetArrayPointer(q)[0]}")  
     print("--------------------------------------------\n")
 
 
+# This function allows pytest to discover the example as a test
 def test_idaSlCrank_dns():
     main()
 

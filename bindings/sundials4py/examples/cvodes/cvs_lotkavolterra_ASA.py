@@ -97,13 +97,17 @@ def main():
     NP = ode.NP
 
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    assert status == SUN_SUCCESS
+
     y = N_VNew_Serial(NEQ, sunctx)
+    assert y is not None
 
     # Set initial condition
     ode.set_init_cond(y)
 
     # Create CVODE solver and set up problem
     cvode = CVodeCreate(CV_BDF, sunctx)
+    assert cvode is not None
 
     # Initialize CVODE with ODE RHS
     status = CVodeInit(cvode.get(), lambda t, yv, ydv, _: ode.f(t, yv, ydv), T0, y)
@@ -119,11 +123,12 @@ def main():
 
     # Set linear solver
     ls = SUNLinSol_SPGMR(y, 0, 3, sunctx)
+    assert ls is not None
     status = CVodeSetLinearSolver(cvode.get(), ls, None)
     assert status == CV_SUCCESS
 
     # Enable adjoint sensitivity analysis
-    status = CVodeAdjInit(cvode.get(), steps, 1)  # CV_HERMITE = 1
+    status = CVodeAdjInit(cvode.get(), steps, CV_HERMITE)  
     assert status == CV_SUCCESS
 
     # Output problem setup
@@ -139,16 +144,20 @@ def main():
     # Forward integration
     tout = Tf
     t = 0.0
-    status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)
+    status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)  
+    assert status == CV_SUCCESS
+
     yarr = N_VGetArrayPointer(y)
     print(f"  {tout:10.6f}  {yarr[0]:10.6f}  {yarr[1]:10.6f}")
     print("   ---------------------------------")
 
     # Adjoint terminal condition
-    uB = N_VNew_Serial(NEQ, sunctx)
+    uB = N_VNew_Serial(NEQ, sunctx)  
+    assert uB is not None  
     arr_uB = N_VGetArrayPointer(uB)
     arr_uB[:] = ode.dgdu(y)
-    qB = N_VNew_Serial(NP, sunctx)
+    qB = N_VNew_Serial(NP, sunctx)  
+    assert qB is not None  
     N_VConst(0.0, qB)
     print("Adjoint terminal condition:")
     print(arr_uB)
@@ -169,7 +178,8 @@ def main():
     assert status == CV_SUCCESS
 
     # Create the linear solver for the backward problem
-    lsb = SUNLinSol_SPGMR(uB, 0, 3, sunctx)
+    lsb = SUNLinSol_SPGMR(uB, 0, 3, sunctx)  
+    assert lsb is not None  
     status = CVodeSetLinearSolverB(cvode.get(), which, lsb, None)
     assert status == CV_SUCCESS
 
@@ -184,7 +194,7 @@ def main():
     # are to be used in the step size control mechanism within CVODES. Call
     # CVodeQuadSStolerances or CVodeQuadSVtolerances to specify the integration
     # tolerances for the quadrature variables.
-    status = CVodeSetQuadErrConB(cvode.get(), which, 1)
+    status = CVodeSetQuadErrConB(cvode.get(), which, True)
     assert status == CV_SUCCESS
 
     # Call CVodeQuadSStolerancesB to specify the scalar relative and absolute tolerances
@@ -195,7 +205,6 @@ def main():
     # Integrate the adjoint ODE
     status = CVodeB(cvode.get(), T0, CV_NORMAL)
     assert status >= 0
-    t = 0.0
 
     # Get the final adjoint solution
     status, t = CVodeGetB(cvode.get(), which, uB)
@@ -214,6 +223,7 @@ def main():
     print(arr_qB)
 
 
+# This function allows pytest to discover the example as a test
 def test_cvs_lotkavolterra_ASA():
     main()
 

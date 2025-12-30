@@ -2,6 +2,19 @@
 # -----------------------------------------------------------------
 # Programmer(s): Cody J. Balos
 # -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
 # Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint
 # sensitivity example (ark_lotka_volterra_ASA.c)
 # -----------------------------------------------------------------
@@ -92,13 +105,16 @@ def main():
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
 
-    y = sun.N_VNew_Serial(NEQ, sunctx)
+    y = sun.N_VNew_Serial(NEQ, sunctx)  
+    assert y is not None  
+
     ode.set_init_cond(y)
 
     #
     # Create the ARKODE stepper that will be used for the forward evolution.
     #
-    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
+    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)  
+    assert arkode is not None  
     status = ark.ARKodeSetOrder(arkode.get(), 4)
     assert status == ark.ARK_SUCCESS
     status = ark.ARKodeSStolerances(arkode.get(), reltol, abstol)
@@ -111,7 +127,7 @@ def main():
     status = ark.ARKodeSetMaxNumSteps(arkode.get(), int((tf - t0) / dt) + 1)
     assert status == ark.ARK_SUCCESS
 
-    # # Enable checkpointing during the forward run
+    # Enable checkpointing during the forward run
     nsteps = int(np.ceil((tf - t0) / dt))
     ncheck = nsteps * order
     mem_helper = sun.SUNMemoryHelper_Sys(sunctx)
@@ -135,7 +151,7 @@ def main():
     assert status == ark.ARK_SUCCESS
 
     print("Forward Solution:")
-    print(sun.N_VGetArrayPointer(y))
+    print(yarr)
 
     print("ARKODE Stats for Forward Solution:")
     status, file_ptr = sun.SUNFileOpen("stdout", "w+")
@@ -147,7 +163,8 @@ def main():
     #
 
     # Adjoint terminal condition
-    uB = sun.N_VNew_Serial(NEQ, sunctx)
+    uB = sun.N_VNew_Serial(NEQ, sunctx)  
+    assert uB is not None  
     arr_uB = ode.dgdu(y)
     uB_arr = sun.N_VGetArrayPointer(uB)
     uB_arr[:] = arr_uB
@@ -157,7 +174,9 @@ def main():
 
     # Combine adjoint vectors into a ManyVector
     sens = [uB, qB]
-    sf = sun.N_VNew_ManyVector(2, sens, sunctx)
+    sf = sun.N_VNew_ManyVector(2, sens, sunctx)  
+    assert sf is not None  
+
     print("Adjoint terminal condition:")
     print(sun.N_VGetArrayPointer(uB))
     print(sun.N_VGetArrayPointer(qB))
@@ -171,6 +190,7 @@ def main():
         sf,
         sunctx,
     )
+    assert status == ark.ARK_SUCCESS  
 
     #
     # Now compute the adjoint solution
@@ -183,10 +203,8 @@ def main():
     print(sun.N_VGetArrayPointer(uB))
     print(sun.N_VGetArrayPointer(qB))
 
-    # print("\nARKStep Adjoint Stats:")
-    # ARKStepAdjointStepperPrintAllStats(adj_stepper.get(), None, 0)
 
-
+# This function allows pytest to discover the example as a test
 def test_ark_lotka_volterra_ASA():
     main()
 

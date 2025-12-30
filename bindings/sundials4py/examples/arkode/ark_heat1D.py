@@ -208,6 +208,7 @@ def main():
     print(f"   Total number of error test failures = {netf}")
 
 
+# This function allows pytest to discover the example as a test
 def test_ark_heat1D():
     main()
 

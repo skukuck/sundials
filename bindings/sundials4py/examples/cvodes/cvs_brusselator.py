@@ -34,7 +34,7 @@
 #    transition, both u and v continue to evolve somewhat
 #    rapidly for another 1.4 time units, and finish off smoothly.
 #
-# This program solves the problem with the DIRK method, using a
+# This program solves the problem with the BDF method, using a
 # Newton iteration with the SUNDIALS dense linear solver, and a
 # user-supplied Jacobian routine.
 #
@@ -107,13 +107,17 @@ def main():
     reltol = 1.0e-6
     abstol = 1.0e-10
 
-    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
-    y = N_VNew_Serial(NEQ, sunctx)
+    status, sunctx = SUNContext_Create(SUN_COMM_NULL)  
+    assert status == SUN_SUCCESS  
+
+    y = N_VNew_Serial(NEQ, sunctx)  
+    assert y is not None  
 
     ode_problem = BrusselatorODE(u0, v0, w0, a, b, ep)
     ode_problem.set_init_cond(y)
 
-    cvode = CVodeCreate(CV_BDF, sunctx)
+    cvode = CVodeCreate(CV_BDF, sunctx)  
+    assert cvode is not None
     status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y)
     assert status == CV_SUCCESS
     status = CVodeSStolerances(cvode.get(), reltol, abstol)
@@ -122,8 +126,11 @@ def main():
     assert status == CV_SUCCESS
 
     # Dense matrix and linear solver
-    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
-    LS = SUNLinSol_Dense(y, A, sunctx)
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)  
+    assert A is not None  
+    LS = SUNLinSol_Dense(y, A, sunctx)  
+    assert LS is not None  
+
     status = CVodeSetLinearSolver(cvode.get(), LS, A)
     assert status == CV_SUCCESS
     status = CVodeSetJacFn(
@@ -192,6 +199,7 @@ def main():
     print(f"   Total RHS evals for setting up the linear system = {nfeLS}")
 
 
+# This function allows pytest to discover the example as a test
 def test_cvs_brusselator():
     main()
 

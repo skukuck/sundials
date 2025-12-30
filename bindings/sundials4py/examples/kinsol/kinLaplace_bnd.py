@@ -45,11 +45,6 @@ ONE = 1.0
 TWO = 2.0
 
 
-# Helper to get index in y for (i, j)
-def idx(i, j):
-    return (j - 1) + (i - 1) * NY
-
-
 class Laplace2D:
     def __init__(self, NX, NY):
         self.NX = NX
@@ -63,37 +58,39 @@ class Laplace2D:
     def set_init_cond(self, yvec):
         y = N_VGetArrayPointer(yvec)
         # Initial guess: zero everywhere
-        for i in range(1, self.NX + 1):
-            for j in range(1, self.NY + 1):
-                y[idx(i, j)] = ZERO
+        y[:] = ZERO
         return 0
 
     def func(self, uvec, fvec):
         u = N_VGetArrayPointer(uvec)
         f = N_VGetArrayPointer(fvec)
-        # Reshape to 2D for vectorized operations
-        u2d = np.zeros((self.NX + 2, self.NY + 2), dtype=sunrealtype)
-        # Fill interior points
-        for i in range(1, self.NX + 1):
-            for j in range(1, self.NY + 1):
-                u2d[i, j] = u[idx(i, j)]
-        # Vectorized finite difference
-        uij = u2d[1:-1, 1:-1]
-        udn = u2d[1:-1, 0:-2]
-        uup = u2d[1:-1, 2:]
-        ult = u2d[0:-2, 1:-1]
-        urt = u2d[2:, 1:-1]
-        hdiff = self.hdc * (ult - TWO * uij + urt)
-        vdiff = self.vdc * (uup - TWO * uij + udn)
-        f2d = hdiff + vdiff + uij - uij * uij * uij + 2.0
-        # Write back to 1D f
-        for i in range(1, self.NX + 1):
-            for j in range(1, self.NY + 1):
-                f[idx(i, j)] = f2d[i - 1, j - 1]
+
+        NX, NY = self.NX, self.NY
+        hdc, vdc = self.hdc, self.vdc
+
+        # 2D views of the interior data (zero-copy)
+        u2d = u.reshape((NX, NY))
+        f2d = f.reshape((NX, NY))
+
+        for i in range(NX):
+            for j in range(NY):
+                uij = u2d[i, j]
+
+                # homogeneous Dirichlet boundaries (0 outside domain)
+                udn = u2d[i, j - 1] if j > 0 else 0.0
+                uup = u2d[i, j + 1] if j < NY - 1 else 0.0
+                ult = u2d[i - 1, j] if i > 0 else 0.0
+                urt = u2d[i + 1, j] if i < NX - 1 else 0.0
+
+                hdiff = hdc * (ult - TWO * uij + urt)
+                vdiff = vdc * (uup - TWO * uij + udn)
+
+                f2d[i, j] = hdiff + vdiff + uij - uij * uij * uij + 2.0
+
         return 0
 
     def print_output(self, yvec):
-        y = N_VGetArrayPointer(yvec)
+        y = N_VGetArrayPointer(yvec).reshape((self.NX, self.NY))
         print("            ", end="")
         for i in range(1, self.NX + 1, SKIP):
             x = i * self.dx
@@ -103,7 +100,7 @@ class Laplace2D:
             yval = j * self.dy
             print(f"{yval:<8.5f}    ", end="")
             for i in range(1, self.NX + 1, SKIP):
-                print(f"{y[idx(i, j)]:<8.5f} ", end="")
+                print(f"{y[i-1,j-1]:<8.5f} ", end="")
             print()
 
 
@@ -115,8 +112,13 @@ def main():
     print(f"Problem size: {NX} x {NY} = {NEQ}\n")
 
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    assert status == SUN_SUCCESS
+
     y = N_VNew_Serial(NEQ, sunctx)
+    assert y is not None
+
     scale = N_VNew_Serial(NEQ, sunctx)
+    assert scale is not None
 
     # Create problem instance and set initial guess
     problem = Laplace2D(NX, NY)
@@ -133,7 +135,11 @@ def main():
 
     # Create band matrix and linear solver
     J = SUNBandMatrix(NEQ, NX, NX, sunctx)
+    assert J is not None
+
     LS = SUNLinSol_Band(y, J, sunctx)
+    assert LS is not None
+
     status = KINSetLinearSolver(kin.get(), LS, J)
     assert status == KIN_SUCCESS
 

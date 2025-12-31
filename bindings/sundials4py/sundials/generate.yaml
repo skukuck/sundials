@@ -53,6 +53,7 @@ modules:
     headers:
     - ../../include/sundials/sundials_context.h
     fn_exclude_by_name__regex:
+    # nanobind cannot bind to functions which take functions points, so we do do something custom 
     - "^SUNContext_PushErrHandler$"
     - "^SUNContext_PopErrHandler$"
   sundials_domeigestimator:

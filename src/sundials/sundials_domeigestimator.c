@@ -236,6 +236,20 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE,
   return (ier);
 }
 
+SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters(SUNDomEigEstimator DEE,
+                                                    sunrealtype tol)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->settolpreprocessiters)
+  {
+    ier = DEE->ops->settolpreprocessiters(DEE, tol);
+  }
+  else { ier = SUN_SUCCESS; }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
 SUNErrCode SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE,
                                         sunrealtype rel_tol)
 {

@@ -146,6 +146,7 @@ int main(int argc, char* argv[])
   fails += Test_SUNDomEigEstimator_SetATimes(DEE, &ProbData, ATimes, 0);
   fails += Test_SUNDomEigEstimator_SetMaxIters(DEE, max_iters, 0);
   fails += Test_SUNDomEigEstimator_SetNumPreprocessIters(DEE, num_warmups, 0);
+  fails += Test_SUNDomEigEstimator_SetTolPreprocessIters(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetRelTol(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetInitialGuess(DEE, q, 0);
   fails += Test_SUNDomEigEstimator_Initialize(DEE, 0);

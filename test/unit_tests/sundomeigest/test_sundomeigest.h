@@ -37,6 +37,8 @@ int Test_SUNDomEigEstimator_SetMaxIters(SUNDomEigEstimator DEE,
                                         long int max_iters, int myid);
 int Test_SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE,
                                                   int num_warmups, int myid);
+int Test_SUNDomEigEstimator_SetTolPreprocessIters(SUNDomEigEstimator DEE,
+                                                  sunrealtype tol_warmups, int myid);
 int Test_SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype tol,
                                       int myid);
 int Test_SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q,

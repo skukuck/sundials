@@ -137,6 +137,43 @@ int Test_SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE,
 }
 
 /* ----------------------------------------------------------------------
+ * SUNDomEigEstimator_SetTolPreprocessIters Test
+ * --------------------------------------------------------------------*/
+int Test_SUNDomEigEstimator_SetTolPreprocessIters(SUNDomEigEstimator DEE,
+                                                  sunrealtype tol_warmups,
+                                                  int myid)
+{
+  int failure;
+  double start_time, stop_time;
+
+  /* try calling SUNDomEigEstimator_SetTolPreprocessIters routine: should pass/fail based on expected input */
+  start_time = get_time();
+  failure    = SUNDomEigEstimator_SetTolPreprocessIters(DEE, tol_warmups);
+  stop_time  = get_time();
+
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNDomEigEstimator_SetTolPreprocessIters check, "
+           "Proc "
+           "%d \n",
+           myid);
+    PRINT_TIME("    SUNDomEigEstimator_SetTolPreprocessIters Time: %22.15e \n "
+               "\n",
+               stop_time - start_time);
+    return (1);
+  }
+  else if (myid == 0)
+  {
+    printf("    PASSED test -- SUNDomEigEstimator_SetTolPreprocessIters \n");
+    PRINT_TIME("    SUNDomEigEstimator_SetTolPreprocessIters Time: %22.15e \n "
+               "\n",
+               stop_time - start_time);
+  }
+
+  return (0);
+}
+
+/* ----------------------------------------------------------------------
  * SUNDomEigEstimator_SetRelTol Test
  * --------------------------------------------------------------------*/
 int Test_SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype tol,

@@ -33,13 +33,10 @@ def test_lsrkstep(sunctx):
     ode_problem = AnalyticODE()
     ode_problem.set_init_cond(y)
 
-    def rhs(t, y, ydot, _):
-        return ode_problem.f(t, y, ydot)
-
     def dom_eig(t, yvec, fnvec, _, tempv1, tempv2, tempv3):
         return ode_problem.dom_eig(t, yvec, fnvec, tempv1, tempv2, tempv3)
 
-    lsrk = LSRKStepCreateSTS(rhs, 0, y, sunctx)
+    lsrk = LSRKStepCreateSTS(ode_problem.f, 0, y, sunctx)
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
     assert status == ARK_SUCCESS
 

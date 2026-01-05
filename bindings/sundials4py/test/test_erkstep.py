@@ -33,10 +33,7 @@ def test_erkstep(sunctx):
     ode_problem = AnalyticODE()
     ode_problem.set_init_cond(y)
 
-    def rhs(t, y, ydot, _):
-        return ode_problem.f(t, y, ydot)
-
-    erk = ERKStepCreate(rhs, 0, y, sunctx)
+    erk = ERKStepCreate(ode_problem.f, 0, y, sunctx)
     status = ARKodeSStolerances(erk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
 

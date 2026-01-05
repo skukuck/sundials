@@ -37,10 +37,38 @@ class AnalyticODE(ODEProblem):
         self.lamb = lamb
         self.inner_stepper = None
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, _):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
         ydot[0] = self.lamb * y[0] + 1.0 / (1.0 + t * t) - self.lamb * np.arctan(t)
+        return 0
+
+    def fS(self, Ns, t, y, ydot, yS, ySdot, _, tmp1, tmp2):
+        # Sensitivity RHS: df/dy * yS + df/dp (here, p = y0, so df/dp = 0)
+        yarr = N_VGetArrayPointer(y)
+        ySarr = N_VGetArrayPointer(yS[0])
+        ySdotarr = N_VGetArrayPointer(ySdot[0])
+        # df/dy = lambda
+        lamb = self.lamb
+        ySdotarr[0] = lamb * ySarr[0]
+        return 0
+
+    def fB(self, t, y, yB, yBdot, _):
+        # Adjoint RHS: -df/dy^T * lambdaB
+        yarr = N_VGetArrayPointer(y)
+        yBarr = N_VGetArrayPointer(yB)
+        yBdotarr = N_VGetArrayPointer(yBdot)
+        lamb = self.lamb
+        yBdotarr[0] = -lamb * yBarr[0]
+        return 0
+
+    def fBS(self, t, y, yS, yB, yBdot, _):
+        # Adjoint RHS: -df/dy^T * lambdaB
+        yarr = N_VGetArrayPointer(y)
+        yBarr = N_VGetArrayPointer(yB)
+        yBdotarr = N_VGetArrayPointer(yBdot)
+        lamb = self.lamb
+        yBdotarr[0] = -lamb * yBarr[0]
         return 0
 
     def dom_eig(self, t, yvec, fnvec, tempv1, tempv2, tempv3):
@@ -79,13 +107,13 @@ class AnalyticMultiscaleODE(ODEProblem):
     def __init__(self, lamb=2.0):
         self.lamb = lamb
 
-    def f_linear(self, t, yvec, ydotvec):
+    def f_linear(self, t, yvec, ydotvec, _):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
         ydot[:] = -self.lamb * y
         return 0
 
-    def f_nonlinear(self, t, yvec, ydotvec):
+    def f_nonlinear(self, t, yvec, ydotvec, _):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
         ydot[:] = y * y
@@ -123,7 +151,7 @@ class AnalyticDAE:
     def __init__(self, alpha=10.0):
         self.alpha = alpha
 
-    def res(self, t, yyvec, ypvec, resvec):
+    def res(self, t, yyvec, ypvec, resvec, _):
         yy = N_VGetArrayPointer(yyvec)
         yp = N_VGetArrayPointer(ypvec)
         res = N_VGetArrayPointer(resvec)

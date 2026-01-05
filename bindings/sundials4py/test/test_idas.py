@@ -40,13 +40,10 @@ def test_idas_ivp(sunctx):
 
     ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
 
-    def resfn(t, yy, yp, rr, _):
-        return dae_problem.res(t, yy, yp, rr)
-
     def psolve(t, yy, yp, rr, r, z, cj, delta, _):
         return dae_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
 
-    status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
+    status = IDAInit(ida.get(), dae_problem.res, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
     status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
@@ -100,13 +97,10 @@ def test_idas_fsa(sunctx):
 
     ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
 
-    def resfn(t, yy, yp, rr, _):
-        return dae_problem.res(t, yy, yp, rr)
-
     def psolve(t, yy, yp, rr, r, z, cj, delta, _):
         return dae_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
 
-    status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
+    status = IDAInit(ida.get(), dae_problem.res, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
     status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
@@ -169,13 +163,10 @@ def test_idas_adjoint(sunctx):
 
     ls = SUNLinSol_SPGMR(yy, SUN_PREC_LEFT, 0, sunctx)
 
-    def resfn(t, yy, yp, rr, _):
-        return dae_problem.res(t, yy, yp, rr)
-
     def psolve(t, yy, yp, rr, r, z, cj, delta, _):
         return dae_problem.psolve(t, yy, yp, rr, r, z, cj, delta)
 
-    status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
+    status = IDAInit(ida.get(), dae_problem.res, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
     status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)

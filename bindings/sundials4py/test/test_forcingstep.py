@@ -30,22 +30,16 @@ def test_forcingstep(sunctx):
     ode_problem = AnalyticMultiscaleODE()
     t0, tf = AnalyticMultiscaleODE.T0, 0.01
 
-    def f_linear(t, y, ydot, _):
-        return ode_problem.f_linear(t, y, ydot)
-
-    def f_nonlinear(t, y, ydot, _):
-        return ode_problem.f_nonlinear(t, y, ydot)
-
     y = N_VNew_Serial(1, sunctx)
     y0 = N_VClone(y)
     ode_problem.set_init_cond(y)
     ode_problem.set_init_cond(y0)
 
-    linear_ark = ERKStepCreate(f_linear, t0, y, sunctx)
+    linear_ark = ERKStepCreate(ode_problem.f_linear, t0, y, sunctx)
     status = ARKodeSetFixedStep(linear_ark.get(), 5e-3)
     assert status == ARK_SUCCESS
 
-    nonlinear_ark = ARKStepCreate(f_nonlinear, None, t0, y, sunctx)
+    nonlinear_ark = ARKStepCreate(ode_problem.f_nonlinear, None, t0, y, sunctx)
     status = ARKodeSetFixedStep(nonlinear_ark.get(), 1e-3)
     assert status == ARK_SUCCESS
 

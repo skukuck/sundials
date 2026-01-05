@@ -33,7 +33,7 @@ def test_multirate(sunctx):
     t0, tf = AnalyticMultiscaleODE.T0, 0.01
 
     def fslow(t, y, ydot, _):
-        return ode_problem.f_linear(t, y, ydot)
+        return ode_problem.f_linear(t, y, ydot, None)
 
     def ffast(t, y, ydot, _):
         # # TODO(CJB): fix MRIStepInnerStepper_GetForcingData
@@ -43,7 +43,7 @@ def test_multirate(sunctx):
         # assert status == ARK_SUCCESS
         # assert len(forcing) == nforcing
 
-        return ode_problem.f_nonlinear(t, y, ydot)
+        return ode_problem.f_nonlinear(t, y, ydot, None)
 
     y = N_VNew_Serial(1, sunctx)
     y0 = N_VClone(y)
@@ -80,13 +80,3 @@ def test_multirate(sunctx):
     # This seems to be unavoidable without setting this to None or using a weakref.
     # Its possible newer versions of Python may not result in the warning.
     ode_problem.inner_stepper = None
-
-
-# Allow the test to be invoked without pytest
-def main():
-    status, sunctx = SUNContext_Create(SUN_COMM_NULL)
-    test_multirate(sunctx)
-
-
-if __name__ == "__main__":
-    main()

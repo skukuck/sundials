@@ -35,7 +35,7 @@ def test_explicit(sunctx):
 
     ode_problem.set_init_cond(y)
 
-    ark = ARKStepCreate(lambda t, y, ydot, _: ode_problem.f(t, y, ydot), None, 0, y, sunctx)
+    ark = ARKStepCreate(ode_problem.f, None, 0, y, sunctx)
 
     status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
@@ -55,6 +55,10 @@ def test_explicit(sunctx):
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
+    status, num_steps = ARKodeGetNumSteps(ark.get())
+    assert status == ARK_SUCCESS
+    assert num_steps > 0
+
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
@@ -72,7 +76,7 @@ def test_implicit(sunctx):
 
     ode_problem.set_init_cond(y)
 
-    ark = ARKStepCreate(None, lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y, sunctx)
+    ark = ARKStepCreate(None, ode_problem.f, 0, y, sunctx)
 
     status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
@@ -84,10 +88,15 @@ def test_implicit(sunctx):
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
+    status, num_steps = ARKodeGetNumSteps(ark.get())
+    assert status == ARK_SUCCESS
+    assert num_steps > 0
+
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+
 
 @pytest.mark.skipif(
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
@@ -101,13 +110,7 @@ def test_implicit_with_dense_ls_and_jac(sunctx):
     A = SUNDenseMatrix(1, 1, sunctx)
     ls = SUNLinSol_Dense(y, A, sunctx)
 
-    ark = ARKStepCreate(
-        None,
-        lambda t, yvec, ydotvec, _: ode_problem.f(t, yvec, ydotvec),
-        0.0,
-        y,
-        sunctx,
-    )
+    ark = ARKStepCreate(None, ode_problem.f, 0.0, y, sunctx)
 
     status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
@@ -128,6 +131,10 @@ def test_implicit_with_dense_ls_and_jac(sunctx):
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
 
+    status, num_steps = ARKodeGetNumSteps(ark.get())
+    assert status == ARK_SUCCESS
+    assert num_steps > 0
+
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
@@ -145,13 +152,7 @@ def test_imex(sunctx):
 
     ode_problem.set_init_cond(y)
 
-    ark = ARKStepCreate(
-        lambda t, y, ydot, _: ode_problem.f_nonlinear(t, y, ydot),
-        lambda t, y, ydot, _: ode_problem.f_linear(t, y, ydot),
-        0,
-        y,
-        sunctx,
-    )
+    ark = ARKStepCreate(ode_problem.f_nonlinear, ode_problem.f_linear, 0, y, sunctx)
 
     status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS
@@ -162,6 +163,10 @@ def test_imex(sunctx):
     tout = 10.0
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
+
+    status, num_steps = ARKodeGetNumSteps(ark.get())
+    assert status == ARK_SUCCESS
+    assert num_steps > 0
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)

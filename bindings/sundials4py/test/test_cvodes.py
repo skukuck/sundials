@@ -38,7 +38,7 @@ def test_cvodes_ivp(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
 
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y)
+    status = CVodeInit(cvode.get(), ode_problem.f, 0, y)
     assert status == CV_SUCCESS
 
     status = CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
@@ -90,7 +90,7 @@ def test_cvodes_fsa(sunctx):
     atol = 1e-10
     rtol = 1e-10
 
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y)
+    status = CVodeInit(cvode.get(), ode_problem.f, 0, y)
     assert status == CV_SUCCESS
 
     status = CVodeSStolerances(cvode.get(), rtol, atol)
@@ -105,17 +105,7 @@ def test_cvodes_fsa(sunctx):
     yS0 = [N_VClone(y)]
     N_VConst(1.0, yS0[0])
 
-    def fS(Ns, t, y, ydot, yS, ySdot, _, tmp1, tmp2):
-        # Sensitivity RHS: df/dy * yS + df/dp (here, p = y0, so df/dp = 0)
-        yarr = N_VGetArrayPointer(y)
-        ySarr = N_VGetArrayPointer(yS[0])
-        ySdotarr = N_VGetArrayPointer(ySdot[0])
-        # df/dy = lambda
-        lamb = ode_problem.lamb
-        ySdotarr[0] = lamb * ySarr[0]
-        return 0
-
-    status = CVodeSensInit(cvode.get(), Ns, ism, fS, yS0)
+    status = CVodeSensInit(cvode.get(), Ns, ism, ode_problem.fS, yS0)
     assert status == CV_SUCCESS
 
     status = CVodeSensSStolerances(cvode.get(), rtol, np.array([atol], dtype=sunrealtype))
@@ -157,7 +147,7 @@ def test_cvodes_adjoint(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
 
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y)
+    status = CVodeInit(cvode.get(), ode_problem.f, 0, y)
     assert status == CV_SUCCESS
 
     status = CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
@@ -188,17 +178,8 @@ def test_cvodes_adjoint(sunctx):
     status, whichB = CVodeCreateB(cvode.get(), CV_BDF)
     assert status == CV_SUCCESS
 
-    def fB(t, y, yB, yBdot, _):
-        # Adjoint RHS: -df/dy^T * lambdaB
-        yarr = N_VGetArrayPointer(y)
-        yBarr = N_VGetArrayPointer(yB)
-        yBdotarr = N_VGetArrayPointer(yBdot)
-        lamb = ode_problem.lamb
-        yBdotarr[0] = -lamb * yBarr[0]
-        return 0
-
     tB0 = tret
-    status = CVodeInitB(cvode.get(), whichB, fB, tB0, yB)
+    status = CVodeInitB(cvode.get(), whichB, ode_problem.fB, tB0, yB)
     assert status == CV_SUCCESS
 
     status = CVodeSStolerancesB(cvode.get(), whichB, SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
@@ -248,7 +229,7 @@ def test_cvodes_adjoint_quad(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
 
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), 0, y)
+    status = CVodeInit(cvode.get(), ode_problem.f, 0, y)
     assert status == CV_SUCCESS
 
     status = CVodeSStolerances(cvode.get(), rtol, atol)
@@ -263,17 +244,7 @@ def test_cvodes_adjoint_quad(sunctx):
     yS0 = [N_VClone(y)]
     N_VConst(1.0, yS0[0])
 
-    def fS(Ns, t, y, ydot, yS, ySdot, _, tmp1, tmp2):
-        # Sensitivity RHS: df/dy * yS + df/dp (here, p = y0, so df/dp = 0)
-        yarr = N_VGetArrayPointer(y)
-        ySarr = N_VGetArrayPointer(yS[0])
-        ySdotarr = N_VGetArrayPointer(ySdot[0])
-        # df/dy = lambda
-        lamb = ode_problem.lamb
-        ySdotarr[0] = lamb * ySarr[0]
-        return 0
-
-    status = CVodeSensInit(cvode.get(), Ns, ism, fS, yS0)
+    status = CVodeSensInit(cvode.get(), Ns, ism, ode_problem.fS, yS0)
     assert status == CV_SUCCESS
 
     status = CVodeSensSStolerances(cvode.get(), rtol, np.array([atol], dtype=sunrealtype))
@@ -320,22 +291,13 @@ def test_cvodes_adjoint_quad(sunctx):
     status, whichB = CVodeCreateB(cvode.get(), CV_BDF)
     assert status == CV_SUCCESS
 
-    def fBS(t, y, yS, yB, yBdot, _):
-        # Adjoint RHS: -df/dy^T * lambdaB
-        yarr = N_VGetArrayPointer(y)
-        yBarr = N_VGetArrayPointer(yB)
-        yBdotarr = N_VGetArrayPointer(yBdot)
-        lamb = ode_problem.lamb
-        yBdotarr[0] = -lamb * yBarr[0]
-        return 0
-
     def fQB(t, y, yS, yB, qBdot, _):
         # Smoke test
         assert len(yS) == Ns
         return 0
 
     tB0 = tret
-    status = CVodeInitBS(cvode.get(), whichB, fBS, tB0, yB)
+    status = CVodeInitBS(cvode.get(), whichB, ode_problem.fBS, tB0, yB)
     assert status == CV_SUCCESS
 
     # Setup backward quadratures

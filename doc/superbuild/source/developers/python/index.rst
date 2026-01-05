@@ -19,7 +19,7 @@ Python Interfaces
 
 This chapter covers details developers need to know about the SUNDIALS Python interfaces, distributed as the Python package sundials4py.
 
-We use `nanobind <https://github.com/wjakob/nanobind>`__ for the Python bindings. nanobind is a sleeker, faster ``pybind11``.
+We use `nanobind <https://github.com/wjakob/nanobind>`__ for the Python bindings. nanobind is a sleeker, faster, alternative to ``pybind11``.
 It is a C++ library, i.e. you write your binding code in C++. Nanobind does have some restrictions:
 
 - Cannot bind to functions which take double, or more pointer arguments. I.e., it cannot bind to `**` or `***` and so on. These have to be flattened somehow.

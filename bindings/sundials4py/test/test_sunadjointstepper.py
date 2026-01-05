@@ -87,5 +87,5 @@ def test_adjointstepper_getnumsteps(sunctx, nvec, sunstepper):
 def test_adjointstepper_getnumrecompute(sunctx, nvec, sunstepper):
     adj_stepper, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
     err, num_recompute = SUNAdjointStepper_GetNumRecompute(adj_stepper)
-    assert err == SUN_SUCCESS  
+    assert err == SUN_SUCCESS
     assert isinstance(num_recompute, int)

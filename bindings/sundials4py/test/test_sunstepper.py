@@ -38,7 +38,7 @@ def test_stepper_evolve(sunctx, nvec):
     s = make_stepper(sunctx)
     vret = nvec
     err, tret = SUNStepper_Evolve(s, 1.0, vret)
-    assert err == SUN_ERR_NOT_IMPLEMENTED 
+    assert err == SUN_ERR_NOT_IMPLEMENTED
     assert isinstance(tret, float)
 
 
@@ -46,14 +46,14 @@ def test_stepper_one_step(sunctx, nvec):
     s = make_stepper(sunctx)
     vret = nvec
     err, tret = SUNStepper_OneStep(s, 1.0, vret)
-    assert err == SUN_ERR_NOT_IMPLEMENTED  
+    assert err == SUN_ERR_NOT_IMPLEMENTED
     assert isinstance(tret, float)
 
 
 def test_stepper_reset(sunctx, nvec):
     s = make_stepper(sunctx)
     err = SUNStepper_Reset(s, 0.0, nvec)
-    assert err == SUN_ERR_NOT_IMPLEMENTED  
+    assert err == SUN_ERR_NOT_IMPLEMENTED
 
 
 def test_stepper_set_evolve_fn(sunctx, nvec):

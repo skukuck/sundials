@@ -91,7 +91,7 @@ def test_update_h(controller_type, sunctx):
 def test_estimate_step_tol(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     err, hnew, tolfacnew = SUNAdaptController_EstimateStepTol(c, 1.0, 1.0, 1, 0.1, 0.1)
-    assert err == SUN_SUCCESS  
+    assert err == SUN_SUCCESS
     assert isinstance(hnew, float)
     assert isinstance(tolfacnew, float)
 

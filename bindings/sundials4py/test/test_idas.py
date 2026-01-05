@@ -49,7 +49,7 @@ def test_idas_ivp(sunctx):
     status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
-    status = IDASStolerances(ida.get(), 100*SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == IDA_SUCCESS
 
     status = IDASetLinearSolver(ida.get(), ls, None)
@@ -109,7 +109,7 @@ def test_idas_fsa(sunctx):
     status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
-    status = IDASStolerances(ida.get(), 100*SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == IDA_SUCCESS
 
     status = IDASetLinearSolver(ida.get(), ls, None)
@@ -141,7 +141,9 @@ def test_idas_fsa(sunctx):
     status = IDASensInit(ida.get(), Ns, ism, resS, yyS0, ypS0)
     assert status == IDA_SUCCESS
 
-    status = IDASensSStolerances(ida.get(), 100*SUNREALTYPE_RTOL, np.array([SUNREALTYPE_ATOL], dtype=sunrealtype))  
+    status = IDASensSStolerances(
+        ida.get(), 100 * SUNREALTYPE_RTOL, np.array([SUNREALTYPE_ATOL], dtype=sunrealtype)
+    )
     assert status == IDA_SUCCESS
 
     tout = dae_problem.TF
@@ -176,7 +178,7 @@ def test_idas_adjoint(sunctx):
     status = IDAInit(ida.get(), resfn, 0.0, yy, yp)
     assert status == IDA_SUCCESS
 
-    status = IDASStolerances(ida.get(), 100*SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    status = IDASStolerances(ida.get(), 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == IDA_SUCCESS
 
     status = IDASetLinearSolver(ida.get(), ls, None)
@@ -216,7 +218,7 @@ def test_idas_adjoint(sunctx):
     status = IDAInitB(ida.get(), whichB, resB, tout, yyB, ypB)
     assert status == IDA_SUCCESS
 
-    status = IDASStolerancesB(ida.get(), whichB, 100*SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)  
+    status = IDASStolerancesB(ida.get(), whichB, 100 * SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == IDA_SUCCESS
 
     status = IDASetLinearSolverB(ida.get(), whichB, lsB, None)

@@ -86,7 +86,7 @@ def test_initialize(estimator_type, sunctx):
 def test_estimate(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(est)
-    assert err == SUN_SUCCESS  
+    assert err == SUN_SUCCESS
     assert isinstance(err, int)
     assert isinstance(lambdaR, float)
     assert isinstance(lambdaI, float)

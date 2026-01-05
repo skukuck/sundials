@@ -59,9 +59,9 @@ def test_get_type_and_id(sunctx, nvec):
     A = SUNDenseMatrix(2, 2, sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     typ = SUNLinSolGetType(LS)
-    id = SUNLinSolGetID(LS)  
-    assert typ == SUNLINEARSOLVER_DIRECT  
-    assert id == SUNLINEARSOLVER_DENSE  
+    id = SUNLinSolGetID(LS)
+    assert typ == SUNLINEARSOLVER_DIRECT
+    assert id == SUNLINEARSOLVER_DENSE
 
 
 def test_initialize_setup(sunctx, nvec):

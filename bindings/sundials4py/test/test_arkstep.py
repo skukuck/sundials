@@ -18,6 +18,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 from sundials4py.arkode import *
@@ -57,7 +58,7 @@ def test_explicit(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
 @pytest.mark.skipif(
@@ -86,7 +87,7 @@ def test_implicit(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
 @pytest.mark.skipif(
@@ -116,9 +117,9 @@ def test_imex(sunctx):
 
     tout = 10.0
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

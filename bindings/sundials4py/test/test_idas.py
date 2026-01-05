@@ -18,6 +18,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from sundials4py.core import *
 from sundials4py.idas import *
 from problems import AnalyticDAE
@@ -80,8 +81,8 @@ def test_idas_ivp(sunctx):
     sol_yp = N_VClone(yp)
 
     ode_problem.solution(sol_yy, sol_yp, tret)
-    assert np.allclose(N_VGetArrayPointer(sol_yy), N_VGetArrayPointer(yy), rtol=1e-2)
-    assert np.allclose(N_VGetArrayPointer(sol_yp), N_VGetArrayPointer(yp), rtol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol_yy), N_VGetArrayPointer(yy), rtol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol_yp), N_VGetArrayPointer(yp), rtol=1e-2)
 
 
 def test_idas_fsa(sunctx):

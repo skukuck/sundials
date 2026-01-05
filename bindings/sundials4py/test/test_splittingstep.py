@@ -18,6 +18,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 from sundials4py.arkode import *
@@ -61,4 +62,4 @@ def test_splittingstep(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y0, sol, tf)
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

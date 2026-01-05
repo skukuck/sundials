@@ -18,6 +18,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 from sundials4py.kinsol import *
@@ -27,7 +28,7 @@ from problems import AnalyticNonlinearSys
 def test_kinsol(sunctx):
     NEQ = 3
     m_aa = 2
-    tol = 1e-4
+    tol = SUNREALTYPE_ATOL
     kin_view = KINCreate(sunctx)
     problem = AnalyticNonlinearSys(None)
     u = N_VNew_Serial(NEQ, sunctx)
@@ -72,4 +73,4 @@ def test_kinsol(sunctx):
     u_expected = N_VNew_Serial(NEQ, sunctx)
     u_expected_data = N_VGetArrayPointer(u_expected)
     problem.solution(u_expected)
-    assert np.allclose(u_data, u_expected_data, atol=1e-6)
+    assert_allclose(u_data, u_expected_data, atol=10 * SUNREALTYPE_ATOL)

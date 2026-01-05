@@ -17,6 +17,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 
@@ -31,14 +32,14 @@ def test_create_manyvector(sunctx):
     yz = N_VNew_ManyVector(2, [y, z], sunctx)
 
     yarr = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yz, 0))
-    assert np.allclose(N_VGetArrayPointer(y), 1.0)
+    assert_allclose(N_VGetArrayPointer(y), 1.0)
 
     zarr = N_VGetArrayPointer(N_VGetSubvector_ManyVector(yz, 1))
-    assert np.allclose(N_VGetArrayPointer(z), 2.0)
+    assert_allclose(N_VGetArrayPointer(z), 2.0)
 
     N_VConst(3.0, yz)
-    assert np.allclose(3.0, yarr)
-    assert np.allclose(3.0, zarr)
+    assert_allclose(3.0, yarr)
+    assert_allclose(3.0, zarr)
 
 
 @pytest.mark.parametrize("vector_type", ["serial"])
@@ -53,10 +54,10 @@ def test_create_nvector(vector_type, sunctx):
     assert arr.shape[0] == 5
 
     arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
-    assert np.allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
+    assert_allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
     N_VConst(2.0, nvec)
-    assert np.allclose(arr, 2.0)
+    assert_allclose(arr, 2.0)
 
 
 @pytest.mark.parametrize("vector_type", ["serial"])
@@ -68,13 +69,13 @@ def test_make_nvector(vector_type, sunctx):
         raise ValueError("Unknown vector type")
     assert nvec is not None
 
-    assert np.allclose(N_VGetArrayPointer(nvec), arr)
+    assert_allclose(N_VGetArrayPointer(nvec), arr)
 
     N_VConst(2.0, nvec)
-    assert np.allclose(arr, 2.0)
+    assert_allclose(arr, 2.0)
 
     arr[:] = np.array([5.0, 4.0, 3.0, 2.0, 1.0], dtype=sunrealtype)
-    assert np.allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
+    assert_allclose(N_VGetArrayPointer(nvec), [5.0, 4.0, 3.0, 2.0, 1.0])
 
 
 # Test an operation that involves vector arrays
@@ -100,7 +101,7 @@ def test_nvlinearcombination(vector_type, sunctx):
 
     N_VLinearCombination(2, c, X, z)
 
-    assert np.allclose(N_VGetArrayPointer(z), [2.0, 4.0, 6.0, 8.0, 10.0])
+    assert_allclose(N_VGetArrayPointer(z), [2.0, 4.0, 6.0, 8.0, 10.0])
 
 
 def test_nvscaleaddmultivectorarray_serial(sunctx):
@@ -134,7 +135,7 @@ def test_nvscaleaddmultivectorarray_serial(sunctx):
         for v in range(nvec):
             expected = c_1d[s] * N_VGetArrayPointer(X_1d[v]) + N_VGetArrayPointer(Y_2d[s][v])
             actual = N_VGetArrayPointer(Z_2d[s][v])
-            assert np.allclose(actual, expected)
+            assert_allclose(actual, expected)
 
 
 def test_nvlinearcombinationvectorarray_serial(sunctx):
@@ -165,4 +166,4 @@ def test_nvlinearcombinationvectorarray_serial(sunctx):
     for v in range(nvec):
         expected = sum(c_1d[s] * N_VGetArrayPointer(X_2d[s][v]) for s in range(nsum))
         actual = N_VGetArrayPointer(Z_1d[v])
-        assert np.allclose(actual, expected)
+        assert_allclose(actual, expected)

@@ -20,6 +20,7 @@
 import pytest
 import weakref
 import numpy as np
+from numpy.testing import assert_allclose
 from sundials4py.core import *
 from sundials4py.arkode import *
 from problems import AnalyticMultiscaleODE
@@ -72,7 +73,7 @@ def test_multirate(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert np.allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
     # We must set this to None to ensure inner_stepper can be garbage collected
     # If we do not do this, then nanobind will warn that references are leaked.

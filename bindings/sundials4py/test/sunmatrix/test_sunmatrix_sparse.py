@@ -50,8 +50,8 @@ def test_zero_matrix(sunctx):
     A = SUNSparseMatrix(rows, cols, nnz, SUN_CSR_MAT, sunctx)
     ret = SUNMatZero(A)
     assert ret == SUN_SUCCESS
-    dataA = SUNSparseMatrix_Data(A)  
-    assert_array_equal(dataA, np.zeros_like(dataA))  
+    dataA = SUNSparseMatrix_Data(A)
+    assert_array_equal(dataA, np.zeros_like(dataA))
 
 
 def test_copy_matrix(sunctx):

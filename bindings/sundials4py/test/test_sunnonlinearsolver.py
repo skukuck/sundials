@@ -19,6 +19,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 
@@ -144,4 +145,4 @@ def test_fixedpoint_setup_and_solve(sunctx):
         # Compare to analytic solution
         utrue = N_VNew_Serial(NEQ, sunctx)
         problem.solution(utrue)
-        assert np.allclose(N_VGetArrayPointer(ucur), N_VGetArrayPointer(utrue), atol=1e-2)
+        assert_allclose(N_VGetArrayPointer(ucur), N_VGetArrayPointer(utrue), atol=1e-2)

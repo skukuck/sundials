@@ -25,9 +25,6 @@ from sundials4py.arkode import *
 from problems import AnalyticODE
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_erkstep(sunctx):
     y = N_VNew_Serial(1, sunctx)
     ode_problem = AnalyticODE()

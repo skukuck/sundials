@@ -25,9 +25,6 @@ from sundials4py.cvodes import *
 from problems import AnalyticODE
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_cvodes_ivp(sunctx):
     NEQ = 1
     y = N_VNew_Serial(NEQ, sunctx)
@@ -71,9 +68,6 @@ def test_cvodes_ivp(sunctx):
     assert num_steps > 0
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_cvodes_fsa(sunctx):
     # Forward Sensitivity Analysis (FSA) with respect to initial condition
     NEQ = 1
@@ -87,8 +81,8 @@ def test_cvodes_fsa(sunctx):
 
     # This problem requires tighter tolerances in order to get the forward
     # sensitivity to converge to the expected solution within a reasonable tolerance
-    atol = 1e-10
-    rtol = 1e-10
+    atol = 10 * SUNREALTYPE_ATOL
+    rtol = 10 * SUNREALTYPE_RTOL
 
     status = CVodeInit(cvode.get(), ode_problem.f, 0, y)
     assert status == CV_SUCCESS
@@ -134,9 +128,6 @@ def test_cvodes_fsa(sunctx):
     assert_allclose(sens_val, expected, atol=1e-2)
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_cvodes_adjoint(sunctx):
     # Adjoint Sensitivity Analysis (ASA) for the same ODE problem as FSA
     y = N_VNew_Serial(1, sunctx)
@@ -209,9 +200,6 @@ def test_cvodes_adjoint(sunctx):
     assert_allclose(sens_val, expected, atol=1e-2)
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_cvodes_adjoint_quad(sunctx):
     # Adjoint Sensitivity Analysis (ASA) for the same ODE problem as before but add quadratures
     NEQ = 1
@@ -224,8 +212,8 @@ def test_cvodes_adjoint_quad(sunctx):
 
     # This problem requires tighter tolerances in order to get the forward
     # sensitivity to converge to the expected solution within a reasonable tolerance
-    atol = 1e-10
-    rtol = 1e-10
+    atol = 10 * SUNREALTYPE_ATOL
+    rtol = 10 * SUNREALTYPE_RTOL
 
     cvode = CVodeCreate(CV_BDF, sunctx)
 

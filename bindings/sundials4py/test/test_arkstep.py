@@ -25,9 +25,6 @@ from sundials4py.arkode import *
 from problems import AnalyticODE, AnalyticMultiscaleODE
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_explicit(sunctx):
     y = N_VNew_Serial(1, sunctx)
 
@@ -65,9 +62,6 @@ def test_explicit(sunctx):
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_implicit(sunctx):
     y = N_VNew_Serial(1, sunctx)
     ls = SUNLinSol_SPGMR(y, 0, 0, sunctx)
@@ -98,9 +92,6 @@ def test_implicit(sunctx):
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_implicit_with_dense_ls_and_jac(sunctx):
     y = N_VNew_Serial(1, sunctx)
 
@@ -141,9 +132,6 @@ def test_implicit_with_dense_ls_and_jac(sunctx):
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
 
-@pytest.mark.skipif(
-    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
-)
 def test_imex(sunctx):
     y = N_VNew_Serial(1, sunctx)
     ls = SUNLinSol_SPGMR(y, 0, 0, sunctx)

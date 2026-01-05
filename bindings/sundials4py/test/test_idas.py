@@ -25,6 +25,7 @@ from problems import AnalyticDAE
 from fixtures import *
 
 
+# This test requires more precision than float32 offers to converge
 @pytest.mark.skipif(
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
 )

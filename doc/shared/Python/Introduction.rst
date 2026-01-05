@@ -46,6 +46,12 @@ You can install sundials4py directly from `PyPI <https://pypi.org/project/sundia
 
    pip install sundials4py
 
+Or, you can install from git:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/LLNL/sundials.git
+
 The default build of sundials4py that is distributed as a binary wheel uses double precision real types and 64-bit indices. 
 To install SUNDIALS with different precisions and index sizes, you can build from source wheels instead of using the pre-built 
 binary wheels. When building from source wheels instead of binary wheels, you can customize the SUNDIALS precision (real type)

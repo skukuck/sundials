@@ -177,13 +177,13 @@ def main():
     status = IDASetMaxNumSteps(ida.get(), 20000)
     assert status == IDA_SUCCESS
 
-    # Create dense SUNMatrix to use with dense linear solver  
-    A = SUNDenseMatrix(NEQ, NEQ, sunctx)  
-    assert A is not None  
+    # Create dense SUNMatrix to use with dense linear solver
+    A = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    assert A is not None
 
-    # Create dense linear solver  
-    LS = SUNLinSol_Dense(yy, A, sunctx)  
-    assert LS is not None  
+    # Create dense linear solver
+    LS = SUNLinSol_Dense(yy, A, sunctx)
+    assert LS is not None
 
     # Attach the matrix and linear solver
     status = IDASetLinearSolver(ida.get(), LS, A)
@@ -252,7 +252,7 @@ def main():
 
     status, tret = IDAGetQuad(ida.get(), q)
     print("--------------------------------------------")
-    print(f"  G = {N_VGetArrayPointer(q)[0]}")  
+    print(f"  G = {N_VGetArrayPointer(q)[0]}")
     print("--------------------------------------------\n")
 
 

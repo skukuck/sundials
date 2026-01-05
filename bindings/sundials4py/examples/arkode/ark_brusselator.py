@@ -137,7 +137,7 @@ def main():
 
     A = SUNDenseMatrix(NEQ, NEQ, sunctx)
     assert A is not None
-    
+
     LS = SUNLinSol_Dense(y, A, sunctx)
     assert LS is not None
 

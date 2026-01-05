@@ -128,7 +128,7 @@ def main():
     assert status == CV_SUCCESS
 
     # Enable adjoint sensitivity analysis
-    status = CVodeAdjInit(cvode.get(), steps, CV_HERMITE)  
+    status = CVodeAdjInit(cvode.get(), steps, CV_HERMITE)
     assert status == CV_SUCCESS
 
     # Output problem setup
@@ -144,7 +144,7 @@ def main():
     # Forward integration
     tout = Tf
     t = 0.0
-    status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)  
+    status, tret, ncheck = CVodeF(cvode.get(), tout, y, CV_NORMAL)
     assert status == CV_SUCCESS
 
     yarr = N_VGetArrayPointer(y)
@@ -152,12 +152,12 @@ def main():
     print("   ---------------------------------")
 
     # Adjoint terminal condition
-    uB = N_VNew_Serial(NEQ, sunctx)  
-    assert uB is not None  
+    uB = N_VNew_Serial(NEQ, sunctx)
+    assert uB is not None
     arr_uB = N_VGetArrayPointer(uB)
     arr_uB[:] = ode.dgdu(y)
-    qB = N_VNew_Serial(NP, sunctx)  
-    assert qB is not None  
+    qB = N_VNew_Serial(NP, sunctx)
+    assert qB is not None
     N_VConst(0.0, qB)
     print("Adjoint terminal condition:")
     print(arr_uB)
@@ -178,8 +178,8 @@ def main():
     assert status == CV_SUCCESS
 
     # Create the linear solver for the backward problem
-    lsb = SUNLinSol_SPGMR(uB, 0, 3, sunctx)  
-    assert lsb is not None  
+    lsb = SUNLinSol_SPGMR(uB, 0, 3, sunctx)
+    assert lsb is not None
     status = CVodeSetLinearSolverB(cvode.get(), which, lsb, None)
     assert status == CV_SUCCESS
 

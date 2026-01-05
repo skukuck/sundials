@@ -105,16 +105,16 @@ def main():
     status, sunctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
     assert status == sun.SUN_SUCCESS
 
-    y = sun.N_VNew_Serial(NEQ, sunctx)  
-    assert y is not None  
+    y = sun.N_VNew_Serial(NEQ, sunctx)
+    assert y is not None
 
     ode.set_init_cond(y)
 
     #
     # Create the ARKODE stepper that will be used for the forward evolution.
     #
-    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)  
-    assert arkode is not None  
+    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
+    assert arkode is not None
     status = ark.ARKodeSetOrder(arkode.get(), 4)
     assert status == ark.ARK_SUCCESS
     status = ark.ARKodeSStolerances(arkode.get(), reltol, abstol)
@@ -163,8 +163,8 @@ def main():
     #
 
     # Adjoint terminal condition
-    uB = sun.N_VNew_Serial(NEQ, sunctx)  
-    assert uB is not None  
+    uB = sun.N_VNew_Serial(NEQ, sunctx)
+    assert uB is not None
     arr_uB = ode.dgdu(y)
     uB_arr = sun.N_VGetArrayPointer(uB)
     uB_arr[:] = arr_uB
@@ -174,8 +174,8 @@ def main():
 
     # Combine adjoint vectors into a ManyVector
     sens = [uB, qB]
-    sf = sun.N_VNew_ManyVector(2, sens, sunctx)  
-    assert sf is not None  
+    sf = sun.N_VNew_ManyVector(2, sens, sunctx)
+    assert sf is not None
 
     print("Adjoint terminal condition:")
     print(sun.N_VGetArrayPointer(uB))
@@ -190,7 +190,7 @@ def main():
         sf,
         sunctx,
     )
-    assert status == ark.ARK_SUCCESS  
+    assert status == ark.ARK_SUCCESS
 
     #
     # Now compute the adjoint solution

@@ -89,6 +89,50 @@ def test_implicit(sunctx):
 
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
+def test_implicit_with_dense_ls_and_jac(sunctx):
+    y = N_VNew_Serial(1, sunctx)
+
+    ode_problem = AnalyticODE()
+    ode_problem.set_init_cond(y)
+
+    A = SUNDenseMatrix(1, 1, sunctx)
+    ls = SUNLinSol_Dense(y, A, sunctx)
+
+    ark = ARKStepCreate(
+        None,
+        lambda t, yvec, ydotvec, _: ode_problem.f(t, yvec, ydotvec),
+        0.0,
+        y,
+        sunctx,
+    )
+
+    status = ARKodeSStolerances(ark.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    assert status == ARK_SUCCESS
+
+    status = ARKodeSetLinearSolver(ark.get(), ls, A)
+    assert status == ARK_SUCCESS
+
+    def jac_fn(t, yvec, fyvec, J, tmp1, tmp2, tmp3, _):
+        # For this scalar problem, dF/dy = lambda
+        Jdata = SUNDenseMatrix_Data(J)
+        Jdata[0, 0] = ode_problem.lamb
+        return 0
+
+    status = ARKodeSetJacFn(ark.get(), jac_fn)
+    assert status == ARK_SUCCESS
+
+    tout = 10.0
+    status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
+    assert status == ARK_SUCCESS
+
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+
 
 @pytest.mark.skipif(
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"

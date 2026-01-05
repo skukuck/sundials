@@ -41,7 +41,7 @@ def test_needs_saving(sunctx):
     stage_num = 0
     t = 0.0
     status, result = SUNAdjointCheckpointScheme_NeedsSaving(scheme, step_num, stage_num, t)
-    assert status == 0
+    assert status == SUN_SUCCESS
     assert isinstance(result, int)
 
 
@@ -51,7 +51,7 @@ def test_insert_vector(sunctx, nvec):
     stage_num = 0
     t = 0.0
     status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 # def test_load_vector(sunctx, nvec):
@@ -61,14 +61,14 @@ def test_insert_vector(sunctx, nvec):
 #     stage_num = 0
 #     t = 0.0
 #     status = SUNAdjointCheckpointScheme_InsertVector(scheme, step_num, stage_num, t, nvec)
-#     assert status == 0
+#     assert status == SUN_SUCCESS
 
 #     peek = False
 #     status, vec, tout = SUNAdjointCheckpointScheme_LoadVector(scheme, step_num, stage_num, peek)
-#     assert status == 0
+#     assert status == SUN_SUCCESS
 
 
 def test_enable_dense(sunctx):
     scheme_status, scheme, mem_helper = make_fixed_scheme(sunctx)
     status = SUNAdjointCheckpointScheme_EnableDense(scheme, True)
-    assert status == 0
+    assert status == SUN_SUCCESS

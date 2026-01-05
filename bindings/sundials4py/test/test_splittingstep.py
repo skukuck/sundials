@@ -42,11 +42,11 @@ def test_splittingstep(sunctx):
 
     linear_ark = ERKStepCreate(f_linear, t0, y, sunctx)
     status = ARKodeSetFixedStep(linear_ark.get(), 5e-3)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     nonlinear_ark = ARKStepCreate(f_nonlinear, None, t0, y, sunctx)
     status = ARKodeSetFixedStep(nonlinear_ark.get(), 1e-3)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     status, linear_stepper = ARKodeCreateSUNStepper(linear_ark.get())
     status, nonlinear_stepper = ARKodeCreateSUNStepper(nonlinear_ark.get())
@@ -54,11 +54,11 @@ def test_splittingstep(sunctx):
     steppers = [linear_stepper, nonlinear_stepper]
     ark = SplittingStepCreate(steppers, len(steppers), t0, y, sunctx)
     status = ARKodeSetFixedStep(ark.get(), 1e-2)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     tout = tf
     status, tret = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     sol = N_VClone(y)
     ode_problem.solution(y0, sol, tf)

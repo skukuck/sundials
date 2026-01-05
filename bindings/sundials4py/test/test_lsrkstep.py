@@ -41,7 +41,7 @@ def test_lsrkstep(sunctx):
 
     lsrk = LSRKStepCreateSTS(rhs, 0, y, sunctx)
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
-    assert status == 0
+    assert status == ARK_SUCCESS
 
     status = ARKodeSStolerances(lsrk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
     assert status == ARK_SUCCESS

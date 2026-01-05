@@ -62,16 +62,16 @@ def test_gettype(solver_type, expected_type, sunctx, nvec):
 def test_initialize(solver_type, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     ret = SUNNonlinSolInitialize(nls)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("solver_type,max_iters", [("newton", 5), ("fixedpoint", 10)])
 def test_set_max_iters_and_get_num_iters(solver_type, max_iters, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     ret = SUNNonlinSolSetMaxIters(nls, max_iters)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     err, niters = SUNNonlinSolGetNumIters(nls)
-    assert err == 0
+    assert err == SUN_SUCCESS
     assert isinstance(niters, int)
 
 
@@ -79,7 +79,7 @@ def test_set_max_iters_and_get_num_iters(solver_type, max_iters, sunctx, nvec):
 def test_get_cur_iter(solver_type, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     err, cur_iter = SUNNonlinSolGetCurIter(nls)
-    assert err == 0
+    assert err == SUN_SUCCESS
     assert isinstance(cur_iter, int)
 
 
@@ -87,7 +87,7 @@ def test_get_cur_iter(solver_type, sunctx, nvec):
 def test_get_num_conv_fails(solver_type, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
     err, nconvfails = SUNNonlinSolGetNumConvFails(nls)
-    assert err == 0
+    assert err == SUN_SUCCESS
     assert isinstance(nconvfails, int)
 
 
@@ -125,19 +125,19 @@ def test_fixedpoint_setup_and_solve(sunctx):
             return problem.conv_test(nls, u, delta, tol, ewt)
 
         ret = SUNNonlinSolSetSysFn(nls, g_fn)
-        assert ret == 0
+        assert ret == SUN_SUCCESS
 
         ret = SUNNonlinSolSetConvTestFn(nls, conv_test)
-        assert ret == 0
+        assert ret == SUN_SUCCESS
 
         ret = SUNNonlinSolSetMaxIters(nls, 50)
 
         ret = SUNNonlinSolSetup(nls, u0)
-        assert ret == 0
+        assert ret == SUN_SUCCESS
 
-        tol = 1e-10
+        tol = SUNREALTYPE_ATOL
         ret = SUNNonlinSolSolve(nls, u0, ucor, w, tol, 0)
-        assert ret == 0
+        assert ret == SUN_SUCCESS
 
         # Update the initial guess with the correction
         N_VLinearSum(1.0, u0, 1.0, ucor, ucur)

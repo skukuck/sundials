@@ -59,9 +59,9 @@ def test_get_type_and_id(sunctx, nvec):
     A = SUNDenseMatrix(2, 2, sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     typ = SUNLinSolGetType(LS)
-    id_ = SUNLinSolGetID(LS)
-    assert isinstance(typ, int)
-    assert isinstance(id_, int)
+    id = SUNLinSolGetID(LS)  
+    assert typ == SUNLINEARSOLVER_DIRECT  
+    assert id == SUNLINEARSOLVER_DENSE  
 
 
 def test_initialize_setup(sunctx, nvec):
@@ -87,7 +87,6 @@ def test_sunlinsol_set_atimes(sunctx):
     x = N_VNew_Serial(1, sunctx)
     y = N_VNew_Serial(1, sunctx)
 
-    # Create a simple dense matrix and linear solver
     LS = SUNLinSol_SPGMR(x, 0, 0, sunctx)
     assert LS is not None
 
@@ -100,7 +99,7 @@ def test_sunlinsol_set_atimes(sunctx):
 
     # Set the ATimes function
     ret = SUNLinSolSetATimes(LS, atimes)
-    assert isinstance(ret, int)
+    assert ret == SUN_SUCCESS
 
     SUNLinSolInitialize(LS)
     SUNLinSolSetup(LS, None)
@@ -112,7 +111,6 @@ def test_sunlinsol_set_preconditioner(sunctx):
     x = N_VNew_Serial(1, sunctx)
     y = N_VNew_Serial(1, sunctx)
 
-    # Create a simple dense matrix and linear solver
     LS = SUNLinSol_SPGMR(x, SUN_PREC_LEFT, 0, sunctx)
     assert LS is not None
 

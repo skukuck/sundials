@@ -112,7 +112,7 @@ void bind_core(nb::module_& m)
   else
   {
     throw sundials4py::illegal_value(
-      "suncountertype size unknown,  email sundials-users@llnl.gov\n");
+      "unknown suncountertype,  email sundials-users@llnl.gov\n");
   }
 }
 

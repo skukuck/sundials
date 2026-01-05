@@ -55,7 +55,7 @@ def test_get_type(controller_type, sunctx):
 def test_estimate_step(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     err, hnew = SUNAdaptController_EstimateStep(c, 1.0, 1, 0.1)
-    assert isinstance(err, int)
+    assert err == SUN_SUCCESS
     assert isinstance(hnew, float)
 
 
@@ -63,35 +63,35 @@ def test_estimate_step(controller_type, sunctx):
 def test_reset(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     status = SUNAdaptController_Reset(c)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_set_defaults(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     status = SUNAdaptController_SetDefaults(c)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_set_error_bias(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     status = SUNAdaptController_SetErrorBias(c, 1.0)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_update_h(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     status = SUNAdaptController_UpdateH(c, 1.0, 0.1)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("controller_type", ["soderlind", "imexgus", "mrihtol"])
 def test_estimate_step_tol(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     err, hnew, tolfacnew = SUNAdaptController_EstimateStepTol(c, 1.0, 1.0, 1, 0.1, 0.1)
-    assert isinstance(err, int)
+    assert err == SUN_SUCCESS  
     assert isinstance(hnew, float)
     assert isinstance(tolfacnew, float)
 
@@ -100,4 +100,4 @@ def test_estimate_step_tol(controller_type, sunctx):
 def test_update_mrihtol(controller_type, sunctx):
     c, c1, c2 = make_controller(controller_type, sunctx)
     status = SUNAdaptController_UpdateMRIHTol(c, 1.0, 1.0, 0.1, 0.1)
-    assert status == 0
+    assert status == SUN_SUCCESS

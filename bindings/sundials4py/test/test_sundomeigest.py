@@ -51,41 +51,42 @@ def test_create_estimator(estimator_type, sunctx):
 def test_set_max_iters(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_SetMaxIters(est, 10)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_num_preprocess_iters(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_SetNumPreprocessIters(est, 2)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_reltol(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_SetRelTol(est, 1e-6)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_set_initial_guess(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_SetInitialGuess(est, nvec)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_initialize(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_Initialize(est)
-    assert status == 0
+    assert status == SUN_SUCCESS
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
 def test_estimate(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     err, lambdaR, lambdaI = SUNDomEigEstimator_Estimate(est)
+    assert err == SUN_SUCCESS  
     assert isinstance(err, int)
     assert isinstance(lambdaR, float)
     assert isinstance(lambdaI, float)
@@ -95,6 +96,7 @@ def test_estimate(estimator_type, sunctx):
 def test_get_res(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     err, res = SUNDomEigEstimator_GetRes(est)
+    assert err == SUN_SUCCESS
     assert isinstance(err, int)
     assert isinstance(res, float)
 
@@ -103,6 +105,7 @@ def test_get_res(estimator_type, sunctx):
 def test_get_num_iters(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     err, num_iters = SUNDomEigEstimator_GetNumIters(est)
+    assert err == SUN_SUCCESS
     assert isinstance(err, int)
     assert isinstance(num_iters, int)
 
@@ -111,5 +114,6 @@ def test_get_num_iters(estimator_type, sunctx):
 def test_get_num_atimes_calls(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     err, num_atimes = SUNDomEigEstimator_GetNumATimesCalls(est)
+    assert err == SUN_SUCCESS
     assert isinstance(err, int)
     assert isinstance(num_atimes, int)

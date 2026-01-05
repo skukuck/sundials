@@ -9,6 +9,7 @@ def test_with_null_comm():
     # Create a new context with a null comm
     err, sunctx = SUNContext_Create(SUN_COMM_NULL)
     assert err == SUN_SUCCESS
+    assert sunctx is not None
 
     # Try calling a SUNContext_ function
     last_err = SUNContext_GetLastError(sunctx)
@@ -20,6 +21,7 @@ def test_push_pop_err_handlers():
     # Create a new context with a null comm
     err, sunctx = SUNContext_Create(SUN_COMM_NULL)
     assert err == SUN_SUCCESS
+    assert sunctx is not None
 
     called = {"err_fn1": False, "err_fn2": False}
 
@@ -50,6 +52,7 @@ def test_push_pop_err_handlers():
 
     SUNContext_TestErrHandler(sunctx)
     assert not called["err_fn1"]
+    assert not called["err_fn2"]
 
     # Popping again should do nothing
     status = SUNContext_PopErrHandler(sunctx)

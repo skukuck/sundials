@@ -127,7 +127,7 @@ def test_nvscaleaddmultivectorarray_serial(sunctx):
     Z_2d = [[N_VNew_Serial(length, sunctx) for _ in range(nvec)] for _ in range(nsum)]
 
     err = N_VScaleAddMultiVectorArray(nvec, nsum, c_1d, X_1d, Y_2d, Z_2d)
-    assert err == 0
+    assert err == SUN_SUCCESS
 
     # Check Z_2d[s][v] = c_1d[s] * X_1d[v] + Y_2d[s][v]
     for s in range(nsum):
@@ -159,7 +159,7 @@ def test_nvlinearcombinationvectorarray_serial(sunctx):
     Z_1d = [N_VNew_Serial(length, sunctx) for _ in range(nvec)]
 
     err = N_VLinearCombinationVectorArray(nvec, nsum, c_1d, X_2d, Z_1d)
-    assert err == 0
+    assert err == SUN_SUCCESS
 
     # Check Z_1d[v] = sum_s c_1d[s] * X_2d[s][v]
     for v in range(nvec):

@@ -44,7 +44,6 @@ class HarmonicOscillatorODE(ODEProblem):
         y[1] = -self.A * self.omega * np.sin(self.phi)
 
     def solution(self, y0vec, yvec, t):
-        y0 = N_VGetArrayPointer(y0vec)
         y = N_VGetArrayPointer(yvec)
         y[0] = self.A * np.cos(self.omega * t + self.phi)
         y[1] = -self.A * self.omega * np.sin(self.omega * t + self.phi)

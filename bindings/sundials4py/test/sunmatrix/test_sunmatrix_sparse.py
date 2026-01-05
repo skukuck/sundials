@@ -17,6 +17,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose, assert_array_equal
 from fixtures import *
 from sundials4py.core import *
 
@@ -29,6 +30,10 @@ def test_create_sparse_matrix(sunctx):
     # Check shape of data
     dataA = SUNSparseMatrix_Data(A)
     assert dataA.shape[0] == nnz
+    idxA = SUNSparseMatrix_IndexValues(A)
+    assert idxA.shape[0] == nnz
+    ptrA = SUNSparseMatrix_IndexPointers(A)
+    assert ptrA.shape[0] == 4
 
 
 def test_clone_matrix(sunctx):
@@ -36,13 +41,17 @@ def test_clone_matrix(sunctx):
     A = SUNSparseMatrix(rows, cols, nnz, SUN_CSR_MAT, sunctx)
     B = SUNMatClone(A)
     assert B is not None
+    assert SUNSparseMatrix_NNZ(A) == SUNSparseMatrix_NNZ(B)
+    assert SUNSparseMatrix_NP(A) == SUNSparseMatrix_NP(B)
 
 
 def test_zero_matrix(sunctx):
     rows, cols, nnz = 3, 3, 4
     A = SUNSparseMatrix(rows, cols, nnz, SUN_CSR_MAT, sunctx)
     ret = SUNMatZero(A)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
+    dataA = SUNSparseMatrix_Data(A)  
+    assert_array_equal(dataA, np.zeros_like(dataA))  
 
 
 def test_copy_matrix(sunctx):
@@ -57,13 +66,13 @@ def test_copy_matrix(sunctx):
     idx_vals[:] = [0, 1, 2, 0]
     idx_ptrs[:] = [0, 1, 2, 4]
     ret = SUNMatCopy(A, B)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     dataB = SUNSparseMatrix_Data(B)
     idx_valsB = SUNSparseMatrix_IndexValues(B)
     idx_ptrsB = SUNSparseMatrix_IndexPointers(B)
-    assert np.allclose(dataB, dataA)
-    assert np.allclose(idx_valsB, idx_vals)
-    assert np.allclose(idx_ptrsB, idx_ptrs)
+    assert_allclose(dataB, dataA)
+    assert_allclose(idx_valsB, idx_vals)
+    assert_allclose(idx_ptrsB, idx_ptrs)
 
 
 def test_scale_add_matrix(sunctx):
@@ -84,9 +93,9 @@ def test_scale_add_matrix(sunctx):
     idx_valsB[:] = [0, 1, 2, 0]
     idx_ptrsB[:] = [0, 1, 2, 4]
     ret = SUNMatScaleAdd(3.0, A, B)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     # 3*A + B = [3+2, 3+2, 3+2, 6+4] = [5, 5, 5, 10]
-    assert np.allclose(dataA, [5.0, 5.0, 5.0, 10.0])
+    assert_allclose(dataA, [5.0, 5.0, 5.0, 10.0])
 
 
 def test_scale_add_identity(sunctx):
@@ -100,11 +109,11 @@ def test_scale_add_identity(sunctx):
     idx_vals[:] = [0, 1, 2, 0]
     idx_ptrs[:] = [0, 1, 2, 4]
     ret = SUNMatScaleAddI(3.0, A)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     # Diagonal elements should be 3*2+1=7, off-diagonal unchanged
     # So dataA = [7.0, 7.0, 7.0, 2.0] (assuming diagonal at idx_vals[0:3])
     # But since idx_vals = [0,1,2,0], diagonal is at positions 0,1,2
-    assert np.allclose(dataA[:3], [7.0, 7.0, 7.0])
+    assert_allclose(dataA[:3], [7.0, 7.0, 7.0])
 
 
 def test_matvec(sunctx):
@@ -122,8 +131,8 @@ def test_matvec(sunctx):
     idx_vals[:] = [0, 1, 2, 0]
     idx_ptrs[:] = [0, 1, 2, 4]
     ret = SUNMatMatvec(A, x, y)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     # y[0] = 1.0*x[0] = 1.0
     # y[1] = 1.0*x[1] = 1.0
     # y[2] = 1.0*x[2] + 2.0*x[0] = 1.0 + 2.0 = 3.0
-    assert np.allclose(N_VGetArrayPointer(y), [1.0, 1.0, 3.0])
+    assert_allclose(N_VGetArrayPointer(y), [1.0, 1.0, 3.0])

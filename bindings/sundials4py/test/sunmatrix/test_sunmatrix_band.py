@@ -17,6 +17,7 @@
 
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose, assert_array_equal
 from fixtures import *
 from sundials4py.core import *
 
@@ -37,13 +38,15 @@ def test_clone_matrix(sunctx):
     A = SUNBandMatrix(rows, mu, ml, sunctx)
     B = SUNMatClone(A)
     assert B is not None
+    assert SUNBandMatrix_LData(A) == SUNBandMatrix_LData(B)
 
 
 def test_zero_matrix(sunctx):
     rows, mu, ml = 4, 1, 1
     A = SUNBandMatrix(rows, mu, ml, sunctx)
-    ret = SUNMatZero(A)
-    assert ret == 0
+    assert A is not None
+    dataA = SUNBandMatrix_Data(A)
+    assert_array_equal(dataA, np.zeros_like(dataA))
 
 
 def test_copy_matrix(sunctx):
@@ -54,7 +57,7 @@ def test_copy_matrix(sunctx):
     dataA = SUNBandMatrix_Data(A)
     dataA[smu - mu] = 1.0
     ret = SUNMatCopy(A, B)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     dataB = SUNBandMatrix_Data(B)
     assert dataB[smu - mu] == 1.0
 
@@ -69,9 +72,9 @@ def test_scale_add_matrix(sunctx):
     dataA[smu - mu : smu + ml] = 1.0  # column 0 set to 1.0
     dataB[smu - mu : smu + ml] = 2.0
     ret = SUNMatScaleAdd(3.0, A, B)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     # A should now be 3*A + B = 3*1 + 2 = 5
-    assert np.allclose(dataA[smu - mu : smu + ml], 5.0)
+    assert_allclose(dataA[smu - mu : smu + ml], 5.0)
 
 
 def test_scale_add_identity(sunctx):
@@ -81,10 +84,10 @@ def test_scale_add_identity(sunctx):
     smu = SUNBandMatrix_StoredUpperBandwidth(A)
     dataA = SUNBandMatrix_Data(A)
     ret = SUNMatScaleAddI(0.0, A)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
     # A should now be I
     diag = np.array([dataA[smu + i * ldim] for i in range(rows)], dtype=sunrealtype)
-    assert np.allclose(diag, 1.0)
+    assert_allclose(diag, 1.0)
 
 
 def test_matvec(sunctx):
@@ -114,6 +117,6 @@ def test_matvec(sunctx):
             dataA[smu + 1 + j * ldim] = 1.0
 
     ret = SUNMatMatvec(A, x, y)
-    assert ret == 0
+    assert ret == SUN_SUCCESS
 
-    assert np.allclose(N_VGetArrayPointer(y), [5.0, 6.0, 6.0, 4.0])
+    assert_allclose(N_VGetArrayPointer(y), [5.0, 6.0, 6.0, 4.0])

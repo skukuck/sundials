@@ -28,7 +28,7 @@ from problems import AnalyticODE
 @pytest.mark.skipif(
     sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
 )
-def test_lsrkstep(sunctx):
+def test_lsrkstep_sts(sunctx):
     y = N_VNew_Serial(1, sunctx)
     ode_problem = AnalyticODE()
     ode_problem.set_init_cond(y)
@@ -37,6 +37,35 @@ def test_lsrkstep(sunctx):
         return ode_problem.dom_eig(t, yvec, fnvec, tempv1, tempv2, tempv3)
 
     lsrk = LSRKStepCreateSTS(ode_problem.f, 0, y, sunctx)
+    status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
+    assert status == ARK_SUCCESS
+
+    status = ARKodeSStolerances(lsrk.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL)
+    assert status == ARK_SUCCESS
+
+    status = ARKodeSetMaxNumSteps(lsrk.get(), 100000)
+
+    tout = 10.0
+    status, tret = ARKodeEvolve(lsrk.get(), tout, y, ARK_NORMAL)
+    assert status == ARK_SUCCESS
+
+    sol = N_VClone(y)
+    ode_problem.solution(y, sol, tret)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+
+
+@pytest.mark.skipif(
+    sunrealtype == np.float32, reason="Test not supported for sunrealtype=np.float32"
+)
+def test_lsrkstep_ssp(sunctx):
+    y = N_VNew_Serial(1, sunctx)
+    ode_problem = AnalyticODE()
+    ode_problem.set_init_cond(y)
+
+    def dom_eig(t, yvec, fnvec, _, tempv1, tempv2, tempv3):
+        return ode_problem.dom_eig(t, yvec, fnvec, tempv1, tempv2, tempv3)
+
+    lsrk = LSRKStepCreateSSP(ode_problem.f, 0, y, sunctx)
     status = LSRKStepSetDomEigFn(lsrk.get(), dom_eig)
     assert status == ARK_SUCCESS
 

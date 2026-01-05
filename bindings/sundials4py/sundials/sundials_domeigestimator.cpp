@@ -46,6 +46,7 @@ void bind_sundomeigestimator(nb::module_& m)
        const std::vector<std::string>& args)
     {
       std::vector<char*> argv;
+      argv.reserve(args.size());
 
       for (const auto& arg : args)
       {

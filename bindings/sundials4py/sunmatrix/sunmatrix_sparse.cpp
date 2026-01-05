@@ -60,12 +60,11 @@ void bind_sunmatrix_sparse(nb::module_& m)
     "SUNSparseMatrix_IndexPointers",
     [](SUNMatrix A)
     {
-      auto nnz   = static_cast<size_t>(SUNSparseMatrix_NP(A) + 1);
+      auto np    = static_cast<size_t>(SUNSparseMatrix_NP(A));
       auto owner = nb::find(A);
       auto ptr   = SUNSparseMatrix_IndexPointers(A);
-      return nb::ndarray<sunindextype, nb::numpy, nb::ndim<1>, nb::c_contig>(ptr,
-                                                                             {nnz},
-                                                                             owner);
+      return nb::ndarray<sunindextype, nb::numpy, nb::ndim<1>,
+                         nb::c_contig>(ptr, {np + 1}, owner);
     },
     nb::arg("A"), nb::rv_policy::reference);
 }

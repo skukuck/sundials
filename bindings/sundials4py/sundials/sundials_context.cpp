@@ -39,19 +39,18 @@ using sundials::SUNContextDeleter;
 
 namespace sundials4py {
 
-using namespace sundials::experimental;
-
 void bind_suncontext(nb::module_& m)
 {
 #include "sundials_context_generated.hpp"
 
   nb::class_<SUNContext_>(m, "SUNContext_");
 
-  // Note: only one error handler can be pushed from python
   m.def("SUNContext_PushErrHandler",
         [](SUNContext sunctx,
            std::function<std::remove_pointer_t<SUNErrHandlerFn>> err_fn)
         {
+          if (!err_fn) { throw sundials4py::illegal_value("err_fn was None"); }
+
           if (!sunctx->python)
           {
             sunctx->python = SUNContextFunctionTable_Alloc();

@@ -106,6 +106,7 @@ void bind_cvodes(nb::module_& m)
        int argc, const std::vector<std::string>& args)
     {
       std::vector<char*> argv;
+      argv.reserve(args.size());
 
       for (const auto& arg : args)
       {

@@ -17,8 +17,10 @@
  * This file defines the sundials4py.core module. 
  * -----------------------------------------------------------------*/
 
+#include "sundials/sundials_types.h"
 #include "sundials4py.hpp"
 
+#include <stdexcept>
 #include <sundials/sundials_core.hpp>
 #include <sundials/sundials_futils.h>
 
@@ -98,6 +100,20 @@ void bind_core(nb::module_& m)
 #else
 #error Unknown sunindextype, email sundials-users@llnl.gov
 #endif
+
+  if (sizeof(suncountertype) == 8)
+  {
+    m.attr("suncountertype") = np.attr("int64");
+  }
+  else if (sizeof(suncountertype) == 4)
+  {
+    m.attr("suncountertype") = np.attr("int32");
+  }
+  else
+  {
+    throw sundials4py::illegal_value(
+      "suncountertype size unknown,  email sundials-users@llnl.gov\n");
+  }
 }
 
 } // namespace sundials4py

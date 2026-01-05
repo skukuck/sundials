@@ -18,6 +18,11 @@
 Introduction
 ============
 
+.. warning::
+
+   sundials4py is currently in beta. The module API is subject to change even in SUNDIALS patch releases.
+
+
 sundials4py is designed to be easy to use from Python in conjunction with ubiquitous libraries in the Python scientific computing and machine learning ecosystems.
 To that end, it supports:
 

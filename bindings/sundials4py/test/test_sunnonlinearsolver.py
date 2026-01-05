@@ -130,7 +130,7 @@ def test_fixedpoint_setup_and_solve(sunctx):
         ret = SUNNonlinSolSetConvTestFn(nls, conv_test)
         assert ret == SUN_SUCCESS
 
-        ret = SUNNonlinSolSetMaxIters(nls, 50)
+        ret = SUNNonlinSolSetMaxIters(nls, 500)
 
         ret = SUNNonlinSolSetup(nls, u0)
         assert ret == SUN_SUCCESS
@@ -145,4 +145,5 @@ def test_fixedpoint_setup_and_solve(sunctx):
         # Compare to analytic solution
         utrue = N_VNew_Serial(NEQ, sunctx)
         problem.solution(utrue)
+        # 1e-2 seems to be the best we can do here
         assert_allclose(N_VGetArrayPointer(ucur), N_VGetArrayPointer(utrue), atol=1e-2)

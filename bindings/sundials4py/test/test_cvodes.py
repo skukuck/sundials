@@ -61,7 +61,7 @@ def test_cvodes_ivp(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
     status, num_steps = CVodeGetNumSteps(cvode.get())
     assert status == CV_SUCCESS
@@ -116,7 +116,7 @@ def test_cvodes_fsa(sunctx):
     # Check IVP solution
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
     # Get sensitivities
     status, tret_sens = CVodeGetSens(cvode.get(), ySout)
@@ -125,7 +125,7 @@ def test_cvodes_fsa(sunctx):
     lamb = ode_problem.lamb
     expected = np.exp(lamb * tret)
     sens_val = N_VGetArrayPointer(ySout[0])[0]
-    assert_allclose(sens_val, expected, atol=1e-2)
+    assert_allclose(sens_val, expected, atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_cvodes_adjoint(sunctx):
@@ -197,7 +197,7 @@ def test_cvodes_adjoint(sunctx):
     lamb = ode_problem.lamb
     expected = np.exp(lamb * tret)
     sens_val = N_VGetArrayPointer(yB0)[0]
-    assert_allclose(sens_val, expected, atol=1e-2)
+    assert_allclose(sens_val, expected, atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_cvodes_adjoint_quad(sunctx):
@@ -315,4 +315,4 @@ def test_cvodes_adjoint_quad(sunctx):
     lamb = ode_problem.lamb
     expected = np.exp(lamb * tret)
     sens_val = N_VGetArrayPointer(yB0)[0]
-    assert_allclose(sens_val, expected, atol=1e-2)
+    assert_allclose(sens_val, expected, atol=100 * SUNREALTYPE_RTOL)

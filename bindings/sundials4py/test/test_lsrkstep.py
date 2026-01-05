@@ -48,7 +48,7 @@ def test_lsrkstep_sts(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_lsrkstep_ssp(sunctx):
@@ -74,4 +74,4 @@ def test_lsrkstep_ssp(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)

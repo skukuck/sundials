@@ -56,4 +56,5 @@ def test_splittingstep(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y0, sol, tf)
+    # we use a fixed atol here since we use a fixed step size
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)

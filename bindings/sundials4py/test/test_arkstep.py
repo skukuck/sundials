@@ -59,7 +59,7 @@ def test_explicit(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_implicit(sunctx):
@@ -89,7 +89,7 @@ def test_implicit(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_implicit_with_dense_ls_and_jac(sunctx):
@@ -129,7 +129,7 @@ def test_implicit_with_dense_ls_and_jac(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
 def test_imex(sunctx):
@@ -159,4 +159,4 @@ def test_imex(sunctx):
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
 
-    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
+    assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)

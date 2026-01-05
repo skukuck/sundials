@@ -73,6 +73,7 @@ def test_multirate(sunctx):
 
     sol = N_VClone(y)
     ode_problem.solution(y, sol, tret)
+    # we use a fixed atol here since we use a fixed step size
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
 
     # We must set this to None to ensure inner_stepper can be garbage collected

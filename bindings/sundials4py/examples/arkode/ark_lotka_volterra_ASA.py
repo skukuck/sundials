@@ -35,7 +35,7 @@ class LotkaVolterraODE:
         y[1] = 1.0
         return 0
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, user_data):
         p = self.p
         y = sun.N_VGetArrayPointer(yvec)
         ydot = sun.N_VGetArrayPointer(ydotvec)
@@ -69,7 +69,7 @@ class LotkaVolterraODE:
     def dgdp(self, yvec):
         return np.zeros(self.NP, dtype=sun.sunrealtype)
 
-    def adj_rhs(self, t, y, sens, sens_dot):
+    def adj_rhs(self, t, y, sens, sens_dot, user_data):
         l = sun.N_VGetSubvector_ManyVector(sens, 0)
         ldot = sun.N_VGetSubvector_ManyVector(sens_dot, 0)
         nu = sun.N_VGetSubvector_ManyVector(sens_dot, 1)
@@ -77,7 +77,7 @@ class LotkaVolterraODE:
         self.parameter_vjp(l, nu, t, y)
         return 0
 
-    def quad_rhs(self, t, yvec, muvec, qBdotvec):
+    def quad_rhs(self, t, yvec, muvec, qBdotvec, user_data):
         self.parameter_vjp(muvec, qBdotvec, t, yvec)
         return 0
 
@@ -113,7 +113,7 @@ def main():
     #
     # Create the ARKODE stepper that will be used for the forward evolution.
     #
-    arkode = ark.ARKStepCreate(lambda t, y, ydot, _: ode.f(t, y, ydot), None, t0, y, sunctx)
+    arkode = ark.ARKStepCreate(ode.f, None, t0, y, sunctx)
     assert arkode is not None
     status = ark.ARKodeSetOrder(arkode.get(), 4)
     assert status == ark.ARK_SUCCESS
@@ -183,12 +183,7 @@ def main():
 
     # Create ARKStep adjoint stepper
     status, adj_stepper = ark.ARKStepCreateAdjointStepper(
-        arkode.get(),
-        lambda t, yv, lv, ldotv, _: ode.adj_rhs(t, yv, lv, ldotv),
-        None,
-        tf,
-        sf,
-        sunctx,
+        arkode.get(), ode.adj_rhs, None, tf, sf, sunctx
     )
     assert status == ark.ARK_SUCCESS
 

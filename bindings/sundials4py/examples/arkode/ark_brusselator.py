@@ -67,7 +67,7 @@ class BrusselatorODE:
         y[2] = self.w0
         return 0
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, user_data):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
         a, b, ep = self.a, self.b, self.ep
@@ -77,7 +77,7 @@ class BrusselatorODE:
         ydot[2] = (b - w) / ep - w * u
         return 0
 
-    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3):
+    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, user_data):
         y = N_VGetArrayPointer(yvec)
         a, b, ep = self.a, self.b, self.ep
         u, v, w = y[0], y[1], y[2]
@@ -117,13 +117,7 @@ def main():
     ode_problem = BrusselatorODE(u0, v0, w0, a, b, ep)
     ode_problem.set_init_cond(y)
 
-    ark = ARKStepCreate(
-        None,  # f_E (explicit)
-        lambda t, yvec, ydotvec, _: ode_problem.f(t, yvec, ydotvec),  # f_I (implicit)
-        T0,
-        y,
-        sunctx,
-    )
+    ark = ARKStepCreate(None, ode_problem.f, T0, y, sunctx)  # f_E (explicit)  # f_I (implicit)
     assert ark is not None
 
     status = ARKodeSStolerances(ark.get(), reltol, abstol)
@@ -144,12 +138,7 @@ def main():
     status = ARKodeSetLinearSolver(ark.get(), LS, A)
     assert status == ARK_SUCCESS
 
-    status = ARKodeSetJacFn(
-        ark.get(),
-        lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode_problem.jac(
-            t, yvec, fyvec, J, tmp1, tmp2, tmp3
-        ),
-    )
+    status = ARKodeSetJacFn(ark.get(), ode_problem.jac)
     assert status == ARK_SUCCESS
 
     # Signal that this problem does not explicitly depend on time

@@ -56,7 +56,7 @@ class Heat1DProblem:
         y[:] = 0.0
         return 0
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, user_data):
         N, k, dx = self.N, self.k, self.dx
         Y = N_VGetArrayPointer(yvec)
         Ydot = N_VGetArrayPointer(ydotvec)
@@ -73,7 +73,7 @@ class Heat1DProblem:
         Ydot[isource] += 0.01 / dx
         return 0
 
-    def jtv(self, vvec, Jvvec, t, yvec, fyvec, tmpvec):
+    def jtv(self, vvec, Jvvec, t, yvec, fyvec, tmpvec, user_data):
         N, k, dx = self.N, self.k, self.dx
         V = N_VGetArrayPointer(vvec)
         JV = N_VGetArrayPointer(Jvvec)
@@ -110,13 +110,7 @@ def main():
     # specify the right-hand side function in y'=f(t,y), the initial time
     # T0, and the initial dependent variable vector y.  Note: since this
     # problem is fully implicit, we set f_E to None and f_I to f. */
-    ark = ARKStepCreate(
-        None,  # f_E (explicit)
-        lambda t, yvec, ydotvec, _: problem.f(t, yvec, ydotvec),  # f_I (implicit)
-        T0,
-        y,
-        sunctx,
-    )
+    ark = ARKStepCreate(None, problem.f, T0, y, sunctx)  # f_E (explicit)
     assert ark is not None
 
     # Set routines
@@ -134,9 +128,7 @@ def main():
     status = ARKodeSetLinearSolver(ark.get(), LS, None)
     assert status == ARK_SUCCESS
 
-    status = ARKodeSetJacTimes(
-        ark.get(), None, lambda v, Jv, t, y, fy, tmp, _: problem.jtv(v, Jv, t, y, fy, tmp)
-    )
+    status = ARKodeSetJacTimes(ark.get(), None, problem.jtv)
     assert status == ARK_SUCCESS
 
     status = ARKodeSetLinear(ark.get(), 0)

@@ -95,7 +95,7 @@ class SliderCrankDAE:
         Q[2] = -fl * (x * s2 - a * s21 / 2.0) / 2.0 - F * s2
         return Q
 
-    def residual(self, t, yyvec, ypvec, rvec):
+    def residual(self, t, yyvec, ypvec, rvec, user_data):
         a, J1, m2, J2 = self.a, self.J1, self.m2, self.J2
         yy = N_VGetArrayPointer(yyvec)
         yp = N_VGetArrayPointer(ypvec)
@@ -119,7 +119,7 @@ class SliderCrankDAE:
         rr[9] = -a * c1 * qd - c2 * pd
         return 0
 
-    def rhsQ(self, t, yyvec, ypvec, qdotvec):
+    def rhsQ(self, t, yyvec, ypvec, qdotvec, user_data):
         J1, m2, J2 = self.J1, self.m2, self.J2
         yy = N_VGetArrayPointer(yyvec)
         qdot = N_VGetArrayPointer(qdotvec)
@@ -164,9 +164,7 @@ def main():
     # IDAS initialization
     ida = IDACreate(sunctx)
     assert ida is not None
-    status = IDAInit(
-        ida.get(), lambda t, yv, ypv, rv, _: dae.residual(t, yv, ypv, rv), TBEGIN, yy, yp
-    )
+    status = IDAInit(ida.get(), dae.residual, TBEGIN, yy, yp)
     assert status == IDA_SUCCESS
     status = IDASStolerances(ida.get(), RTOLF, ATOLF)
     assert status == IDA_SUCCESS
@@ -191,7 +189,7 @@ def main():
 
     #  Setup quadrature
     N_VConst(0.0, q)
-    status = IDAQuadInit(ida.get(), lambda t, yv, ypv, qv, _: dae.rhsQ(t, yv, ypv, qv), q)
+    status = IDAQuadInit(ida.get(), dae.rhsQ, q)
     assert status == IDA_SUCCESS
     status = IDASetQuadErrCon(ida.get(), True)
     assert status == IDA_SUCCESS

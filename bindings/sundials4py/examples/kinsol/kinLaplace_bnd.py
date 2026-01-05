@@ -61,7 +61,7 @@ class Laplace2D:
         y[:] = ZERO
         return 0
 
-    def func(self, uvec, fvec):
+    def func(self, uvec, fvec, user_data):
         u = N_VGetArrayPointer(uvec)
         f = N_VGetArrayPointer(fvec)
 
@@ -126,7 +126,7 @@ def main():
 
     # Initialize and allocate memory for KINSOL
     kin = KINCreate(sunctx)
-    status = KINInit(kin.get(), lambda u, f, _: problem.func(u, f), y)
+    status = KINInit(kin.get(), problem.func, y)
     assert status == KIN_SUCCESS
 
     # Set function norm tolerance

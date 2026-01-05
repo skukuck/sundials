@@ -34,7 +34,7 @@ class LotkaVolterraODE:
         y[1] = 1.0
         return 0
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, user_data):
         # Lotka-Volterra ODE right-hand side
         p = self.p
         y = N_VGetArrayPointer(yvec)
@@ -71,14 +71,14 @@ class LotkaVolterraODE:
         # g(u) = 0.5 * ||1 - u||^2, so grad = u - 1
         return np.array([-1.0 + y[0], -1.0 + y[1]], dtype=sunrealtype)
 
-    def adjoint_rhs(self, t, yvec, lvec, ldotvec):
+    def adjoint_rhs(self, t, yvec, lvec, ldotvec, user_datas):
         # Adjoint ODE right-hand side: -mu^T (df/du)
         self.vjp(lvec, ldotvec, t, yvec)
         ldot = N_VGetArrayPointer(ldotvec)
         ldot *= -1.0
         return 0
 
-    def quad_rhs(self, t, yvec, muvec, qBdotvec):
+    def quad_rhs(self, t, yvec, muvec, qBdotvec, user_data):
         # Quadrature right-hand side: mu^T (df/dp)
         self.parameter_vjp(muvec, qBdotvec, t, yvec)
         return 0
@@ -110,7 +110,7 @@ def main():
     assert cvode is not None
 
     # Initialize CVODE with ODE RHS
-    status = CVodeInit(cvode.get(), lambda t, yv, ydv, _: ode.f(t, yv, ydv), T0, y)
+    status = CVodeInit(cvode.get(), ode.f, T0, y)
     assert status == CV_SUCCESS
 
     # Set tolerances
@@ -168,9 +168,7 @@ def main():
     assert status == CV_SUCCESS
 
     # Initialize the CVODES solver for the backward problem
-    status = CVodeInitB(
-        cvode.get(), which, lambda t, yv, lv, ldotv, _: ode.adjoint_rhs(t, yv, lv, ldotv), Tf, uB
-    )
+    status = CVodeInitB(cvode.get(), which, ode.adjoint_rhs, Tf, uB)
     assert status == CV_SUCCESS
 
     # Set the tolerances for the backward problem
@@ -185,9 +183,7 @@ def main():
 
     # Call CVodeQuadInitB to allocate internal memory and initialize backward
     # quadrature integration. This gives the sensitivities w.r.t. the parameters.
-    status = CVodeQuadInitB(
-        cvode.get(), which, lambda t, yv, mu, qBdot, _: ode.quad_rhs(t, yv, mu, qBdot), qB
-    )
+    status = CVodeQuadInitB(cvode.get(), which, ode.quad_rhs, qB)
     assert status == CV_SUCCESS
 
     # Call CVodeSetQuadErrCon to specify whether or not the quadrature variables

@@ -64,7 +64,7 @@ class BrusselatorODE:
         y[2] = self.w0
         return 0
 
-    def f(self, t, yvec, ydotvec):
+    def f(self, t, yvec, ydotvec, user_data):
         y = N_VGetArrayPointer(yvec)
         ydot = N_VGetArrayPointer(ydotvec)
         a, b, ep = self.a, self.b, self.ep
@@ -74,7 +74,7 @@ class BrusselatorODE:
         ydot[2] = (b - w) / ep - w * u
         return 0
 
-    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3):
+    def jac(self, t, yvec, fyvec, J, tmp1, tmp2, tmp3, user_data):
         y = N_VGetArrayPointer(yvec)
         a, b, ep = self.a, self.b, self.ep
         u, v, w = y[0], y[1], y[2]
@@ -118,7 +118,7 @@ def main():
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert cvode is not None
-    status = CVodeInit(cvode.get(), lambda t, y, ydot, _: ode_problem.f(t, y, ydot), T0, y)
+    status = CVodeInit(cvode.get(), ode_problem.f, T0, y)
     assert status == CV_SUCCESS
     status = CVodeSStolerances(cvode.get(), reltol, abstol)
     assert status == CV_SUCCESS
@@ -133,12 +133,7 @@ def main():
 
     status = CVodeSetLinearSolver(cvode.get(), LS, A)
     assert status == CV_SUCCESS
-    status = CVodeSetJacFn(
-        cvode.get(),
-        lambda t, yvec, fyvec, J, tmp1, tmp2, tmp3, _: ode_problem.jac(
-            t, yvec, fyvec, J, tmp1, tmp2, tmp3
-        ),
-    )
+    status = CVodeSetJacFn(cvode.get(), ode_problem.jac)
     assert status == CV_SUCCESS
 
     # Parse any command line arguments

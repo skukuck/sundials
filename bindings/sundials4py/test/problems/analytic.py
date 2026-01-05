@@ -249,7 +249,7 @@ class AnalyticNonlinearSys:
     def __exit__(self, type, value, traceback):
         self.u0vec = None
 
-    def fixed_point_fn(self, uvec, gvec):
+    def fixed_point_fn(self, uvec, gvec, _):
         u = N_VGetArrayPointer(uvec)
         g = N_VGetArrayPointer(gvec)
         x, y, z = u[0], u[1], u[2]
@@ -261,7 +261,7 @@ class AnalyticNonlinearSys:
         return 0
 
     def corrector_fp_fn(self, uvec, gvec):
-        self.fixed_point_fn(uvec, gvec)
+        self.fixed_point_fn(uvec, gvec, None)
         N_VLinearSum(1.0, gvec, -1.0, self.u0vec, gvec)
         return 0
 

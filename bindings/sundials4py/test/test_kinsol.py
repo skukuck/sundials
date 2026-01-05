@@ -33,9 +33,6 @@ def test_kinsol(sunctx):
     problem = AnalyticNonlinearSys(None)
     u = N_VNew_Serial(NEQ, sunctx)
 
-    def fp_function(u, g, _):
-        return problem.fixed_point_fn(u, g)
-
     def depth_fn(iter, u_val, g_val, f_val, df, R_mat, depth, _, remove_indices):
         if iter < 2:
             new_depth = 1
@@ -50,7 +47,7 @@ def test_kinsol(sunctx):
 
     kin_status = KINSetMAA(kin_view.get(), m_aa)
     assert kin_status == KIN_SUCCESS
-    kin_status = KINInit(kin_view.get(), fp_function, u)
+    kin_status = KINInit(kin_view.get(), problem.fixed_point_fn, u)
     assert kin_status == KIN_SUCCESS
     kin_status = KINSetFuncNormTol(kin_view.get(), tol)
     assert kin_status == KIN_SUCCESS
@@ -68,6 +65,47 @@ def test_kinsol(sunctx):
     N_VConst(1.0, scale)
 
     kin_status = KINSol(kin_view.get(), u, KIN_FP, scale, scale)
+    assert kin_status == KIN_SUCCESS
+
+    u_expected = N_VNew_Serial(NEQ, sunctx)
+    u_expected_data = N_VGetArrayPointer(u_expected)
+    problem.solution(u_expected)
+    assert_allclose(u_data, u_expected_data, atol=10 * SUNREALTYPE_ATOL)
+
+
+def test_kinsol_newton_dense(sunctx):
+    NEQ = AnalyticNonlinearSys.NEQ
+    tol = SUNREALTYPE_ATOL
+    kin_view = KINCreate(sunctx)
+    problem = AnalyticNonlinearSys(None)
+    u = N_VNew_Serial(NEQ, sunctx)
+
+    def sys_function(u, f, _):
+        # Form the nonlinear residual f(u) = g(u) - u
+        problem.fixed_point_fn(u, f, None)
+        N_VLinearSum(1.0, f, -1.0, u, f)
+        return 0
+
+    kin_status = KINInit(kin_view.get(), sys_function, u)
+    assert kin_status == KIN_SUCCESS
+    kin_status = KINSetFuncNormTol(kin_view.get(), tol)
+    assert kin_status == KIN_SUCCESS
+
+    # Attach a dense linear solver
+    J = SUNDenseMatrix(NEQ, NEQ, sunctx)
+    LS = SUNLinSol_Dense(u, J, sunctx)
+    kin_status = KINSetLinearSolver(kin_view.get(), LS, J)
+    assert kin_status == KIN_SUCCESS
+
+    # initial guess
+    u_data = N_VGetArrayPointer(u)
+    u_data[:] = [0.1, 0.1, -0.1]
+
+    # no scaling used
+    scale = N_VNew_Serial(NEQ, sunctx)
+    N_VConst(1.0, scale)
+
+    kin_status = KINSol(kin_view.get(), u, KIN_NONE, scale, scale)
     assert kin_status == KIN_SUCCESS
 
     u_expected = N_VNew_Serial(NEQ, sunctx)

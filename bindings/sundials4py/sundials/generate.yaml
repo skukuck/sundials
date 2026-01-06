@@ -44,6 +44,7 @@ modules:
     - "Set.*Fn" # nanobind cannot bind to functions which take a function pointer, so we do something custom
     - "SetContent" # no need to set content from Python, so we don't interface it
     - "GetContent" # content should not be accessible from Python, so we don't interface it
+    - "^SUNAdjointCheckpointScheme_LoadVector$" # we have to do a custom wrap of this due to needing a template vector for an out vector
   sundials_adjointstepper:
     path: sundials/sundials_adjointstepper_generated.hpp
     headers:

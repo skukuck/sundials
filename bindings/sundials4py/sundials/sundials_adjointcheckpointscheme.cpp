@@ -30,8 +30,6 @@
 namespace nb = nanobind;
 using namespace sundials::experimental;
 
-using namespace sundials::experimental;
-
 namespace sundials4py {
 
 void bind_sunadjointcheckpointscheme(nb::module_& m)
@@ -39,6 +37,26 @@ void bind_sunadjointcheckpointscheme(nb::module_& m)
 #include "sundials_adjointcheckpointscheme_generated.hpp"
 
   nb::class_<SUNAdjointCheckpointScheme_>(m, "SUNAdjointCheckpointScheme_");
+
+  m.def(
+    "SUNAdjointCheckpointScheme_LoadVector",
+    [](SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
+       suncountertype stage_num, sunbooleantype peek, N_Vector tmpl)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<N_Vector>>, sunrealtype>
+    {
+      N_Vector nvec_out = N_VClone(tmpl);
+      sunrealtype tout;
+      SUNErrCode err =
+        SUNAdjointCheckpointScheme_LoadVector(check_scheme, step_num, stage_num,
+                                              peek, &nvec_out, &tout);
+
+      return std::make_tuple(err,
+                             our_make_shared<std::remove_pointer_t<N_Vector>,
+                                             N_VectorDeleter>(nvec_out),
+                             tout);
+    },
+    nb::arg("check_scheme"), nb::arg("step_num"), nb::arg("stage_num"),
+    nb::arg("peek"), nb::arg("tmpl"));
 }
 
 } // namespace sundials4py

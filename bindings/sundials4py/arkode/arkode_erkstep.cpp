@@ -48,7 +48,7 @@ void bind_arkode_erkstep(nb::module_& m)
       }
 
       // Create the user-supplied function table to store the Python user functions
-      auto fn_table = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = new arkode_user_supplied_fn_table;
 
       // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
       static_cast<ARKodeMem>(ark_mem)->python = fn_table;

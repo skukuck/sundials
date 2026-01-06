@@ -105,18 +105,6 @@ struct mristepinnerstepper_user_supplied_fn_table
 // ARKODE user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
 
-inline arkode_user_supplied_fn_table* arkode_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since ARKodeFree calls free
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(
-    std::malloc(sizeof(arkode_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(arkode_user_supplied_fn_table));
-
-  return fn_table;
-}
-
 inline arkode_user_supplied_fn_table* get_arkode_fn_table(void* ark_mem)
 {
   auto mem      = static_cast<ARKodeMem>(ark_mem);
@@ -126,18 +114,6 @@ inline arkode_user_supplied_fn_table* get_arkode_fn_table(void* ark_mem)
     throw sundials4py::null_function_table(
       "Failed to get Python function table from ARKODE memory");
   }
-  return fn_table;
-}
-
-inline mristepinnerstepper_user_supplied_fn_table* mristepinnerstepper_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since ARKodeFree calls free
-  auto fn_table = static_cast<mristepinnerstepper_user_supplied_fn_table*>(
-    std::malloc(sizeof(mristepinnerstepper_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(mristepinnerstepper_user_supplied_fn_table));
-
   return fn_table;
 }
 

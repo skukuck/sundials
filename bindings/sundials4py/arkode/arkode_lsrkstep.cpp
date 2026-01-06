@@ -46,7 +46,7 @@ void bind_arkode_lsrkstep(nb::module_& m)
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
 
-      auto fn_table = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = new arkode_user_supplied_fn_table;
 
       static_cast<ARKodeMem>(ark_mem)->python = fn_table;
 
@@ -78,7 +78,7 @@ void bind_arkode_lsrkstep(nb::module_& m)
         throw sundials4py::error_returned("Failed to create LSRKStep memory");
       }
 
-      auto fn_table = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = new arkode_user_supplied_fn_table;
 
       static_cast<ARKodeMem>(ark_mem)->python = fn_table;
 

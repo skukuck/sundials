@@ -46,7 +46,7 @@ void bind_arkode_mristep(nb::module_& m)
       MRIStepInnerStepper stepper = nullptr;
 
       int status      = MRIStepInnerStepper_Create(sunctx, &stepper);
-      auto fn_table   = mristepinnerstepper_user_supplied_fn_table_alloc();
+      auto fn_table   = new mristepinnerstepper_user_supplied_fn_table;
       stepper->python = static_cast<void*>(fn_table);
 
       return std::make_tuple(status,
@@ -122,7 +122,7 @@ void bind_arkode_mristep(nb::module_& m)
       }
 
       // Create the user-supplied function table to store the Python user functions
-      auto fn_table = arkode_user_supplied_fn_table_alloc();
+      auto fn_table = new arkode_user_supplied_fn_table;
 
       // Smuggle the user-supplied function table into callback wrappers through the user_data pointer
       static_cast<ARKodeMem>(ark_mem)->python = fn_table;
@@ -145,3 +145,9 @@ void bind_arkode_mristep(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+// The destroy functions gets called in our C code
+extern "C" void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr)
+{
+  delete static_cast<mristepinnerstepper_user_supplied_fn_table*>(ptr);
+}

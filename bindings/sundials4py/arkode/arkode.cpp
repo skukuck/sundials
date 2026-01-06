@@ -250,3 +250,9 @@ void bind_arkode(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+// The destroy functions gets called in our C code
+extern "C" void arkode_user_supplied_fn_table_destroy(void* ptr)
+{
+  delete static_cast<arkode_user_supplied_fn_table*>(ptr);
+}

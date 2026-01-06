@@ -23,9 +23,6 @@ from numpy.testing import assert_allclose
 from fixtures import *
 from sundials4py.core import *
 
-# Note: some of these tests will fail if SUNDIALS error checks are turned on because
-# we dont properly mock some of the requirements
-
 
 @pytest.mark.parametrize("solver_type", ["fixedpoint", "newton"])
 def test_create_solver(solver_type, sunctx, nvec):
@@ -35,17 +32,37 @@ def test_create_solver(solver_type, sunctx, nvec):
         nls = SUNNonlinSol_Newton(nvec, sunctx)
     else:
         raise ValueError("Unknown solver type")
+
     assert nls is not None
 
 
 @pytest.mark.parametrize("solver_type", ["fixedpoint", "newton"])
 def make_solver(solver_type, sunctx, nvec):
     if solver_type == "fixedpoint":
-        return SUNNonlinSol_FixedPoint(nvec, 5, sunctx)
+        nls = SUNNonlinSol_FixedPoint(nvec, 5, sunctx)
     elif solver_type == "newton":
-        return SUNNonlinSol_Newton(nvec, sunctx)
+        nls = SUNNonlinSol_Newton(nvec, sunctx)
     else:
         raise ValueError("Unknown solver type")
+
+    def ctest(nls, u, delta, tol, ewt, _):
+        return 0
+
+    def sys(u, g, _):
+        return 0
+
+    def lsolve(u, _):
+        return 0
+
+    # Sys and CTest must be set before calling certain functions when error checking is enabled
+    SUNNonlinSolSetConvTestFn(nls, ctest)
+    SUNNonlinSolSetSysFn(nls, sys)
+
+    # LSolve must also be set before calling certain functions when error checking is enabled
+    if solver_type == "newton":
+        SUNNonlinSolSetLSolveFn(nls, lsolve)
+
+    return nls
 
 
 @pytest.mark.parametrize(
@@ -61,6 +78,7 @@ def test_gettype(solver_type, expected_type, sunctx, nvec):
 @pytest.mark.parametrize("solver_type", ["fixedpoint", "newton"])
 def test_initialize(solver_type, sunctx, nvec):
     nls = make_solver(solver_type, sunctx, nvec)
+
     ret = SUNNonlinSolInitialize(nls)
     assert ret == SUN_SUCCESS
 

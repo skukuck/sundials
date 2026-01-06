@@ -19,18 +19,15 @@ import pytest
 from fixtures import *
 from sundials4py.core import *
 
-# Note: some of these tests will fail if SUNDIALS error checks are turned on because
-# we dont properly mock some of the requirements
-
 
 def test_create_dense(sunctx, nvec):
-    A = SUNDenseMatrix(2, 2, sunctx)
+    A = SUNDenseMatrix(N_VGetLength(nvec), N_VGetLength(nvec), sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     assert LS is not None
 
 
 def test_create_band(sunctx, nvec):
-    A = SUNBandMatrix(2, 1, 1, sunctx)
+    A = SUNBandMatrix(N_VGetLength(nvec), 1, 1, sunctx)
     LS = SUNLinSol_Band(nvec, A, sunctx)
     assert LS is not None
 
@@ -56,7 +53,7 @@ def test_create_sptfqmr(sunctx, nvec):
 
 
 def test_get_type_and_id(sunctx, nvec):
-    A = SUNDenseMatrix(2, 2, sunctx)
+    A = SUNDenseMatrix(N_VGetLength(nvec), N_VGetLength(nvec), sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     typ = SUNLinSolGetType(LS)
     id = SUNLinSolGetID(LS)
@@ -65,7 +62,7 @@ def test_get_type_and_id(sunctx, nvec):
 
 
 def test_initialize_setup(sunctx, nvec):
-    A = SUNDenseMatrix(2, 2, sunctx)
+    A = SUNDenseMatrix(N_VGetLength(nvec), N_VGetLength(nvec), sunctx)
     LS = SUNLinSol_Dense(nvec, A, sunctx)
     ret_init = SUNLinSolInitialize(LS)
     ret_setup = SUNLinSolSetup(LS, A)

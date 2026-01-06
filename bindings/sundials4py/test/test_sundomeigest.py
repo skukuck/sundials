@@ -21,13 +21,11 @@ import pytest
 from fixtures import *
 from sundials4py.core import *
 
-# Note: some of these tests will fail if SUNDIALS error checks are turned on because
-# we dont properly mock some of the requirements
-
 
 def make_estimator(estimator_type, sunctx):
     if estimator_type == "power":
         nvec = N_VNew_Serial(5, sunctx)
+        N_VConst(1.0, nvec)
         e = SUNDomEigEstimator_Power(nvec, 10, 1.0, sunctx)
 
         def atimes(_, v, z):

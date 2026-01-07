@@ -36,14 +36,6 @@ struct SUNContextFunctionTable
   std::vector<nb::object> err_handlers;
 };
 
-inline SUNContextFunctionTable* SUNContextFunctionTable_Alloc()
-{
-  auto fn_table = static_cast<SUNContextFunctionTable*>(
-    std::malloc(sizeof(SUNContextFunctionTable)));
-  std::memset(fn_table, 0, sizeof(SUNContextFunctionTable));
-  return fn_table;
-}
-
 inline void suncontext_errhandler_wrapper(int line, const char* func,
                                           const char* file, const char* msg,
                                           SUNErrCode err_code,

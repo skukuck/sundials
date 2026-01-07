@@ -71,7 +71,7 @@ void bind_sundomeigestimator(nb::module_& m)
     {
       if (!dee->python)
       {
-        dee->python = SUNDomEigEstimatorFunctionTable_Alloc();
+        dee->python = new SUNDomEigEstimatorFunctionTable;
       }
 
       auto fntable = static_cast<SUNDomEigEstimatorFunctionTable*>(dee->python);
@@ -89,3 +89,8 @@ void bind_sundomeigestimator(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+extern "C" void SUNDomEigEstimatorFunctionTable_Destroy(void* ptr)
+{
+  delete static_cast<SUNDomEigEstimatorFunctionTable*>(ptr);
+}

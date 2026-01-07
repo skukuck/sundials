@@ -35,18 +35,6 @@ struct SUNDomEigEstimatorFunctionTable
   nb::object atimes;
 };
 
-inline SUNDomEigEstimatorFunctionTable* SUNDomEigEstimatorFunctionTable_Alloc()
-{
-  // We must use malloc since ARKodeFree calls free
-  auto fn_table = static_cast<SUNDomEigEstimatorFunctionTable*>(
-    std::malloc(sizeof(SUNDomEigEstimatorFunctionTable)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(SUNDomEigEstimatorFunctionTable));
-
-  return fn_table;
-}
-
 template<typename... Args>
 SUNErrCode sundomeigestimator_atimes_wrapper(Args... args)
 {

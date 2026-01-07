@@ -53,7 +53,7 @@ void bind_suncontext(nb::module_& m)
 
           if (!sunctx->python)
           {
-            sunctx->python = SUNContextFunctionTable_Alloc();
+            sunctx->python = new SUNContextFunctionTable;
 
             // Only push the wrapper the first time this is called
             SUNErrCode status =
@@ -107,3 +107,8 @@ void bind_suncontext(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+extern "C" void SUNContextFunctionTable_Destroy(void* ptr)
+{
+  delete static_cast<SUNContextFunctionTable*>(ptr);
+}

@@ -42,14 +42,6 @@ struct SUNStepperFunctionTable
   nb::object get_num_steps;
 };
 
-inline SUNStepperFunctionTable* SUNStepperFunctionTable_Alloc()
-{
-  auto fn_table = static_cast<SUNStepperFunctionTable*>(
-    std::malloc(sizeof(SUNStepperFunctionTable)));
-  std::memset(fn_table, 0, sizeof(SUNStepperFunctionTable));
-  return fn_table;
-}
-
 template<typename... Args>
 inline SUNErrCode sunstepper_evolve_wrapper(Args... args)
 {

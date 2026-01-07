@@ -68,7 +68,7 @@ void bind_sunlinearsolver(nb::module_& m)
     [](SUNLinearSolver LS,
        std::function<std::remove_pointer_t<SUNATimesFn>> ATimesFn) -> SUNErrCode
     {
-      if (!LS->python) { LS->python = SUNLinearSolverFunctionTable_Alloc(); }
+      if (!LS->python) { LS->python = new SUNLinearSolverFunctionTable; }
       auto fn_table = static_cast<SUNLinearSolverFunctionTable*>(LS->python);
       fn_table->ATimesFn = nb::cast(ATimesFn);
       if (ATimesFn)
@@ -86,7 +86,7 @@ void bind_sunlinearsolver(nb::module_& m)
        std::function<std::remove_pointer_t<SUNPSetupFn>> PSetupFn,
        std::function<std::remove_pointer_t<SUNPSetupFn>> PSolveFn) -> SUNErrCode
     {
-      if (!LS->python) { LS->python = SUNLinearSolverFunctionTable_Alloc(); }
+      if (!LS->python) { LS->python = new SUNLinearSolverFunctionTable; }
       auto fn_table = static_cast<SUNLinearSolverFunctionTable*>(LS->python);
       fn_table->PSetupFn = nb::cast(PSetupFn);
       fn_table->PSolveFn = nb::cast(PSolveFn);
@@ -107,3 +107,8 @@ void bind_sunlinearsolver(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+extern "C" void SUNLinearSolverFunctionTable_Destroy(void* ptr)
+{
+  delete static_cast<SUNLinearSolverFunctionTable*>(ptr);
+}

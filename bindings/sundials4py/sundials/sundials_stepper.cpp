@@ -46,7 +46,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable    = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->evolve = nb::cast(fn);
@@ -65,7 +65,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->one_step = nb::cast(fn);
@@ -84,7 +84,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->full_rhs = nb::cast(fn);
@@ -103,7 +103,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable    = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reinit = nb::cast(fn);
@@ -122,7 +122,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable   = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reset = nb::cast(fn);
@@ -142,7 +142,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reset_ckpt_idx = nb::cast(fn);
@@ -162,7 +162,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_stop_time = nb::cast(fn);
@@ -182,7 +182,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_step_direction = nb::cast(fn);
@@ -201,7 +201,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_forcing = nb::cast(fn);
@@ -219,7 +219,7 @@ void bind_sunstepper(nb::module_& m)
     {
       if (!stepper->python)
       {
-        stepper->python = SUNStepperFunctionTable_Alloc();
+        stepper->python = new SUNStepperFunctionTable;
       }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->get_num_steps = nb::cast(fn);
@@ -234,3 +234,8 @@ void bind_sunstepper(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+extern "C" void SUNStepperFunctionTable_Destroy(void* ptr)
+{
+  delete static_cast<SUNStepperFunctionTable*>(ptr);
+}

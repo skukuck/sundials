@@ -66,7 +66,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       return SUNNonlinSolSetup(NLS, y, NLS->python);
     },
@@ -79,7 +79,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       return SUNNonlinSolSolve(NLS, y0, y, w, tol, callLSetup, NLS->python);
     },
@@ -93,7 +93,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->sysfn = nb::cast(SysFn);
@@ -112,7 +112,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->lsetupfn = nb::cast(SetupFn);
@@ -131,7 +131,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->lsolvefn = nb::cast(SolveFn);
@@ -150,7 +150,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     {
       if (!NLS->python)
       {
-        NLS->python = SUNNonlinearSolverFunctionTable_Alloc();
+        NLS->python = new SUNNonlinearSolverFunctionTable;
       }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->convtestfn = nb::cast(CTestFn);
@@ -166,3 +166,8 @@ void bind_sunnonlinearsolver(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+extern "C" void SUNNonlinearSolverFunctionTable_Destroy(void* ptr)
+{
+  delete static_cast<SUNNonlinearSolverFunctionTable*>(ptr);
+}

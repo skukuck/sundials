@@ -37,14 +37,6 @@ struct SUNLinearSolverFunctionTable
   nb::object PSolveFn;
 };
 
-inline SUNLinearSolverFunctionTable* SUNLinearSolverFunctionTable_Alloc()
-{
-  auto fn_table = static_cast<SUNLinearSolverFunctionTable*>(
-    std::malloc(sizeof(SUNLinearSolverFunctionTable)));
-  std::memset(fn_table, 0, sizeof(SUNLinearSolverFunctionTable));
-  return fn_table;
-}
-
 template<typename... Args>
 inline int sunlinearsolver_atimesfn_wrapper(Args... args)
 {

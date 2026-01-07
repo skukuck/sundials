@@ -37,14 +37,6 @@ struct SUNNonlinearSolverFunctionTable
   nb::object convtestfn;
 };
 
-inline SUNNonlinearSolverFunctionTable* SUNNonlinearSolverFunctionTable_Alloc()
-{
-  auto fn_table = static_cast<SUNNonlinearSolverFunctionTable*>(
-    std::malloc(sizeof(SUNNonlinearSolverFunctionTable)));
-  std::memset(fn_table, 0, sizeof(SUNNonlinearSolverFunctionTable));
-  return fn_table;
-}
-
 template<typename... Args>
 inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
 {

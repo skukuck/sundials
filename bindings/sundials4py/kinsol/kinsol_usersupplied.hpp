@@ -68,18 +68,6 @@ inline kinsol_user_supplied_fn_table* get_kinsol_fn_table(void* kin_mem)
 // KINSOL user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
 
-inline kinsol_user_supplied_fn_table* kinsol_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since KINFree calls free
-  auto fn_table = static_cast<kinsol_user_supplied_fn_table*>(
-    std::malloc(sizeof(kinsol_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(kinsol_user_supplied_fn_table));
-
-  return fn_table;
-}
-
 template<typename... Args>
 inline int kinsol_sysfn_wrapper(Args... args)
 {

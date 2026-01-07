@@ -106,7 +106,7 @@ void bind_kinsol(nb::module_& m)
       int kin_status = KINInit(kin_mem, kinsol_sysfn_wrapper, tmpl);
       if (kin_status != KIN_SUCCESS) { return kin_status; }
 
-      auto fn_table      = kinsol_user_supplied_fn_table_alloc();
+      auto fn_table      = new kinsol_user_supplied_fn_table;
       auto kinsol_mem    = static_cast<KINMem>(kin_mem);
       kinsol_mem->python = fn_table;
       kin_status         = KINSetUserData(kin_mem, kin_mem);
@@ -151,3 +151,10 @@ void bind_kinsol(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+// The destroy functions gets called in our C code by the integrator destructor
+extern "C" void kinsol_user_supplied_fn_table_destroy(void* ptr)
+{
+  delete static_cast<kinsol_user_supplied_fn_table*>(ptr);
+}
+

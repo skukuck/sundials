@@ -41,23 +41,19 @@ struct idas_user_supplied_fn_table
     lsjactimesvecfn, lsjacresfn;
 
   // idas quadrature user-supplied function pointers
-  nanobind::object resQ, resQS;
+  nb::object resQ, resQS;
 
   // idas FSA user-supplied function pointers
-  nanobind::object resS;
+  nb::object resS;
+
+  // idas adjoint user-supplied function pointers
+  nb::object resB, resQB, resBS, resQBS;
+
+  // idas_ls adjoint user-supplied function pointers
+  nb::object lsjacfnB, lsjacfnBS, lsprecsetupfnB, lsprecsetupfnBS,
+    lsprecsolvefnB, lsprecsolvefnBS, lsjactimessetupfnB, lsjactimessetupfnBS,
+    lsjactimesvecfnB, lsjactimesvecfnBS;
 };
-
-inline idas_user_supplied_fn_table* idas_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since IDAFree calls free
-  auto fn_table = static_cast<idas_user_supplied_fn_table*>(
-    std::malloc(sizeof(idas_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(idas_user_supplied_fn_table));
-
-  return fn_table;
-}
 
 inline idas_user_supplied_fn_table* get_idas_fn_table(void* ida_mem)
 {
@@ -219,46 +215,10 @@ inline int idas_resS_wrapper(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
 // IDAS Adjoint user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
 
-struct idasa_user_supplied_fn_table
-{
-  // idas adjoint user-supplied function pointers
-  nb::object resB, resQB, resBS, resQBS;
-
-  // idas_ls adjoint user-supplied function pointers
-  nb::object lsjacfnB, lsjacfnBS, lsprecsetupfnB, lsprecsetupfnBS,
-    lsprecsolvefnB, lsprecsolvefnBS, lsjactimessetupfnB, lsjactimessetupfnBS,
-    lsjactimesvecfnB, lsjactimesvecfnBS;
-};
-
-inline idasa_user_supplied_fn_table* idasa_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since IDASFree calls free
-  auto fn_table = static_cast<idasa_user_supplied_fn_table*>(
-    std::malloc(sizeof(idasa_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(idasa_user_supplied_fn_table));
-
-  return fn_table;
-}
-
-inline idasa_user_supplied_fn_table* get_idasa_fn_table(void* ida_mem)
-{
-  auto mem      = static_cast<IDAMem>(ida_mem);
-  auto fn_table = static_cast<idasa_user_supplied_fn_table*>(
-    static_cast<IDAMem>(ida_mem)->python);
-  if (!fn_table)
-  {
-    throw sundials4py::null_function_table(
-      "Failed to get Python function table from IDAS memory");
-  }
-  return fn_table;
-}
-
-inline idasa_user_supplied_fn_table* get_idasa_fn_table(void* ida_mem, int which)
+inline idas_user_supplied_fn_table* get_idas_fn_table(void* ida_mem, int which)
 {
   auto mem      = static_cast<IDAMem>(IDAGetAdjIDABmem(ida_mem, which));
-  auto fn_table = static_cast<idasa_user_supplied_fn_table*>(mem->python);
+  auto fn_table = static_cast<idas_user_supplied_fn_table*>(mem->python);
   if (!fn_table)
   {
     throw sundials4py::null_function_table(
@@ -271,56 +231,56 @@ template<typename... Args>
 inline int idas_resB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDAResFnB>, idasa_user_supplied_fn_table, IDAMem,
-    1>(&idasa_user_supplied_fn_table::resB, args...);
+    std::remove_pointer_t<IDAResFnB>, idas_user_supplied_fn_table, IDAMem,
+    1>(&idas_user_supplied_fn_table::resB, args...);
 }
 
 template<typename... Args>
 inline int idas_resQB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDAQuadRhsFnB>, idasa_user_supplied_fn_table, IDAMem,
-    1>(&idasa_user_supplied_fn_table::resQB, args...);
+    std::remove_pointer_t<IDAQuadRhsFnB>, idas_user_supplied_fn_table, IDAMem,
+    1>(&idas_user_supplied_fn_table::resQB, args...);
 }
 
 template<typename... Args>
 inline int idas_lsjacfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsJacFnB>, idasa_user_supplied_fn_table, IDAMem,
-    4>(&idasa_user_supplied_fn_table::lsjacfnB, args...);
+    std::remove_pointer_t<IDALsJacFnB>, idas_user_supplied_fn_table, IDAMem,
+    4>(&idas_user_supplied_fn_table::lsjacfnB, args...);
 }
 
 template<typename... Args>
 inline int idas_lsprecsetupfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsPrecSetupFnB>, idasa_user_supplied_fn_table,
-    IDAMem, 1>(&idasa_user_supplied_fn_table::lsprecsetupfnB, args...);
+    std::remove_pointer_t<IDALsPrecSetupFnB>, idas_user_supplied_fn_table,
+    IDAMem, 1>(&idas_user_supplied_fn_table::lsprecsetupfnB, args...);
 }
 
 template<typename... Args>
 inline int idas_lsprecsolvefnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsPrecSolveFnB>, idasa_user_supplied_fn_table,
-    IDAMem, 1>(&idasa_user_supplied_fn_table::lsprecsolvefnB, args...);
+    std::remove_pointer_t<IDALsPrecSolveFnB>, idas_user_supplied_fn_table,
+    IDAMem, 1>(&idas_user_supplied_fn_table::lsprecsolvefnB, args...);
 }
 
 template<typename... Args>
 inline int idas_lsjactimessetupfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsJacTimesSetupFnB>, idasa_user_supplied_fn_table,
-    IDAMem, 1>(&idasa_user_supplied_fn_table::lsjactimessetupfnB, args...);
+    std::remove_pointer_t<IDALsJacTimesSetupFnB>, idas_user_supplied_fn_table,
+    IDAMem, 1>(&idas_user_supplied_fn_table::lsjactimessetupfnB, args...);
 }
 
 template<typename... Args>
 inline int idas_lsjactimesvecfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<IDALsJacTimesVecFnB>, idasa_user_supplied_fn_table,
-    IDAMem, 3>(&idasa_user_supplied_fn_table::lsjactimesvecfnB, args...);
+    std::remove_pointer_t<IDALsJacTimesVecFnB>, idas_user_supplied_fn_table,
+    IDAMem, 3>(&idas_user_supplied_fn_table::lsjactimesvecfnB, args...);
 }
 
 using IDAResStdFnBS = int(sunrealtype t, N_Vector y, N_Vector yp,
@@ -333,7 +293,7 @@ inline int ida_resBS_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
                              N_Vector ypB, N_Vector yBdot, void* user_dataB)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<IDAResStdFnBS>>(fn_table->resBS);
   auto Ns       = ida_mem->ida_Ns;
 
@@ -353,7 +313,7 @@ inline int idas_resQBS_wrapper(sunrealtype t, N_Vector y, N_Vector yp,
                                N_Vector ypB, N_Vector rhsvalBQS, void* user_dataB)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = static_cast<idasa_user_supplied_fn_table*>(user_dataB);
+  auto fn_table = static_cast<idas_user_supplied_fn_table*>(user_dataB);
   auto fn       = nb::cast<std::function<IDAQuadRhsStdFnBS>>(fn_table->resQBS);
   auto Ns       = ida_mem->ida_Ns;
 
@@ -377,7 +337,7 @@ inline int idas_lsjacfnBS_wrapper(sunrealtype tt, sunrealtype c_jB, N_Vector yy,
                                   N_Vector tmp1B, N_Vector tmp2B, N_Vector tmp3B)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<IDALsJacStdFnBS>>(fn_table->lsjacfnBS);
   auto Ns       = ida_mem->ida_Ns;
 
@@ -400,7 +360,7 @@ inline int idas_lsprecsetupfnBS_wrapper(sunrealtype tt, N_Vector yy, N_Vector yp
                                         sunrealtype c_jB, void* user_dataB)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn =
     nb::cast<std::function<IDALsPrecSetupStdFnBS>>(fn_table->lsprecsetupfnBS);
   auto Ns = ida_mem->ida_Ns;
@@ -426,7 +386,7 @@ inline int idas_lsprecsolvefnBS_wrapper(sunrealtype tt, N_Vector yy, N_Vector yp
                                         sunrealtype deltaB, void* user_dataB)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn =
     nb::cast<std::function<IDALsPrecSolveStdFnBS>>(fn_table->lsprecsolvefnBS);
   auto Ns = ida_mem->ida_Ns;
@@ -451,7 +411,7 @@ inline int idas_lsjactimessetupfnBS_wrapper(sunrealtype t, N_Vector yy,
                                             sunrealtype c_jB, void* user_dataB)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<IDALsJacTimesSetupStdFnBS>>(
     fn_table->lsjactimessetupfnBS);
   auto Ns = ida_mem->ida_Ns;
@@ -476,7 +436,7 @@ inline int idas_lsjactimesvecfnBS_wrapper(
   sunrealtype c_jB, void* user_dataB, N_Vector tmp1B, N_Vector tmp2B)
 {
   auto ida_mem  = static_cast<IDAMem>(user_dataB);
-  auto fn_table = get_idasa_fn_table(user_dataB);
+  auto fn_table = get_idas_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<IDALsJacTimesVecStdFnBS>>(
     fn_table->lsjactimesvecfnBS);
   auto Ns = ida_mem->ida_Ns;

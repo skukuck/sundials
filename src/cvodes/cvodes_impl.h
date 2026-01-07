@@ -1186,6 +1186,7 @@ int cvSensRhs1InternalDQ(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
                          N_Vector tempv, N_Vector ftemp);
 
 /* Function to destroy function table allocated by the Python binding code */
+
 #if defined(SUNDIALS_ENABLE_PYTHON)
 void cvode_user_supplied_fn_table_destroy(void* ptr);
 #endif

@@ -68,7 +68,7 @@ using namespace sundials::experimental;
     [](void* cv_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                             \
       void* user_data  = nullptr;                                                 \
-      auto fn_table    = get_cvodea_fn_table(cv_mem, which);                      \
+      auto fn_table    = get_cvode_fn_table(cv_mem, which);                      \
       fn_table->MEMBER = nb::cast(fn);                                            \
       if (fn) { return NAME(cv_mem, which, WRAPPER); }                            \
       else { return NAME(cv_mem, which, nullptr); }                               \
@@ -84,7 +84,7 @@ using namespace sundials::experimental;
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
       void* user_data = nullptr;                                           \
-      auto fn_table   = get_cvodea_fn_table(cv_mem, which);                \
+      auto fn_table   = get_cvode_fn_table(cv_mem, which);                \
       if (fn1 && fn2) { return NAME(cv_mem, which, WRAPPER1, WRAPPER2); }  \
       else if (fn1) { return NAME(cv_mem, which, WRAPPER1, nullptr); }     \
       else if (fn2) { return NAME(cv_mem, which, nullptr, WRAPPER2); }     \
@@ -139,7 +139,7 @@ void bind_cvodes(nb::module_& m)
       if (cv_status != CV_SUCCESS) { return cv_status; }
 
       // Create the user-supplied function table to store the Python user functions
-      auto fn_table = cvode_user_supplied_fn_table_alloc();
+      auto fn_table = new cvode_user_supplied_fn_table;
 
       static_cast<CVodeMem>(cv_mem)->python = fn_table;
 
@@ -283,7 +283,7 @@ void bind_cvodes(nb::module_& m)
       int cv_status = CVodeInitB(cv_mem, which, cvode_fB_wrapper, tB0, yB0);
       if (cv_status != CV_SUCCESS) { return cv_status; }
 
-      auto fn_table = cvodea_user_supplied_fn_table_alloc();
+      auto fn_table = new cvode_user_supplied_fn_table;
       auto cvb_mem = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
       cvb_mem->python = fn_table;
 
@@ -305,7 +305,7 @@ void bind_cvodes(nb::module_& m)
     [](void* cv_mem, int which,
        std::function<std::remove_pointer_t<CVQuadRhsFnB>> fQB, N_Vector yQBO)
     {
-      auto fn_table = get_cvodea_fn_table(cv_mem, which);
+      auto fn_table = get_cvode_fn_table(cv_mem, which);
 
       if (fQB)
       {
@@ -348,7 +348,7 @@ void bind_cvodes(nb::module_& m)
       int cv_status = CVodeInitBS(cv_mem, which, cvode_fBS_wrapper, tB0, yB0);
       if (cv_status != CV_SUCCESS) { return cv_status; }
 
-      auto fn_table = cvodea_user_supplied_fn_table_alloc();
+      auto fn_table = new cvode_user_supplied_fn_table;
       auto cvb_mem = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
       cvb_mem->python = fn_table;
 
@@ -369,7 +369,7 @@ void bind_cvodes(nb::module_& m)
     "CVodeQuadInitBS",
     [](void* cv_mem, int which, std::function<CVQuadRhsStdFnBS> fQBS, N_Vector yQBO)
     {
-      auto fn_table = get_cvodea_fn_table(cv_mem, which);
+      auto fn_table = get_cvode_fn_table(cv_mem, which);
       if (fQBS)
       {
         fn_table->fQBS = nb::cast(fQBS);
@@ -404,3 +404,9 @@ void bind_cvodes(nb::module_& m)
 }
 
 } // namespace sundials4py
+
+// The destroy functions gets called in our C code by the integrator destructor
+extern "C" void cvode_user_supplied_fn_table_destroy(void* ptr)
+{
+  delete static_cast<cvode_user_supplied_fn_table*>(ptr);
+}

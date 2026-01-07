@@ -42,10 +42,18 @@ struct cvode_user_supplied_fn_table
     lsjactimesvecfn, lslinsysfn, lsjacrhsfn;
 
   // cvode quadrature user-supplied function pointers
-  nanobind::object fQ, fQS;
+  nb::object fQ, fQS;
 
   // cvode FSA user-supplied function pointers
-  nanobind::object fS, fS1;
+  nb::object fS, fS1;
+
+  // cvode adjoint user-supplied function pointers
+  nb::object fB, fBS, fQB, fQBS;
+
+  // cvode_ls adjoint user-supplied function pointers
+  nb::object lsjacfnB, lsjacfnBS, lsprecsetupfnB, lsprecsetupfnBS,
+    lsprecsolvefnB, lsprecsolvefnBS, lsjactimessetupfnB, lsjactimessetupfnBS,
+    lsjactimesvecfnB, lsjactimesvecfnBS, lslinsysfnB, lslinsysfnBS;
 };
 
 // Helper to extract CVodeMem and function table
@@ -64,18 +72,6 @@ inline cvode_user_supplied_fn_table* get_cvode_fn_table(void* cv_mem)
 ///////////////////////////////////////////////////////////////////////////////
 // CVODE user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
-
-inline cvode_user_supplied_fn_table* cvode_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since CVODEFree calls free
-  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(
-    std::malloc(sizeof(cvode_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(cvode_user_supplied_fn_table));
-
-  return fn_table;
-}
 
 template<typename... Args>
 inline int cvode_f_wrapper(Args... args)
@@ -261,45 +257,10 @@ inline int cvode_fS1_wrapper(Args... args)
 // CVODE Adjoint user-supplied functions
 ///////////////////////////////////////////////////////////////////////////////
 
-struct cvodea_user_supplied_fn_table
-{
-  // cvode adjoint user-supplied function pointers
-  nb::object fB, fBS, fQB, fQBS;
-
-  // cvode_ls adjoint user-supplied function pointers
-  nb::object lsjacfnB, lsjacfnBS, lsprecsetupfnB, lsprecsetupfnBS,
-    lsprecsolvefnB, lsprecsolvefnBS, lsjactimessetupfnB, lsjactimessetupfnBS,
-    lsjactimesvecfnB, lsjactimesvecfnBS, lslinsysfnB, lslinsysfnBS;
-};
-
-inline cvodea_user_supplied_fn_table* cvodea_user_supplied_fn_table_alloc()
-{
-  // We must use malloc since CVODEFree calls free
-  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(
-    std::malloc(sizeof(cvodea_user_supplied_fn_table)));
-
-  // Zero out the memory
-  std::memset(fn_table, 0, sizeof(cvodea_user_supplied_fn_table));
-
-  return fn_table;
-}
-
-inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem)
-{
-  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(
-    static_cast<CVodeMem>(cv_mem)->python);
-  if (!fn_table)
-  {
-    throw sundials4py::null_function_table(
-      "Failed to get Python adjoint function table from CVODE memory");
-  }
-  return fn_table;
-}
-
-inline cvodea_user_supplied_fn_table* get_cvodea_fn_table(void* cv_mem, int which)
+inline cvode_user_supplied_fn_table* get_cvode_fn_table(void* cv_mem, int which)
 {
   auto cvb_mem  = static_cast<CVodeMem>(CVodeGetAdjCVodeBmem(cv_mem, which));
-  auto fn_table = static_cast<cvodea_user_supplied_fn_table*>(cvb_mem->python);
+  auto fn_table = static_cast<cvode_user_supplied_fn_table*>(cvb_mem->python);
   if (!fn_table)
   {
     throw sundials4py::null_function_table(
@@ -312,24 +273,24 @@ template<typename... Args>
 inline int cvode_fB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVRhsFnB>, cvodea_user_supplied_fn_table, CVodeMem,
-    1>(&cvodea_user_supplied_fn_table::fB, args...);
+    std::remove_pointer_t<CVRhsFnB>, cvode_user_supplied_fn_table, CVodeMem,
+    1>(&cvode_user_supplied_fn_table::fB, args...);
 }
 
 template<typename... Args>
 inline int cvode_fQB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVQuadRhsFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 1>(&cvodea_user_supplied_fn_table::fQB, args...);
+    std::remove_pointer_t<CVQuadRhsFnB>, cvode_user_supplied_fn_table,
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::fQB, args...);
 }
 
 template<typename... Args>
 inline int cvode_lsjacfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsJacFnB>, cvodea_user_supplied_fn_table, CVodeMem,
-    4>(&cvodea_user_supplied_fn_table::lsjacfnB, args...);
+    std::remove_pointer_t<CVLsJacFnB>, cvode_user_supplied_fn_table, CVodeMem,
+    4>(&cvode_user_supplied_fn_table::lsjacfnB, args...);
 }
 
 using CVLsPrecSetupStdFnB = std::tuple<int, sunbooleantype>(
@@ -341,7 +302,7 @@ inline int cvode_lsprecsetupfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
                                         sunbooleantype* jcurPtrB,
                                         sunrealtype gammaB, void* user_dataB)
 {
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn = nb::cast<std::function<CVLsPrecSetupStdFnB>>(fn_table->lsprecsetupfnB);
 
   auto result = fn(t, y, yB, fyB, jokB, gammaB, nullptr);
@@ -355,24 +316,24 @@ template<typename... Args>
 inline int cvode_lsprecsolvefnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsPrecSolveFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsprecsolvefnB, args...);
+    std::remove_pointer_t<CVLsPrecSolveFnB>, cvode_user_supplied_fn_table,
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsprecsolvefnB, args...);
 }
 
 template<typename... Args>
 inline int cvode_lsjactimessetupfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsJacTimesSetupFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 1>(&cvodea_user_supplied_fn_table::lsjactimessetupfnB, args...);
+    std::remove_pointer_t<CVLsJacTimesSetupFnB>, cvode_user_supplied_fn_table,
+    CVodeMem, 1>(&cvode_user_supplied_fn_table::lsjactimessetupfnB, args...);
 }
 
 template<typename... Args>
 inline int cvode_lsjactimesvecfnB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVLsJacTimesVecFnB>, cvodea_user_supplied_fn_table,
-    CVodeMem, 2>(&cvodea_user_supplied_fn_table::lsjactimesvecfnB, args...);
+    std::remove_pointer_t<CVLsJacTimesVecFnB>, cvode_user_supplied_fn_table,
+    CVodeMem, 2>(&cvode_user_supplied_fn_table::lsjactimesvecfnB, args...);
 }
 
 using CVLsLinSysStdFnB = std::tuple<int, sunbooleantype>(
@@ -387,7 +348,7 @@ inline int cvode_lslinsysfnB_wrapper(sunrealtype t, N_Vector y, N_Vector yB,
                                      N_Vector tmp1B, N_Vector tmp2B,
                                      N_Vector tmp3B)
 {
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn = nb::cast<std::function<CVLsLinSysStdFnB>>(fn_table->lslinsysfnB);
 
   auto result = fn(t, y, yB, fyB, AB, jokB, gammaB, nullptr, tmp1B, tmp2B, tmp3B);
@@ -404,7 +365,7 @@ inline int cvode_fBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
                              N_Vector yB, N_Vector yBdot, void* user_dataB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<CVRhsStdFnBS>>(fn_table->fBS);
   auto Ns       = cv_mem->cv_Ns;
 
@@ -421,7 +382,7 @@ inline int cvode_fQBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
                               N_Vector yB, N_Vector qBdot, void* user_dataB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<CVQuadRhsStdFnBS>>(fn_table->fQBS);
   auto Ns       = cv_mem->cv_Ns;
 
@@ -441,7 +402,7 @@ inline int cvode_lsjacfnBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d,
                                    N_Vector tmp2B, N_Vector tmp3B)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<CVLsJacStdFnBS>>(fn_table->lsjacfnBS);
   auto Ns       = cv_mem->cv_Ns;
 
@@ -461,7 +422,7 @@ inline int cvode_lsprecsetupfnBS_wrapper(sunrealtype t, N_Vector y,
                                          sunrealtype gammaB, void* user_dataB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn =
     nb::cast<std::function<CVLsPrecSetupStdFnBS>>(fn_table->lsprecsetupfnBS);
   auto Ns = cv_mem->cv_Ns;
@@ -488,7 +449,7 @@ inline int cvode_lsprecsolvefnBS_wrapper(sunrealtype t, N_Vector y,
                                          int lrB, void* user_dataB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn =
     nb::cast<std::function<CVLsPrecSolveStdFnBS>>(fn_table->lsprecsolvefnBS);
   auto Ns = cv_mem->cv_Ns;
@@ -507,7 +468,7 @@ inline int cvode_lsjactimessetupfnBS_wrapper(sunrealtype t, N_Vector y,
                                              N_Vector fyB, void* user_dataB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn       = nb::cast<std::function<CVLsJacTimesSetupStdFnBS>>(
     fn_table->lsjactimessetupfnBS);
   auto Ns = cv_mem->cv_Ns;
@@ -529,7 +490,7 @@ inline int cvode_lsjactimesvecfnBS_wrapper(N_Vector vB, N_Vector JvB,
                                            N_Vector tmpB)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn =
     nb::cast<std::function<CVLsJacTimesVecStdFnBS>>(fn_table->lsjactimesvecfnBS);
   auto Ns = cv_mem->cv_Ns;
@@ -552,7 +513,7 @@ inline int cvode_lslinsysfnBS_wrapper(sunrealtype t, N_Vector y, N_Vector* yS_1d
                                       N_Vector tmp2B, N_Vector tmp3B)
 {
   auto cv_mem   = static_cast<CVodeMem>(user_dataB);
-  auto fn_table = get_cvodea_fn_table(user_dataB);
+  auto fn_table = get_cvode_fn_table(user_dataB);
   auto fn = nb::cast<std::function<CVLsLinSysStdFnBS>>(fn_table->lslinsysfnBS);
   auto Ns = cv_mem->cv_Ns;
 

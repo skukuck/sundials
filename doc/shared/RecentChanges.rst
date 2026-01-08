@@ -8,6 +8,27 @@
 The functions ``CVodeGetUserDataB`` and ``IDAGetUserDataB`` were added to CVODES
 and IDAS, respectively.
 
+Added the ``ARKODE_SSP_ERK_2_1_2``, ``ARKODE_SSP_ERK_3_1_2``, ``ARKODE_SSP_ERK_4_1_2``,
+``ARKODE_SSP_ERK_10_1_2``, ``ARKODE_SSP_ERK_4_2_3``, ``ARKODE_SSP_ERK_9_2_3``,
+``ARKODE_SSP_ERK_10_3_4``, ``ARKODE_SSP_LSPUM_ERK_3_1_2``, and ``ARKODE_ASCHER_ERK_3_1_2``
+embedded explicit Runge-Kutta Butcher tables.
+
+Added the ``ARKODE_SSP_SDIRK_2_1_2``, ``ARKODE_SSP_DIRK_3_1_2``,
+``ARKODE_SSP_LSPUM_SDIRK_3_1_2``, ``ARKODE_SSP_ESDIRK_4_2_3``,
+``ARKODE_SSP_ESDIRK_9_2_3``, and ``ARKODE_ASCHER_SDIRK_3_1_2`` embedded diagonally
+implicit Runge-Kutta Butcher tables.
+
+Of these, embedded additive Runge-Kutta methods may be formed using
+``ARKODE_SSP_ERK_2_1_2`` + ``ARKODE_SSP_SDIRK_2_1_2``,
+``ARKODE_SSP_ERK_3_1_2`` + ``ARKODE_SSP_DIRK_3_1_2``,
+``ARKODE_SSP_ERK_4_2_3`` + ``ARKODE_SSP_ESDIRK_4_2_3``,
+``ARKODE_SSP_ERK_9_2_3`` + ``ARKODE_SSP_ESDIRK_9_2_3``,
+``ARKODE_SSP_LSPUM_ERK_3_1_2`` + ``ARKODE_SSP_LSPUM_SDIRK_3_1_2``,
+and ``ARKODE_ASCHER_ERK_3_1_2`` + ``ARKODE_ASCHER_SDIRK_3_1_2``.
+
+Added the ``ARKODE_IMEX_MRI_GARK_ARS222`` and ``ARKODE_IMEX_MRI_GARK_GIRALDO``
+embedded implicit-explicit MRI-GARK coupling tables.
+
 **Bug Fixes**
 
 On the initial time step with a user-supplied initial step size, ARKODE and
@@ -43,7 +64,7 @@ called even when informational logging was disabled.
 
 **Deprecation Notices**
 
-``SUNDIALSFileOpen`` and ``SUNDIALSFileClose`` will be removed in the next major release. 
+``SUNDIALSFileOpen`` and ``SUNDIALSFileClose`` will be removed in the next major release.
 Use :c:func:`SUNFileOpen` and :c:func:`SUNFileClose` instead.
 
 The ``Convert`` methods on the ``sundials::kokkos:Vector``, ``sundials::kokkos::DenseMatrix``,

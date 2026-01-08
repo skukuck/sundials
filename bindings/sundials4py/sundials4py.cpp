@@ -31,6 +31,8 @@ namespace sundials4py {
 
 void bind_core(nb::module_& m);
 
+void bind_test(nb::module_& m);
+
 void bind_arkode(nb::module_& m);
 void bind_cvodes(nb::module_& m);
 void bind_idas(nb::module_& m);
@@ -82,6 +84,14 @@ NB_MODULE(sundials4py, m)
 
   nb::module_ core_m = m.def_submodule("core", "A submodule of 'sundials4py'");
   sundials4py::bind_core(core_m);
+
+  //
+  // Create test submodule
+  //
+
+  nb::module_ test_m = m.def_submodule("test",
+                                        "A submodule of 'sundials4py' for testing");
+  sundials4py::bind_test(test_m);
 
   //
   // Create submodules for each package

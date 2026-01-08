@@ -112,7 +112,8 @@ set(sundials_SOURCES
     sunmatrix/sunmatrix_sparse.cpp
     sunmemory/sunmemory_system.cpp
     sunnonlinsol/sunnonlinsol_fixedpoint.cpp
-    sunnonlinsol/sunnonlinsol_newton.cpp)
+    sunnonlinsol/sunnonlinsol_newton.cpp
+    test/sundials4py_test.cpp)
 
 # Create the Python sundials library
 nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})

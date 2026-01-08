@@ -95,15 +95,6 @@ void bind_suncontext(nb::module_& m)
           return SUN_SUCCESS;
         });
 
-  m.def(
-    "SUNContext_TestErrHandler",
-    [](SUNContext sunctx)
-    {
-      SUNHandleErrWithMsg(__LINE__, __func__, __FILE__,
-                          "create an error to test the error handlers",
-                          SUN_ERR_ARG_CORRUPT, sunctx);
-    },
-    "This function is for testing purposes and should not be called.");
 }
 
 } // namespace sundials4py

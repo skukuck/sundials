@@ -266,7 +266,7 @@ are generally:
 - arrays or array-like pointers, 
 - or output parameters (pointers used for the purpose of returning a value).
 
-In this case, we need to wriet a custom ``std::function`` type which mirrors the C function typedef,
+In this case, we need to write a custom ``std::function`` type which mirrors the C function typedef,
 but uses C++ analogs for the special parameters. 
 E.g.,
 

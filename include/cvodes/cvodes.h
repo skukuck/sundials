@@ -442,8 +442,8 @@ SUNDIALS_EXPORT int CVodeGetNumStepSensSolveFails(void* cvode_mem,
                                                   long int* nSncfails);
 SUNDIALS_EXPORT int CVodeGetStgrSensNumNonlinSolvIters(void* cvode_mem,
                                                        long int* nSTGR1niters_1d);
-SUNDIALS_EXPORT int CVodeGetStgrSensNumNonlinSolvConvFails(void* cvode_mem,
-                                                           long int* nSTGR1nfails_1d);
+SUNDIALS_EXPORT int CVodeGetStgrSensNumNonlinSolvConvFails(
+  void* cvode_mem, long int* nSTGR1nfails_1d);
 SUNDIALS_EXPORT int CVodeGetStgrSensNonlinSolvStats(void* cvode_mem,
                                                     long int* nSTGR1niters_1d,
                                                     long int* nSTGR1nfails_1d);

@@ -92,6 +92,7 @@ jobs:
         for whl in wheelhouse/*.whl; do
           mv "$whl" "$(echo $whl | sed 's/\.whl$/-${{ matrix.precision }}-${{ matrix.index }}.whl/')"
         done
+        ls -al wheelhouse/
       shell: bash
 
     - name: Upload wheels

@@ -2004,30 +2004,31 @@ Accessible via the string ``"ARKODE_SSP_ESDIRK_4_2_3"`` to
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This method was invented specifically for ARKODE as an implicit method to
 pair with :numref:`Butcher.SSP-ERK-4-2-3` for an embedded additive
-Runge--Kutta method.  The method and embedding are both A-stable.
-Neither the ESDIRK method or its embedding are SSP.
+Runge--Kutta method.  The method is both A- and L-stable, and the
+embedding is A-stable.  Neither the ESDIRK method or its embedding are SSP.
 
 .. math::
 
    \renewcommand{\arraystretch}{1.5}
    \begin{array}{r|cccc}
      0       & 0 & 0 & 0 & 0 \\
-     \frac12 & -\frac{\sqrt{3}}{6} & \gamma    & 0 & 0 \\
-     1       & 2\gamma             & 1-3\gamma & \gamma & 0 \\
-     \frac12 & \frac16 & \frac13-\gamma & 0 & \gamma \\
+     \frac12 & \frac12-\gamma & \gamma    & 0 & 0 \\
+     1       & 1-\alpha-\gamma & \alpha & \gamma & 0 \\
+     \frac12 & \frac12-\beta-\eta-\gamma & \beta & \eta & \gamma \\
      \hline
      3       & \frac16 & \frac16 & \frac16 & \frac12 \\
      2       & \frac14 & \frac14 & \frac14 & \frac14
    \end{array}
 
+where :math:`\gamma =  0.435866521508459`, :math:`\alpha = 0.1677218170940733`,
+:math:`\beta = 1.386012857827706`, and :math:`\eta = -0.8234932532713241`.
 
 .. figure:: /figs/arkode/ARKODE_SSP_ESDIRK_4_2_3_stab_region.png
    :width: 50 %
    :align: center
 
    Linear stability region for the SSP-ESDIRK-4-2-3 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed (these
-   boundaries lie on top of one another).
+   region is outlined in red; the embedding's region is in blue dashed.
 
 
 .. c:enumerator:: ARKODE_SSP_ESDIRK_9_2_3
@@ -2711,7 +2712,19 @@ are as follows.
    +==============================================+===============================================+========+================+=======+
    | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`        | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`        | 3      | 1              | 2*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`      | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`     | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_2_1_2`         | :c:enumerator:`ARKODE_SSP_SDIRK_2_1_2`        | 2      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_SDIRK_3_1_2`        | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`   | :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`  | 3      | 1              | 2     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK324L2SA_ERK_4_2_3`  | :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`  | 4      | 2              | 3*    |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`         | :c:enumerator:`ARKODE_SSP_ESDIRK_4_2_3`       | 4      | 2              | 3     |
+   +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_SSP_ERK_9_2_3`         | :c:enumerator:`ARKODE_SSP_ESDIRK_9_2_3`       | 9      | 2              | 3     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_ARK437L2SA_ERK_7_3_4`  | :c:enumerator:`ARKODE_ARK437L2SA_DIRK_7_3_4`  | 7      | 3              | 4*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2856,8 +2869,6 @@ ARKODE_SSP_ARK_4_2_3
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
    ``ARKODE_SSP_ARK_4_2_3`` method.
-   All joint stability regions coincide, so only the :math:`80^o` boundary
-   is visible.
 
 
 .. figure:: /figs/arkode/ARKODE_SSP_ARK_4_2_3_joint_stab_region_rho1.png

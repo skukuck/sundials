@@ -68,7 +68,7 @@ using namespace sundials::experimental;
     [](void* cv_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                             \
       void* user_data  = nullptr;                                                 \
-      auto fn_table    = get_cvode_fn_table(cv_mem, which);                      \
+      auto fn_table    = get_cvode_fn_table(cv_mem, which);                       \
       fn_table->MEMBER = nb::cast(fn);                                            \
       if (fn) { return NAME(cv_mem, which, WRAPPER); }                            \
       else { return NAME(cv_mem, which, nullptr); }                               \
@@ -84,7 +84,7 @@ using namespace sundials::experimental;
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
       void* user_data = nullptr;                                           \
-      auto fn_table   = get_cvode_fn_table(cv_mem, which);                \
+      auto fn_table   = get_cvode_fn_table(cv_mem, which);                 \
       if (fn1 && fn2) { return NAME(cv_mem, which, WRAPPER1, WRAPPER2); }  \
       else if (fn1) { return NAME(cv_mem, which, WRAPPER1, nullptr); }     \
       else if (fn2) { return NAME(cv_mem, which, nullptr, WRAPPER2); }     \

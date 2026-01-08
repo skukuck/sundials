@@ -89,8 +89,8 @@ NB_MODULE(sundials4py, m)
   // Create test submodule
   //
 
-  nb::module_ test_m = m.def_submodule("test",
-                                        "A submodule of 'sundials4py' for testing");
+  nb::module_ test_m =
+    m.def_submodule("test", "A submodule of 'sundials4py' for testing");
   sundials4py::bind_test(test_m);
 
   //

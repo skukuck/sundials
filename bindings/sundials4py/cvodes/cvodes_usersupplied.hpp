@@ -281,8 +281,8 @@ template<typename... Args>
 inline int cvode_fQB_wrapper(Args... args)
 {
   return sundials4py::user_supplied_fn_caller<
-    std::remove_pointer_t<CVQuadRhsFnB>, cvode_user_supplied_fn_table,
-    CVodeMem, 1>(&cvode_user_supplied_fn_table::fQB, args...);
+    std::remove_pointer_t<CVQuadRhsFnB>, cvode_user_supplied_fn_table, CVodeMem,
+    1>(&cvode_user_supplied_fn_table::fQB, args...);
 }
 
 template<typename... Args>

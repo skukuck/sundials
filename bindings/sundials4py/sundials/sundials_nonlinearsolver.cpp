@@ -64,10 +64,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     "SUNNonlinSolSetup",
     [](SUNNonlinearSolver NLS, N_Vector y)
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       return SUNNonlinSolSetup(NLS, y, NLS->python);
     },
     nb::arg("NLS"), nb::arg("y"));
@@ -77,10 +74,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     [](SUNNonlinearSolver NLS, N_Vector y0, N_Vector y, N_Vector w,
        sunrealtype tol, sunbooleantype callLSetup)
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       return SUNNonlinSolSolve(NLS, y0, y, w, tol, callLSetup, NLS->python);
     },
     nb::arg("NLS"), nb::arg("y0"), nb::arg("y"), nb::arg("w"), nb::arg("tol"),
@@ -91,10 +85,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> SysFn) -> SUNErrCode
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->sysfn = nb::cast(SysFn);
       if (SysFn)
@@ -110,10 +101,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     [](SUNNonlinearSolver NLS,
        std::function<SUNNonlinSolLSetupStdFn> SetupFn) -> SUNErrCode
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->lsetupfn = nb::cast(SetupFn);
       if (SetupFn)
@@ -129,10 +117,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolLSolveFn>> SolveFn) -> SUNErrCode
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->lsolvefn = nb::cast(SolveFn);
       if (SolveFn)
@@ -148,10 +133,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolConvTestFn>> CTestFn) -> SUNErrCode
     {
-      if (!NLS->python)
-      {
-        NLS->python = new SUNNonlinearSolverFunctionTable;
-      }
+      if (!NLS->python) { NLS->python = new SUNNonlinearSolverFunctionTable; }
       auto fntable = static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
       fntable->convtestfn = nb::cast(CTestFn);
       if (CTestFn)

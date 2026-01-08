@@ -65,7 +65,7 @@ using namespace sundials::experimental;
     [](void* ida_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                              \
       void* user_data  = nullptr;                                                  \
-      auto fn_table    = get_idas_fn_table(ida_mem, which);                       \
+      auto fn_table    = get_idas_fn_table(ida_mem, which);                        \
       fn_table->MEMBER = nb::cast(fn);                                             \
       if (fn) { return NAME(ida_mem, which, &WRAPPER); }                           \
       else { return NAME(ida_mem, which, nullptr); }                               \
@@ -81,7 +81,7 @@ using namespace sundials::experimental;
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
       void* user_data = nullptr;                                           \
-      auto fn_table   = get_idas_fn_table(ida_mem, which);                \
+      auto fn_table   = get_idas_fn_table(ida_mem, which);                 \
       if (fn1 && fn2) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); } \
       else if (fn1) { return NAME(ida_mem, which, WRAPPER1, nullptr); }    \
       else if (fn2) { return NAME(ida_mem, which, nullptr, WRAPPER2); }    \
@@ -137,7 +137,7 @@ void bind_idas(nb::module_& m)
       int ida_status = IDAInit(ida_mem, idas_res_wrapper, t0, yy0, yp0);
       if (ida_status != IDA_SUCCESS) { return ida_status; }
 
-      auto fn_table = new idas_user_supplied_fn_table;
+      auto fn_table                        = new idas_user_supplied_fn_table;
       static_cast<IDAMem>(ida_mem)->python = fn_table;
 
       ida_status = IDASetUserData(ida_mem, ida_mem);

@@ -21,9 +21,9 @@
  * -----------------------------------------------------------------*/
 
 #include "sundials4py.hpp"
- 
-#include <sundials/sundials_errors.h>
+
 #include <sundials/sundials_context.hpp>
+#include <sundials/sundials_errors.h>
 
 #include <sundials/priv/sundials_errors_impl.h>
 

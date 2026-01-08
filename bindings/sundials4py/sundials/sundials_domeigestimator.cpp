@@ -69,10 +69,7 @@ void bind_sundomeigestimator(nb::module_& m)
     [](SUNDomEigEstimator dee,
        std::function<std::remove_pointer_t<SUNATimesFn>> ATimes) -> SUNErrCode
     {
-      if (!dee->python)
-      {
-        dee->python = new SUNDomEigEstimatorFunctionTable;
-      }
+      if (!dee->python) { dee->python = new SUNDomEigEstimatorFunctionTable; }
 
       auto fntable = static_cast<SUNDomEigEstimatorFunctionTable*>(dee->python);
 

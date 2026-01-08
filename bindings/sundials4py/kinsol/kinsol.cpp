@@ -157,4 +157,3 @@ extern "C" void kinsol_user_supplied_fn_table_destroy(void* ptr)
 {
   delete static_cast<kinsol_user_supplied_fn_table*>(ptr);
 }
-

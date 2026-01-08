@@ -94,7 +94,6 @@ void bind_suncontext(nb::module_& m)
 
           return SUN_SUCCESS;
         });
-
 }
 
 } // namespace sundials4py

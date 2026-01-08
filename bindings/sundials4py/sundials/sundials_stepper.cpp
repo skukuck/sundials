@@ -44,10 +44,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperEvolveFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable    = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->evolve = nb::cast(fn);
       if (fn)
@@ -63,10 +60,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperOneStepFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->one_step = nb::cast(fn);
       if (fn)
@@ -82,10 +76,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperFullRhsFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->full_rhs = nb::cast(fn);
       if (fn)
@@ -101,10 +92,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperReInitFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable    = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reinit = nb::cast(fn);
       if (fn)
@@ -120,10 +108,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperResetFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable   = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reset = nb::cast(fn);
       if (fn)
@@ -140,10 +125,7 @@ void bind_sunstepper(nb::module_& m)
        std::function<std::remove_pointer_t<SUNStepperResetCheckpointIndexFn>> fn)
       -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->reset_ckpt_idx = nb::cast(fn);
       if (fn)
@@ -160,10 +142,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperSetStopTimeFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_stop_time = nb::cast(fn);
       if (fn)
@@ -180,10 +159,7 @@ void bind_sunstepper(nb::module_& m)
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperSetStepDirectionFn>> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_step_direction = nb::cast(fn);
       if (fn)
@@ -199,10 +175,7 @@ void bind_sunstepper(nb::module_& m)
     "SUNStepper_SetForcingFn",
     [](SUNStepper stepper, std::function<SUNStepperSetForcingStdFn> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->set_forcing = nb::cast(fn);
       if (fn)
@@ -217,10 +190,7 @@ void bind_sunstepper(nb::module_& m)
     "SUNStepper_SetGetNumStepsFn",
     [](SUNStepper stepper, std::function<SUNStepperGetNumStepsStdFn> fn) -> SUNErrCode
     {
-      if (!stepper->python)
-      {
-        stepper->python = new SUNStepperFunctionTable;
-      }
+      if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
       auto fntable = static_cast<SUNStepperFunctionTable*>(stepper->python);
       fntable->get_num_steps = nb::cast(fn);
       if (fn)

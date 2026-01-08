@@ -1,7 +1,64 @@
 # SUNDIALS Changelog
 
-
 ## Changes to SUNDIALS in release X.Y.Z
+
+### Major Features
+
+### New Features and Enhancements
+
+The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES
+and IDAS, respectively.
+
+### Bug Fixes
+
+On the initial time step with a user-supplied initial step size, ARKODE and
+CVODE(S) will now return `ARK_TOO_CLOSE` or `CV_TOO_CLOSE`, respectively,
+when the requested output time is the same as the initial time (or within
+numerical roundoff of the initial time). Before a `TOO_CLOSE` error would only
+be returned when internally estimating the initial step size. In IDA(S), added a
+`IDA_TOO_CLOSE` return value for when the initial and output time are too
+close. Previously, IDA(S) would return `IDA_ILL_INPUT`.
+
+Fixed a bug in ARKODE, CVODE(S), and IDA(S) where the linear solver counters
+were not reinitialized until the next call to advance the system. As such,
+non-zero linear solver statistics could be returned if retrieving or printing
+linear solver counters between the initialization and the next call to advance
+the system.
+
+The interface to Ginkgo batched linear solvers has been updated to fix build
+errors when using 64-bit index types. Note, only the batched dense matrix in
+Ginkgo is currently compatible with 64-bit indexing (as of Ginkgo 1.10).
+
+The SPRKStep module now accounts for zero coefficients in the SPRK tables,
+eliminating extraneous function evaluations.
+
+A bug preventing a user supplied `SUNStepper_ResetCheckpointIndex` function from
+being called was fixed.
+
+The Kokkos N_Vector now properly handles unmanaged views. Previously, if a
+Kokkos `N_Vector` was created from an unmanaged view, the view would become a
+managed view and the data would be freed unexpectedly.
+
+A bug was fixed in KINSOL where the information logging function would always be
+called even when informational logging was disabled.
+
+### Deprecation Notices
+
+`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major release. 
+Use `SUNFileOpen` and `SUNFileClose` instead.
+
+The `Convert` methods on the `sundials::kokkos:Vector`, `sundials::kokkos::DenseMatrix`,
+`sundials::ginkgo::Matrix`, `sundials::ginkgo::BatchMatrix`, `sundials::kokkos::DenseLinearSolver`,
+`sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver` classes have
+been deprecated and will be removed in the next major release. The method `get`, should
+be used instead.
+
+The `CSC_MAT` and `CSR_MAT` macros defined in `sunmatrix_sparse.h` will be removed in
+the next major release. Use `SUN_CSC_MAT` and `SUN_CSR_MAT` instead.
+
+The `N_Vector_S` typedef to `N_Vector*` is deprecated and will be removed in the next major release.
+
+## Changes to SUNDIALS in release 7.5.0
 
 ### Major Features
 
@@ -14,7 +71,16 @@ Added the function `LSRKStepSetDomEigEstimator` in LSRKStep to attach a
 methods, as an alternative to supplying a user-defined function to compute the dominant
 eigenvalue.
 
+Added `SetOptions` functions all SUNDIALS packages and the classes for
+adaptivity controllers, dominant eigenvalue estimators, linear solvers, and
+nonlinear solvers to support setting options with command line inputs.
+
 ### New Features and Enhancements
+
+A new SUNLinearSolver, SUNLINEARSOLVER_GINKGOBATCH, and corresponding SUNMatrix,
+SUNMATRIX_GINKGOBATCH, were added for solving block/batched linear systems with
+the [Ginkgo linear solver library](https://ginkgo-project.github.io/). As a
+result, Ginkgo 1.9.0 or newer is now required when enabling Ginkgo support.
 
 The functions `KINSetMAA` and `KINSetOrthAA` have been updated to allow for
 setting the Anderson acceleration depth and orthogonalization method after
@@ -26,7 +92,7 @@ in any order.
 Fixed a bug in how MRIStep interacts with an MRIHTol SUNAdaptController object
 (the previous version essentially just reverted to a decoupled multirate
 controller). Removed the upper limit on `inner_max_tolfac` in
-`SUNAdaptController_SetParams_MRIHTol`. 
+`SUNAdaptController_SetParams_MRIHTol`.
 
 The shared library version numbers for the oneMKL dense linear solver and
 matrix as well as the PETSc SNES nonlinear solver have been corrected.
@@ -66,9 +132,6 @@ method, would only extract values from the fast time scale if the slow time
 scale step matched the given status filter. Fixed an additional bug in
 `get_history` with MRI-GARK methods where values would not be extracted from a
 fast time scale integration associated with an embedding.
-
-### Deprecation Notices
-
 
 ## Changes to SUNDIALS in release 7.4.0
 

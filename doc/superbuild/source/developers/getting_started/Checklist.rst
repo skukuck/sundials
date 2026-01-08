@@ -2,8 +2,11 @@
    Author(s): David J. Gardner @ LLNL
    -----------------------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -42,6 +45,12 @@ system, etc. developers should adhere to the following checklist.
    (OpenMP, Pthreads, MPI, Lapack, KLU, etc.) and run ``make``, ``make test``,
    ``make install``, and ``make test_install`` to ensure that everything
    functions smoothly when external libraries are supplied.
+
+#. When developing new code, configure your build with ``CMAKE_BUILD_TYPE=Debug``
+   as this will enable internal SUNDIALS error-checking.  Run ``make`` and
+   ``make test`` to ensure that none of the internal error checking fails.  Only
+   once these run smoothly should you reset your ``CMAKE_BUILD_TYPE`` to
+   ``RelWithDebInfo`` or ``Release``.
 
 #. When implementing a bug-fix to an existing package/solver:
 

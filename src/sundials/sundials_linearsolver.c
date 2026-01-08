@@ -1,11 +1,14 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  *                David J. Gardner, Carol S. Woodward, and
  *                Slaven Peles @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -19,11 +22,11 @@
  * -----------------------------------------------------------------*/
 
 #include <stdlib.h>
+#include <string.h>
+
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
 #include <sundials/sundials_errors.h>
-
-#include "sundials_iterative_impl.h"
 #include "sundials_logger_impl.h"
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
@@ -81,6 +84,7 @@ SUNLinearSolver SUNLinSolNewEmpty(SUNContext sunctx)
   /* attach ops and initialize content and context to NULL */
   LS->ops     = ops;
   LS->content = NULL;
+  LS->python  = NULL;
   LS->sunctx  = sunctx;
 
   return (LS);
@@ -94,11 +98,12 @@ void SUNLinSolFreeEmpty(SUNLinearSolver S)
 {
   if (S == NULL) { return; }
 
-  /* free non-NULL ops structure */
-  if (S->ops) { free(S->ops); }
+  free(S->ops);
   S->ops = NULL;
 
-  /* free overall N_Vector object and return */
+  free(S->python);
+  S->python = NULL;
+
   free(S);
   return;
 }
@@ -315,16 +320,15 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
 
   /* if we reach this point, either ops == NULL or free == NULL,
      try to cleanup by freeing the content, ops, and solver */
-  if (S->content)
-  {
-    free(S->content);
-    S->content = NULL;
-  }
-  if (S->ops)
-  {
-    free(S->ops);
-    S->ops = NULL;
-  }
+  free(S->content);
+  S->content = NULL;
+
+  free(S->ops);
+  S->ops = NULL;
+
+  free(S->python);
+  S->python = NULL;
+
   free(S);
   S = NULL;
 

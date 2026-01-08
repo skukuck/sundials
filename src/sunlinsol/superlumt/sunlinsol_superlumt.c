@@ -1,12 +1,15 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  * -----------------------------------------------------------------
  * Based on codes <solver>_superlumt.c, written by
  * Carol S. Woodward @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -351,7 +354,7 @@ int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
   panel_size = sp_ienv(1);
   relax      = sp_ienv(2);
   fact       = EQUILIBRATE;
-  trans      = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans      = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   usepr      = NO;
   drop_tol   = ZERO;
   lwork      = 0;
@@ -427,7 +430,7 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   Bstore->nzval = xdata;
 
   /* Call SuperLUMT to solve the linear system using L and U */
-  trans = (SUNSparseMatrix_SparseType(A) == CSC_MAT) ? NOTRANS : TRANS;
+  trans = (SUNSparseMatrix_SparseType(A) == SUN_CSC_MAT) ? NOTRANS : TRANS;
   xgstrs(trans, SM_L(S), SM_U(S), (int_t*)PERMR(S), (int_t*)PERMC(S), SM_B(S),
          GSTAT(S), &retval);
   if (retval != 0)

@@ -2,8 +2,11 @@
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -17,11 +20,11 @@
  * ---------------------------------------------------------------------------*/
 
 #include <stdlib.h>
+#include <string.h>
+
 #include <sundials/priv/sundials_context_impl.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
-
-#include "sundials/sundials_errors.h"
 #include "sundials_logger_impl.h"
 
 #if defined(SUNDIALS_BUILD_WITH_PROFILING)
@@ -77,6 +80,7 @@ SUNNonlinearSolver SUNNonlinSolNewEmpty(SUNContext sunctx)
   NLS->sunctx  = sunctx;
   NLS->ops     = ops;
   NLS->content = NULL;
+  NLS->python  = NULL;
 
   return (NLS);
 }
@@ -90,8 +94,11 @@ void SUNNonlinSolFreeEmpty(SUNNonlinearSolver NLS)
   if (NLS == NULL) { return; }
 
   /* free non-NULL ops structure */
-  if (NLS->ops) { free(NLS->ops); }
+  free(NLS->ops);
   NLS->ops = NULL;
+
+  free(NLS->python);
+  NLS->python = NULL;
 
   /* free overall N_Vector object and return */
   free(NLS);
@@ -149,16 +156,12 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
 
   /* if we reach this point, either ops == NULL or free == NULL,
      try to cleanup by freeing the content, ops, and solver */
-  if (NLS->content)
-  {
-    free(NLS->content);
-    NLS->content = NULL;
-  }
-  if (NLS->ops)
-  {
-    free(NLS->ops);
-    NLS->ops = NULL;
-  }
+  free(NLS->content);
+  NLS->content = NULL;
+  free(NLS->ops);
+  NLS->ops = NULL;
+  free(NLS->python);
+  NLS->python = NULL;
   free(NLS);
   NLS = NULL;
 

@@ -2,8 +2,11 @@
  * Programmer(s): Mustafa Aggul @ SMU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -71,6 +74,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   /* attach ops and initialize content and context to NULL */
   DEE->ops     = ops;
   DEE->content = NULL;
+  DEE->python  = NULL;
   DEE->sunctx  = sunctx;
 
   return (DEE);
@@ -87,6 +91,9 @@ void SUNDomEigEstimator_FreeEmpty(SUNDomEigEstimator DEE)
   /* free non-NULL ops structure */
   if (DEE->ops) { free(DEE->ops); }
   DEE->ops = NULL;
+
+  free(DEE->python);
+  DEE->python = NULL;
 
   /* free overall SUNDomEigEstimator object and return */
   free(DEE);

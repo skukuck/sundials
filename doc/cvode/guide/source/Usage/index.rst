@@ -1,7 +1,10 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2025, Lawrence Livermore National Security
+   Copyright (c) 2025, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -26,7 +29,7 @@ also be helpful. Those codes may be used as templates (with the removal of some
 lines used in testing) and are included in the CVODE package.
 
 Users with applications written in Fortran should see
-:numref:`SUNDIALS.Fortran`, which describes interfacing with CVODE from
+:numref:`Fortran`, which describes interfacing with CVODE from
 Fortran.
 
 The user should be aware that not all ``SUNLinearSolver`` and ``SUNMatrix``
@@ -937,7 +940,7 @@ Main solver optional input functions
       File-based options are not yet supported, so the ``file_name`` argument
       should be set to either ``NULL`` or the empty string ``""``.
 
-   .. versionadded:: x.y.z
+   .. versionadded:: 7.5.0
 
 .. c:function:: int CVodeSetUserData(void* cvode_mem, void * user_data)
 

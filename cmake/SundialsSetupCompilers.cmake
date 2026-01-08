@@ -2,8 +2,11 @@
 # Programmer(s): Cody J. Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -86,7 +89,7 @@ if(ENABLE_ALL_WARNINGS)
       "-Wno-unknown-warning-option -Wall -Wpedantic -Wextra -Wshadow \
 -Wwrite-strings -Wcast-align -Wdisabled-optimization -Wvla -Walloca \
 -Wduplicated-cond -Wduplicated-branches -Wunused-macros \
--Wunused-local-typedefs")
+-Wunused-local-typedefs -Wundef")
   # TODO(SBR): Try to add -Wredundant-decls once SuperLU version is updated in
   # CI tests
 
@@ -183,8 +186,8 @@ endif()
 # C settings
 # ===============================================================
 
-set(DOCSTR "The C standard to use (99, 11, 17)")
-sundials_option(CMAKE_C_STANDARD STRING "${DOCSTR}" "99" OPTIONS "99;11;17")
+set(DOCSTR "The C standard to use (99, 11, 17, 23)")
+sundials_option(CMAKE_C_STANDARD STRING "${DOCSTR}" "99" OPTIONS "99;11;17;23")
 message(STATUS "C standard set to ${CMAKE_C_STANDARD}")
 
 set(DOCSTR "Enable C compiler specific extensions")

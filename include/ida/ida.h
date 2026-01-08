@@ -3,8 +3,11 @@
  *                and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -78,6 +81,8 @@ extern "C" {
 
 #define IDA_CONTEXT_ERR -29
 
+#define IDA_TOO_CLOSE -60
+
 #define IDA_UNRECOGNIZED_ERROR -99
 
 /* ------------------------------
@@ -88,7 +93,7 @@ typedef int (*IDAResFn)(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector rr,
                         void* user_data);
 
 typedef int (*IDARootFn)(sunrealtype t, N_Vector y, N_Vector yp,
-                         sunrealtype* gout, void* user_data);
+                         sunrealtype* gout_1d, void* user_data);
 
 typedef int (*IDAEwtFn)(N_Vector y, N_Vector ewt, void* user_data);
 
@@ -196,8 +201,10 @@ SUNDIALS_EXPORT int IDAGetConsistentIC(void* ida_mem, N_Vector yy0_mod,
 SUNDIALS_EXPORT int IDAGetLastOrder(void* ida_mem, int* klast);
 SUNDIALS_EXPORT int IDAGetCurrentOrder(void* ida_mem, int* kcur);
 SUNDIALS_EXPORT int IDAGetCurrentCj(void* ida_mem, sunrealtype* cj);
-SUNDIALS_EXPORT int IDAGetCurrentY(void* ida_mem, N_Vector* ycur);
-SUNDIALS_EXPORT int IDAGetCurrentYp(void* ida_mem, N_Vector* ypcur);
+SUNDIALS_EXPORT int IDAGetCurrentY(void* ida_mem,
+                                   N_Vector* ycur); // nb::rv_policy::reference
+SUNDIALS_EXPORT int IDAGetCurrentYp(void* ida_mem,
+                                    N_Vector* ypcur); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetActualInitStep(void* ida_mem, sunrealtype* hinused);
 SUNDIALS_EXPORT int IDAGetLastStep(void* ida_mem, sunrealtype* hlast);
 SUNDIALS_EXPORT int IDAGetCurrentStep(void* ida_mem, sunrealtype* hcur);
@@ -213,11 +220,10 @@ SUNDIALS_EXPORT int IDAGetIntegratorStats(void* ida_mem, long int* nsteps,
                                           int* qcur, sunrealtype* hinused,
                                           sunrealtype* hlast, sunrealtype* hcur,
                                           sunrealtype* tcur);
-SUNDIALS_EXPORT int IDAGetNonlinearSystemData(void* ida_mem, sunrealtype* tcur,
-                                              N_Vector* yypred,
-                                              N_Vector* yppred, N_Vector* yyn,
-                                              N_Vector* ypn, N_Vector* res,
-                                              sunrealtype* cj, void** user_data);
+SUNDIALS_EXPORT int IDAGetNonlinearSystemData(
+  void* ida_mem, sunrealtype* tcur, N_Vector* yypred, N_Vector* yppred,
+  N_Vector* yyn, N_Vector* ypn, N_Vector* res, sunrealtype* cj,
+  void** user_data); // nb::rv_policy::reference
 SUNDIALS_EXPORT int IDAGetNumNonlinSolvIters(void* ida_mem, long int* nniters);
 SUNDIALS_EXPORT int IDAGetNumNonlinSolvConvFails(void* ida_mem,
                                                  long int* nnfails);

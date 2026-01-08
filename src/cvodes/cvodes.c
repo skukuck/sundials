@@ -2,8 +2,11 @@
  * Programmer(s): Alan C. Hindmarsh and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -189,12 +192,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <cvodes/cvodes.h>
+#include <sundials/priv/sundials_errors_impl.h>
+#include <sundials/sundials_context.h>
 #include <sundials/sundials_types.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #include "cvodes_impl.h"
-#include "sundials/priv/sundials_errors_impl.h"
-#include "sundials/sundials_context.h"
+#include "cvodes_ls_impl.h"
+#include "sundials_utils.h"
 
 /*=================================================================*/
 /* CVODE Private Constants                                         */
@@ -312,7 +319,7 @@ static sunbooleantype cvCheckNvector(N_Vector tmpl);
 
 /* Initial setup */
 
-static int cvInitialSetup(CVodeMem cv_mem);
+static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout);
 
 /* Memory allocation/deallocation */
 
@@ -420,7 +427,7 @@ static int cvSLdet(CVodeMem cv_mem);
 
 static int cvRcheck1(CVodeMem cv_mem);
 static int cvRcheck2(CVodeMem cv_mem);
-static int cvRcheck3(CVodeMem cv_mem);
+static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask);
 static int cvRootfind(CVodeMem cv_mem);
 
 /* Function for combined norms */
@@ -496,6 +503,8 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   memset(cv_mem, 0, sizeof(struct CVodeMemRec));
 
   maxord = (lmm == CV_ADAMS) ? ADAMS_Q_MAX : BDF_Q_MAX;
+
+  cv_mem->python = NULL;
 
   /* Copy input parameters into cv_mem */
   cv_mem->cv_sunctx = sunctx;
@@ -822,11 +831,12 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
   /* Set the linear solver addresses to NULL.
      (We check != NULL later, in CVode) */
 
-  cv_mem->cv_linit  = NULL;
-  cv_mem->cv_lsetup = NULL;
-  cv_mem->cv_lsolve = NULL;
-  cv_mem->cv_lfree  = NULL;
-  cv_mem->cv_lmem   = NULL;
+  cv_mem->cv_linit   = NULL;
+  cv_mem->cv_lreinit = NULL;
+  cv_mem->cv_lsetup  = NULL;
+  cv_mem->cv_lsolve  = NULL;
+  cv_mem->cv_lfree   = NULL;
+  cv_mem->cv_lmem    = NULL;
 
   /* Set forceSetup to SUNFALSE */
 
@@ -961,6 +971,8 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
   cv_mem->cv_nge     = 0;
 
   cv_mem->cv_irfnd = 0;
+
+  if (cv_mem->cv_lreinit) { cv_mem->cv_lreinit(cv_mem); }
 
   /* Initialize other integrator optional outputs */
 
@@ -2951,9 +2963,6 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     return (CV_ILL_INPUT);
   }
 
-  if (itask == CV_NORMAL) { cv_mem->cv_toutc = tout; }
-  cv_mem->cv_taskc = itask;
-
   /*
    * ----------------------------------------
    * 2. Initializations performed only at
@@ -2977,7 +2986,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
 
     /* Check inputs for correctness */
 
-    ier = cvInitialSetup(cv_mem);
+    ier = cvInitialSetup(cv_mem, tout);
     if (ier != CV_SUCCESS)
     {
       SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
@@ -3294,7 +3303,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
          check remaining interval for roots */
       if (SUNRabs(cv_mem->cv_tn - cv_mem->cv_tretlast) > troundoff)
       {
-        retval = cvRcheck3(cv_mem);
+        retval = cvRcheck3(cv_mem, tout, itask);
 
         if (retval == CV_SUCCESS)
         { /* no root found */
@@ -3563,7 +3572,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     /* Check for root in last step taken. */
     if (cv_mem->cv_nrtfn > 0)
     {
-      retval = cvRcheck3(cv_mem);
+      retval = cvRcheck3(cv_mem, tout, itask);
 
       if (retval == RTFOUND)
       { /* A new root was found */
@@ -4453,6 +4462,9 @@ void CVodeFree(void** cvode_mem)
 
   if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
 
+  free(cv_mem->python);
+  cv_mem->python = NULL;
+
   free(*cvode_mem);
   *cvode_mem = NULL;
 }
@@ -5183,10 +5195,22 @@ static void cvQuadSensFreeVectors(CVodeMem cv_mem)
  * linear solver initialization routine.
  */
 
-static int cvInitialSetup(CVodeMem cv_mem)
+static int cvInitialSetup(CVodeMem cv_mem, sunrealtype tout)
 {
   int ier;
   sunbooleantype conOK;
+
+  /* Is tout too close to tn? */
+  sunrealtype tdist  = SUNRabs(tout - cv_mem->cv_tn);
+  sunrealtype tround = cv_mem->cv_uround *
+                       SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
+
+  if (tdist == ZERO || tdist < TWO * tround)
+  {
+    cvProcessError(cv_mem, CV_TOO_CLOSE, __LINE__, __func__, __FILE__,
+                   MSGCV_TOO_CLOSE);
+    return (CV_TOO_CLOSE);
+  }
 
   /* Did the user specify tolerances? */
   if (cv_mem->cv_itol == CV_NN)
@@ -5447,15 +5471,13 @@ static int cvInitialSetup(CVodeMem cv_mem)
 /*
  * cvHin
  *
- * This routine computes a tentative initial step size h0.
- * If tout is too close to tn (= t0), then cvHin returns CV_TOO_CLOSE
- * and h remains uninitialized. Note that here tout is either the value
- * passed to CVode at the first call or the value of tstop (if tstop is
- * enabled and it is closer to t0=tn than tout).
- * If any RHS function fails unrecoverably, cvHin returns CV_*RHSFUNC_FAIL.
- * If any RHS function fails recoverably too many times and recovery is
- * not possible, cvHin returns CV_REPTD_*RHSFUNC_ERR.
- * Otherwise, cvHin sets h to the chosen value h0 and returns CV_SUCCESS.
+ * This routine computes a tentative initial step size h0. Note that here tout
+ * is either the value passed to CVode at the first call or the value of tstop
+ * (if tstop is enabled and it is closer to t0=tn than tout). If any RHS
+ * function fails unrecoverably, cvHin returns CV_*RHSFUNC_FAIL. If any RHS
+ * function fails recoverably too many times and recovery is not possible, cvHin
+ * returns CV_REPTD_*RHSFUNC_ERR. Otherwise, cvHin sets h to the chosen value
+ * h0 and returns CV_SUCCESS.
  *
  * The algorithm used seeks to find h0 as a solution of
  *       (WRMS norm of (h0^2 ydd / 2)) = 1,
@@ -5486,15 +5508,11 @@ static int cvHin(CVodeMem cv_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* If tout is too close to tn, give up */
-
-  if ((tdiff = tout - cv_mem->cv_tn) == ZERO) { return (CV_TOO_CLOSE); }
-
+  /* cvInitialSetup checks for tdiff = 0 or < 2 * troundoff */
+  tdiff  = tout - cv_mem->cv_tn;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = cv_mem->cv_uround * SUNMAX(SUNRabs(cv_mem->cv_tn), SUNRabs(tout));
-
-  if (tdist < TWO * tround) { return (CV_TOO_CLOSE); }
 
   /*
      Set lower and upper bounds on h0, and take geometric mean
@@ -7016,7 +7034,8 @@ static int cvNls(CVodeMem cv_mem, int nflag)
     if (flag > 0) { return (SUN_NLS_CONV_RECVR); }
   }
 
-  SUNLogInfo(CV_LOGGER, "begin-nonlinear-solve", "tol = %.16g", cv_mem->cv_tq[4]);
+  SUNLogInfo(CV_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
+             cv_mem->cv_tq[4]);
 
   /* solve the nonlinear system */
   if (do_sensi_sim)
@@ -8791,26 +8810,26 @@ static int cvRcheck2(CVodeMem cv_mem)
  *     CV_SUCCESS      = 0 otherwise.
  */
 
-static int cvRcheck3(CVodeMem cv_mem)
+static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask)
 {
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first; set y = y(thi). */
-  if (cv_mem->cv_taskc == CV_ONE_STEP)
+  if (itask == CV_ONE_STEP)
   {
     cv_mem->cv_thi = cv_mem->cv_tn;
     N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
   }
-  if (cv_mem->cv_taskc == CV_NORMAL)
+  if (itask == CV_NORMAL)
   {
-    if ((cv_mem->cv_toutc - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
+    if ((tout - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
     {
       cv_mem->cv_thi = cv_mem->cv_tn;
       N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
     }
     else
     {
-      cv_mem->cv_thi = cv_mem->cv_toutc;
+      cv_mem->cv_thi = tout;
       (void)CVodeGetDky(cv_mem, cv_mem->cv_thi, 0, cv_mem->cv_y);
     }
   }

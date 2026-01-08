@@ -2,8 +2,11 @@
  * Programmer(s): Alan Hindmarsh, Radu Serban and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -79,17 +82,19 @@
  * =================================================================
  */
 
-#include "ida/ida.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <ida/ida.h>
+#include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
 #include <sunnonlinsol/sunnonlinsol_newton.h>
 
 #include "ida_impl.h"
-#include "sundials/priv/sundials_errors_impl.h"
+#include "ida_ls_impl.h"
+#include "sundials_utils.h"
 
 /*
  * =================================================================
@@ -245,7 +250,7 @@ static int IDAHandleFailure(IDAMem IDA_mem, int sflag);
 
 static int IDARcheck1(IDAMem IDA_mem);
 static int IDARcheck2(IDAMem IDA_mem);
-static int IDARcheck3(IDAMem IDA_mem);
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask);
 static int IDARootfind(IDAMem IDA_mem);
 
 /*
@@ -294,6 +299,7 @@ void* IDACreate(SUNContext sunctx)
   memset(IDA_mem, 0, sizeof(struct IDAMemRec));
 
   IDA_mem->ida_sunctx = sunctx;
+  IDA_mem->python     = NULL;
 
   /* Set unit roundoff in IDA_mem */
   IDA_mem->ida_uround = SUN_UNIT_ROUNDOFF;
@@ -629,6 +635,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
   IDA_mem->ida_nge = 0;
 
   IDA_mem->ida_irfnd = 0;
+
+  if (IDA_mem->ida_lmem) { idaLsInitializeCounters(IDA_mem->ida_lmem); }
 
   /* Initial setup not done yet */
 
@@ -1125,9 +1133,6 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
     return (IDA_ILL_INPUT);
   }
 
-  if (itask == IDA_NORMAL) { IDA_mem->ida_toutc = tout; }
-  IDA_mem->ida_taskc = itask;
-
   if (IDA_mem->ida_nst == 0)
   { /* This is the first call */
 
@@ -1148,22 +1153,15 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
        check for approach to tstop, and scale phi[1] by hh.
        Also check for zeros of root function g at and near t0.    */
 
-    tdist = SUNRabs(tout - IDA_mem->ida_tn);
-    if (tdist == ZERO)
-    {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      MSG_TOO_CLOSE);
-      SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
-    }
+    tdist     = SUNRabs(tout - IDA_mem->ida_tn);
     troundoff = TWO * IDA_mem->ida_uround *
                 (SUNRabs(IDA_mem->ida_tn) + SUNRabs(tout));
-    if (tdist < troundoff)
+    if (tdist == ZERO || tdist < troundoff)
     {
-      IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+      IDAProcessError(IDA_mem, IDA_TOO_CLOSE, __LINE__, __func__, __FILE__,
                       MSG_TOO_CLOSE);
       SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
-      return (IDA_ILL_INPUT);
+      return (IDA_TOO_CLOSE);
     }
 
     /* Set initial h */
@@ -1288,7 +1286,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
                   (SUNRabs(IDA_mem->ida_tn) + SUNRabs(IDA_mem->ida_hh));
       if (SUNRabs(IDA_mem->ida_tn - IDA_mem->ida_tretlast) > troundoff)
       {
-        ier = IDARcheck3(IDA_mem);
+        ier = IDARcheck3(IDA_mem, tout, itask);
         if (ier == IDA_SUCCESS)
         { /* no root found */
           IDA_mem->ida_irfnd = 0;
@@ -1426,7 +1424,7 @@ int IDASolve(void* ida_mem, sunrealtype tout, sunrealtype* tret, N_Vector yret,
 
     if (IDA_mem->ida_nrtfn > 0)
     {
-      ier = IDARcheck3(IDA_mem);
+      ier = IDARcheck3(IDA_mem, tout, itask);
 
       if (ier == RTFOUND)
       { /* A new root was found */
@@ -1717,6 +1715,9 @@ void IDAFree(void** ida_mem)
     free(IDA_mem->ida_gactive);
     IDA_mem->ida_gactive = NULL;
   }
+
+  free(IDA_mem->python);
+  IDA_mem->python = NULL;
 
   free(*ida_mem);
   *ida_mem = NULL;
@@ -2747,7 +2748,7 @@ static int IDANls(IDAMem IDA_mem)
     if (retval > 0) { return (IDA_NLS_SETUP_RECVR); }
   }
 
-  SUNLogInfo(IDA_LOGGER, "begin-nonlinear-solve", "tol = %.16g",
+  SUNLogInfo(IDA_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
              IDA_mem->ida_epsNewt);
 
   /* solve the nonlinear system */
@@ -3622,21 +3623,17 @@ static int IDARcheck2(IDAMem IDA_mem)
  *     IDA_SUCCESS     = 0 otherwise.
  */
 
-static int IDARcheck3(IDAMem IDA_mem)
+static int IDARcheck3(IDAMem IDA_mem, sunrealtype tout, int itask)
 {
   int i, ier, retval;
 
   /* Set thi = tn or tout, whichever comes first. */
-  if (IDA_mem->ida_taskc == IDA_ONE_STEP)
+  if (itask == IDA_ONE_STEP) { IDA_mem->ida_thi = IDA_mem->ida_tn; }
+  if (itask == IDA_NORMAL)
   {
-    IDA_mem->ida_thi = IDA_mem->ida_tn;
-  }
-  if (IDA_mem->ida_taskc == IDA_NORMAL)
-  {
-    IDA_mem->ida_thi =
-      ((IDA_mem->ida_toutc - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
-        ? IDA_mem->ida_tn
-        : IDA_mem->ida_toutc;
+    IDA_mem->ida_thi = ((tout - IDA_mem->ida_tn) * IDA_mem->ida_hh >= ZERO)
+                         ? IDA_mem->ida_tn
+                         : tout;
   }
 
   /* Get y and y' at thi. */

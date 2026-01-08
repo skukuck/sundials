@@ -1,7 +1,10 @@
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2025, Lawrence Livermore National Security
+# Copyright (c) 2025, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -33,6 +36,7 @@ needs_sphinx = "4.0"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx.ext.extlinks",
     "sphinx.ext.ifconfig",
     "sphinx.ext.mathjax",
     "sphinx.ext.intersphinx",
@@ -43,9 +47,27 @@ extensions = [
     "sphinx_sundials",
     "sphinx_toolbox.collapse",
     "sphinx.ext.autodoc",
+    "sphinx_multitoc_numbering",
 ]
 
-intersphinx_mapping = {"sphinx": ("https://www.sphinx-doc.org/en/master/", None)}
+extlinks = {
+    "pdfdoc": (
+        f"https://github.com/LLNL/sundials/releases/download/{sundials_version}/%s.pdf",
+        None,
+    )
+}
+
+# Where to find cross-references to the Sphinx documentation.
+intersphinx_mapping = {
+    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None))
+}
+
+# Only setup Google analytics for the readthedocs being deployed (not local).
+# We can do this by checking if we are running in GitHub actions.
+if os.getenv("READTHEDOCS"):
+    extensions.append("sphinxcontrib.googleanalytics")
+    googleanalytics_id = "G-3KESEG9QED"
+    googleanalytics_enabled = True
 
 # No non-external references will be resolved by intersphinx
 intersphinx_disabled_reftypes = ["*"]
@@ -66,8 +88,12 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "User Documentation for SUNDIALS"
-copyright = """2002-{year}, Lawrence Livermore National Security and Southern Methodist University""".format(
+project = "Documentation for SUNDIALS"
+# RTD adds the first Copyright (c), so we leave it out.
+copyright = """\
+    2025-{year}, Lawrence Livermore National Security, University of Maryland Baltimore County, and the SUNDIALS contributors.
+    Copyright (c) 2013-2025, Lawrence Livermore National Security and Southern Methodist University.
+    Copyright (c) 2002-2013, Lawrence Livermore National Security""".format(
     year=year
 )
 
@@ -84,7 +110,20 @@ today_fmt = "%B %d, %Y"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = [
+    "examples/arkode/index.rst",
+    "examples/arkode/References.rst",
+    "examples/cvode/index.rst",
+    "examples/cvode/references.rst",
+    "examples/cvodes/index.rst",
+    "examples/cvodes/references.rst",
+    "examples/ida/index.rst",
+    "examples/ida/references.rst",
+    "examples/idas/index.rst",
+    "examples/idas/references.rst",
+    "examples/kinsol/index.rst",
+    "examples/kinsol/references.rst",
+]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None

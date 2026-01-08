@@ -1,7 +1,10 @@
 /* -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -29,6 +32,7 @@ SUNErrCode SUNStepper_Create(SUNContext sunctx, SUNStepper* stepper_ptr)
   SUNAssert(stepper, SUN_ERR_MALLOC_FAIL);
 
   stepper->content   = NULL;
+  stepper->python    = NULL;
   stepper->sunctx    = sunctx;
   stepper->last_flag = SUN_SUCCESS;
 
@@ -56,6 +60,8 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
     const SUNStepper_Ops ops = (*stepper_ptr)->ops;
     if (ops && ops->destroy) { ops->destroy(*stepper_ptr); }
     free(ops);
+    free((*stepper_ptr)->python);
+    (*stepper_ptr)->python = NULL;
     free(*stepper_ptr);
     *stepper_ptr = NULL;
   }
@@ -114,7 +120,7 @@ SUNErrCode SUNStepper_ResetCheckpointIndex(SUNStepper stepper,
                                            suncountertype ckptIdxR)
 {
   SUNFunctionBegin(stepper->sunctx);
-  if (stepper->ops->reset)
+  if (stepper->ops->resetcheckpointindex)
   {
     return stepper->ops->resetcheckpointindex(stepper, ckptIdxR);
   }

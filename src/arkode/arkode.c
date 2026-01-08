@@ -1,9 +1,12 @@
 /*---------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -713,13 +716,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
   /* start profiler */
   SUNDIALS_MARK_FUNCTION_BEGIN(ARK_PROFILER);
 
-  /* store copy of itask if using root-finding */
-  if (ark_mem->root_mem != NULL)
-  {
-    if (itask == ARK_NORMAL) { ark_mem->root_mem->toutc = tout; }
-    ark_mem->root_mem->taskc = itask;
-  }
-
   /* perform first-step-specific initializations:
      - initialize tret values to initialization time
      - perform initial integrator setup  */
@@ -1027,7 +1023,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     {
       if (ark_mem->root_mem->nrtfn > 0)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
         if (retval == RTFOUND)
         { /* A new root was found */
           ark_mem->root_mem->irfnd = 1;
@@ -1277,6 +1273,9 @@ void ARKodeFree(void** arkode_mem)
     ark_mem->relax_mem = NULL;
   }
 
+  free(ark_mem->python);
+  ark_mem->python = NULL;
+
   free(*arkode_mem);
   *arkode_mem = NULL;
 }
@@ -1504,6 +1503,9 @@ ARKodeMem arkCreate(SUNContext sunctx)
 
   /* Set the context */
   ark_mem->sunctx = sunctx;
+
+  /* Set the Python context to NULL */
+  ark_mem->python = NULL;
 
   /* Set uround */
   ark_mem->uround = SUN_UNIT_ROUNDOFF;
@@ -1978,6 +1980,18 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype tout_hin, rh, htmp;
   sunbooleantype conOK;
 
+  /* Is tout too close to tn? */
+  sunrealtype tdist  = SUNRabs(tout - ark_mem->tcur);
+  sunrealtype tround = ark_mem->uround *
+                       SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
+
+  if (tdist == ZERO || tdist < TWO * tround)
+  {
+    arkProcessError(ark_mem, ARK_TOO_CLOSE, __LINE__, __func__, __FILE__,
+                    MSG_ARK_TOO_CLOSE);
+    return (ARK_TOO_CLOSE);
+  }
+
   /* Check that user has supplied an initial step size if fixedstep mode is on */
   if ((ark_mem->fixedstep) && (ark_mem->hin == ZERO))
   {
@@ -2332,7 +2346,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
          check remaining interval for roots */
       if (SUNRabs(ark_mem->tcur - ark_mem->tretlast) > troundoff)
       {
-        retval = arkRootCheck3((void*)ark_mem);
+        retval = arkRootCheck3((void*)ark_mem, tout, itask);
 
         if (retval == ARK_SUCCESS)
         { /* no root found */
@@ -2442,15 +2456,13 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
   arkHin
 
   This routine computes a tentative initial step size h0.
-  If tout is too close to tn (= t0), then arkHin returns
-  ARK_TOO_CLOSE and h remains uninitialized. Note that here tout
-  is either the value passed to ARKodeEvolve at the first call or the
-  value of tstop (if tstop is enabled and it is closer to t0=tn
-  than tout). If the RHS function fails unrecoverably, arkHin
-  returns ARK_RHSFUNC_FAIL. If the RHS function fails recoverably
-  too many times and recovery is not possible, arkHin returns
-  ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin sets h to the chosen
-  value h0 and returns ARK_SUCCESS.
+  Note that here tout is either the value passed to ARKodeEvolve
+  at the first call or the value of tstop (if tstop is enabled and
+  it is closer to t0=tn than tout). If the RHS function fails
+  unrecoverably, arkHin returns ARK_RHSFUNC_FAIL. If the RHS
+  function fails recoverably too many times and recovery is not
+  possible, arkHin returns ARK_REPTD_RHSFUNC_ERR. Otherwise, arkHin
+  sets h to the chosen value h0 and returns ARK_SUCCESS.
 
   The algorithm used seeks to find h0 as a solution of
   (WRMS norm of (h0^2 ydd / 2)) = 1,
@@ -2486,14 +2498,11 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   sunrealtype hg, hgs, hs, hnew, hrat, h0, yddnrm;
   sunbooleantype hgOK;
 
-  /* If tout is too close to tn, give up */
-  if ((tdiff = tout - ark_mem->tcur) == ZERO) { return (ARK_TOO_CLOSE); }
-
+  /* arkInitialSetup checks for tdiff = 0 or < 2 * troundoff */
+  tdiff  = tout - ark_mem->tcur;
   sign   = (tdiff > ZERO) ? 1 : -1;
   tdist  = SUNRabs(tdiff);
   tround = ark_mem->uround * SUNMAX(SUNRabs(ark_mem->tcur), SUNRabs(tout));
-
-  if (tdist < TWO * tround) { return (ARK_TOO_CLOSE); }
 
   /* call full RHS if needed */
   if (!(ark_mem->fn_is_current))

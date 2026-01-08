@@ -1,11 +1,14 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel Reynolds @ SMU
+ * Programmer(s): Daniel Reynolds @ UMBC
  *                David Gardner, Carol Woodward,
  *                Slaven Peles, Cody Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -69,15 +72,19 @@ extern "C" {
  * Implemented SUNLinearSolver types and IDs:
  * ----------------------------------------------------------------- */
 
-typedef enum
+enum SUNLinearSolver_Type
 {
   SUNLINEARSOLVER_DIRECT,
   SUNLINEARSOLVER_ITERATIVE,
   SUNLINEARSOLVER_MATRIX_ITERATIVE,
   SUNLINEARSOLVER_MATRIX_EMBEDDED
-} SUNLinearSolver_Type;
+};
 
-typedef enum
+#ifndef SWIG
+typedef enum SUNLinearSolver_Type SUNLinearSolver_Type;
+#endif
+
+enum SUNLinearSolver_ID
 {
   SUNLINEARSOLVER_BAND,
   SUNLINEARSOLVER_DENSE,
@@ -95,9 +102,14 @@ typedef enum
   SUNLINEARSOLVER_MAGMADENSE,
   SUNLINEARSOLVER_ONEMKLDENSE,
   SUNLINEARSOLVER_GINKGO,
+  SUNLINEARSOLVER_GINKGOBATCH,
   SUNLINEARSOLVER_KOKKOSDENSE,
   SUNLINEARSOLVER_CUSTOM
-} SUNLinearSolver_ID;
+};
+
+#ifndef SWIG
+typedef enum SUNLinearSolver_ID SUNLinearSolver_ID;
+#endif
 
 /* -----------------------------------------------------------------
  * Generic definition of SUNLinearSolver
@@ -138,6 +150,7 @@ struct _generic_SUNLinearSolver_Ops
 struct _generic_SUNLinearSolver
 {
   void* content;
+  void* python;
   SUNLinearSolver_Ops ops;
   SUNContext sunctx;
 };
@@ -196,7 +209,7 @@ SUNDIALS_EXPORT
 sunrealtype SUNLinSolResNorm(SUNLinearSolver S);
 
 SUNDIALS_EXPORT
-N_Vector SUNLinSolResid(SUNLinearSolver S);
+N_Vector SUNLinSolResid(SUNLinearSolver S); // nb::rv_policy::reference
 
 /* TODO(CJB): sunindextype being the return type here could cause a problem if
               sunindextype happened to be smaller than an int.  */

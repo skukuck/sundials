@@ -3,8 +3,11 @@
  *                and Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2025, Lawrence Livermore National Security
+ * Copyright (c) 2025, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -87,6 +90,8 @@ extern "C" {
 typedef struct IDAMemRec
 {
   SUNContext ida_sunctx;
+
+  void* python;
 
   sunrealtype ida_uround; /* machine unit roundoff */
 
@@ -306,9 +311,7 @@ typedef struct IDAMemRec
   sunrealtype* ida_glo;   /* saved array of g values at t = tlo              */
   sunrealtype* ida_ghi;   /* saved array of g values at t = thi              */
   sunrealtype* ida_grout; /* array of g values at t = trout                  */
-  sunrealtype ida_toutc;  /* copy of tout (if NORMAL mode)                   */
   sunrealtype ida_ttol;   /* tolerance on root location                      */
-  int ida_taskc;          /* copy of parameter itask                         */
   int ida_irfnd;          /* flag showing whether last step had a root       */
   long int ida_nge;       /* counter for g evaluations                       */
   sunbooleantype* ida_gactive; /* array with active/inactive event functions      */

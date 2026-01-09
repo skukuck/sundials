@@ -1909,6 +1909,19 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
                step_mem->stagetypes[is], ark_mem->tcur);
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Determine current stage type, and call corresponding routine; the
        vector ark_mem->ycur stores the previous stage solution on input, and
        should store the result of this stage solution on output. */
@@ -1953,11 +1966,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_%i(:) =", is);
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if ((ark_mem->ProcessStage != NULL) &&
+    if ((ark_mem->PostProcessStage != NULL) &&
         (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC))
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                     ark_mem->user_data);
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1970,7 +1983,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
     {
       if ((step_mem->stagetypes[is] != MRISTAGE_ERK_FAST) ||
-          (ark_mem->ProcessStage != NULL))
+          (ark_mem->PostProcessStage != NULL))
       {
         retval = mriStepInnerStepper_Reset(step_mem->stepper, tf, ark_mem->ycur);
         if (retval != ARK_SUCCESS)
@@ -2168,6 +2181,19 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
                step_mem->stagetypes[is], ark_mem->tcur);
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Determine final stage type, and call corresponding routine; the
        vector ark_mem->ycur stores the previous stage solution on input, and
        should store the result of this stage solution on output. */
@@ -2212,11 +2238,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogExtraDebugVec(ARK_LOGGER, "slow stage", ark_mem->ycur, "z_%i(:) =", is);
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if ((ark_mem->ProcessStage != NULL) &&
+    if ((ark_mem->PostProcessStage != NULL) &&
         (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC))
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                     ark_mem->user_data);
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2229,7 +2255,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)
     {
       if ((step_mem->stagetypes[is] != MRISTAGE_ERK_FAST) ||
-          (ark_mem->ProcessStage != NULL))
+          (ark_mem->PostProcessStage != NULL))
       {
         retval = mriStepInnerStepper_Reset(step_mem->stepper, tf, ark_mem->ycur);
         if (retval != ARK_SUCCESS)
@@ -2453,6 +2479,19 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, stage,
                MRISTAGE_ERK_FAST, ark_mem->tn + cstage * ark_mem->h);
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Compute forcing function for inner solver */
     retval = mriStep_ComputeInnerForcing(ark_mem, step_mem, stage, ark_mem->tn,
                                          ark_mem->tn + cstage * ark_mem->h);
@@ -2600,10 +2639,10 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     /* apply user-supplied stage postprocessing function (if supplied),
        and reset the inner integrator with the modified stage solution */
-    if (ark_mem->ProcessStage != NULL)
+    if (ark_mem->PostProcessStage != NULL)
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                     ark_mem->user_data);
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -2892,6 +2931,19 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       lowest_stage = SUNMIN(lowest_stage, step_mem->MRIC->group[ig][il]);
     }
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Set up fast RHS for this stage group */
     retval = mriStep_ComputeInnerForcing(ark_mem, step_mem, lowest_stage,
                                          ark_mem->tn, ark_mem->tn + ark_mem->h);
@@ -2990,10 +3042,10 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       /* apply user-supplied stage postprocessing function (if supplied),
          and reset the inner integrator with the modified stage solution */
-      if (ark_mem->ProcessStage != NULL)
+      if (ark_mem->PostProcessStage != NULL)
       {
-        retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                       ark_mem->user_data);
+        retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                           ark_mem->user_data);
         if (retval != 0)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",

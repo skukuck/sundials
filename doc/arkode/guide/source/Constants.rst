@@ -470,9 +470,9 @@ contains the ARKODE output constants.
    Commented-out table rows:
 
       +-------------------------------------+------+------------------------------------------------------------+
-      | :index:`ARK_POSTPROCESS_STEP_FAIL`  | -37  | An error occurred when calling the user-provided           |
+      | :index:`ARK_POSTPROCESS_STEP_FAIL`  | -37  | An error occurred when calling a user-provided.            |
       |                                     |      | step-based :c:func:`ARKPostProcessFn` routine.             |
       +-------------------------------------+------+------------------------------------------------------------+
-      | :index:`ARK_POSTPROCESS_STAGE_FAIL` | -38  | An error occurred when calling the user-provided           |
+      | :index:`ARK_POSTPROCESS_STAGE_FAIL` | -38  | An error occurred when calling a user-provided             |
       |                                     |      | stage-based :c:func:`ARKPostProcessFn` routine.            |
       +-------------------------------------+------+------------------------------------------------------------+

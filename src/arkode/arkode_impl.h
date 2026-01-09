@@ -564,12 +564,15 @@ struct ARKodeMemRec
   sunbooleantype relax_enabled; /* is relaxation enabled?    */
   ARKodeRelaxMem relax_mem;     /* relaxation data structure */
 
-  /* User-supplied step solution post-processing function */
-  ARKPostProcessFn ProcessStep;
+  /* User-supplied step solution pre/post-processing functions */
+  ARKPostProcessFn PreProcessStep;
+  ARKPostProcessFn PostProcessStep;
+  ARKPostProcessFn PostProcessStepFail;
   void* ps_data; /* pointer to user_data */
 
-  /* User-supplied stage solution post-processing function */
-  ARKPostProcessFn ProcessStage;
+  /* User-supplied stage solution pre/post-processing functions */
+  ARKPostProcessFn PreProcessStage;
+  ARKPostProcessFn PostProcessStage;
 
   sunbooleantype use_compensated_sums;
 

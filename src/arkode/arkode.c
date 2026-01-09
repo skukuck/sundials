@@ -903,6 +903,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                  "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
                  ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
 
+      /* call the user-supplied step preprocessing function (if it exists) */
+      if (ark_mem->PreProcessStep != NULL)
+      {
+        retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+        if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+      }
+
       /* Call time stepper module to attempt a step:
             0 => step completed successfully
            >0 => step encountered recoverable failure; reduce step if possible
@@ -999,6 +1006,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* update h, hprime and next_h for next iteration */
       ark_mem->h *= ark_mem->eta;
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
+
+      /* since the previous step attempt failed, call the user-supplied step failure postprocessing function (if it exists) */
+      if (ark_mem->PostProcessStepFail != NULL)
+      {
+        retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+        if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+      }
 
     } /* end looping for step attempts */
 
@@ -1586,12 +1600,15 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->VRabstolMallocDone = SUNFALSE;
   ark_mem->MallocDone         = SUNFALSE;
 
-  /* No user-supplied step postprocessing function yet */
-  ark_mem->ProcessStep = NULL;
+  /* No user-supplied step pre- or post-processing functions yet */
+  ark_mem->PreProcessStep = NULL;
+  ark_mem->PostProcessStep = NULL;
+  ark_mem->PostProcessStepFail = NULL;
   ark_mem->ps_data     = NULL;
 
-  /* No user-supplied stage postprocessing function yet */
-  ark_mem->ProcessStage = NULL;
+  /* No user-supplied stage pre- or post-processing functions yet */
+  ark_mem->PreProcessStage = NULL;
+  ark_mem->PostProcessStage = NULL;
 
   /* No user_data pointer yet */
   ark_mem->user_data = NULL;
@@ -2726,9 +2743,9 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   }
 
   /* apply user-supplied step postprocessing function (if supplied) */
-  if (ark_mem->ProcessStep != NULL)
+  if (ark_mem->PostProcessStep != NULL)
   {
-    retval = ark_mem->ProcessStep(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+    retval = ark_mem->PostProcessStep(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
     if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
   }
 

@@ -874,7 +874,8 @@ int ARKodeSetUserData(void* arkode_mem, void* user_data)
   if (ark_mem->root_mem != NULL) { ark_mem->root_mem->root_data = user_data; }
 
   /* Set data for post-processing a step */
-  if (ark_mem->ProcessStep != NULL) { ark_mem->ps_data = user_data; }
+  if ((ark_mem->PreProcessStep != NULL) || (ark_mem->PostProcessStep != NULL) ||
+      (ark_mem->PostProcessStepFail != NULL)) { ark_mem->ps_data = user_data; }
 
   /* Set user data into stepper (if provided) */
   if (ark_mem->step_setuserdata)
@@ -1490,16 +1491,40 @@ int ARKodeSetNoInactiveRootWarn(void* arkode_mem)
 }
 
 /*---------------------------------------------------------------
+  ARKodeSetPreprocessStepFn:
   ARKodeSetPostprocessStepFn:
+  ARKodeSetPostprocessStepFailFn:
 
-  Specifies a user-provided step postprocessing function having
-  type ARKPostProcessFn.  A NULL input function disables step
-  postprocessing.
+  Specifies user-provided step pre- and post-processing functions
+  having type ARKPostProcessFn.  A NULL input function disables step
+  pre- or post-step processing.
+
+  The "Preprocess" function is called just prior to taking a step,
+  while the "Postprocess" function is called immediately after
+  a successful step.  The "PostprocessStepFail" function is called
+  immediately after a failed step.
 
   IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
   THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
   STABILITY ARE LOST.
   ---------------------------------------------------------------*/
+int ARKodeSetPreprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument sets default, otherwise set inputs */
+  ark_mem->PreProcessStep = ProcessStep;
+  ark_mem->ps_data     = ark_mem->user_data;
+
+  return (ARK_SUCCESS);
+}
 int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 {
   ARKodeMem ark_mem;
@@ -1512,18 +1537,40 @@ int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* NULL argument sets default, otherwise set inputs */
-  ark_mem->ProcessStep = ProcessStep;
+  ark_mem->PostProcessStep = ProcessStep;
+  ark_mem->ps_data     = ark_mem->user_data;
+
+  return (ARK_SUCCESS);
+}
+int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument sets default, otherwise set inputs */
+  ark_mem->PostProcessStepFail = ProcessStep;
   ark_mem->ps_data     = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------
+  ARKodeSetPreprocessStageFn:
   ARKodeSetPostprocessStageFn:
 
-  Specifies a user-provided stage postprocessing function having
-  type ARKPostProcessFn.  A NULL input function disables
-  stage postprocessing.
+  Specifies user-provided stage pre- and post-processing
+  functions having type ARKPostProcessFn.  A NULL input function
+  disables pre- or post-stage processing.
+
+  The "Preprocess" function is called just prior to taking a stage,
+  while the "Postprocess" function is called immediately after
+  computing a stage.
 
   IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
   THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
@@ -1536,6 +1583,22 @@ int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
   ARKodeSetDeduceImplicitRhs in order to guarantee
   postprocessing constraints are enforced.
   ---------------------------------------------------------------*/
+int ARKodeSetPreprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument sets default, otherwise set inputs */
+  ark_mem->PreProcessStage = ProcessStage;
+
+  return (ARK_SUCCESS);
+}
 int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 {
   ARKodeMem ark_mem;
@@ -1548,7 +1611,7 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* NULL argument sets default, otherwise set inputs */
-  ark_mem->ProcessStage = ProcessStage;
+  ark_mem->PostProcessStage = ProcessStage;
 
   return (ARK_SUCCESS);
 }

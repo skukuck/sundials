@@ -823,6 +823,19 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, is, ark_mem->tcur);
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn + step_mem->B->c[is-1] * ark_mem->h,
+                                        ark_mem->ycur, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Set ycur to current stage solution */
     nvec = 0;
     for (js = 0; js < is; js++)
@@ -857,10 +870,10 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* apply user-supplied stage postprocessing function (if supplied) */
-    if (ark_mem->ProcessStage != NULL)
+    if (ark_mem->PostProcessStage != NULL)
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                     ark_mem->user_data);
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",

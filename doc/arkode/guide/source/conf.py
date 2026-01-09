@@ -344,4 +344,3 @@ texinfo_documents = [
 # Generate rst files with autofunction directives for sundials4py functions
 generate_autofunctions_for_submodule("core")
 generate_autofunctions_for_submodule("arkode")
-

@@ -9,6 +9,8 @@ on:
       - main
       - develop
   pull_request:
+    paths:
+      - bindings/sundials4py/**
   merge_group:
   workflow_dispatch:
   release:
@@ -95,14 +97,35 @@ jobs:
         ls -al wheelhouse/
       shell: bash
 
-    - name: Upload wheels
+    - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v5
       with:
         path: wheelhouse/*.whl
         name: dist-extra-${{ matrix.os }}-${{ matrix.precision }}-${{ matrix.index }}
 
-  upload:
-    name: Upload if release
+  attach_wheels_to_release:
+    name: Attach wheels to GitHub release
+    needs: [build_wheels, build_wheels_extra]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+    - name: Download wheel artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: dist
+        pattern: dist-*
+        merge-multiple: true
+
+    - name: Upload wheels to release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/**/*.whl
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pypi_publish:
+    name: Publish to pypi if release
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'

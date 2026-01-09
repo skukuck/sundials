@@ -263,5 +263,7 @@ htmlhelp_basename = "SUNDIALSdoc"
 # This prevents numpydoc from showing too much detail of the Enum classes
 numpydoc_show_class_members = False
 
-# Generate rst files with autofunction directives for sundials4py functions
-generate_autofunctions_for_sundials4py()
+# Skip generation of autofunctions in Jenkins builds
+if not os.getenv("JENKINS_HOME"):
+    # Generate rst files with autofunction directives for sundials4py functions
+    generate_autofunctions_for_sundials4py()

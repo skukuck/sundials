@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: spack/spack
-          ref: v0.21.0
+          ref: v1.1.0
           path: spack
 
       - name: Setup Spack
@@ -29,14 +29,14 @@ jobs:
 
       - name: Setup Spack Binary Cache
         run: |
-          spack mirror add v0.21.0 https://binaries.spack.io/v0.21.0
+          spack mirror add v1.1.0 https://binaries.spack.io/v1.1.0
           spack mirror add --oci-username ${{ github.actor }} --oci-password ${{ secrets.OCI_TOKEN }} sundials_spack_cache oci://ghcr.io/LLNL/sundials_spack_cache
           spack buildcache keys --install --trust
 
-      - name: Install llvm@17.0.4
-        run: spack install --no-check-signature llvm@17.0.4
+      - name: Install llvm@17.0.6
+        run: spack install --no-check-signature llvm@17.0.6
 
       - name: Push to buildcache
         if: ${{ !cancelled() }}
         run: |
-          spack buildcache push --force --base-image ubuntu:22.04 sundials_spack_cache llvm
+          spack buildcache push --force --base-image ubuntu:22.04 sundials_spack_cache_new llvm

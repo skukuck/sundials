@@ -1,6 +1,7 @@
 name: Containers - build llvm container for clang-format checker
 
 on:
+  push: # temporary
   workflow_dispatch:
 
 concurrency:

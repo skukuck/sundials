@@ -342,6 +342,10 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
 
-# Generate rst files with autofunction directives for sundials4py functions
-generate_autofunctions_for_submodule("core")
-generate_autofunctions_for_submodule("idas")
+if not os.getenv("JENKINS_HOME"):
+    # Generate rst files with autofunction directives for sundials4py functions
+    sys.path.append(os.path.dirname(os.path.abspath("../../shared/generate_autofunctions.py")))
+    from generate_autofunctions import generate_autofunctions_for_submodule
+
+    generate_autofunctions_for_submodule("core")
+    generate_autofunctions_for_submodule("idas")

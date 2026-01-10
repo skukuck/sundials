@@ -91,6 +91,12 @@ modules:
     path: nvector/nvector_serial_generated.hpp
     headers:
     - ../../include/nvector/nvector_serial.h
+  nvector_cuda:
+    path: nvector/nvector_cuda_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_cuda.h
+    fn_exclude_by_name__regex:
+    - "^N_VSetKernelExecPolicy_Cuda$"
   nvector_manyvector:
     path: nvector/nvector_manyvector_generated.hpp
     headers:

@@ -40,6 +40,7 @@ void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
 void bind_nvector_manyvector(nb::module_& m);
+void bind_nvector_cuda(nb::module_& m);
 
 void bind_sumemoryhelper_sys(nb::module_& m);
 
@@ -118,6 +119,9 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_nvector_serial(core_m);
   sundials4py::bind_nvector_manyvector(core_m);
+#if defined(SUNDIALS_CUDA_ENABLED)
+  sundials4py::bind_nvector_cuda(core_m);
+#endif
 
   sundials4py::bind_sunadaptcontroller_imexgus(core_m);
   sundials4py::bind_sunadaptcontroller_mrihtol(core_m);

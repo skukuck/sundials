@@ -115,6 +115,10 @@ set(sundials_SOURCES
     sunnonlinsol/sunnonlinsol_newton.cpp
     test/sundials4py_test.cpp)
 
+if(ENABLE_CUDA)
+  list(APPEND sundials_SOURCES nvector/nvector_cuda.cpp)
+endif()
+
 # Create the Python sundials library
 nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
 
@@ -145,6 +149,10 @@ target_link_libraries(
           sundials_sunmatrixsparse
           sundials_sundomeigestpower
           sundials_core)
+
+if(ENABLE_CUDA)
+  target_link_libraries(sundials4py PRIVATE sundials_nveccuda CUDA::cudart)
+endif()
 
 # Install directive for scikit-build-core
 install(TARGETS sundials4py LIBRARY DESTINATION .)

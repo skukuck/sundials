@@ -36,12 +36,12 @@ def test_multirate(sunctx):
         return ode_problem.f_linear(t, y, ydot, None)
 
     def ffast(t, y, ydot, _):
-        # # TODO(CJB): fix MRIStepInnerStepper_GetForcingData
-        # inner_stepper = ode_problem.inner_stepper
-        # # test MRIStepInnerStepper_GetForcingData
-        # status, tshift, tscale, forcing, nforcing = MRIStepInnerStepper_GetForcingData(inner_stepper)
-        # assert status == ARK_SUCCESS
-        # assert len(forcing) == nforcing
+        # test MRIStepInnerStepper_GetForcingData
+        status, tshift, tscale, forcing, nforcing = MRIStepInnerStepper_GetForcingData(
+            ode_problem.inner_stepper
+        )
+        assert status == ARK_SUCCESS
+        assert len(forcing) == nforcing
 
         return ode_problem.f_nonlinear(t, y, ydot, None)
 
@@ -75,9 +75,3 @@ def test_multirate(sunctx):
     ode_problem.solution(y, sol, tret)
     # we use a fixed atol here since we use a fixed step size
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=1e-2)
-
-    # We must set this to None to ensure inner_stepper can be garbage collected
-    # If we do not do this, then nanobind will warn that references are leaked.
-    # This seems to be unavoidable without setting this to None or using a weakref.
-    # Its possible newer versions of Python may not result in the warning.
-    ode_problem.inner_stepper = None

@@ -71,25 +71,25 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("stepper"));
 
-  // m.def("MRIStepInnerStepper_GetForcingData",
-  //       [](MRIStepInnerStepper stepper) -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int> {
+  m.def(
+    "MRIStepInnerStepper_GetForcingData",
+    [](MRIStepInnerStepper stepper)
+      -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int>
+    {
+      sunrealtype tshift   = 0.0;
+      sunrealtype tscale   = 0.0;
+      N_Vector* forcing_1d = nullptr;
+      int nforcing         = 0;
 
-  //           sunrealtype tshift = 0.0;
-  //           sunrealtype tscale = 0.0;
-  //           N_Vector* forcing_1d  = nullptr;
-  //           int nforcing = 0;
+      int status = MRIStepInnerStepper_GetForcingData(stepper, &tshift, &tscale,
+                                                      &forcing_1d, &nforcing);
 
-  //           int status = MRIStepInnerStepper_GetForcingData(stepper, &tshift, &tscale, &forcing_1d, &nforcing);
+      std::vector<N_Vector> forcing(nforcing);
+      for (int i = 0; i < nforcing; i++) { forcing[i] = forcing_1d[i]; }
 
-  //           std::vector<N_Vector> forcing(nforcing);
-  //           // TODO(CJB): for some reason this causes a segfault unless you clone
-  //           // for (int i = 0; i < nforcing; i++) {
-  //           //   // forcing[i] = N_VClone(forcing_1d[i]);
-  //           //   forcing[i] = forcing_1d[i];
-  //           // }
-
-  //           return std::make_tuple(status, tshift, tscale, forcing, nforcing);
-  //       });
+      return std::make_tuple(status, tshift, tscale, forcing, nforcing);
+    },
+    nb::rv_policy::reference);
 
   m.def(
     "ARKodeCreateMRIStepInnerStepper",

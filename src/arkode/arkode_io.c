@@ -875,7 +875,10 @@ int ARKodeSetUserData(void* arkode_mem, void* user_data)
 
   /* Set data for post-processing a step */
   if ((ark_mem->PreProcessStep != NULL) || (ark_mem->PostProcessStep != NULL) ||
-      (ark_mem->PostProcessStepFail != NULL)) { ark_mem->ps_data = user_data; }
+      (ark_mem->PostProcessStepFail != NULL))
+  {
+    ark_mem->ps_data = user_data;
+  }
 
   /* Set user data into stepper (if provided) */
   if (ark_mem->step_setuserdata)
@@ -1521,10 +1524,11 @@ int ARKodeSetPreprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PreProcessStep = ProcessStep;
-  ark_mem->ps_data     = ark_mem->user_data;
+  ark_mem->ps_data        = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
+
 int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 {
   ARKodeMem ark_mem;
@@ -1538,10 +1542,11 @@ int ARKodeSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PostProcessStep = ProcessStep;
-  ark_mem->ps_data     = ark_mem->user_data;
+  ark_mem->ps_data         = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
+
 int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
 {
   ARKodeMem ark_mem;
@@ -1555,7 +1560,7 @@ int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessSte
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PostProcessStepFail = ProcessStep;
-  ark_mem->ps_data     = ark_mem->user_data;
+  ark_mem->ps_data             = ark_mem->user_data;
 
   return (ARK_SUCCESS);
 }
@@ -1599,6 +1604,7 @@ int ARKodeSetPreprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 
   return (ARK_SUCCESS);
 }
+
 int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 {
   ARKodeMem ark_mem;

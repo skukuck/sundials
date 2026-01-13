@@ -906,7 +906,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* call the user-supplied step preprocessing function (if it exists) */
       if (ark_mem->PreProcessStep != NULL)
       {
-        retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+        retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->ps_data);
         if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
       }
 
@@ -1010,7 +1011,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       /* since the previous step attempt failed, call the user-supplied step failure postprocessing function (if it exists) */
       if (ark_mem->PostProcessStepFail != NULL)
       {
-        retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+        retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur,
+                                              ark_mem->ps_data);
         if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
       }
 
@@ -1601,13 +1603,13 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->MallocDone         = SUNFALSE;
 
   /* No user-supplied step pre- or post-processing functions yet */
-  ark_mem->PreProcessStep = NULL;
-  ark_mem->PostProcessStep = NULL;
+  ark_mem->PreProcessStep      = NULL;
+  ark_mem->PostProcessStep     = NULL;
   ark_mem->PostProcessStepFail = NULL;
-  ark_mem->ps_data     = NULL;
+  ark_mem->ps_data             = NULL;
 
   /* No user-supplied stage pre- or post-processing functions yet */
-  ark_mem->PreProcessStage = NULL;
+  ark_mem->PreProcessStage  = NULL;
   ark_mem->PostProcessStage = NULL;
 
   /* No user_data pointer yet */
@@ -2745,7 +2747,8 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   /* apply user-supplied step postprocessing function (if supplied) */
   if (ark_mem->PostProcessStep != NULL)
   {
-    retval = ark_mem->PostProcessStep(ark_mem->tcur, ark_mem->ycur, ark_mem->ps_data);
+    retval = ark_mem->PostProcessStep(ark_mem->tcur, ark_mem->ycur,
+                                      ark_mem->ps_data);
     if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
   }
 

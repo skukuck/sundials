@@ -563,8 +563,8 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tn + ci * ark_mem->h, prev_stage,
-                                        ark_mem->user_data);
+      retval = ark_mem->PreProcessStage(ark_mem->tn + ci * ark_mem->h,
+                                        prev_stage, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "begin-stages-list",

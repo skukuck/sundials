@@ -1912,8 +1912,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur,
-                                        ark_mem->user_data);
+      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2184,8 +2183,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur,
-                                        ark_mem->user_data);
+      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "begin-stages-list",

@@ -616,9 +616,9 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     {
 
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessStage != NULL)
+      if (ark_mem->PreProcessRHS != NULL)
       {
-        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+        retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
         if (retval != 0)
         {
           return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -665,9 +665,9 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       if (recomputeRHS)
       {
         /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreProcessStage != NULL)
+        if (ark_mem->PreProcessRHS != NULL)
         {
-          retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+          retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
           if (retval != 0)
           {
             return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -705,9 +705,9 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   case ARK_FULLRHS_OTHER:
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
+    if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
       if (retval != 0)
       {
         return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -902,9 +902,9 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
+    if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
                                         ark_mem->user_data);
       if (retval != 0)
       {

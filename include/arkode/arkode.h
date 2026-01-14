@@ -282,8 +282,8 @@ SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStepFailFn(void* arkode_mem,
                                                    ARKPostProcessFn ProcessStep);
-SUNDIALS_EXPORT int ARKodeSetPreprocessStageFn(void* arkode_mem,
-                                               ARKPostProcessFn ProcessStage);
+SUNDIALS_EXPORT int ARKodeSetPreprocessRHSFn(void* arkode_mem,
+                                             ARKPostProcessFn ProcessRHS);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
                                                 ARKPostProcessFn ProcessStage);
 

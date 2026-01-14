@@ -1332,9 +1332,9 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     {
 
       /* apply user-supplied stage preprocessing function (if supplied) */
-      if (ark_mem->PreProcessStage != NULL)
+      if (ark_mem->PreProcessRHS != NULL)
       {
-        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+        retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
         if (retval != 0)
         {
           return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -1468,9 +1468,9 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       {
 
         /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreProcessStage != NULL)
+        if (ark_mem->PreProcessRHS != NULL)
         {
-          retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+          retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
           if (retval != 0)
           {
             return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -1587,9 +1587,9 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   case ARK_FULLRHS_OTHER:
 
     /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
+    if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
       if (retval != 0)
       {
         return (ARK_POSTPROCESS_STAGE_FAIL);
@@ -1878,9 +1878,9 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       else
       {
         /* apply user-supplied stage preprocessing function (if supplied) */
-        if (ark_mem->PreProcessStage != NULL)
+        if (ark_mem->PreProcessRHS != NULL)
         {
-          retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+          retval = ark_mem->PreProcessRHS(ark_mem->tn, ark_mem->yn,
                                             ark_mem->user_data);
           if (retval != 0)
           {
@@ -2113,9 +2113,9 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* apply user-supplied stage preprocessing function (if supplied) */
     /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
        of tcur corresponds to the stage time from the implicit table (c_i^I). */
-    if (ark_mem->PreProcessStage != NULL)
+    if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
                                         ark_mem->user_data);
       if (retval != 0)
       {

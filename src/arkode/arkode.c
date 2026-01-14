@@ -1609,7 +1609,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->ps_data             = NULL;
 
   /* No user-supplied stage pre- or post-processing functions yet */
-  ark_mem->PreProcessStage  = NULL;
+  ark_mem->PreProcessRHS    = NULL;
   ark_mem->PostProcessStage = NULL;
 
   /* No user_data pointer yet */

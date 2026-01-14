@@ -570,9 +570,11 @@ struct ARKodeMemRec
   ARKPostProcessFn PostProcessStepFail;
   void* ps_data; /* pointer to user_data */
 
-  /* User-supplied stage solution pre/post-processing functions */
-  ARKPostProcessFn PreProcessStage;
+  /* User-supplied stage solution post-processing function */
   ARKPostProcessFn PostProcessStage;
+
+  /* User-supplied RHS function pre-processing function */
+  ARKPostProcessFn PreProcessRHS;
 
   sunbooleantype use_compensated_sums;
 

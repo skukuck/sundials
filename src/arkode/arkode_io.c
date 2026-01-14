@@ -1566,15 +1566,13 @@ int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessSte
 }
 
 /*---------------------------------------------------------------
-  ARKodeSetPreprocessStageFn:
   ARKodeSetPostprocessStageFn:
 
-  Specifies user-provided stage pre- and post-processing
-  functions having type ARKPostProcessFn.  A NULL input function
-  disables pre- or post-stage processing.
+  Specifies user-provided stage post-processing
+  function having type ARKPostProcessFn.  A NULL input function
+  disables post-stage processing.
 
-  The "Preprocess" function is called just prior to taking a stage,
-  while the "Postprocess" function is called immediately after
+  The "ProcessStage" function is called immediately after
   computing a stage.
 
   IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
@@ -1588,23 +1586,6 @@ int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessSte
   ARKodeSetDeduceImplicitRhs in order to guarantee
   postprocessing constraints are enforced.
   ---------------------------------------------------------------*/
-int ARKodeSetPreprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
-{
-  ARKodeMem ark_mem;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* NULL argument sets default, otherwise set inputs */
-  ark_mem->PreProcessStage = ProcessStage;
-
-  return (ARK_SUCCESS);
-}
-
 int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 {
   ARKodeMem ark_mem;
@@ -1618,6 +1599,39 @@ int ARKodeSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
 
   /* NULL argument sets default, otherwise set inputs */
   ark_mem->PostProcessStage = ProcessStage;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  ARKodeSetPreprocessRHSFn:
+
+  Specifies user-provided pre-processing function having type
+  ARKPostProcessFn.  A NULL input function disables pre-RHS
+  processing.
+
+  The "PreprocessRHS" function is called on a state vector
+  just prior to computing the RHS.  For problems with partitioned
+  RHS functions that are called with identical inputs, this is
+  only called before the first RHS evaluation.
+
+  IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA,
+  THEN ALL THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND
+  STABILITY ARE LOST.
+  ---------------------------------------------------------------*/
+int ARKodeSetPreprocessRHSFn(void* arkode_mem, ARKPostProcessFn PreprocessRHS)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* NULL argument sets default, otherwise set inputs */
+  ark_mem->PreProcessRHS = PreprocessRHS;
 
   return (ARK_SUCCESS);
 }

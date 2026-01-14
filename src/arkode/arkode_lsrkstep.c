@@ -451,6 +451,15 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* compute the RHS */
     if (!ark_mem->fn_is_current)
     {
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
+      {
+        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+        if (retval != 0)
+        {
+          return (ARK_POSTPROCESS_STAGE_FAIL);
+        }
+      }
       retval = step_mem->fe(t, y, f, ark_mem->user_data);
       step_mem->nfe++;
       if (retval != 0)
@@ -470,6 +479,15 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
        ark_mem->fn_is_current is changed by ARKODE. */
     if (step_mem->is_SSP)
     {
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
+      {
+        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+        if (retval != 0)
+        {
+          return (ARK_POSTPROCESS_STAGE_FAIL);
+        }
+      }
       retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
       step_mem->nfe++;
       ark_mem->fn_is_current = SUNTRUE;
@@ -485,6 +503,16 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     break;
 
   case ARK_FULLRHS_OTHER:
+
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+      if (retval != 0)
+      {
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
 
     /* call f */
     retval = step_mem->fe(t, y, f, ark_mem->user_data);
@@ -610,6 +638,21 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
       (step_mem->step_nst != ark_mem->nst))
   {
+
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
+    /* call fe */
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -640,19 +683,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   bjm1 = ONE / SUNSQR(TWO * w0);
   bjm2 = bjm1;
-
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
 
   /* Evaluate the first stage */
   N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
@@ -705,8 +735,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                         ark_mem->tempv2, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -795,6 +825,19 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Compute yerr (if step adaptivity enabled) */
   if (!ark_mem->fixedstep)
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                        ark_mem->ycur, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
                           ark_mem->tempv2, ark_mem->user_data);
     step_mem->nfe++;
@@ -828,6 +871,19 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   else
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                        ark_mem->ycur, ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
                           ark_mem->tempv2, ark_mem->user_data);
     step_mem->nfe++;
@@ -948,23 +1004,22 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   /* Compute RHS function, if necessary. */
   if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
       (step_mem->step_nst != ark_mem->nst))
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -1031,8 +1086,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                         ark_mem->tempv2, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1107,20 +1162,33 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
   SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
 
+  /* apply user-supplied stage preprocessing function (if supplied) */
+  if (ark_mem->PreProcessStage != NULL)
+  {
+    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                      ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
+      return ARK_POSTPROCESS_STAGE_FAIL;
+    }
+  }
+
+  retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
+                        ark_mem->tempv2, ark_mem->user_data);
+  step_mem->nfe++;
+
+  SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
+  SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
+                "status = failed rhs eval, retval = %i", retval);
+
+  if (retval < 0) { return ARK_RHSFUNC_FAIL; }
+  if (retval > 0) { return RHSFUNC_RECVR; }
+
   /* Compute yerr (if step adaptivity enabled) */
   if (!ark_mem->fixedstep)
   {
-    retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
-                          ark_mem->tempv2, ark_mem->user_data);
-    step_mem->nfe++;
-
-    SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
-    SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
-                 "status = failed rhs eval, retval = %i", retval);
-
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
-
     /* Estimate the local error and compute its weighted RMS norm */
     cvals[0] = p8;
     Xvecs[0] = ark_mem->yn;
@@ -1143,17 +1211,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   }
   else
   {
-    retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
-                          ark_mem->tempv2, ark_mem->user_data);
-    step_mem->nfe++;
-
-    SUNLogExtraDebugVec(ARK_LOGGER, "solution RHS", ark_mem->tempv2, "F_n(:) =");
-    SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-compute-embedding",
-                 "status = failed rhs eval, retval = %i", retval);
-
-    if (retval < 0) { return ARK_RHSFUNC_FAIL; }
-    if (retval > 0) { return RHSFUNC_RECVR; }
-
     lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr);
   }
 
@@ -1218,19 +1275,6 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     bt3 = (rs - ONE) / (rs * rs);
   }
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
@@ -1239,6 +1283,19 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
      of the step unless a renewed step or ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -1280,16 +1337,16 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate stages j = 2,...,step_mem->req_stages - 1 */
   for (int j = 2; j < step_mem->req_stages; j++)
   {
+
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval =
-        ark_mem->PreProcessStage(ark_mem->tcur + (j - 1) * sm1inv * ark_mem->h,
-                                 ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - ONE) * sm1inv * ark_mem->h,
+                                        ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1335,6 +1392,18 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
 
   /* Evaluate the last stage for j = step_mem->req_stages */
+
+  if (ark_mem->PreProcessStage != NULL)
+  {
+    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                      ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
+      return ARK_POSTPROCESS_STAGE_FAIL;
+    }
+  }
   retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
                         ark_mem->tempv2, ark_mem->user_data);
   step_mem->nfe++;
@@ -1434,23 +1503,23 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   /* The method is not FSAL. Therefore, fn ​is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -1494,12 +1563,12 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur + (j - 1) * rat * ark_mem->h,
+      retval = ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - ONE) * rat * ark_mem->h,
                                         ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1551,12 +1620,12 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur + (j - 1) * rat * ark_mem->h,
+      retval = ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - ONE) * rat * ark_mem->h,
                                         ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1605,13 +1674,12 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   if (ark_mem->PreProcessStage != NULL)
   {
     retval = ark_mem->PreProcessStage(ark_mem->tcur +
-                                        rat * (rn * (rn + ONE) / TWO - ONE) *
-                                          ark_mem->h,
+                                      rat * (rn * (rn + ONE) / TWO - ONE) * ark_mem->h,
                                       ark_mem->ycur, ark_mem->user_data);
     if (retval != 0)
     {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1672,17 +1740,16 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   for (int j = (in * (in + 1) / 2 + 1); j <= step_mem->req_stages; j++)
   {
-    /* apply user-supplied stage postprocessing function (if supplied) */
+    /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval =
-        ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - rn - ONE) *
-                                                   rat * ark_mem->h,
-                                 ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PreProcessStage(ark_mem->tcur +
+                                        ((sunrealtype)j - rn - ONE) * rat * ark_mem->h,
+                                        ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed postprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -1794,23 +1861,23 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   /* The method is not FSAL. Therefore, fn ​is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -1855,8 +1922,8 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
                                       ark_mem->ycur, ark_mem->user_data);
     if (retval != 0)
     {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1900,12 +1967,12 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* apply user-supplied stage preprocessing function (if supplied) */
   if (ark_mem->PreProcessStage != NULL)
   {
-    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
-                                      ark_mem->user_data);
+    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                      ark_mem->ycur, ark_mem->user_data);
     if (retval != 0)
     {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -1955,6 +2022,19 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed postprocess stage, retval = %i", retval);
+      return ARK_POSTPROCESS_STAGE_FAIL;
+    }
+  }
+
+  /* apply user-supplied stage preprocessing function (if supplied) */
+  if (ark_mem->PreProcessStage != NULL)
+  {
+    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h * p5,
+                                      ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
@@ -2038,23 +2118,23 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
              "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
-  /* apply user-supplied stage preprocessing function (if supplied) */
-  if (ark_mem->PreProcessStage != NULL)
-  {
-    retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
-    if (retval != 0)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      return ARK_POSTPROCESS_STAGE_FAIL;
-    }
-  }
-
   /* The method is not FSAL. Therefore, fn ​is computed at the beginning
      of the step unless ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
@@ -2102,13 +2182,13 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - ONE) *
-                                                          onesixth * ark_mem->h,
+      retval = ark_mem->PreProcessStage(ark_mem->tcur +
+                                        ((sunrealtype)j - ONE) * onesixth * ark_mem->h,
                                         ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -2181,16 +2261,16 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   for (int j = 6; j <= 9; j++)
   {
-    /* apply user-supplied stage prerocessing function (if supplied) */
+    /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessStage != NULL)
     {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur + ((sunrealtype)j - FOUR) *
-                                                          onesixth * ark_mem->h,
+      retval = ark_mem->PreProcessStage(ark_mem->tcur +
+                                        ((sunrealtype)j - FOUR) * onesixth * ark_mem->h,
                                         ark_mem->ycur, ark_mem->user_data);
       if (retval != 0)
       {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                  "status = failed preprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
     }
@@ -2238,6 +2318,19 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                    "status = failed postprocess stage, retval = %i", retval);
         return ARK_POSTPROCESS_STAGE_FAIL;
       }
+    }
+  }
+
+  /* apply user-supplied stage preprocessing function (if supplied) */
+  if (ark_mem->PreProcessStage != NULL)
+  {
+    retval = ark_mem->PreProcessStage(ark_mem->tcur + ark_mem->h,
+                                      ark_mem->ycur, ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                "status = failed preprocess stage, retval = %i", retval);
+      return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
 
@@ -2650,6 +2743,17 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
   if ((!ark_mem->fn_is_current && ark_mem->initsetup) ||
       (step_mem->step_nst != ark_mem->nst))
   {
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
+
     retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfeDQ++;
@@ -2673,7 +2777,14 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
     N_VLinearSum(sig, v, ONE, y, work);
 
     /* Set Jv = f(tn, y+sig*v) */
-    //TODO:Needs to be update when LSRK Supports IMEX
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(t, work, ark_mem->user_data);
+      if (retval != 0)
+      {
+        return ARK_POSTPROCESS_STAGE_FAIL;
+      }
+    }
     retval = step_mem->fe(t, work, Jv, ark_mem->user_data);
     step_mem->nfeDQ++;
     if (retval == 0) { break; }

@@ -1330,29 +1330,14 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* compute the full RHS */
     if (!(ark_mem->fn_is_current))
     {
-      /* compute the explicit component */
-      if (step_mem->explicit)
+
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
       {
-        retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
-        step_mem->nfe++;
+        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
         if (retval != 0)
         {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
-          return (ARK_RHSFUNC_FAIL);
-        }
-
-        /* compute and store M(t)^{-1} fe */
-        if (step_mem->mass_type == MASS_TIMEDEP)
-        {
-          retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
-                                    step_mem->nlscoef / ark_mem->h);
-          if (retval)
-          {
-            arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                            __FILE__, "Mass matrix solver failure");
-            return ARK_MASSSOLVE_FAIL;
-          }
+          return (ARK_POSTPROCESS_STAGE_FAIL);
         }
       }
 
@@ -1372,6 +1357,32 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
         if (step_mem->mass_type == MASS_TIMEDEP)
         {
           retval = step_mem->msolve((void*)ark_mem, step_mem->Fi[0],
+                                    step_mem->nlscoef / ark_mem->h);
+          if (retval)
+          {
+            arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                            __FILE__, "Mass matrix solver failure");
+            return ARK_MASSSOLVE_FAIL;
+          }
+        }
+      }
+
+      /* compute the explicit component */
+      if (step_mem->explicit)
+      {
+        retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
+        step_mem->nfe++;
+        if (retval != 0)
+        {
+          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
+          return (ARK_RHSFUNC_FAIL);
+        }
+
+        /* compute and store M(t)^{-1} fe */
+        if (step_mem->mass_type == MASS_TIMEDEP)
+        {
+          retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
                                     step_mem->nlscoef / ark_mem->h);
           if (retval)
           {
@@ -1455,29 +1466,14 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       /* recompute RHS functions */
       if (recomputeRHS)
       {
-        /* compute the explicit component */
-        if (step_mem->explicit)
+
+        /* apply user-supplied stage preprocessing function (if supplied) */
+        if (ark_mem->PreProcessStage != NULL)
         {
-          retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
-          step_mem->nfe++;
+          retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
           if (retval != 0)
           {
-            arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                            __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
-            return (ARK_RHSFUNC_FAIL);
-          }
-
-          /* compute and store M(t)^{-1} fi */
-          if (step_mem->mass_type == MASS_TIMEDEP)
-          {
-            retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
-                                      step_mem->nlscoef / ark_mem->h);
-            if (retval)
-            {
-              arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
-                              __FILE__, "Mass matrix solver failure");
-              return ARK_MASSSOLVE_FAIL;
-            }
+            return (ARK_POSTPROCESS_STAGE_FAIL);
           }
         }
 
@@ -1497,6 +1493,32 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
           if (step_mem->mass_type == MASS_TIMEDEP)
           {
             retval = step_mem->msolve((void*)ark_mem, step_mem->Fi[0],
+                                      step_mem->nlscoef / ark_mem->h);
+            if (retval)
+            {
+              arkProcessError(ark_mem, ARK_MASSSOLVE_FAIL, __LINE__, __func__,
+                              __FILE__, "Mass matrix solver failure");
+              return ARK_MASSSOLVE_FAIL;
+            }
+          }
+        }
+
+        /* compute the explicit component */
+        if (step_mem->explicit)
+        {
+          retval = step_mem->fe(t, y, step_mem->Fe[0], ark_mem->user_data);
+          step_mem->nfe++;
+          if (retval != 0)
+          {
+            arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                            __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
+            return (ARK_RHSFUNC_FAIL);
+          }
+
+          /* compute and store M(t)^{-1} fi */
+          if (step_mem->mass_type == MASS_TIMEDEP)
+          {
+            retval = step_mem->msolve((void*)ark_mem, step_mem->Fe[0],
                                       step_mem->nlscoef / ark_mem->h);
             if (retval)
             {
@@ -1564,16 +1586,13 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
 
   case ARK_FULLRHS_OTHER:
 
-    /* compute the explicit component and store in ark_tempv2 */
-    if (step_mem->explicit)
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
     {
-      retval = step_mem->fe(t, y, ark_mem->tempv2, ark_mem->user_data);
-      step_mem->nfe++;
+      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
       if (retval != 0)
       {
-        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                        MSG_ARK_RHSFUNC_FAILED, t);
-        return (ARK_RHSFUNC_FAIL);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
 
@@ -1582,6 +1601,19 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     {
       retval = step_mem->fi(t, y, step_mem->sdata, ark_mem->user_data);
       step_mem->nfi++;
+      if (retval != 0)
+      {
+        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                        MSG_ARK_RHSFUNC_FAILED, t);
+        return (ARK_RHSFUNC_FAIL);
+      }
+    }
+
+    /* compute the explicit component and store in ark_tempv2 */
+    if (step_mem->explicit)
+    {
+      retval = step_mem->fe(t, y, ark_mem->tempv2, ark_mem->user_data);
+      step_mem->nfe++;
       if (retval != 0)
       {
         arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
@@ -1845,6 +1877,16 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
       else
       {
+        /* apply user-supplied stage preprocessing function (if supplied) */
+        if (ark_mem->PreProcessStage != NULL)
+        {
+          retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->yn,
+                                            ark_mem->user_data);
+          if (retval != 0)
+          {
+            return (ARK_POSTPROCESS_STAGE_FAIL);
+          }
+        }
         retval = step_mem->fi(ark_mem->tn, ark_mem->yn, step_mem->Fi[0],
                               ark_mem->user_data);
         step_mem->nfi++;
@@ -1916,21 +1958,6 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, implicit = %i, tcur = " SUN_FORMAT_G, is,
                implicit_stage, ark_mem->tcur);
-
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
-       of tcur corresponds to the stage time from the implicit table (c_i^I). */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
 
     /* setup time-dependent mass matrix */
     if ((step_mem->mass_type == MASS_TIMEDEP) && (step_mem->msetup != NULL))
@@ -2080,6 +2107,21 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                           errcode);
           return ARK_ADJ_CHECKPOINT_FAIL;
         }
+      }
+    }
+
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    /* NOTE: with internally inconsistent IMEX methods (c_i^E != c_i^I) the value
+       of tcur corresponds to the stage time from the implicit table (c_i^I). */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
+      if (retval != 0)
+      {
+        SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                   "status = failed preprocess stage, retval = %i", retval);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
 

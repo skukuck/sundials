@@ -560,25 +560,26 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                ark_mem->tn + ci * ark_mem->h, ark_mem->tn + chati * ark_mem->h);
     SUNLogExtraDebugVec(ARK_LOGGER, "stage", prev_stage, "z2_%i(:) =", is);
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(ark_mem->tn + ci * ark_mem->h,
-                                        prev_stage, ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     /* evaluate p' with the previous velocity */
     if (SUNRabs(ahati) > TINY)
     {
       N_VConst(ZERO, step_mem->sdata); /* either have to do this or ask user to
                                           set other outputs to zero */
 
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
+      {
+        retval = ark_mem->PreProcessStage(ark_mem->tn + chati * ark_mem->h,
+                                          prev_stage, ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                      "status = failed preprocess stage, retval = %i", retval);
+          return (ARK_POSTPROCESS_STAGE_FAIL);
+        }
+      }
+
+      /* evaluate p' */
       retval = sprkStep_f1(step_mem, ark_mem->tn + chati * ark_mem->h,
                            prev_stage, step_mem->sdata, ark_mem->user_data);
 
@@ -608,6 +609,20 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       N_VConst(ZERO, step_mem->sdata); /* either have to do this or ask user to
                                         set other outputs to zero */
 
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
+      {
+        retval = ark_mem->PreProcessStage(ark_mem->tn + ci * ark_mem->h,
+                                          curr_stage, ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                      "status = failed preprocess stage, retval = %i", retval);
+          return (ARK_POSTPROCESS_STAGE_FAIL);
+        }
+      }
+
+      /* evaluate q' */
       retval = sprkStep_f2(step_mem, ark_mem->tn + ci * ark_mem->h, curr_stage,
                            step_mem->sdata, ark_mem->user_data);
 
@@ -682,6 +697,20 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
      [ \Delta Q_0 ] = [ 0 ] */
   N_VConst(ZERO, delta_Yi);
 
+  /* if user-supplied stage preprocessing or postprocessing functions,
+    * we error out since those won't work with the increment form */
+  if ((ark_mem->PreProcessStage != NULL) || (ark_mem->PostProcessStage != NULL))
+  {
+    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+               "status = failed stage stage processing, retval = %i",
+               ARK_POSTPROCESS_STAGE_FAIL);
+    arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
+                    __FILE__,
+                    "Compensated summation is not compatible with stage "
+                    "Pre- or PostProcessing!\n");
+    return (ARK_POSTPROCESS_STAGE_FAIL);
+  }
+
   /* loop over internal stages to the step */
   for (is = 0; is < step_mem->method->stages; is++)
   {
@@ -698,19 +727,6 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, t = " SUN_FORMAT_G ", that = " SUN_FORMAT_G, is,
                ark_mem->tn + ci * ark_mem->h, ark_mem->tn + chati * ark_mem->h);
-
-    /* if user-supplied stage preprocessing function, we error out since it
-     * won't work with the increment form */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                 "status = failed preprocess stage, retval = %i", retval);
-      arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Compensated summation is not compatible with stage "
-                      "PreProcessing!\n");
-      return (ARK_POSTPROCESS_STAGE_FAIL);
-    }
 
     /* [     ] + [            ]
        [ q_n ] + [ \Delta Q_i ] */
@@ -773,19 +789,6 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
          [            ] = [                ] + [       ]
          [ \Delta Q_i ] = [ \Delta Q_{i-1} ] + [ sdata ] */
       N_VLinearSum(ONE, delta_Yi, ark_mem->h * ai, step_mem->sdata, delta_Yi);
-    }
-
-    /* if user-supplied stage postprocessing function, we error out since it
-     * won't work with the increment form */
-    if (ark_mem->PostProcessStage != NULL)
-    {
-      SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                 "status = failed postprocess stage, retval = %i", retval);
-      arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
-                      __FILE__,
-                      "Compensated summation is not compatible with stage "
-                      "PostProcessing!\n");
-      return (ARK_POSTPROCESS_STAGE_FAIL);
     }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");

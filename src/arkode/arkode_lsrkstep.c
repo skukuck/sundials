@@ -516,7 +516,9 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
 
   The output variable dsmPtr should contain estimate of the
   weighted local error if an embedding is present; otherwise it
-  should be 0.  The variables (ark_mem->tcur, ark_mem->ycur) should
+  should be 0.
+
+  The variables (ark_mem->tcur, ark_mem->ycur) should
   contain the current time and solution at each stage of within
   the time step.
 
@@ -644,11 +646,11 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
        (SUNRcosh(arg) * step_mem->req_stages * temp2 - w0 * SUNRsinh(arg));
   bjm1 = ONE / SUNSQR(TWO * w0);
   bjm2 = bjm1;
+  mus = w1 * bjm1;
 
   /* Evaluate the first stage */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
   N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
-  mus = w1 * bjm1;
+  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
              1, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, ark_mem->ycur);
@@ -826,6 +828,10 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   weighted local error if an embedding is present; otherwise it
   should be 0.
 
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at each stage of within
+  the time step.
+
   The input/output variable nflagPtr is generally used in ARKODE
   to gauge the convergence of any algebraic solvers. However, since
   the STS step routines do not involve an algebraic solve, this variable
@@ -861,7 +867,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* initialize the current solution */
+  /* Initialize the current solution */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
@@ -948,22 +954,19 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   w1 = FOUR / ((step_mem->req_stages + TWO) * (step_mem->req_stages - ONE));
   bjm2 = ONE / THREE;
   bjm1 = bjm2;
-
-  /* Evaluate the first stage */
-  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
-  N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
   mus  = w1 * bjm1;
   cjm1 = mus;
+
+  /* Evaluate the first stage */
+  N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
+  ark_mem->tcur = ark_mem->tn + ark_mem->h * mus;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
              1, ark_mem->tcur);
-  // N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, ark_mem->tempv2);
   N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, ark_mem->ycur);
 
   /* apply user-supplied stage postprocessing function (if supplied) */
   if (ark_mem->ProcessStage != NULL)
   {
-    // retval = ark_mem->ProcessStage(ark_mem->tcur,
-    //                                ark_mem->tempv2, ark_mem->user_data);
     retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
                                    ark_mem->user_data);
     if (retval != 0)
@@ -979,8 +982,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   {
     /* Evaluate RHS and store in tempv3 */
     ark_mem->tcur = ark_mem->tn + ark_mem->h * cjm1;
-    // retval = step_mem->fe(ark_mem->tcur, ark_mem->tempv2,
-    //                       ark_mem->tempv3, ark_mem->user_data);
     retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur,
                           ark_mem->tempv3, ark_mem->user_data);
     step_mem->nfe++;
@@ -1117,6 +1118,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   weighted local error if an embedding is present; otherwise it
   should be 0.
 
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at each stage of within
+  the time step.
+
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
   involves no algebraic solve, it is set to 0 (success).
@@ -1144,6 +1149,11 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
+  /* Initialize the current solution */
+  ark_mem->tcur = ark_mem->tn;
+  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+
+  /* Initialize method coefficients */
   sunrealtype rs     = (sunrealtype)step_mem->req_stages;
   sunrealtype sm1inv = ONE / (rs - ONE);
   sunrealtype bt1, bt2, bt3;
@@ -1168,15 +1178,14 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
   /* The method is not FSAL. Therefore, fn ​is computed at the beginning
-     of the step unless a renewed step or ARKODE updated fn. */
+     of the step unless the previous step failed or ARKODE updated fn. */
   if (!ark_mem->fn_is_current)
   {
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tn, ark_mem->ycur, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
     {
-      SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
       return (ARK_RHSFUNC_FAIL);
@@ -1186,9 +1195,11 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->fn, "F_0(:) =");
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
-  SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
-             1, ark_mem->tn + ark_mem->h * sm1inv);
 
+  /* Begin the first stage, and accumulate embedding into tempv1 */
+  ark_mem->tcur = ark_mem->tn + sm1inv * ark_mem->h;
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
+             1, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->yn, sm1inv * ark_mem->h, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {
@@ -1199,8 +1210,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* apply user-supplied stage postprocessing function (if supplied) */
   if (ark_mem->ProcessStage != NULL)
   {
-    retval = ark_mem->ProcessStage(ark_mem->tn + sm1inv * ark_mem->h,
-                                   ark_mem->ycur, ark_mem->user_data);
+    retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                   ark_mem->user_data);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1212,9 +1223,10 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate stages j = 2,...,step_mem->req_stages - 1 */
   for (int j = 2; j < step_mem->req_stages; j++)
   {
-    retval =
-      step_mem->fe(ark_mem->tcur + ((sunrealtype)j - ONE) * sm1inv * ark_mem->h,
-                   ark_mem->ycur, ark_mem->tempv2, ark_mem->user_data);
+    /* Complete previous stage by evaluating RHS and storing it in tempv2 */
+    ark_mem->tcur = ark_mem->tn + (j - 1) * sm1inv * ark_mem->h;
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                          ark_mem->user_data);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv2,
@@ -1226,10 +1238,12 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     if (retval > 0) { return RHSFUNC_RECVR; }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
+
+    /* Begin the j-th stage by updating the state and embedding */
+    ark_mem->tcur = ark_mem->tn + j * sm1inv * ark_mem->h;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j,
-               ark_mem->tn + ark_mem->h * j * sm1inv);
-
+               ark_mem->tcur);
     N_VLinearSum(ONE, ark_mem->ycur, sm1inv * ark_mem->h, ark_mem->tempv2,
                  ark_mem->ycur);
     if (!ark_mem->fixedstep)
@@ -1241,8 +1255,8 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     /* apply user-supplied stage postprocessing function (if supplied) */
     if (ark_mem->ProcessStage != NULL)
     {
-      retval = ark_mem->ProcessStage(ark_mem->tcur + j * sm1inv * ark_mem->h,
-                                     ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->ProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                     ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -1252,9 +1266,10 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
-  /* Evaluate the last stage for j = step_mem->req_stages */
-  retval = step_mem->fe(ark_mem->tcur + ark_mem->h, ark_mem->ycur,
-                        ark_mem->tempv2, ark_mem->user_data);
+  /* Complete the next-to-last stage by evaluating the RHS and storing it in tempv2 */
+  ark_mem->tcur = ark_mem->tn + ark_mem->h;
+  retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv2,
+                        ark_mem->user_data);
   step_mem->nfe++;
 
   SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv2,
@@ -1266,16 +1281,16 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   if (retval > 0) { return RHSFUNC_RECVR; }
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
-  SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
-             step_mem->req_stages, ark_mem->tn + ark_mem->h);
 
+  /* Compute the step solution */
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = %i, tcur = " SUN_FORMAT_G,
+             step_mem->req_stages, ark_mem->tcur);
   cvals[0] = ONE / (sm1inv * rs);
   Xvecs[0] = ark_mem->ycur;
   cvals[1] = ONE / rs;
   Xvecs[1] = ark_mem->yn;
   cvals[2] = ark_mem->h / rs;
   Xvecs[2] = ark_mem->tempv2;
-
   retval = N_VLinearCombination(3, cvals, Xvecs, ark_mem->ycur);
   if (retval != 0)
   {
@@ -1294,7 +1309,6 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
                  ark_mem->tempv1);
     SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->tempv1,
                         "y_embedded(:) =");
-
     N_VLinearSum(ONE, ark_mem->ycur, -ONE, ark_mem->tempv1, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
   }
@@ -1315,6 +1329,10 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   The output variable dsmPtr should contain estimate of the
   weighted local error if an embedding is present; otherwise it
   should be 0.
+
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at each stage of within
+  the time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
@@ -1603,6 +1621,10 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   weighted local error if an embedding is present; otherwise it
   should be 0.
 
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at each stage of within
+  the time step.
+
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine
   involves no algebraic solve, it is set to 0 (success).
@@ -1808,6 +1830,10 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   The output variable dsmPtr should contain estimate of the
   weighted local error if an embedding is present; otherwise it
   should be 0.
+
+  The variables (ark_mem->tcur, ark_mem->ycur) should
+  contain the current time and solution at each stage of within
+  the time step.
 
   The input/output variable nflagPtr is used to gauge convergence
   of any algebraic solvers within the step.  As this routine

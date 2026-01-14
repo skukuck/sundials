@@ -1476,20 +1476,14 @@ int mriStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     step_mem->Xvecs[nvec] = f;
     nvec++;
 
-    /* compute the explicit component and store in ark_tempv2 */
-    if (step_mem->explicit_rhs)
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
     {
-      retval = step_mem->fse(t, y, ark_mem->tempv2, ark_mem->user_data);
-      step_mem->nfse++;
+      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
       if (retval != 0)
       {
-        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                        MSG_ARK_RHSFUNC_FAILED, t);
-        return (ARK_RHSFUNC_FAIL);
+        return (ARK_POSTPROCESS_STAGE_FAIL);
       }
-      step_mem->cvals[nvec] = ONE;
-      step_mem->Xvecs[nvec] = ark_mem->tempv2;
-      nvec++;
     }
 
     /* compute the implicit component and store in sdata */
@@ -1505,6 +1499,22 @@ int mriStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       }
       step_mem->cvals[nvec] = ONE;
       step_mem->Xvecs[nvec] = step_mem->sdata;
+      nvec++;
+    }
+
+    /* compute the explicit component and store in ark_tempv2 */
+    if (step_mem->explicit_rhs)
+    {
+      retval = step_mem->fse(t, y, ark_mem->tempv2, ark_mem->user_data);
+      step_mem->nfse++;
+      if (retval != 0)
+      {
+        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                        MSG_ARK_RHSFUNC_FAILED, t);
+        return (ARK_RHSFUNC_FAIL);
+      }
+      step_mem->cvals[nvec] = ONE;
+      step_mem->Xvecs[nvec] = ark_mem->tempv2;
       nvec++;
     }
 
@@ -1597,32 +1607,15 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 
     /* update the RHS components */
 
-    /*   explicit component */
-    if (step_mem->explicit_rhs)
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if ((ark_mem->PreProcessStage != NULL) &&
+        ((!step_mem->fse_is_current || !ark_mem->fn_is_current) ||
+         (!step_mem->fsi_is_current || !ark_mem->fn_is_current)))
     {
-      /* if either ARKODE or MRIStep consider Fse[0] stale, then recompute */
-      if (!step_mem->fse_is_current || !ark_mem->fn_is_current)
+      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+      if (retval != 0)
       {
-        retval = step_mem->fse(t, y, step_mem->Fse[0], ark_mem->user_data);
-        step_mem->nfse++;
-        if (retval != 0)
-        {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
-                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
-          return (ARK_RHSFUNC_FAIL);
-        }
-        step_mem->fse_is_current = SUNTRUE;
-
-        /* Add external forcing, if applicable */
-        if (step_mem->expforcing)
-        {
-          step_mem->cvals[0] = ONE;
-          step_mem->Xvecs[0] = step_mem->Fse[0];
-          nvec               = 1;
-          mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
-          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
-                               step_mem->Fse[0]);
-        }
+        return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
 
@@ -1655,15 +1648,11 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
       }
     }
 
-    break;
-
-  case ARK_FULLRHS_END:
-
-    /* compute the full RHS */
-    if (!(ark_mem->fn_is_current))
+    /*   explicit component */
+    if (step_mem->explicit_rhs)
     {
-      /* compute the explicit component */
-      if (step_mem->explicit_rhs)
+      /* if either ARKODE or MRIStep consider Fse[0] stale, then recompute */
+      if (!step_mem->fse_is_current || !ark_mem->fn_is_current)
       {
         retval = step_mem->fse(t, y, step_mem->Fse[0], ark_mem->user_data);
         step_mem->nfse++;
@@ -1675,7 +1664,7 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
         }
         step_mem->fse_is_current = SUNTRUE;
 
-        /* Add external forcing, as appropriate */
+        /* Add external forcing, if applicable */
         if (step_mem->expforcing)
         {
           step_mem->cvals[0] = ONE;
@@ -1684,6 +1673,25 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
           mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
           N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
                                step_mem->Fse[0]);
+        }
+      }
+    }
+
+    break;
+
+  case ARK_FULLRHS_END:
+
+    /* compute the full RHS */
+    if (!(ark_mem->fn_is_current))
+    {
+
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
+      {
+        retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+        if (retval != 0)
+        {
+          return (ARK_POSTPROCESS_STAGE_FAIL);
         }
       }
 
@@ -1711,6 +1719,32 @@ int mriStep_UpdateF0(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                                step_mem->Fsi[0]);
         }
       }
+
+      /* compute the explicit component */
+      if (step_mem->explicit_rhs)
+      {
+        retval = step_mem->fse(t, y, step_mem->Fse[0], ark_mem->user_data);
+        step_mem->nfse++;
+        if (retval != 0)
+        {
+          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                          __FILE__, MSG_ARK_RHSFUNC_FAILED, t);
+          return (ARK_RHSFUNC_FAIL);
+        }
+        step_mem->fse_is_current = SUNTRUE;
+
+        /* Add external forcing, as appropriate */
+        if (step_mem->expforcing)
+        {
+          step_mem->cvals[0] = ONE;
+          step_mem->Xvecs[0] = step_mem->Fse[0];
+          nvec               = 1;
+          mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
+          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
+                               step_mem->Fse[0]);
+        }
+      }
+
     }
 
     break;
@@ -1909,18 +1943,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
                step_mem->stagetypes[is], ark_mem->tcur);
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur, ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     /* Determine current stage type, and call corresponding routine; the
        vector ark_mem->ycur stores the previous stage solution on input, and
        should store the result of this stage solution on output. */
@@ -2007,32 +2029,17 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
     if (calc_fslow)
     {
-      /* store explicit slow rhs */
-      if (step_mem->explicit_rhs)
+
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
       {
-        retval = step_mem->fse(ark_mem->tcur, ark_mem->ycur,
-                               step_mem->Fse[step_mem->stage_map[is]],
-                               ark_mem->user_data);
-        step_mem->nfse++;
-
-        SUNLogExtraDebugVec(ARK_LOGGER, "slow explicit RHS",
-                            step_mem->Fse[step_mem->stage_map[is]],
-                            "Fse_%i(:) =", is);
-        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
-                     "status = failed explicit rhs eval, retval = %i", retval);
-
-        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
-
-        /* Add external forcing to Fse, if applicable */
-        if (step_mem->expforcing)
+        retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+        if (retval != 0)
         {
-          step_mem->cvals[0] = ONE;
-          step_mem->Xvecs[0] = step_mem->Fse[step_mem->stage_map[is]];
-          nvec               = 1;
-          mriStep_ApplyForcing(step_mem, tf, ONE, &nvec);
-          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
-                               step_mem->Fse[step_mem->stage_map[is]]);
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed preprocess stage, retval = %i", retval);
+          return (ARK_POSTPROCESS_STAGE_FAIL);
         }
       }
 
@@ -2076,6 +2083,35 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
           SUNLogExtraDebugVec(ARK_LOGGER, "slow implicit RHS",
                               step_mem->Fsi[step_mem->stage_map[is]],
                               "Fsi_%i(:) =", is);
+        }
+      }
+
+      /* store explicit slow rhs */
+      if (step_mem->explicit_rhs)
+      {
+        retval = step_mem->fse(ark_mem->tcur, ark_mem->ycur,
+                               step_mem->Fse[step_mem->stage_map[is]],
+                               ark_mem->user_data);
+        step_mem->nfse++;
+
+        SUNLogExtraDebugVec(ARK_LOGGER, "slow explicit RHS",
+                            step_mem->Fse[step_mem->stage_map[is]],
+                            "Fse_%i(:) =", is);
+        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
+                     "status = failed explicit rhs eval, retval = %i", retval);
+
+        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+
+        /* Add external forcing to Fse, if applicable */
+        if (step_mem->expforcing)
+        {
+          step_mem->cvals[0] = ONE;
+          step_mem->Xvecs[0] = step_mem->Fse[step_mem->stage_map[is]];
+          nvec               = 1;
+          mriStep_ApplyForcing(step_mem, tf, ONE, &nvec);
+          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
+                               step_mem->Fse[step_mem->stage_map[is]]);
         }
       }
     } /* compute slow RHS */
@@ -2179,18 +2215,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, is,
                step_mem->stagetypes[is], ark_mem->tcur);
-
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(t0, ark_mem->ycur, ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
 
     /* Determine final stage type, and call corresponding routine; the
        vector ark_mem->ycur stores the previous stage solution on input, and
@@ -2477,19 +2501,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                "stage = %i, stage type = %d, tcur = " SUN_FORMAT_G, stage,
                MRISTAGE_ERK_FAST, ark_mem->tn + cstage * ark_mem->h);
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->ycur,
-                                        ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     /* Compute forcing function for inner solver */
     retval = mriStep_ComputeInnerForcing(ark_mem, step_mem, stage, ark_mem->tn,
                                          ark_mem->tn + cstage * ark_mem->h);
@@ -2662,30 +2673,17 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* Compute updated slow RHS (except for final solution or embedding) */
     if ((!solution) && (!embedding))
     {
-      /* store explicit slow rhs */
-      if (step_mem->explicit_rhs)
+
+      /* apply user-supplied stage preprocessing function (if supplied) */
+      if (ark_mem->PreProcessStage != NULL)
       {
-        retval = step_mem->fse(ark_mem->tcur, ark_mem->ycur,
-                               step_mem->Fse[stage], ark_mem->user_data);
-        step_mem->nfse++;
-
-        SUNLogExtraDebugVec(ARK_LOGGER, "slow explicit RHS",
-                            step_mem->Fse[stage], "Fse_%i(:) =", stage);
-        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
-                     "status = failed explicit rhs eval, retval = %i", retval);
-
-        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
-        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
-
-        /* Add external forcing to Fse[stage], if applicable */
-        if (step_mem->expforcing)
+        retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+        if (retval != 0)
         {
-          step_mem->cvals[0] = ONE;
-          step_mem->Xvecs[0] = step_mem->Fse[stage];
-          nvec               = 1;
-          mriStep_ApplyForcing(step_mem, ark_mem->tcur, ONE, &nvec);
-          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
-                               step_mem->Fse[stage]);
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed preprocess stage, retval = %i", retval);
+          return (ARK_POSTPROCESS_STAGE_FAIL);
         }
       }
 
@@ -2725,6 +2723,33 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
           SUNLogExtraDebugVec(ARK_LOGGER, "slow implicit RHS",
                               step_mem->Fsi[stage], "Fsi_%i(:) =", stage);
+        }
+      }
+
+      /* store explicit slow rhs */
+      if (step_mem->explicit_rhs)
+      {
+        retval = step_mem->fse(ark_mem->tcur, ark_mem->ycur,
+                               step_mem->Fse[stage], ark_mem->user_data);
+        step_mem->nfse++;
+
+        SUNLogExtraDebugVec(ARK_LOGGER, "slow explicit RHS",
+                            step_mem->Fse[stage], "Fse_%i(:) =", stage);
+        SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
+                     "status = failed explicit rhs eval, retval = %i", retval);
+
+        if (retval < 0) { return (ARK_RHSFUNC_FAIL); }
+        if (retval > 0) { return (ARK_UNREC_RHSFUNC_ERR); }
+
+        /* Add external forcing to Fse[stage], if applicable */
+        if (step_mem->expforcing)
+        {
+          step_mem->cvals[0] = ONE;
+          step_mem->Xvecs[0] = step_mem->Fse[stage];
+          nvec               = 1;
+          mriStep_ApplyForcing(step_mem, ark_mem->tcur, ONE, &nvec);
+          N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
+                               step_mem->Fse[stage]);
         }
       }
 
@@ -2929,19 +2954,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       lowest_stage = SUNMIN(lowest_stage, step_mem->MRIC->group[ig][il]);
     }
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessStage != NULL)
-    {
-      retval = ark_mem->PreProcessStage(ark_mem->tn, ark_mem->ycur,
-                                        ark_mem->user_data);
-      if (retval != 0)
-      {
-        SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
-    }
-
     /* Set up fast RHS for this stage group */
     retval = mriStep_ComputeInnerForcing(ark_mem, step_mem, lowest_stage,
                                          ark_mem->tn, ark_mem->tn + ark_mem->h);
@@ -3070,6 +3082,19 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       /* Compute updated slow RHS (except for final solution or embedding) */
       if ((!solution) && (!embedding))
       {
+        /* apply user-supplied stage preprocessing function (if supplied) */
+        if (ark_mem->PreProcessStage != NULL)
+        {
+          retval = ark_mem->PreProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                            ark_mem->user_data);
+          if (retval != 0)
+          {
+            SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                      "status = failed preprocess stage, retval = %i", retval);
+            return (ARK_POSTPROCESS_STAGE_FAIL);
+          }
+        }
+
         /* store explicit slow rhs */
         retval = step_mem->fse(ark_mem->tcur, ark_mem->ycur,
                                step_mem->Fse[stage], ark_mem->user_data);
@@ -4216,28 +4241,13 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* call fse if the problem has an explicit component */
-  if (step_mem->explicit_rhs)
+  /* apply user-supplied stage preprocessing function (if supplied) */
+  if (ark_mem->PreProcessStage != NULL)
   {
-    retval = step_mem->fse(t, y, step_mem->Fse[0], ark_mem->user_data);
-    step_mem->nfse++;
-    step_mem->fse_is_current = SUNTRUE;
+    retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
     if (retval != 0)
     {
-      arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                      MSG_ARK_RHSFUNC_FAILED, t);
-      return (ARK_RHSFUNC_FAIL);
-    }
-
-    /* Add external forcing, if applicable */
-    if (step_mem->expforcing)
-    {
-      step_mem->cvals[0] = ONE;
-      step_mem->Xvecs[0] = step_mem->Fse[0];
-      nvec               = 1;
-      mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
-      N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
-                           step_mem->Fse[0]);
+      return (ARK_POSTPROCESS_STAGE_FAIL);
     }
   }
 
@@ -4263,6 +4273,31 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
       N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
                            step_mem->Fsi[0]);
+    }
+  }
+
+  /* call fse if the problem has an explicit component */
+  if (step_mem->explicit_rhs)
+  {
+    retval = step_mem->fse(t, y, step_mem->Fse[0], ark_mem->user_data);
+    step_mem->nfse++;
+    step_mem->fse_is_current = SUNTRUE;
+    if (retval != 0)
+    {
+      arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_ARK_RHSFUNC_FAILED, t);
+      return (ARK_RHSFUNC_FAIL);
+    }
+
+    /* Add external forcing, if applicable */
+    if (step_mem->expforcing)
+    {
+      step_mem->cvals[0] = ONE;
+      step_mem->Xvecs[0] = step_mem->Fse[0];
+      nvec               = 1;
+      mriStep_ApplyForcing(step_mem, t, ONE, &nvec);
+      N_VLinearCombination(nvec, step_mem->cvals, step_mem->Xvecs,
+                           step_mem->Fse[0]);
     }
   }
 

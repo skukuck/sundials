@@ -492,6 +492,16 @@ int sprkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   case ARK_FULLRHS_END:
   case ARK_FULLRHS_OTHER:
 
+    /* apply user-supplied stage preprocessing function (if supplied) */
+    if (ark_mem->PreProcessStage != NULL)
+    {
+      retval = ark_mem->PreProcessStage(t, y, ark_mem->user_data);
+      if (retval != 0)
+      {
+        return (ARK_POSTPROCESS_STAGE_FAIL);
+      }
+    }
+
     /* Since f1 and f2 do not have overlapping outputs and so the f vector is
        passed to both RHS functions. */
 

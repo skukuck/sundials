@@ -2510,7 +2510,8 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
        mass matrix solve when computing the full RHS. Before calling arkHin, h
        is set to |tout - tcur| or 1 and so we do not need to guard against
        h == 0 here before calling the full RHS. */
-    retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->yn,
+    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, ARK_FULLRHS_START);
     if (retval) { return ARK_RHSFUNC_FAIL; }
     ark_mem->fn_is_current = SUNTRUE;

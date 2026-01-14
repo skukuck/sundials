@@ -1330,15 +1330,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     /* compute the full RHS */
     if (!(ark_mem->fn_is_current))
     {
-
       /* apply user-supplied stage preprocessing function (if supplied) */
       if (ark_mem->PreProcessRHS != NULL)
       {
         retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
-        if (retval != 0)
-        {
-          return (ARK_POSTPROCESS_STAGE_FAIL);
-        }
+        if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
       }
 
       /* compute the implicit component */
@@ -1466,15 +1462,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       /* recompute RHS functions */
       if (recomputeRHS)
       {
-
         /* apply user-supplied stage preprocessing function (if supplied) */
         if (ark_mem->PreProcessRHS != NULL)
         {
           retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
-          if (retval != 0)
-          {
-            return (ARK_POSTPROCESS_STAGE_FAIL);
-          }
+          if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
         }
 
         /* compute the implicit component */
@@ -1590,10 +1582,7 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     if (ark_mem->PreProcessRHS != NULL)
     {
       retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
-      if (retval != 0)
-      {
-        return (ARK_POSTPROCESS_STAGE_FAIL);
-      }
+      if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
     }
 
     /* compute the implicit component and store in sdata */
@@ -1881,11 +1870,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         if (ark_mem->PreProcessRHS != NULL)
         {
           retval = ark_mem->PreProcessRHS(ark_mem->tn, ark_mem->yn,
-                                            ark_mem->user_data);
-          if (retval != 0)
-          {
-            return (ARK_POSTPROCESS_STAGE_FAIL);
-          }
+                                          ark_mem->user_data);
+          if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
         }
         retval = step_mem->fi(ark_mem->tn, ark_mem->yn, step_mem->Fi[0],
                               ark_mem->user_data);
@@ -2116,7 +2102,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     if (ark_mem->PreProcessRHS != NULL)
     {
       retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
+                                      ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",

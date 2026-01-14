@@ -1772,7 +1772,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   ARKodeMRIStepMem step_mem;          /* outer stepper memory       */
   int is;                             /* current stage index        */
   int retval;                         /* reusable return flag       */
-  N_Vector tmp;                       /* N_Vector pointer           */
   SUNAdaptController_Type adapt_type; /* timestep adaptivity type   */
   sunrealtype t0, tf;                 /* start/end of each stage    */
   sunbooleantype calc_fslow;
@@ -2084,15 +2083,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   {
     is = step_mem->stages;
 
-    /* Temporarily swap ark_mem->ycur and ark_mem->tempv4 pointers, copying
-       data so that both hold the current ark_mem->ycur value.  This ensures
-       that during this embedding "stage":
-         - ark_mem->ycur will be the correct initial condition for the final stage.
-         - ark_mem->tempv4 will hold the embedded solution vector. */
+    /* Copy ark_mem->ycur into ark_mem->tempv4, since it serves as the initial condition
+       for both this embedding stage, and the subsequent final stage. */
     N_VScale(ONE, ark_mem->ycur, ark_mem->tempv4);
-    tmp             = ark_mem->ycur;
-    ark_mem->ycur   = ark_mem->tempv4;
-    ark_mem->tempv4 = tmp;
 
     /* Reset ark_mem->tcur as the time value corresponding with the end of the step */
     /* Set relevant stage times (including desired stage time for implicit solves) */
@@ -2146,10 +2139,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogExtraDebugVec(ARK_LOGGER, "embedded solution", ark_mem->ycur,
                         "y_embedded(:) =");
 
-    /* Swap back ark_mem->ycur with ark_mem->tempv4, and reset the inner integrator */
-    tmp             = ark_mem->ycur;
-    ark_mem->ycur   = ark_mem->tempv4;
-    ark_mem->tempv4 = tmp;
+    /* Copy embedding solution into ark_mem->tempv1 for later error estimation,
+       reset ark_mem->ycur to ark_mem->tempv4 in preparation for the final stage,
+       and reset the inner integrator */
+    N_VScale(ONE, ark_mem->ycur, ark_mem->tempv1);
+    N_VScale(ONE, ark_mem->tempv4, ark_mem->ycur);
     retval = mriStepInnerStepper_Reset(step_mem->stepper, t0, ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
@@ -2251,10 +2245,11 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
 
     /* Compute temporal error estimate via difference between step
-       solution and embedding, store in ark_mem->tempv1, and take norm. */
+       solution and embedding (embedding is already stored in ark_mem->tempv1
+       so we need only subtract off ark_mem->ycur) and take norm. */
     if (do_embedding)
     {
-      N_VLinearSum(ONE, ark_mem->tempv4, -ONE, ark_mem->ycur, ark_mem->tempv1);
+      N_VLinearSum(ONE, ark_mem->tempv1, -ONE, ark_mem->ycur, ark_mem->tempv1);
       *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     }
 

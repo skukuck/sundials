@@ -917,8 +917,16 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   steps (after all user "set" routines have been called) from
   within arkInitialSetup.
 
-  For all initialization types, this routine sets the relevant
-  TakeStep routine based on the current problem configuration.
+  With initialization type RESET_INIT, this routine does nothing.
+
+  For other initialization types, this routine:
+  - sets the relevant TakeStep routine based on the current
+    problem configuration
+  - checks for consistency between the system and mass matrix
+    linear solvers (if applicable)
+  - initializes and sets up the system and mass matrix linear
+    solvers (if applicable)
+  - initializes and sets up the nonlinear solver (if applicable)
 
   With initialization type FIRST_INIT this routine:
   - sets/checks the ARK Butcher tables to be used
@@ -932,17 +940,6 @@ int arkStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   - allocates the interpolation data structure (if needed based
     on ARKStep solver options)
   - updates the call_fullrhs flag if necessary
-
-  With initialization type FIRST_INIT or RESIZE_INIT, this routine:
-  - sets the relevant TakeStep routine based on the current
-    problem configuration
-  - checks for consistency between the system and mass matrix
-    linear solvers (if applicable)
-  - initializes and sets up the system and mass matrix linear
-    solvers (if applicable)
-  - initializes and sets up the nonlinear solver (if applicable)
-
-  With initialization type RESET_INIT, this routine does nothing.
   ---------------------------------------------------------------*/
 int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
                  int init_type)

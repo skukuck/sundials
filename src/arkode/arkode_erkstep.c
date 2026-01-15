@@ -410,7 +410,7 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* immediately return if resize or reset */
-  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
+  if (init_type != FIRST_INIT)
   {
     return (ARK_SUCCESS);
   }

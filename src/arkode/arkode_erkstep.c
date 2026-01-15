@@ -410,7 +410,7 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* immediately return if resize or reset */
-  if (init_type != FIRST_INIT)
+  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
   {
     return (ARK_SUCCESS);
   }
@@ -465,16 +465,13 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   /*   Allocate F[0] ... F[stages-1] if needed */
   if (step_mem->F == NULL)
   {
-    step_mem->F = (N_Vector*)calloc(step_mem->stages, sizeof(N_Vector));
-  }
-  for (j = 0; j < step_mem->stages; j++)
-  {
-    if (!arkAllocVec(ark_mem, ark_mem->ewt, &(step_mem->F[j])))
+    if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt,
+                          &(step_mem->F), ark_mem->lrw1, &(ark_mem->lrw),
+                          ark_mem->liw1, &(ark_mem->liw)))
     {
       return (ARK_MEM_FAIL);
     }
   }
-  ark_mem->liw += step_mem->stages; /* pointers */
 
   /* Allocate reusable arrays for fused vector interface */
   step_mem->nfusedopvecs = 2 * step_mem->stages + 2 + step_mem->nforcing;

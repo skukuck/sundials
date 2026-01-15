@@ -948,7 +948,8 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   if (init_type == RESET_INIT) { return (ARK_SUCCESS); }
 
   /* initializations/checks for (re-)initialization call */
-  if (init_type == FIRST_INIT)
+  if (init_type == ALLOC_INIT ||
+      (init_type == FIRST_INIT && !step_mem->preallocated))
   {
     /* enforce use of arkEwtSmallReal if using a fixed step size for
        an explicit method, an internal error weight function, and not performing
@@ -1271,7 +1272,7 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   }
 
   /* Call linit (if it exists) */
-  if (step_mem->linit)
+  if (step_mem->linit && !step_mem->preallocated)
   {
     retval = step_mem->linit(ark_mem);
     if (retval != 0)
@@ -1283,7 +1284,7 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   }
 
   /* Initialize the nonlinear solver object (if it exists) */
-  if (step_mem->NLS)
+  if (step_mem->NLS && !step_mem->preallocated)
   {
     retval = mriStep_NlsInit(ark_mem);
     if (retval != ARK_SUCCESS)
@@ -1294,79 +1295,89 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
     }
   }
 
-  /*** Perform timestep adaptivity checks and initial setup ***/
-
-  /* get timestep adaptivity type */
-  adapt_type = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
-
-  if (ark_mem->fixedstep)
+  /*** Perform timestep adaptivity checks and initial setup (skip on ALLOC_INIT) ***/
+  if (init_type != ALLOC_INIT)
   {
-    /* Fixed step sizes: user must supply the initial step size */
-    if (ark_mem->hin == ZERO)
-    {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
-                      __FILE__, "Timestep adaptivity disabled, but missing user-defined fixed stepsize");
-      return (ARK_ILL_INPUT);
-    }
-  }
-  else
-  {
-    /* ensure that a compatible adaptivity controller is provided */
-    if ((adapt_type != SUN_ADAPTCONTROLLER_MRI_H_TOL) &&
-        (adapt_type != SUN_ADAPTCONTROLLER_H))
-    {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController type is unsupported by MRIStep");
-      return (ARK_ILL_INPUT);
-    }
 
-    /* Controller provides adaptivity (at least at the slow time scale):
-       - verify that the MRI method includes an embedding, and
-       - estimate initial slow step size (store in ark_mem->hin) */
-    if (step_mem->MRIC->p <= 0)
-    {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
-                      __FILE__, "Timestep adaptivity enabled, but non-embedded MRI table specified");
-      return (ARK_ILL_INPUT);
-    }
-    if (ark_mem->hin == ZERO)
-    {
-      /*   initialize (tcur,ycur) to (t0,y0) */
-      ark_mem->tcur = ark_mem->tn;
-      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    /* get timestep adaptivity type */
+    adapt_type = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
 
-      /*   tempv1 = fslow(t0, y0) */
-      if (mriStep_SlowRHS(ark_mem, ark_mem->tcur, ark_mem->ycur, ark_mem->tempv1,
-                          ARK_FULLRHS_START) != ARK_SUCCESS)
+    if (ark_mem->fixedstep)
+    {
+      /* Fixed step sizes: user must supply the initial step size */
+      if (ark_mem->hin == ZERO)
       {
-        arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                        "error calling slow RHS function(s)");
-        return (ARK_RHSFUNC_FAIL);
-      }
-      retval = mriStep_Hin(ark_mem, ark_mem->tcur, tout, ark_mem->tempv1,
-                           &(ark_mem->hin));
-      if (retval != ARK_SUCCESS)
-      {
-        retval = arkHandleFailure(ark_mem, retval);
-        return (retval);
+        arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
+                        __FILE__, "Timestep adaptivity disabled, but missing user-defined fixed stepsize");
+        return (ARK_ILL_INPUT);
       }
     }
-  }
-
-  /* Perform additional setup for (H,tol) controller */
-  if (adapt_type == SUN_ADAPTCONTROLLER_MRI_H_TOL)
-  {
-    /* Verify that adaptivity type is supported by inner stepper */
-    if (!mriStepInnerStepper_SupportsRTolAdaptivity(step_mem->stepper))
+    else
     {
-      arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
-                      __FILE__, "MRI H-TOL SUNAdaptController provided, but unsupported by inner stepper");
-      return (ARK_ILL_INPUT);
+      /* ensure that a compatible adaptivity controller is provided */
+      if ((adapt_type != SUN_ADAPTCONTROLLER_MRI_H_TOL) &&
+          (adapt_type != SUN_ADAPTCONTROLLER_H))
+      {
+        arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "SUNAdaptController type is unsupported by MRIStep");
+        return (ARK_ILL_INPUT);
+      }
+
+      /* Controller provides adaptivity (at least at the slow time scale):
+        - verify that the MRI method includes an embedding, and
+        - estimate initial slow step size (store in ark_mem->hin) */
+      if (step_mem->MRIC->p <= 0)
+      {
+        arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
+                        __FILE__, "Timestep adaptivity enabled, but non-embedded MRI table specified");
+        return (ARK_ILL_INPUT);
+      }
+      if (ark_mem->hin == ZERO)
+      {
+        /*   initialize (tcur,ycur) to (t0,y0) */
+        ark_mem->tcur = ark_mem->tn;
+        N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+
+        /*   tempv1 = fslow(t0, y0) */
+        if (mriStep_SlowRHS(ark_mem, ark_mem->tcur, ark_mem->ycur, ark_mem->tempv1,
+                            ARK_FULLRHS_START) != ARK_SUCCESS)
+        {
+          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
+                          "error calling slow RHS function(s)");
+          return (ARK_RHSFUNC_FAIL);
+        }
+        retval = mriStep_Hin(ark_mem, ark_mem->tcur, tout, ark_mem->tempv1,
+                            &(ark_mem->hin));
+        if (retval != ARK_SUCCESS)
+        {
+          retval = arkHandleFailure(ark_mem, retval);
+          return (retval);
+        }
+      }
     }
 
-    /* initialize fast stepper to use the same relative tolerance as MRIStep */
-    step_mem->inner_rtol_factor = ONE;
+    /* Perform additional setup for (H,tol) controller */
+    if (adapt_type == SUN_ADAPTCONTROLLER_MRI_H_TOL)
+    {
+      /* Verify that adaptivity type is supported by inner stepper */
+      if (!mriStepInnerStepper_SupportsRTolAdaptivity(step_mem->stepper))
+      {
+        arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
+                        __FILE__, "MRI H-TOL SUNAdaptController provided, but unsupported by inner stepper");
+        return (ARK_ILL_INPUT);
+      }
+
+      /* initialize fast stepper to use the same relative tolerance as MRIStep */
+      step_mem->inner_rtol_factor = ONE;
+    }
   }
+
+  /* if init_type == ALLOC_INIT then store preallocated flag */
+  if (init_type == ALLOC_INIT) { step_mem->preallocated = SUNTRUE; }
+
+  /* if init_type == FIRST_INIT then reset preallocated flag (in case
+     of an eventual resize or reinit) */
+  if (init_type == FIRST_INIT) { step_mem->preallocated = SUNFALSE; }
 
   return (ARK_SUCCESS);
 }

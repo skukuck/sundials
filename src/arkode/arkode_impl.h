@@ -99,9 +99,10 @@ extern "C" {
 /*---------------------------------------------------------------
   Initialization types
   ---------------------------------------------------------------*/
-#define FIRST_INIT  0 /* first step (re-)initialization */
-#define RESET_INIT  1 /* reset initialization           */
-#define RESIZE_INIT 2 /* resize initialization          */
+#define FIRST_INIT  0 /* first step (re-)initialization    */
+#define RESET_INIT  1 /* reset initialization              */
+#define RESIZE_INIT 2 /* resize initialization             */
+#define ALLOC_INIT  3 /* allocate data (before FIRST_INIT) */
 
 /*---------------------------------------------------------------
   Control constants for lower-level time-stepping functions
@@ -715,7 +716,7 @@ int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
 #define MSG_ARK_NO_MEM         "arkode_mem = NULL illegal."
 #define MSG_ARK_ARKMEM_FAIL    "Allocation of arkode_mem failed."
 #define MSG_ARK_MEM_FAIL       "A memory request failed."
-#define MSG_ARK_NO_MALLOC      "Attempt to call before ARKodeInit."
+#define MSG_ARK_NO_MALLOC      "Attempt to call before ARKODE initialized."
 #define MSG_ARK_BAD_HMIN_HMAX  "Inconsistent step size limits: hmin > hmax."
 #define MSG_ARK_BAD_RELTOL     "reltol < 0 illegal."
 #define MSG_ARK_BAD_ABSTOL     "abstol has negative component(s) (illegal)."
@@ -1010,12 +1011,26 @@ int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
   ARKTimestepInitFn
 
   This routine is called just prior to performing internal time
-  steps (after all user "set" routines have been called) from
-  within arkInitialSetup. It should complete initializations for
-  a specific ARKODE time stepping module, such as verifying
-  compatibility of user-specified linear and nonlinear solver
-  objects. The input init_type flag indicates if the call is
-  for (re-)initializing, resizing, or resetting the problem.
+  steps (after all user "set" routines have been called), either
+  from within arkInitialSetup or ARKodeAllocateInternalData.
+  It should perform initializations for a specific ARKODE time
+  stepping module, such as verifying compatibility of user-
+  specified linear and nonlinear solver objects.
+
+  The input init_type flag indicates the type of call:
+  * FIRST_INIT -- called during arkInitialSetup for the first
+    time step of a simulation.
+  * RESIZE_INIT -- called during ARKodeResize to resize
+    internal stepper data structures after a change in problem size.
+  * RESET_INIT -- called during ARKodeReset to reset the current
+    (t,y) state in the stepper.
+  * ALLOC_INIT -- called during the optional routine
+    ARKodeAllocateInternalData to allocate and initialize
+    internal stepper data structures. Note that the routine
+    will be called again with FIRST_INIT.  Thus a time-stepper
+    can either ignore this flag (and just return), or if it
+    performs allocations here then it should not re-allocate
+    the same data when called with FIRST_INIT.
 
   This routine should return 0 if it has successfully initialized
   the ARKODE time stepper module and a negative value otherwise.
@@ -1236,6 +1251,13 @@ int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
   This optional routine allows the stepper to accept any user-
   requested method order parameter that was passed to
   ARKodeSetOrder.
+
+  ---------------------------------------------------------------
+
+  ARKTimestepSetOptions
+
+  This optional routine allows the stepper to accept any user-
+  requested method options that were passed to ARKodeSetOptions.
 
   ===============================================================
 

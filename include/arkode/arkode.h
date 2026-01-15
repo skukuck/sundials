@@ -279,6 +279,7 @@ SUNDIALS_EXPORT int ARKodeSetPostprocessStepFn(void* arkode_mem,
                                                ARKPostProcessFn ProcessStep);
 SUNDIALS_EXPORT int ARKodeSetPostprocessStageFn(void* arkode_mem,
                                                 ARKPostProcessFn ProcessStage);
+SUNDIALS_EXPORT int ARKodeAllocateInternalData(void* arkode_mem);
 
 /* Optional input functions (implicit solver) */
 SUNDIALS_EXPORT int ARKodeSetNonlinearSolver(void* arkode_mem,

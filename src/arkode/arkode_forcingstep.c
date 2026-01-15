@@ -90,8 +90,8 @@ static int forcingStep_Init(ARKodeMem ark_mem,
     return ARK_ILL_INPUT;
   }
 
-  /* immediately return if resize or reset */
-  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
+  /* immediately return if not called in FIRST_INIT mode */
+  if (init_type != FIRST_INIT)
   {
     return ARK_SUCCESS;
   }

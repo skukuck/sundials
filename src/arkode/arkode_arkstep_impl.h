@@ -79,6 +79,9 @@ typedef struct ARKodeARKStepMemRec
   sunbooleantype implicit;       /* SUNTRUE if fi is enabled       */
   sunbooleantype deduce_rhs;     /* SUNTRUE if fi is deduced after
                                    a nonlinear solve               */
+  sunbooleantype preallocated;   /* SUNTRUE if data has been
+                                   preallocated in a call to
+                                   arkStep_Init with ALLOC_INIT    */
 
   /* Adjoint problem specification */
   SUNAdjRhsFn adj_fe;

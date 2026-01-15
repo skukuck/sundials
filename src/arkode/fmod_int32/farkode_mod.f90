@@ -147,6 +147,7 @@ module farkode_mod
  public :: FARKodeSetUserData
  public :: FARKodeSetPostprocessStepFn
  public :: FARKodeSetPostprocessStageFn
+ public :: FARKodeAllocateInternalData
  public :: FARKodeSetNonlinearSolver
  public :: FARKodeSetLinear
  public :: FARKodeSetNonlinear
@@ -720,6 +721,14 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeAllocateInternalData(farg1) &
+bind(C, name="_wrap_FARKodeAllocateInternalData") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2925,6 +2934,19 @@ type(C_FUNPTR) :: farg2
 farg1 = arkode_mem
 farg2 = processstage
 fresult = swigc_FARKodeSetPostprocessStageFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeAllocateInternalData(arkode_mem) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = arkode_mem
+fresult = swigc_FARKodeAllocateInternalData(farg1)
 swig_result = fresult
 end function
 

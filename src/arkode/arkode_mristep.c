@@ -915,7 +915,18 @@ int mriStep_GetGammas(ARKodeMem ark_mem, sunrealtype* gamma, sunrealtype* gamrat
   steps (after all user "set" routines have been called) from
   within arkInitialSetup.
 
-  With initialization types FIRST_INIT this routine:
+  With initialization type RESET_INIT, this routine does nothing.
+
+  For other initialization types, this routine:
+  - initializes and sets up the linear and nonlinear solvers
+    (if applicable)
+  - initializes and sets up the nonlinear solver (if applicable)
+  - performs timestep adaptivity checks and initial setup,
+    including setting the initial time step size if needed
+
+  With initialization type FIRST_INIT this routine additionally:
+  - sets the relevant TakeStep routine based on the current
+    problem configuration
   - sets/checks the coefficient tables to be used
   - allocates any internal memory that depends on the MRI method
     structure or solver options

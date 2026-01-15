@@ -1149,7 +1149,6 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     {
       istate            = ARK_SUCCESS;
       ark_mem->tretlast = *tret = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, yout);
       ark_mem->next_h = ark_mem->hprime;
       break;
     }

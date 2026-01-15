@@ -9,6 +9,8 @@
 The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES
 and IDAS, respectively.
 
+Removed extraneous copy of output vector when using ARKODE in ONE_STEP mode.
+
 ### Bug Fixes
 
 On the initial time step with a user-supplied initial step size, ARKODE and
@@ -44,7 +46,7 @@ called even when informational logging was disabled.
 
 ### Deprecation Notices
 
-`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major release. 
+`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major release.
 Use `SUNFileOpen` and `SUNFileClose` instead.
 
 The `Convert` methods on the `sundials::kokkos:Vector`, `sundials::kokkos::DenseMatrix`,

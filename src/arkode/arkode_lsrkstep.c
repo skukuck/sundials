@@ -734,7 +734,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                           ark_mem->user_data);
     step_mem->nfe++;
 
-    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
+    SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->tempv3,
                         "F_%i(:) =", j - 1);
     SUNLogInfoIf(retval != 0, ARK_LOGGER, "end-stages-list",
                  "status = failed rhs eval, retval = %i", retval);
@@ -2778,8 +2778,8 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
                                         &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
-  sunrealtype t = ark_mem->tn;
-  N_Vector y    = ark_mem->yn;
+  sunrealtype t = ark_mem->tcur;
+  N_Vector y    = ark_mem->ycur;
   N_Vector work = ark_mem->tempv3;
 
   /* Compute RHS function, if necessary. */
@@ -2789,13 +2789,11 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tn, ark_mem->yn,
-                                      ark_mem->user_data);
+      retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
       if (retval != 0) { return ARK_POSTPROCESS_STAGE_FAIL; }
     }
 
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
-                          ark_mem->user_data);
+    retval = step_mem->fe(t, y, ark_mem->fn, ark_mem->user_data);
     step_mem->nfeDQ++;
     if (retval != ARK_SUCCESS)
     {

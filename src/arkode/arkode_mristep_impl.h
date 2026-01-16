@@ -269,6 +269,7 @@ int mriStep_GetNumNonlinSolvIters(ARKodeMem ark_mem, long int* nniters);
 int mriStep_GetNumNonlinSolvConvFails(ARKodeMem ark_mem, long int* nnfails);
 int mriStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
                                long int* nnfails);
+int mriStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 int mriStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int mriStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
 int mriStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);

@@ -243,6 +243,7 @@ void arkStep_Free(ARKodeMem ark_mem);
 void arkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int arkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
                             sunrealtype tscale, N_Vector* f, int nvecs);
+int arkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int arkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

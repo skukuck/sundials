@@ -91,6 +91,7 @@ void sprkStep_Free(ARKodeMem ark_mem);
 void sprkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int sprkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
+int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int sprkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

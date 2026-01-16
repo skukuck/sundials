@@ -11,6 +11,10 @@ and IDAS, respectively.
 
 Multiple minor updates were made to the ARKODE package.  We removed an extraneous
 copy of the output vector when using ARKODE in `ARK_ONE_STEP` mode.  We added the
+function `ARKodeGetStageIndex` that returns the index of the stage currently
+being processed, and the total number of stages in the method, for users who must
+compute auxiliary quantities in their IVP right-hand side functions during some
+stages and not others (e.g., in all but the first or last stage). We added the
 function `ARKodeAllocateInternalData` to ARKODE to enable stage-related
 data allocation before the first call to `ARKodeEvolve` (but after all other
 optional input routines have been called), to support users who measure memory

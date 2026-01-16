@@ -143,6 +143,7 @@ void* ARKStepCreate(ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0,
   ark_mem->step_getnumnonlinsolvconvfails = arkStep_GetNumNonlinSolvConvFails;
   ark_mem->step_getnonlinsolvstats        = arkStep_GetNonlinSolvStats;
   ark_mem->step_setforcing                = arkStep_SetInnerForcing;
+  ark_mem->step_getstageindex             = arkStep_GetStageIndex;
   ark_mem->step_supports_adaptive         = SUNTRUE;
   ark_mem->step_supports_implicit         = SUNTRUE;
   ark_mem->step_supports_massmatrix       = SUNTRUE;
@@ -1711,8 +1712,10 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *nflagPtr = ARK_SUCCESS;
   }
 
-  /* initialize the current solution */
+  /* initialize the current solution and stage index */
+  ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* call nonlinear solver setup if it exists */
   if (step_mem->NLS)

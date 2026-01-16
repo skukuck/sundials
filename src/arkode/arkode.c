@@ -1574,6 +1574,7 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->step_getnumnonlinsolviters     = NULL;
   ark_mem->step_getnumnonlinsolvconvfails = NULL;
   ark_mem->step_getnonlinsolvstats        = NULL;
+  ark_mem->step_getstageindex             = NULL;
   ark_mem->step_setforcing                = NULL;
   ark_mem->step_mem                       = NULL;
   ark_mem->step_supports_adaptive         = SUNFALSE;

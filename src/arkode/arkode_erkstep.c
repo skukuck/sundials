@@ -109,6 +109,7 @@ void* ERKStepCreate(ARKRhsFn f, sunrealtype t0, N_Vector y0, SUNContext sunctx)
   ark_mem->step_getnumrhsevals        = erkStep_GetNumRhsEvals;
   ark_mem->step_getestlocalerrors     = erkStep_GetEstLocalErrors;
   ark_mem->step_setforcing            = erkStep_SetInnerForcing;
+  ark_mem->step_getstageindex         = erkStep_GetStageIndex;
   ark_mem->step_supports_adaptive     = SUNTRUE;
   ark_mem->step_supports_relaxation   = SUNTRUE;
   ark_mem->step_mem                   = (void*)step_mem;
@@ -364,6 +365,7 @@ void erkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   /* output integer quantities */
   fprintf(outfile, "ERKStep: q = %i\n", step_mem->q);
   fprintf(outfile, "ERKStep: p = %i\n", step_mem->p);
+  fprintf(outfile, "ERKStep: istage = %i\n", step_mem->istage);
   fprintf(outfile, "ERKStep: stages = %i\n", step_mem->stages);
 
   /* output long integer quantities */
@@ -770,6 +772,11 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   cvals = step_mem->cvals;
   Xvecs = step_mem->Xvecs;
 
+  /* initialize the current solution and stage index */
+  ark_mem->tcur = ark_mem->tn;
+  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
+
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = 0, tcur = " SUN_FORMAT_G,
              ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
@@ -783,7 +790,6 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (!(ark_mem->fn_is_current))
   {
     mode = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
     retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, mode);
     if (retval)
@@ -837,6 +843,9 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      the first stage RHS is just the full RHS from the start of the step */
   for (is = 1; is < step_mem->stages; is++)
   {
+    /* store current stage index */
+    step_mem->istage = is;
+
     /* Set current stage time(s) */
     ark_mem->tcur = ark_mem->tn + step_mem->B->c[is] * ark_mem->h;
 

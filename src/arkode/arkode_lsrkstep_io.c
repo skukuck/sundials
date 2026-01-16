@@ -772,6 +772,26 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
 }
 
 /*---------------------------------------------------------------
+  lsrkStep_GetStageIndex:
+
+  Returns the current stage index and number of stages
+  ---------------------------------------------------------------*/
+int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
+{
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeLSRKStepMem structure */
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  *stage = step_mem->istage;
+  *max_stages = step_mem->req_stages;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   lsrkStep_PrintAllStats:
 
   Prints integrator statistics for STS methods

@@ -3641,6 +3641,7 @@ Estimated local truncation error vector                :c:func:`ARKodeGetEstLoca
 Number of constraint test failures                     :c:func:`ARKodeGetNumConstrFails`
 Retrieve a pointer for user data                       :c:func:`ARKodeGetUserData`
 Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumulatedError`
+Current stage index, and total number of stages        :c:func:`ARKodeGetStageIndex`
 =====================================================  ============================================
 
 
@@ -4115,6 +4116,21 @@ Retrieve the accumulated temporal error estimate       :c:func:`ARKodeGetAccumul
                                     by the current time-stepping module.
 
    .. versionadded:: 6.2.0
+
+
+.. c:function:: int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
+
+   Returns the index of the current stage (0-based) and the total number of
+   stages in the method.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param stage: pointer to storage for the current stage index.
+   :param max_stages: pointer to storage for the number of stages in the method.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
 
 
 

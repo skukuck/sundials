@@ -140,6 +140,7 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   ark_mem->step_getnumnonlinsolvconvfails = mriStep_GetNumNonlinSolvConvFails;
   ark_mem->step_getnonlinsolvstats        = mriStep_GetNonlinSolvStats;
   ark_mem->step_setforcing                = mriStep_SetInnerForcing;
+  ark_mem->step_getstageindex             = mriStep_GetStageIndex;
   ark_mem->step_supports_adaptive         = SUNTRUE;
   ark_mem->step_supports_implicit         = SUNTRUE;
   ark_mem->step_mem                       = (void*)step_mem;
@@ -1839,7 +1840,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
 
   /* initialize the current solution */
+  ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -1952,6 +1955,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
   {
+    /* Set current stage index (0-based) */
+    step_mem->istage = is;
+
     /* Set relevant stage times (including desired stage time for implicit solves) */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
@@ -2139,7 +2145,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* perform embedded stage (if needed) */
   if (do_embedding)
   {
-    is = step_mem->stages;
+    /* Set current stage index */
+    step_mem->istage = is = step_mem->stages;
 
     /* Copy ark_mem->ycur into ark_mem->tempv4, since it serves as the initial condition
        for both this embedding stage, and the subsequent final stage. */
@@ -2217,7 +2224,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   /* Compute final stage (for evolved solution), along with error estimate */
   {
-    is = step_mem->stages - 1;
+    /* Set current stage index */
+    step_mem->istage = is = step_mem->stages - 1;
 
     /* Set relevant stage times (including desired stage time for implicit solves) */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
@@ -2388,7 +2396,9 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ytemp  = ark_mem->tempv2;
 
   /* initialize the current solution */
+  ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -2502,6 +2512,9 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Loop over stages */
   for (stage = 1; stage < max_stages; stage++)
   {
+    /* Set current stage index */
+    step_mem->istage = stage;
+
     /* Determine if this is an "embedding" or "solution" stage */
     solution  = (stage == step_mem->stages - 1);
     embedding = (stage == step_mem->stages);
@@ -2870,7 +2883,9 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   t0 = ark_mem->tn;
 
   /* initialize the current solution */
+  ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
@@ -2990,7 +3005,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     {
       /* Get stage index from group; skip to the next group if
          we've reached the end of this one */
-      stage = step_mem->MRIC->group[ig][is];
+      step_mem->istage = stage = step_mem->MRIC->group[ig][is];
       if (stage < 0) { break; }
       nextstage = -1;
       if (stage < step_mem->stages)

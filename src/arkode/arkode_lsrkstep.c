@@ -180,6 +180,7 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   ark_mem->step_setdefaults       = lsrkStep_SetDefaults;
   ark_mem->step_getnumrhsevals    = lsrkStep_GetNumRhsEvals;
   ark_mem->step_getestlocalerrors = lsrkStep_GetEstLocalErrors;
+  ark_mem->step_getstageindex     = lsrkStep_GetStageIndex;
   ark_mem->step_mem               = (void*)step_mem;
   ark_mem->step_supports_adaptive = SUNTRUE;
 
@@ -579,9 +580,11 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
+  step_mem->req_stages = step_mem->stage_max_limit;
 
   /* Compute dominant eigenvalue and update stats */
   if (step_mem->dom_eig_update)
@@ -714,6 +717,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Evaluate stages j = 2,...,step_mem->req_stages */
   for (int j = 2; j <= step_mem->req_stages; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Evaluate RHS and store in tempv3 */
     ark_mem->tcur = ark_mem->tn + ark_mem->h * thjm1;
 
@@ -818,6 +824,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
 
   /* final stage processing */
+  step_mem->istage = step_mem->req_stages;
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
@@ -923,9 +930,11 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
+  step_mem->req_stages = step_mem->stage_max_limit;
 
   /* Compute dominant eigenvalue and update stats */
   if (step_mem->dom_eig_update)
@@ -1048,6 +1057,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Evaluate stages j = 2,...,step_mem->req_stages */
   for (int j = 2; j <= step_mem->req_stages; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Evaluate RHS and store in tempv3 */
     ark_mem->tcur = ark_mem->tn + ark_mem->h * cjm1;
 
@@ -1140,9 +1152,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
+  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
 
   /* final stage processing */
-  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
+  step_mem->istage = step_mem->req_stages;
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
@@ -1238,9 +1251,10 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* Initialize method coefficients */
   const sunrealtype rs      = (sunrealtype)step_mem->req_stages;
@@ -1328,6 +1342,9 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate stages j = 2,...,step_mem->req_stages - 1 */
   for (int j = 2; j < step_mem->req_stages; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete previous stage by evaluating RHS and storing it in tempv2 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hsm1inv;
 
@@ -1383,6 +1400,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
 
   /* Complete the next-to-last stage by evaluating the RHS and storing it in tempv2 */
+  step_mem->istage = step_mem->req_stages-1;
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
   if (ark_mem->PreProcessRHS != NULL)
   {
@@ -1487,9 +1505,10 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* Initialize method coefficients */
   const sunrealtype rs     = (sunrealtype)step_mem->req_stages;
@@ -1563,6 +1582,9 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate first stage group */
   for (int j = 2; j <= ((in - 1) * (in - 2) / 2); j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete previous stage by evaluating RHS and storing it in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
 
@@ -1624,6 +1646,9 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate second stage group */
   for (int j = ((in - 1) * (in - 2) / 2 + 1); j <= (in * (in + 1) / 2 - 1); j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete previous stage by evaluating RHS and storing it in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
 
@@ -1680,6 +1705,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
 
   /* Complete the last stage from the second stage group */
+  step_mem->istage = (in * (in + 1) / 2 - 1);
   ark_mem->tcur = ark_mem->tn + hrat * (rn * (rn + ONE) / TWO - ONE);
 
   /* apply user-supplied stage preprocessing function (if supplied) */
@@ -1747,6 +1773,9 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   /* Evaluate final stage group */
   for (int j = (in * (in + 1) / 2 + 1); j <= step_mem->req_stages; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete the previous stage */
     ark_mem->tcur = ark_mem->tn + (j - in - 1) * hrat;
 
@@ -1864,9 +1893,10 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* Initialize method coefficients */
   const sunrealtype rs     = SUN_RCONST(4.0);
@@ -1935,6 +1965,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
+  /* update stage index */
+  step_mem->istage = 1;
+
   /* apply user-supplied stage preprocessing function (if supplied) */
   if (ark_mem->PreProcessRHS != NULL)
   {
@@ -1984,6 +2017,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
+
+  /* update stage index */
+  step_mem->istage = 2;
 
   /* Evaluate stage RHS */
 
@@ -2047,6 +2083,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
+
+  /* update stage index */
+  step_mem->istage = 3;
 
   /* Evaluate stage RHS */
 
@@ -2140,9 +2179,10 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
+  /* Initialize the current solution and stage index */
   ark_mem->tcur = ark_mem->tn;
   N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  step_mem->istage = 0;
 
   /* Initialize method coefficients */
   const sunrealtype hsixth = ark_mem->h / SIX;
@@ -2215,6 +2255,9 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Evaluate stages j = 2,...,4 */
   for (int j = 2; j <= 5; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete previous stage by evaluating RHS and storing in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 1) * hsixth;
 
@@ -2301,6 +2344,9 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Evaluate stages j = 6,...,9 */
   for (int j = 6; j <= 9; j++)
   {
+    /* set stage index (0-based) */
+    step_mem->istage = j-1;
+
     /* Complete previous stage by evaluating RHS and storing in tempv3 */
     ark_mem->tcur = ark_mem->tn + (j - 4) * hsixth;
 
@@ -2361,7 +2407,10 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
   }
 
-  /* Complete the 9th stage by evaluating RHS and storing in tempv3 */
+  /* set stage index (0-based) */
+  step_mem->istage = 9;
+
+  /* Complete the last stage by evaluating RHS and storing in tempv3 */
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
@@ -2494,18 +2543,16 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
 
   fprintf(outfile, "LSRKStep: q                   = %i\n", step_mem->q);
   fprintf(outfile, "LSRKStep: p                   = %i\n", step_mem->p);
+  fprintf(outfile, "LSRKStep: istage              = %i\n", step_mem->istage);
+  fprintf(outfile, "LSRKStep: req_stages          = %i\n", step_mem->req_stages);
 
   if (step_mem->is_SSP)
   {
-    fprintf(outfile, "LSRKStep: req_stages          = %i\n",
-            step_mem->req_stages);
     fprintf(outfile, "LSRKStep: nfe                 = %li\n", step_mem->nfe);
   }
   else if (!step_mem->is_SSP)
   {
     /* output integer quantities */
-    fprintf(outfile, "LSRKStep: req_stages            = %i\n",
-            step_mem->req_stages);
     fprintf(outfile, "LSRKStep: dom_eig_nst           = %li\n",
             step_mem->dom_eig_nst);
     fprintf(outfile, "LSRKStep: stage_max             = %i\n",

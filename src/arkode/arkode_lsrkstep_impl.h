@@ -139,7 +139,8 @@ typedef struct ARKodeLSRKStepMemRec
   int q; /* method order               */
   int p; /* embedding order            */
 
-  int req_stages; /* number of requested stages   */
+  int istage;     /* current stage            */
+  int req_stages; /* number of stages in step */
 
   ARKODE_LSRKMethodType LSRKmethod;
 
@@ -209,6 +210,7 @@ void lsrkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile);
 int lsrkStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
                             long int* rhs_evals);
 int lsrkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele);
+int lsrkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 
 /* Internal utility routines */
 int lsrkStep_AccessARKODEStepMem(void* arkode_mem, const char* fname,

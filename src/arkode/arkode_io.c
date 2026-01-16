@@ -3186,6 +3186,38 @@ int ARKodeGetUserData(void* arkode_mem, void** user_data)
   return (ARK_SUCCESS);
 }
 
+/*---------------------------------------------------------------
+  ARKodeGetStageIndex:
+
+  Returns the index of the current stage and the total number of
+  stages.  If this is not supplied by the time-stepping module
+  then it returns (0,1), indicating that it is currently in the
+  first of only a single stage.
+  ---------------------------------------------------------------*/
+int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  /* Call stepper routine to compute the state (if provided) */
+  if (ark_mem->step_getstageindex)
+  {
+    return (ark_mem->step_getstageindex(ark_mem, stage, max_stages));
+  }
+  else
+  {
+    *stage = 0;
+    *max_stages = 1;
+    return (ARK_SUCCESS);
+  }
+}
+
 /*-----------------------------------------------------------------
   ARKodePrintAllStats
 

@@ -778,7 +778,7 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
   /* Call the full RHS if needed. If this is the first step then we may need to
-     evaluate or copy the RHS values from an  earlier evaluation (e.g., to
+     evaluate or copy the RHS values from an earlier evaluation (e.g., to
      compute h0). For subsequent steps treat this RHS evaluation as an
      evaluation at the end of the just completed step to potentially reuse
      (FSAL methods) RHS evaluations from the end of the last step. */
@@ -786,7 +786,8 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (!(ark_mem->fn_is_current))
   {
     mode   = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
-    retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->yn,
+    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, mode);
     if (retval)
     {

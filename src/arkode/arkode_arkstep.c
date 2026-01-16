@@ -1710,6 +1710,9 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *nflagPtr = ARK_SUCCESS;
   }
 
+  /* initialize the current solution */
+  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+
   /* call nonlinear solver setup if it exists */
   if (step_mem->NLS)
   {
@@ -1845,7 +1848,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
          of the just completed step (tn, yn) and potentially reuse the
          evaluation (FSAL method) or save the value for later use. */
       mode   = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
-      retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->yn,
+      retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                      ark_mem->fn, mode);
       if (retval)
       {
@@ -1873,7 +1876,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                                           ark_mem->user_data);
           if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
         }
-        retval = step_mem->fi(ark_mem->tn, ark_mem->yn, step_mem->Fi[0],
+        retval = step_mem->fi(ark_mem->tn, ark_mem->ycur, step_mem->Fi[0],
                               ark_mem->user_data);
         step_mem->nfi++;
 

@@ -8,7 +8,7 @@
 The functions ``CVodeGetUserDataB`` and ``IDAGetUserDataB`` were added to CVODES
 and IDAS, respectively.
 
-Removed extraneous copy of output vector when using ARKODE in ONE_STEP mode.
+Removed extraneous copy of output vector when using ARKODE in ``ARK_ONE_STEP`` mode.
 
 **Bug Fixes**
 

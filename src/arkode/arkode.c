@@ -1727,12 +1727,23 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
 
   arkInit allocates and initializes memory for a problem. All
   inputs are checked for errors. If any error occurs during
-  initialization, an error flag is returned. Otherwise, it returns
-  ARK_SUCCESS.  This routine should be called by an ARKODE
-  timestepper module (not by the user).  This routine must be
-  called prior to calling ARKodeEvolve to evolve the problem. The
-  initialization type indicates if the values of internal counters
-  should be reinitialized (FIRST_INIT) or retained (RESET_INIT).
+  initialization, an error flag is returned. Otherwise, it
+  returns ARK_SUCCESS.
+
+  This routine should only be called by
+  (a) ARKodeReset (with the input init_type == RESET_INIT),
+  (b) an ARKODE timestepper module creation routine (with
+      init_type == FIRST_INIT), or
+  (c) an ARKODE timestepper module re-initialization routine
+      (with init_type == FIRST_INIT).
+  This should never by the user.
+
+  The initialization type indicates if the values of internal
+  counters should be reinitialized (FIRST_INIT) or retained
+  (RESET_INIT).
+
+  This routine must be called prior to calling ARKodeEvolve
+  to evolve the problem.
   ---------------------------------------------------------------*/
 int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
 {

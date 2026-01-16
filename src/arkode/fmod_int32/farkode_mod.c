@@ -720,6 +720,18 @@ SWIGEXPORT int _wrap_FARKodeSetPostprocessStageFn(void *farg1, ARKPostProcessFn 
 }
 
 
+SWIGEXPORT int _wrap_FARKodeAllocateInternalData(void *farg1) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  result = (int)ARKodeAllocateInternalData(arg1);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeSetNonlinearSolver(void *farg1, SUNNonlinearSolver farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;

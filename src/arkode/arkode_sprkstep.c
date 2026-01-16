@@ -374,8 +374,8 @@ int sprkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
   /* immediately return if reset */
   if (init_type == RESET_INIT) { return (ARK_SUCCESS); }
 
-  /* initializations/checks for (re-)initialization call */
-  if (init_type == FIRST_INIT)
+  /* initializations/checks for (re-)initialization or allocation */
+  if (init_type == FIRST_INIT || init_type == ALLOC_INIT)
   {
     if (!step_mem->method)
     {
@@ -414,6 +414,9 @@ int sprkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
         break;
       }
     }
+
+    /* Immediately return if called for allocation */
+    if (init_type == ALLOC_INIT) { return (ARK_SUCCESS); }
   }
 
   /* Override the interpolant degree (if needed), used in arkInitialSetup */

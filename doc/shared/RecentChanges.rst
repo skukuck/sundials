@@ -10,6 +10,11 @@ and IDAS, respectively.
 
 Removed extraneous copy of output vector when using ARKODE in ONE_STEP mode.
 
+Added the function :c:func:`ARKodeAllocateInternalData` to ARKODE to enable stage-related
+data allocation before the first call to :c:func:`ARKodeEvolve` (but after all other
+optional input routines have been called), to support users who measure memory
+usage before beginning a simulation.
+
 **Bug Fixes**
 
 On the initial time step with a user-supplied initial step size, ARKODE and

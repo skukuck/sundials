@@ -2192,7 +2192,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Begin the second stage, and accumulate embedding into tempv1 */
   ark_mem->tcur = ark_mem->tn + hsixth;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-             "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tn + hsixth);
+             "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->yn, hsixth, ark_mem->fn, ark_mem->ycur);
   if (!ark_mem->fixedstep)
   {

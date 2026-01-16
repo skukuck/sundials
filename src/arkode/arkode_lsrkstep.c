@@ -651,7 +651,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* call fe */
-    retval = step_mem->fe(ark_mem->tn, ark_mem->yn, ark_mem->fn,
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->fn,
                           ark_mem->user_data);
     step_mem->nfe++;
     if (retval != ARK_SUCCESS)
@@ -714,6 +714,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Evaluate stages j = 2,...,step_mem->req_stages */
   for (int j = 2; j <= step_mem->req_stages; j++)
   {
+    /* Evaluate RHS and store in tempv3 */
+    ark_mem->tcur = ark_mem->tn + ark_mem->h * thjm1;
+
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessRHS != NULL)
     {
@@ -727,10 +730,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* Evaluate RHS and store in tempv3 */
-    ark_mem->tcur = ark_mem->tn + ark_mem->h * thjm1;
-    retval        = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
-                                 ark_mem->user_data);
+    retval = step_mem->fe(ark_mem->tcur, ark_mem->ycur, ark_mem->tempv3,
+                          ark_mem->user_data);
     step_mem->nfe++;
 
     SUNLogExtraDebugVec(ARK_LOGGER, "stage RHS", ark_mem->ycur,
@@ -1139,8 +1140,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
-  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
+
   /* final stage processing */
+  SUNLogInfo(ARK_LOGGER, "begin-compute-embedding", "");
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
@@ -1178,7 +1180,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     Xvecs[2] = ark_mem->fn;
     cvals[3] = p4 * ark_mem->h;
     Xvecs[3] = ark_mem->tempv3;
-
     retval = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
     if (retval != 0)
     {
@@ -1563,7 +1564,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   for (int j = 2; j <= ((in - 1) * (in - 2) / 2); j++)
   {
     /* Complete previous stage by evaluating RHS and storing it in tempv3 */
-    ark_mem->tcur = ark_mem->tn + ((sunrealtype)j - ONE) * hrat;
+    ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessRHS != NULL)
@@ -1747,7 +1748,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   for (int j = (in * (in + 1) / 2 + 1); j <= step_mem->req_stages; j++)
   {
     /* Complete the previous stage */
-    ark_mem->tcur = ark_mem->tn + (j - 1) * hrat;
+    ark_mem->tcur = ark_mem->tn + (j - in - 1) * hrat;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessRHS != NULL)

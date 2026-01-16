@@ -1264,9 +1264,9 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     bt3 = ark_mem->h * (rs - ONE) / (rs * rs);
   }
 
-  +/* Begin first stage */
-    SUNLogInfo(ARK_LOGGER, "begin-stages-list",
-               "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
+  /* Begin first stage */
+  SUNLogInfo(ARK_LOGGER, "begin-stages-list",
+             "stage = %i, tcur = " SUN_FORMAT_G, 0, ark_mem->tcur);
   SUNLogExtraDebugVec(ARK_LOGGER, "stage", ark_mem->yn, "z_0(:) =");
 
   /* The method is not FSAL. Therefore, fn ​is computed at the beginning
@@ -1657,7 +1657,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     ark_mem->tcur = ark_mem->tn + j * hrat;
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
-    N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3,
+    N_VLinearSum(ONE, ark_mem->ycur, hrat, ark_mem->tempv3, ark_mem->ycur);
     if (!ark_mem->fixedstep)
     {
       N_VLinearSum(ONE, ark_mem->tempv1, hrsinv, ark_mem->tempv3,
@@ -2047,10 +2047,10 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
     }
   }
 
-  +/* Evaluate stage RHS */
+  /* Evaluate stage RHS */
 
-    /* apply user-supplied stage preprocessing function (if supplied) */
-    if (ark_mem->PreProcessRHS != NULL)
+  /* apply user-supplied stage preprocessing function (if supplied) */
+  if (ark_mem->PreProcessRHS != NULL)
   {
     retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
                                     ark_mem->user_data);
@@ -2258,8 +2258,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* apply user-supplied stage postprocessing function (if supplied) */
     if (ark_mem->PostProcessStage != NULL)
     {
-      retval = ark_mem->PostProcessStage(ark_mem->tn + j * onesixth * ark_mem->h,
-                                         ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                         ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",

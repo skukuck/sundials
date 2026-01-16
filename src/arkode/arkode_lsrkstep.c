@@ -1180,7 +1180,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     Xvecs[2] = ark_mem->fn;
     cvals[3] = p4 * ark_mem->h;
     Xvecs[3] = ark_mem->tempv3;
-    retval = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
+    retval   = N_VLinearCombination(4, cvals, Xvecs, ark_mem->tempv1);
     if (retval != 0)
     {
       SUNLogInfo(ARK_LOGGER, "end-compute-embedding",

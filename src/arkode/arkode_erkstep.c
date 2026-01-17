@@ -405,7 +405,7 @@ int erkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
 {
   ARKodeERKStepMem step_mem;
   sunbooleantype reset_efun;
-  int retval, j;
+  int retval;
 
   /* access ARKodeERKStepMem structure */
   retval = erkStep_AccessStepMem(ark_mem, __func__, &step_mem);

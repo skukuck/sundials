@@ -951,7 +951,7 @@ int arkStep_Init(ARKodeMem ark_mem, SUNDIALS_MAYBE_UNUSED sunrealtype tout,
                  int init_type)
 {
   ARKodeARKStepMem step_mem;
-  int j, retval;
+  int retval;
   sunbooleantype reset_efun;
 
   /* access ARKodeARKStepMem structure */

@@ -91,10 +91,7 @@ static int forcingStep_Init(ARKodeMem ark_mem,
   }
 
   /* immediately return if not called in FIRST_INIT mode */
-  if (init_type != FIRST_INIT)
-  {
-    return ARK_SUCCESS;
-  }
+  if (init_type != FIRST_INIT) { return ARK_SUCCESS; }
 
   /* On first initialization, make the SUNStepper consistent with the current
    * state in case a user provided a different initial condition for the

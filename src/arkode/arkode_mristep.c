@@ -1299,7 +1299,6 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
   /*** Perform timestep adaptivity checks and initial setup (skip on ALLOC_INIT) ***/
   if (init_type != ALLOC_INIT)
   {
-
     /* get timestep adaptivity type */
     adapt_type = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
 
@@ -1343,8 +1342,8 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
         if (mriStep_SlowRHS(ark_mem, ark_mem->tcur, ark_mem->ycur,
                             ark_mem->tempv1, ARK_FULLRHS_START) != ARK_SUCCESS)
         {
-          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__, __FILE__,
-                          "error calling slow RHS function(s)");
+          arkProcessError(ark_mem, ARK_RHSFUNC_FAIL, __LINE__, __func__,
+                          __FILE__, "error calling slow RHS function(s)");
           return (ARK_RHSFUNC_FAIL);
         }
         retval = mriStep_Hin(ark_mem, ark_mem->tcur, tout, ark_mem->tempv1,

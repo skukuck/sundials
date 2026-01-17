@@ -472,12 +472,12 @@ int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage, int* num_stages)
   /* if coefficients structure is not yet available, return defaults */
   if (step_mem->coefficients == NULL)
   {
-    *istage = 0;
+    *istage     = 0;
     *num_stages = 1;
   }
   else
   {
-    *istage = step_mem->istage;
+    *istage     = step_mem->istage;
     *num_stages = step_mem->coefficients->sequential_methods;
   }
 

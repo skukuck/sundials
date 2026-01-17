@@ -292,12 +292,12 @@ int sprkStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages)
   /* if table is not yet set, return defaults */
   if (step_mem->method == NULL)
   {
-    *stage = 0;
+    *stage      = 0;
     *max_stages = 1;
   }
   else
   {
-    *stage = step_mem->istage;
+    *stage      = step_mem->istage;
     *max_stages = step_mem->method->stages;
   }
 

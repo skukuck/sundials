@@ -3194,7 +3194,7 @@ int ARKodeGetUserData(void* arkode_mem, void** user_data)
   then it returns (0,1), indicating that it is currently in the
   first of only a single stage.
   ---------------------------------------------------------------*/
-int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
+int ARKodeGetStageIndex(void* arkode_mem, int* stage, int* max_stages)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)
@@ -3212,7 +3212,7 @@ int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages)
   }
   else
   {
-    *stage = 0;
+    *stage      = 0;
     *max_stages = 1;
     return (ARK_SUCCESS);
   }

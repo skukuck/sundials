@@ -381,7 +381,8 @@ SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);
 SUNDIALS_EXPORT char* ARKodeGetReturnFlagName(long int flag);
 SUNDIALS_EXPORT int ARKodeWriteParameters(void* arkode_mem, FILE* fp);
-SUNDIALS_EXPORT int ARKodeGetStageIndex(void* arkode_mem, int* stage, int *max_stages);
+SUNDIALS_EXPORT int ARKodeGetStageIndex(void* arkode_mem, int* stage,
+                                        int* max_stages);
 
 /* Optional output functions (temporal adaptivity) */
 SUNDIALS_EXPORT int ARKodeGetNumExpSteps(void* arkode_mem, long int* expsteps);

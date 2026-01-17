@@ -231,7 +231,7 @@ typedef int (*ARKTimestepSetUseCompensatedSums)(ARKodeMem ark_mem,
 typedef int (*ARKTimestepSetOptions)(ARKodeMem ark_mem, int* argidx, char* argv[],
                                      size_t offset, sunbooleantype* arg_used);
 typedef int (*ARKTimestepGetStageIndex)(ARKodeMem ark_mem, int* stage,
-                                        int *max_stages);
+                                        int* max_stages);
 
 /* time stepper interface functions -- temporal adaptivity */
 typedef int (*ARKTimestepGetEstLocalErrors)(ARKodeMem ark_mem, N_Vector ele);

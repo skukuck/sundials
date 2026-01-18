@@ -46,16 +46,6 @@ int main(int argc, char* argv[])
   bool preallocate_data = false;
   if (argc > 1) { preallocate_data = stoi(argv[1]); }
 
-  // Ensure logging output goes to stdout
-  SUNLogger logger;
-  int flag = SUNContext_GetLogger(sunctx, &logger);
-  if (check_flag(flag, "SUNContext_GetLogger")) { return 1; }
-
-  SUNLogger_SetErrorFilename(logger, "stdout");
-  SUNLogger_SetWarningFilename(logger, "stdout");
-  SUNLogger_SetInfoFilename(logger, "stdout");
-  SUNLogger_SetDebugFilename(logger, "stdout");
-
   // Create initial condition
   N_Vector y = N_VNew_Serial(1, sunctx);
   if (check_ptr(y, "N_VNew_Serial")) { return 1; }
@@ -67,7 +57,7 @@ int main(int argc, char* argv[])
   if (check_ptr(arkode_mem, "LSRKStepCreate")) { return 1; }
 
   // Select method
-  flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKC_2");
+  int flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKC_2");
   if (check_flag(flag, "LSRKStepSetSTSMethodByName")) { return 1; }
 
   flag = ARKodeSetUserData(arkode_mem, &problem_data);

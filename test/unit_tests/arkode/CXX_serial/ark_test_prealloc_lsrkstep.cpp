@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
   // Create LSRKStep memory structure
   void* arkode_mem = nullptr;
-  arkode_mem = LSRKStepCreateSTS(ode_rhs, zero, y, sunctx);
+  arkode_mem       = LSRKStepCreateSTS(ode_rhs, zero, y, sunctx);
   if (check_ptr(arkode_mem, "LSRKStepCreate")) { return 1; }
 
   // Select method

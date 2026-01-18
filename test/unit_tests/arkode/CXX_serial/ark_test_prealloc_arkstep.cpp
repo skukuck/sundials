@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
   // Relative and absolute tolerances
   const sunrealtype rtol = SUN_RCONST(1.0e-6);
   const sunrealtype atol = SUN_RCONST(1.0e-10);
-  flag = ARKodeSStolerances(arkode_mem, rtol, atol);
+  flag                   = ARKodeSStolerances(arkode_mem, rtol, atol);
   if (check_flag(flag, "ARKodeSStolerances")) { return 1; }
 
   // Implicit algebraic solvers

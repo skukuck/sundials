@@ -1561,6 +1561,22 @@ SWIGEXPORT int _wrap_FARKodeWriteParameters(void *farg1, void *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FARKodeGetStageIndex(void *farg1, int *farg2, int *farg3) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int *)(farg2);
+  arg3 = (int *)(farg3);
+  result = (int)ARKodeGetStageIndex(arg1,arg2,arg3);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeGetNumExpSteps(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;

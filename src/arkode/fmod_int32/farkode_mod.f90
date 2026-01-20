@@ -213,6 +213,7 @@ module farkode_mod
  public :: FARKodePrintAllStats
  public :: FARKodeGetReturnFlagName
  public :: FARKodeWriteParameters
+ public :: FARKodeGetStageIndex
  public :: FARKodeGetNumExpSteps
  public :: FARKodeGetNumAccSteps
  public :: FARKodeGetNumErrTestFails
@@ -1296,6 +1297,16 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FARKodeGetStageIndex(farg1, farg2, farg3) &
+bind(C, name="_wrap_FARKodeGetStageIndex") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -4011,6 +4022,25 @@ type(C_PTR) :: farg2
 farg1 = arkode_mem
 farg2 = fp
 fresult = swigc_FARKodeWriteParameters(farg1, farg2)
+swig_result = fresult
+end function
+
+function FARKodeGetStageIndex(arkode_mem, stage, max_stages) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT), dimension(*), target, intent(inout) :: stage
+integer(C_INT), dimension(*), target, intent(inout) :: max_stages
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = arkode_mem
+farg2 = c_loc(stage(1))
+farg3 = c_loc(max_stages(1))
+fresult = swigc_FARKodeGetStageIndex(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

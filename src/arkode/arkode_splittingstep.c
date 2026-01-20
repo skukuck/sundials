@@ -463,7 +463,7 @@ static int splittingStep_SetOrder(ARKodeMem ark_mem, int order)
 /*---------------------------------------------------------------
   Returns the current stage index and number of stages
   ---------------------------------------------------------------*/
-int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage, int* num_stages)
+static int splittingStep_GetStageIndex(ARKodeMem ark_mem, int* istage, int* num_stages)
 {
   ARKodeSplittingStepMem step_mem;
   int retval = splittingStep_AccessStepMem(ark_mem, __func__, &step_mem);

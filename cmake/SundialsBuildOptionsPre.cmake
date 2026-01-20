@@ -340,6 +340,8 @@ endif()
 # Options for SUNDIALS testing
 # ---------------------------------------------------------------
 
+sundials_option(SUNDIALS_ENABLE_TESTING BOOL "Enable SUNDIALS tests" ON)
+
 sundials_option(SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Include development tests"
                 OFF ADVANCED)
 

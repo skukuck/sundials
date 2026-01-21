@@ -15,28 +15,4 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 
-message("Adding development tests")
-
-if(BUILD_ARKODE)
-  add_subdirectory(arkode)
-endif()
-
-# if(BUILD_CVODE)
-#   add_subdirectory(cvode)
-# endif()
-
-# if(BUILD_CVODES)
-#   add_subdirectory(cvodes)
-# endif()
-
-# if(BUILD_IDA)
-#   add_subdirectory(ida)
-# endif()
-
-# if(BUILD_IDAS)
-#   add_subdirectory(idas)
-# endif()
-
-# if(BUILD_KINSOL)
-#   add_subdirectory(kinsol)
-# endif()
+add_subdirectory(stiffness)

@@ -15,6 +15,10 @@ and IDAS, respectively.
 
 ### Bug Fixes
 
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build
+([Issue #692](https://github.com/LLNL/sundials/issues/692)).
+
 Some installed Fortran example makefiles were not linking to `sundials_fcore_mod`
 and `sundials_core` libraries as they should be. This is now fixed.
 

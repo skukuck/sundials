@@ -150,6 +150,7 @@ SUNDIALS_EXPORT int IDASetMaxErrTestFails(void* ida_mem, int maxnef);
 SUNDIALS_EXPORT int IDASetSuppressAlg(void* ida_mem, sunbooleantype suppressalg);
 SUNDIALS_EXPORT int IDASetId(void* ida_mem, N_Vector id);
 SUNDIALS_EXPORT int IDASetConstraints(void* ida_mem, N_Vector constraints);
+SUNDIALS_EXPORT int IDASetMaxNumConstraintFails(void* ida_mem, int max_fails);
 
 /* Optional step adaptivity input functions */
 
@@ -222,6 +223,10 @@ SUNDIALS_EXPORT int IDAGetCurrentTime(void* ida_mem, sunrealtype* tcur);
 SUNDIALS_EXPORT int IDAGetTolScaleFactor(void* ida_mem, sunrealtype* tolsfact);
 SUNDIALS_EXPORT int IDAGetErrWeights(void* ida_mem, N_Vector eweight);
 SUNDIALS_EXPORT int IDAGetEstLocalErrors(void* ida_mem, N_Vector ele);
+SUNDIALS_EXPORT int IDAGetNumConstraintFails(void* ida_mem,
+                                             long int* num_fails_out);
+SUNDIALS_EXPORT int IDAGetNumConstraintCorrections(void* ida_mem,
+                                                   long int* num_corrections_out);
 SUNDIALS_EXPORT int IDAGetNumGEvals(void* ida_mem, long int* ngevals);
 SUNDIALS_EXPORT int IDAGetRootInfo(void* ida_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int IDAGetIntegratorStats(void* ida_mem, long int* nsteps,

@@ -4,7 +4,23 @@
 
 ### Major Features
 
+SUNDIALS now has official Python interfaces! With this release, we are shipping a **beta version** of
+the sundials4py Python module (created with nanobind and litgen). sundials4py provides explicit
+interfaces to most features of SUNDIALS.
+
 ### New Features and Enhancements
+
+Added functions to CVODE(S) and IDA(S) to set the maximum number of inequality
+constraint failures in a step attempt (`CVodeSetMaxNumConstraintFails` and
+`IDASetMaxNumConstraintFails`) and to retrieve the total number of failed step
+attempts due to an inequality constraint violation (`CVodeGetNumConstraintFails`
+and `IDAGetNumConstraintFails`). As a result, constraint failures are no longer
+included in the number of step failures due to a solver failure (i.e., the
+values returned by `CVodeGetNumStepSolveFails` and `IDAGetNumStepSolveFails`).
+The functions `CVodeGetNumConstraintCorrections` and
+`IDAGetNumConstraintCorrections` were also added to retrieve the number of steps
+where the corrector was modified to satisfy an inequality constraint without
+failing the step.
 
 The functions `CVodeGetUserDataB` and `IDAGetUserDataB` were added to CVODES
 and IDAS, respectively.
@@ -12,6 +28,21 @@ and IDAS, respectively.
 Removed extraneous copy of output vector when using ARKODE in `ARK_ONE_STEP` mode.
 
 ### Bug Fixes
+
+Fixed a bug in the CVODE(S) inequality constraint handling where the predicted
+state was used to compute the step size reduction factor which could lead to an
+insufficient reduction in the step size or, when the prediction violates the
+constraints, an infinitely large step size in the next step attempt.
+
+In CVODES and IDA, added missing return flag names to `CVodeGetReturnFlagName`
+and `IDAGetReturnFlagName`, respectively.
+
+Fixed a CMake bug which resulted in static targets depending on shared targets
+when building both types of libraries in the same build
+([Issue #692](https://github.com/LLNL/sundials/issues/692)).
+
+Some installed Fortran example makefiles were not linking to `sundials_fcore_mod`
+and `sundials_core` libraries as they should be. This is now fixed.
 
 On the initial time step with a user-supplied initial step size, ARKODE and
 CVODE(S) will now return `ARK_TOO_CLOSE` or `CV_TOO_CLOSE`, respectively,
@@ -46,19 +77,21 @@ called even when informational logging was disabled.
 
 ### Deprecation Notices
 
-`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major release.
-Use `SUNFileOpen` and `SUNFileClose` instead.
+`SUNDIALSFileOpen` and `SUNDIALSFileClose` will be removed in the next major
+release.  Use `SUNFileOpen` and `SUNFileClose` instead.
 
-The `Convert` methods on the `sundials::kokkos:Vector`, `sundials::kokkos::DenseMatrix`,
-`sundials::ginkgo::Matrix`, `sundials::ginkgo::BatchMatrix`, `sundials::kokkos::DenseLinearSolver`,
-`sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver` classes have
-been deprecated and will be removed in the next major release. The method `get`, should
-be used instead.
+The `Convert` methods on the `sundials::kokkos:Vector`,
+`sundials::kokkos::DenseMatrix`, `sundials::ginkgo::Matrix`,
+`sundials::ginkgo::BatchMatrix`, `sundials::kokkos::DenseLinearSolver`,
+`sundials::ginkgo::LinearSolver`, and `sundials::ginkgo::BatchLinearSolver`
+classes have been deprecated and will be removed in the next major release. The
+method `get`, should be used instead.
 
-The `CSC_MAT` and `CSR_MAT` macros defined in `sunmatrix_sparse.h` will be removed in
-the next major release. Use `SUN_CSC_MAT` and `SUN_CSR_MAT` instead.
+The `CSC_MAT` and `CSR_MAT` macros defined in `sunmatrix_sparse.h` will be
+removed in the next major release. Use `SUN_CSC_MAT` and `SUN_CSR_MAT` instead.
 
-The `N_Vector_S` typedef to `N_Vector*` is deprecated and will be removed in the next major release.
+The `N_Vector_S` typedef to `N_Vector*` is deprecated and will be removed in the
+next major release.
 
 ## Changes to SUNDIALS in release 7.5.0
 

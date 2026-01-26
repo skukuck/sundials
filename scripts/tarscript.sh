@@ -3,7 +3,7 @@
 # Programmer(s): Radu Serban, David J. Gardner, Cody J. Balos @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -60,13 +60,13 @@ function print_usage
 # VERSION NUMBERS
 #---------------------------------------------------------
 
-SUN_VER="7.5.0"
-CV_VER="7.5.0"
-CVS_VER="7.5.0"
-IDA_VER="7.5.0"
-IDAS_VER="6.5.0"
-KIN_VER="7.5.0"
-ARK_VER="6.5.0"
+SUN_VER="7.6.0"
+CV_VER="7.6.0"
+CVS_VER="7.6.0"
+IDA_VER="7.6.0"
+IDAS_VER="6.6.0"
+KIN_VER="7.6.0"
+ARK_VER="6.6.0"
 
 #---------------------------------------------------------
 # Test if the script is executed from within its directory

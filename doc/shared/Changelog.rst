@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -24,9 +24,9 @@ Changelog
 
 .. SED_REPLACEMENT_KEY
 
-.. _Changelog.X.Y.Z:
+.. _Changelog.7.6.0:
 
-Changes to SUNDIALS in release X.Y.Z
+Changes to SUNDIALS in release 7.6.0
 ====================================
 
 .. include:: RecentChanges_link.rst

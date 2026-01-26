@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -111,7 +111,7 @@ implementations.
 .. efficiency of C, and the greater ease of interfacing the solver to
 .. applications written in extended Fortran.
 
-Changes to SUNDIALS in release X.Y.Z
+Changes to SUNDIALS in release 7.6.0
 ====================================
 
 .. include:: ../../../shared/RecentChanges.rst

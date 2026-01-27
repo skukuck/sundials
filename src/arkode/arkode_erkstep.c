@@ -786,7 +786,6 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (!(ark_mem->fn_is_current))
   {
     mode = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
     retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, mode);
     if (retval)

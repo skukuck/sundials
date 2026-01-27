@@ -3622,6 +3622,8 @@ Actual initial time step size used                     :c:func:`ARKodeGetActualI
 Step size used for the last successful step            :c:func:`ARKodeGetLastStep`
 Step size to be attempted on the next step             :c:func:`ARKodeGetCurrentStep`
 Integration direction, e.g., forward or backward       :c:func:`ARKodeGetStepDirection`
+Last saved time reached by the solver                  :c:func:`ARKodeGetLastTime`
+Last saved solution reached by the solver              :c:func:`ARKodeGetLastState`
 Current internal time reached by the solver            :c:func:`ARKodeGetCurrentTime`
 Current internal solution reached by the solver        :c:func:`ARKodeGetCurrentState`
 Current :math:`\gamma` value used by the solver        :c:func:`ARKodeGetCurrentGamma`
@@ -3743,6 +3745,38 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
    .. versionadded:: 6.2.0
+
+
+.. c:function:: int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
+
+   Returns the last saved time reached by the solver.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param tn: last saved time reached.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. versionadded:: x.y.z
+
+
+.. c:function:: int ARKodeGetLastState(void *arkode_mem, N_Vector *yn)
+
+   Returns the last saved solution reached by the solver.
+
+   :param arkode_mem: pointer to the ARKODE memory block.
+   :param yn: last saved solution.
+
+   :retval ARK_SUCCESS: the function exited successfully.
+   :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
+
+   .. note::
+
+      Users should exercise extreme caution when using this function,
+      as altering values of *yn* may lead to undesirable behavior, depending
+      on the particular use case and on when this routine is called.
+
+   .. versionadded:: x.y.z
 
 
 .. c:function:: int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur)

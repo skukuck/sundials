@@ -406,6 +406,9 @@ SUNDIALS_EXPORT int ARKodeGetAccumulatedError(void* arkode_mem,
 /* Optional output functions (implicit solver) */
 SUNDIALS_EXPORT int ARKodeGetNumLinSolvSetups(void* arkode_mem,
                                               long int* nlinsetups);
+SUNDIALS_EXPORT int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn);
+SUNDIALS_EXPORT int ARKodeGetLastState(void* arkode_mem,
+                                       N_Vector* state); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetCurrentTime(void* arkode_mem, sunrealtype* tcur);
 SUNDIALS_EXPORT int ARKodeGetCurrentState(void* arkode_mem,
                                           N_Vector* state); // nb::rv_policy::reference

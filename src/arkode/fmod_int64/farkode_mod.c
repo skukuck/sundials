@@ -1725,6 +1725,34 @@ SWIGEXPORT int _wrap_FARKodeGetNumLinSolvSetups(void *farg1, long *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FARKodeGetLastTime(void *farg1, double *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (sunrealtype *)(farg2);
+  result = (int)ARKodeGetLastTime(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FARKodeGetLastState(void *farg1, void *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (N_Vector *)(farg2);
+  result = (int)ARKodeGetLastState(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FARKodeGetCurrentTime(void *farg1, double *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;

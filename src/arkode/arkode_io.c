@@ -2570,6 +2570,46 @@ int ARKodeGetEstLocalErrors(void* arkode_mem, N_Vector ele)
 }
 
 /*---------------------------------------------------------------
+  ARKodeGetLastTime:
+
+  Returns the last saved value of the independent variable
+  ---------------------------------------------------------------*/
+int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  *tcur = ark_mem->tn;
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  ARKodeGetLastState:
+
+  Returns the last saved time step solution.
+  ---------------------------------------------------------------*/
+int ARKodeGetLasState(void* arkode_mem, N_Vector* state)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  *state = ark_mem->yn;
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   ARKodeGetCurrentTime:
 
   Returns the current value of the independent variable

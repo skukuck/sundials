@@ -904,6 +904,10 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                  "step = %li, tn = " SUN_FORMAT_G ", h = " SUN_FORMAT_G,
                  ark_mem->nst + 1, ark_mem->tn, ark_mem->h);
 
+      /* fill (tcur,ycur) with the last accepted step solution */
+      ark_mem->tcur = ark_mem->tn;
+      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+
       /* call the user-supplied step preprocessing function (if it exists) */
       if (ark_mem->PreProcessStep != NULL)
       {

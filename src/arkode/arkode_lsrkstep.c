@@ -579,10 +579,6 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* Compute dominant eigenvalue and update stats */
   if (step_mem->dom_eig_update)
   {
@@ -923,10 +919,6 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* Compute dominant eigenvalue and update stats */
   if (step_mem->dom_eig_update)
   {
@@ -1238,10 +1230,6 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* Initialize method coefficients */
   const sunrealtype rs      = (sunrealtype)step_mem->req_stages;
   const sunrealtype sm1inv  = ONE / (rs - ONE);
@@ -1486,10 +1474,6 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
 
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
-
-  /* Initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /* Initialize method coefficients */
   const sunrealtype rs     = (sunrealtype)step_mem->req_stages;
@@ -1864,10 +1848,6 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* Initialize method coefficients */
   const sunrealtype rs     = SUN_RCONST(4.0);
   const sunrealtype hp5    = ark_mem->h * SUN_RCONST(0.5);
@@ -2139,10 +2119,6 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
-
-  /* Initialize the current solution */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /* Initialize method coefficients */
   const sunrealtype hsixth = ark_mem->h / SIX;

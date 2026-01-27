@@ -312,8 +312,6 @@ static int splittingStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   SUNLogInfo(ARK_LOGGER, "begin-sequential-methods-list",
              "sequential method = 0");
 
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
   step_mem->istage = 0;
   retval = splittingStep_SequentialMethod(ark_mem, step_mem, 0, ark_mem->ycur);
   SUNLogExtraDebugVec(ARK_LOGGER, "sequential state", ark_mem->ycur,

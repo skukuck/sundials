@@ -772,9 +772,7 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   cvals = step_mem->cvals;
   Xvecs = step_mem->Xvecs;
 
-  /* initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* initialize the current stage index */
   step_mem->istage = 0;
 
   SUNLogInfo(ARK_LOGGER, "begin-stages-list", "stage = 0, tcur = " SUN_FORMAT_G,
@@ -789,7 +787,7 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   if (!(ark_mem->fn_is_current))
   {
-    mode   = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
+    mode = (ark_mem->initsetup) ? ARK_FULLRHS_START : ARK_FULLRHS_END;
     retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, mode);
     if (retval)

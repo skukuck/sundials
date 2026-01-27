@@ -580,9 +580,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage     = 0;
   step_mem->req_stages = step_mem->stage_max_limit;
 
@@ -930,9 +928,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage     = 0;
   step_mem->req_stages = step_mem->stage_max_limit;
 
@@ -1251,9 +1247,7 @@ int lsrkStep_TakeStepSSPs2(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage = 0;
 
   /* Initialize method coefficients */
@@ -1505,9 +1499,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage = 0;
 
   /* Initialize method coefficients */
@@ -1893,9 +1885,7 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage = 0;
 
   /* Initialize method coefficients */
@@ -2179,9 +2169,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  /* Initialize the current solution and stage index */
-  ark_mem->tcur = ark_mem->tn;
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  /* Initialize the current stage index */
   step_mem->istage = 0;
 
   /* Initialize method coefficients */

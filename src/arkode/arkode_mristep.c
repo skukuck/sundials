@@ -1837,9 +1837,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   do_embedding = !ark_mem->fixedstep ||
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
 
-  /* initialize the current solution */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
   adapt_type     = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
@@ -2386,9 +2383,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   ytilde = ark_mem->tempv4;
   ytemp  = ark_mem->tempv2;
 
-  /* initialize the current solution */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */
   adapt_type     = SUNAdaptController_GetType(ark_mem->hadapt_mem->hcontroller);
@@ -2867,9 +2861,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* initial time for step */
   t0 = ark_mem->tn;
-
-  /* initialize the current solution */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
   /* if MRI adaptivity is enabled: reset fast accumulated error,
      and send appropriate control parameter to the fast integrator */

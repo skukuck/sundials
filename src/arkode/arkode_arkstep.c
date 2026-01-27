@@ -1711,9 +1711,6 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *nflagPtr = ARK_SUCCESS;
   }
 
-  /* initialize the current solution */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
-
   /* call nonlinear solver setup if it exists */
   if (step_mem->NLS)
   {

@@ -105,7 +105,8 @@ foreach(example_tuple ${IDA_examples})
 endforeach(example_tuple ${IDA_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -287,7 +288,8 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the extra files
   foreach(extrafile ${IDA_extras})
-    install(FILES ${extrafile} DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/serial)
+    install(FILES ${extrafile}
+            DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/serial)
   endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
@@ -296,7 +298,8 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   examples2string(IDA_examples EXAMPLES)
 
-  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(IDA_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")

@@ -31,8 +31,8 @@
 # GPU_EXAMPLES_VAR, and CPU_GPU_EXAMPLES_VAR that go with MODULE (e.g. cvode,
 # sunlinsol).
 #
-# The DESTINATION option is the path *within* SUNDIALS_EXAMPLES_INSTALL_PATH that the
-# files should be installed under.
+# The DESTINATION option is the path *within* SUNDIALS_EXAMPLES_INSTALL_PATH
+# that the files should be installed under.
 #
 # The SUNDIALS_COMPONENTS option is a list of CMake targets in the SUNDIALS::
 # namespace provided to find_package. Note this may be the same as or a superset

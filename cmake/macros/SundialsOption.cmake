@@ -82,7 +82,7 @@ This module provides the following command:
      A list of variables which must evaluate to true for the cache variable to
      be set.
 
-     * If any of the dependencies evalute to false, then the cache variable will
+     * If any of the dependencies evaluate to false, then the cache variable will
        be unset and a warning message is printed.
 
    ``DEPENDS_ON_THROW_ERROR``
@@ -169,12 +169,18 @@ function(sundials_option NAME TYPE DOCSTR DEFAULT_VALUE)
       else()
         if((TYPE STREQUAL BOOL) AND arg_NEGATE_DEPRECATED)
           if(${_save_value})
-            set(${NAME} FALSE CACHE ${TYPE} ${DOCSTR})
+            set(${NAME}
+                FALSE
+                CACHE ${TYPE} ${DOCSTR})
           else()
-            set(${NAME} TRUE CACHE ${TYPE} ${DOCSTR})
+            set(${NAME}
+                TRUE
+                CACHE ${TYPE} ${DOCSTR})
           endif()
         else()
-          set(${NAME} "${_save_value}" CACHE ${TYPE} ${DOCSTR})
+          set(${NAME}
+              "${_save_value}"
+              CACHE ${TYPE} ${DOCSTR})
         endif()
       endif()
     endif()

@@ -83,7 +83,8 @@ endforeach(example_tuple ${ARKODE_examples})
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_petsc)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "ARKODE")

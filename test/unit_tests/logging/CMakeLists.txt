@@ -108,7 +108,8 @@ if(SUNDIALS_ENABLE_IDAS)
   list(APPEND unit_tests "test_logging_idas.cpp\;0") # Newton + GMRES
 endif()
 
-# if(SUNDIALS_ENABLE_KINSOL) list(APPEND unit_tests "test_logging_kinsol.cpp\;") endif()
+# if(SUNDIALS_ENABLE_KINSOL) list(APPEND unit_tests "test_logging_kinsol.cpp\;")
+# endif()
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})

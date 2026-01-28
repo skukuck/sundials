@@ -82,7 +82,8 @@ endforeach(example_tuple ${IDA_examples})
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/parallel)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/parallel)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "IDA")

@@ -228,7 +228,8 @@ if(SUNDIALS_ENABLE_RAJA
     # RAJA + OpenMP Offload
     # ---------------------
 
-    if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES "TARGET_OPENMP"))
+    if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV AND (RAJA_BACKENDS MATCHES
+                                              "TARGET_OPENMP"))
       set(openmpdev_raja_examples
           "ark_brusselator1D_task_local_nls.cpp\;USE_OMPDEV_NVEC\;--monitor\;1\;4\;exclude\;2"
       )

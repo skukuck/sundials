@@ -30,7 +30,8 @@ include_guard(GLOBAL)
 # Using XBRAID requires building with MPI enabled
 if(NOT SUNDIALS_ENABLE_MPI)
   message(
-    FATAL_ERROR "MPI is required for XBraid support. Set SUNDIALS_ENABLE_MPI to ON.")
+    FATAL_ERROR
+      "MPI is required for XBraid support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # XBraid does not support single or extended precision

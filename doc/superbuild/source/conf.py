@@ -48,7 +48,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinxcontrib.bibtex",
-    "sphinxcontrib.moderncmakedomain", 
+    "sphinxcontrib.moderncmakedomain",
     "sphinxfortran.fortran_domain",
 ]
 

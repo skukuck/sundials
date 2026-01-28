@@ -77,12 +77,8 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
 
   # Create a C source file which calls a KLU function
   file(WRITE ${TEST_DIR}/test.c
-    "\#include \"klu.h\"\n"
-    "int main(void) {\n"
-    "klu_common Common;\n"
-    "klu_defaults (&Common);\n"
-    "return 0;\n"
-    "}\n")
+       "\#include \"klu.h\"\n" "int main(void) {\n" "klu_common Common;\n"
+       "klu_defaults (&Common);\n" "return 0;\n" "}\n")
 
   # Attempt to build and link the test executable, pass --debug-trycompile to
   # the cmake command to save build files for debugging
@@ -100,8 +96,7 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
     file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
     message(
       FATAL_ERROR
-        "Could not compile KLU test. Check output in ${TEST_DIR}/compile.out"
-    )
+        "Could not compile KLU test. Check output in ${TEST_DIR}/compile.out")
   endif()
 
 else()

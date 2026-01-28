@@ -139,7 +139,8 @@ foreach(example_tuple ${CVODES_examples})
 endforeach(example_tuple ${CVODES_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -317,7 +318,8 @@ endif()
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/serial)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/serial)
 
   # Install the extra files
   foreach(extrafile ${CVODES_extras})
@@ -331,7 +333,8 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   examples2string(CVODES_examples EXAMPLES)
 
-  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(CVODES_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")

@@ -112,7 +112,8 @@ foreach(example_tuple ${KINSOL_examples})
 endforeach(example_tuple ${KINSOL_examples})
 
 # Add the build and install targets for each LAPACK example (if needed)
-if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+   AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
   set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
@@ -233,7 +234,8 @@ endif()
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/serial)
 
   # Install the extra files
   foreach(extrafile ${KINSOL_extras})
@@ -247,7 +249,8 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   examples2string(KINSOL_examples EXAMPLES)
 
-  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
+     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     examples2string(KINSOL_examples_BL EXAMPLES_BL)
   else()
     set(EXAMPLES_BL "")

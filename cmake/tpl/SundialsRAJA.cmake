@@ -28,15 +28,18 @@ include_guard(GLOBAL)
 # -----------------------------------------------------------------------------
 
 if((SUNDIALS_RAJA_BACKENDS MATCHES "CUDA") AND (NOT SUNDIALS_ENABLE_CUDA))
-  message(FATAL_ERROR "RAJA with a CUDA backend requires SUNDIALS_ENABLE_CUDA = ON")
+  message(
+    FATAL_ERROR "RAJA with a CUDA backend requires SUNDIALS_ENABLE_CUDA = ON")
 endif()
 
 if((SUNDIALS_RAJA_BACKENDS MATCHES "HIP") AND (NOT SUNDIALS_ENABLE_HIP))
-  message(FATAL_ERROR "RAJA with a HIP backend requires SUNDIALS_ENABLE_HIP = ON")
+  message(
+    FATAL_ERROR "RAJA with a HIP backend requires SUNDIALS_ENABLE_HIP = ON")
 endif()
 
 if((SUNDIALS_RAJA_BACKENDS MATCHES "SYCL") AND (NOT SUNDIALS_ENABLE_SYCL))
-  message(FATAL_ERROR "RAJA with a SYCL backend requires SUNDIALS_ENABLE_SYCL = ON")
+  message(
+    FATAL_ERROR "RAJA with a SYCL backend requires SUNDIALS_ENABLE_SYCL = ON")
 endif()
 
 # -----------------------------------------------------------------------------

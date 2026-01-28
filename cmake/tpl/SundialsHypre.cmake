@@ -30,7 +30,8 @@ include_guard(GLOBAL)
 # Using hypre requires building with MPI enabled
 if(NOT SUNDIALS_ENABLE_MPI)
   message(
-    FATAL_ERROR "MPI is required for hypre support. Set SUNDIALS_ENABLE_MPI to ON.")
+    FATAL_ERROR
+      "MPI is required for hypre support. Set SUNDIALS_ENABLE_MPI to ON.")
 endif()
 
 # -----------------------------------------------------------------------------
@@ -82,8 +83,7 @@ if(SUNDIALS_ENABLE_HYPRE_CHECKS)
     file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
     message(
       FATAL_ERROR
-        "Could not compile hypre test. Check output in ${TEST_DIR}/compile.out"
-    )
+        "Could not compile hypre test. Check output in ${TEST_DIR}/compile.out")
   endif()
 
 else()

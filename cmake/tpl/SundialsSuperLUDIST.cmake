@@ -38,7 +38,8 @@ endif()
 if(SUNDIALS_ENABLE_SUPERLUDIST AND NOT SUNDIALS_ENABLE_MPI)
   message(
     FATAL_ERROR
-      "MPI is required for SuperLU DIST support. Set SUNDIALS_ENABLE_MPI to ON.")
+      "MPI is required for SuperLU DIST support. Set SUNDIALS_ENABLE_MPI to ON."
+  )
 endif()
 
 # Using SUPERLUDIST with OpenMP requires building with OpenMP enabled
@@ -47,7 +48,8 @@ if(SUNDIALS_ENABLE_SUPERLUDIST
    AND NOT SUNDIALS_ENABLE_OPENMP)
   message(
     FATAL_ERROR
-      "OpenMP is required for SuperLU DIST support. Set SUNDIALS_ENABLE_OPENMP to ON.")
+      "OpenMP is required for SuperLU DIST support. Set SUNDIALS_ENABLE_OPENMP to ON."
+  )
 endif()
 
 # -----------------------------------------------------------------------------

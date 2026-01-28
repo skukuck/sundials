@@ -51,13 +51,8 @@ if(SUNDIALS_ENABLE_SYCL)
 endif()
 
 # Look for CMake configuration file in oneMKL installation
-find_package(
-  MKL
-  CONFIG
-  PATHS
-  "${ONEMKL_DIR}"
-  "${ONEMKL_DIR}/lib/cmake/mkl"
-  REQUIRED)
+find_package(MKL CONFIG PATHS "${ONEMKL_DIR}" "${ONEMKL_DIR}/lib/cmake/mkl"
+             REQUIRED)
 
 message(STATUS "MKL Version: ${MKL_VERSION}")
 message(STATUS "MKL Targets: ${MKL_IMPORTED_TARGETS}")

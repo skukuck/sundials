@@ -95,7 +95,8 @@ if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
   endforeach()
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/CXX_parhyp)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "KINSOL")

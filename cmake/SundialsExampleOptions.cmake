@@ -21,7 +21,8 @@
 # Options for C/C++ examples
 # -----------------------------------------------------------------------------
 
-sundials_option(SUNDIALS_EXAMPLES_ENABLE_C BOOL "Build SUNDIALS C examples" ON DEPRECATED_NAMES EXAMPLES_ENABLE_C)
+sundials_option(SUNDIALS_EXAMPLES_ENABLE_C BOOL "Build SUNDIALS C examples" ON
+                DEPRECATED_NAMES EXAMPLES_ENABLE_C)
 
 # Some TPLs only have C++ examples. Default the C++ examples to ON if any of
 # these are enabled on the initial configuration pass.
@@ -35,9 +36,13 @@ if(SUNDIALS_ENABLE_TRILINOS
    OR SUNDIALS_ENABLE_RAJA
    OR SUNDIALS_ENABLE_GINKGO
    OR SUNDIALS_ENABLE_KOKKOS)
-  sundials_option(SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" ON DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
+  sundials_option(
+    SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" ON
+    DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 else()
-  sundials_option(SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" OFF DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
+  sundials_option(
+    SUNDIALS_EXAMPLES_ENABLE_CXX BOOL "Build SUNDIALS C++ examples" OFF
+    DEPRECATED_NAMES EXAMPLES_ENABLE_CXX)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -45,27 +50,34 @@ endif()
 # -----------------------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_FORTRAN)
-  sundials_option(SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" ON DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
+  sundials_option(
+    SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" ON
+    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
 else()
-  sundials_option(SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" OFF DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
+  sundials_option(
+    SUNDIALS_EXAMPLES_ENABLE_FORTRAN BOOL "Build SUNDIALS Fortran examples" OFF
+    DEPENDS_ON SUNDIALS_ENABLE_FORTRAN DEPRECATED_NAMES EXAMPLES_ENABLE_F2003)
 endif()
 
 # -----------------------------------------------------------------------------
 # Options for CUDA Examples
 # -----------------------------------------------------------------------------
 
-sundials_option(SUNDIALS_EXAMPLES_ENABLE_CUDA BOOL "Build SUNDIALS CUDA examples" ON
-                DEPENDS_ON SUNDIALS_ENABLE_CUDA DEPRECATED_NAMES EXAMPLES_ENABLE_CUDA)
+sundials_option(
+  SUNDIALS_EXAMPLES_ENABLE_CUDA BOOL "Build SUNDIALS CUDA examples" ON
+  DEPENDS_ON SUNDIALS_ENABLE_CUDA DEPRECATED_NAMES EXAMPLES_ENABLE_CUDA)
 
 # -----------------------------------------------------------------------------
 # Options for installing examples
 # -----------------------------------------------------------------------------
 
 # Enable installing examples by default
-sundials_option(SUNDIALS_EXAMPLES_ENABLE_INSTALL BOOL "Install SUNDIALS examples" ON)
+sundials_option(SUNDIALS_EXAMPLES_ENABLE_INSTALL BOOL
+                "Install SUNDIALS examples" ON)
 
 sundials_option(
-  SUNDIALS_EXAMPLES_INSTALL_PATH PATH "Output directory for installing example files"
+  SUNDIALS_EXAMPLES_INSTALL_PATH PATH
+  "Output directory for installing example files"
   "${CMAKE_INSTALL_PREFIX}/examples")
 
 # If examples are to be exported, check where we should install them.

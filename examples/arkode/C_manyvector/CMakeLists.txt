@@ -67,7 +67,8 @@ endforeach(example_tuple ${ARKODE_examples})
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_manyvector)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/C_manyvector)
 
   # Install the extra files
   foreach(extrafile ${ARKODE_extras})

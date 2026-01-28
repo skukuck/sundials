@@ -85,7 +85,8 @@ endforeach(example_tuple ${CVODE_examples})
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/parallel)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/parallel)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "CVODE")

@@ -71,14 +71,16 @@ set(SUNDIALS_COUNTER_TYPE
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation monitoring capabilities enabled")
-sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES SUNDIALS_BUILD_WITH_MONITORING)
+sundials_option(SUNDIALS_ENABLE_MONITORING BOOL "${DOCSTR}" OFF
+                DEPRECATED_NAMES SUNDIALS_BUILD_WITH_MONITORING)
 
 # ---------------------------------------------------------------
 # Option to enable profiling
 # ---------------------------------------------------------------
 
 set(DOCSTR "Build with simulation profiling capabilities enabled")
-sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES SUNDIALS_BUILD_WITH_PROFILING)
+sundials_option(SUNDIALS_ENABLE_PROFILING BOOL "${DOCSTR}" OFF DEPRECATED_NAMES
+                SUNDIALS_BUILD_WITH_PROFILING)
 
 if(SUNDIALS_ENABLE_PROFILING)
   message(
@@ -215,7 +217,14 @@ endif()
 
 # Fortran 2003 interface is disabled by default
 set(DOCSTR "Enable Fortran 2003 modules")
-sundials_option(SUNDIALS_ENABLE_FORTRAN BOOL "${DOCSTR}" OFF DEPRECATED_NAMES F2003_INTERFACE_ENABLE BUILD_FORTRAN_MODULE_INTERFACE)
+sundials_option(
+  SUNDIALS_ENABLE_FORTRAN
+  BOOL
+  "${DOCSTR}"
+  OFF
+  DEPRECATED_NAMES
+  F2003_INTERFACE_ENABLE
+  BUILD_FORTRAN_MODULE_INTERFACE)
 
 if(SUNDIALS_ENABLE_FORTRAN)
   # F2003 interface only supports double precision
@@ -258,24 +267,60 @@ sundials_option(SUNDIALS_INSTALL_CMAKEDIR STRING "${DOCSTR}"
 # Options to enable compiler warnings, address sanitizer
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_ENABLE_ALL_WARNINGS BOOL "Enable all compiler warnings" OFF
-                ADVANCED DEPRECATED_NAMES ENABLE_ALL_WARNINGS)
+sundials_option(
+  SUNDIALS_ENABLE_ALL_WARNINGS
+  BOOL
+  "Enable all compiler warnings"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ALL_WARNINGS)
 
 # CMake 3.24 added the native option, CMAKE_COMPILE_WARNING_AS_ERROR
-sundials_option(CMAKE_COMPILE_WARNING_AS_ERROR BOOL
-                "Treat compiler warnings as errors" OFF ADVANCED DEPRECATED_NAMES ENABLE_WARNINGS_AS_ERRORS)
+sundials_option(
+  CMAKE_COMPILE_WARNING_AS_ERROR
+  BOOL
+  "Treat compiler warnings as errors"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_WARNINGS_AS_ERRORS)
 
-sundials_option(SUNDIALS_ENABLE_ADDRESS_SANITIZER BOOL "Enable address sanitizer" OFF
-                ADVANCED DEPRECATED_NAMES ENABLE_ADDRESS_SANITIZER)
+sundials_option(
+  SUNDIALS_ENABLE_ADDRESS_SANITIZER
+  BOOL
+  "Enable address sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_ADDRESS_SANITIZER)
 
-sundials_option(SUNDIALS_ENABLE_MEMORY_SANITIZER BOOL "Enable memory sanitizer" OFF
-                ADVANCED DEPRECATED_NAMES ENABLE_MEMORY_SANITIZER)
+sundials_option(
+  SUNDIALS_ENABLE_MEMORY_SANITIZER
+  BOOL
+  "Enable memory sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_MEMORY_SANITIZER)
 
-sundials_option(SUNDIALS_ENABLE_LEAK_SANITIZER BOOL "Enable leak sanitizer" OFF
-                ADVANCED DEPRECATED_NAMES ENABLE_LEAK_SANITIZER)
+sundials_option(
+  SUNDIALS_ENABLE_LEAK_SANITIZER
+  BOOL
+  "Enable leak sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_LEAK_SANITIZER)
 
-sundials_option(SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER BOOL "Enable undefined behavior sanitizer" OFF
-                ADVANCED DEPRECATED_NAMES ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
+sundials_option(
+  SUNDIALS_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER
+  BOOL
+  "Enable undefined behavior sanitizer"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
 
 # ---------------------------------------------------------------
 # Options to enable SUNDIALS debugging
@@ -345,11 +390,23 @@ endif()
 # Options for SUNDIALS testing
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_TEST_ENABLE_DEV_TESTS BOOL "Enable development tests"
-                OFF ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_DEVTESTS)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_DEV_TESTS
+  BOOL
+  "Enable development tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_DEVTESTS)
 
-sundials_option(SUNDIALS_TEST_ENABLE_UNIT_TESTS BOOL "Enable unit tests" OFF
-                ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_UNITTESTS)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_UNIT_TESTS
+  BOOL
+  "Enable unit tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_UNITTESTS)
 
 if(SUNDIALS_TEST_ENABLE_UNIT_TESTS)
   set(_default_gtest ON)
@@ -380,9 +437,14 @@ else()
 endif()
 
 sundials_option(
-  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT BOOL
-  "Compare test output with saved answer files" ${_default_diff_output}
-  ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_NODIFF NEGATE_DEPRECATED)
+  SUNDIALS_TEST_ENABLE_DIFF_OUTPUT
+  BOOL
+  "Compare test output with saved answer files"
+  ${_default_diff_output}
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_NODIFF
+  NEGATE_DEPRECATED)
 
 if((SUNDIALS_TEST_ENABLE_DEV_TESTS OR SUNDIALS_TEST_ENABLE_UNIT_TESTS)
    AND NOT SUNDIALS_TEST_ENABLE_DIFF_OUTPUT)
@@ -414,8 +476,14 @@ if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT SUNDIALS_TEST_ANSWER_DIR)
       "failures due to hardware or round-off differences.")
 endif()
 
-sundials_option(SUNDIALS_TEST_ENABLE_PROFILING BOOL "Profile tests" OFF
-                ADVANCED DEPRECATED_NAMES SUNDIALS_TEST_PROFILE)
+sundials_option(
+  SUNDIALS_TEST_ENABLE_PROFILING
+  BOOL
+  "Profile tests"
+  OFF
+  ADVANCED
+  DEPRECATED_NAMES
+  SUNDIALS_TEST_PROFILE)
 
 sundials_option(
   SUNDIALS_TEST_CALIPER_OUTPUT_DIR PATH "Location to write test Caliper files"
@@ -450,13 +518,14 @@ sundials_option(SUNDIALS_DEV_CLANG_TIDY BOOL "Enable clang-tidy" OFF ADVANCED)
 # Options for SUNDIALS benchmarks
 # ---------------------------------------------------------------
 
-sundials_option(SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF DEPRECATED_NAMES BUILD_BENCHMARKS)
+sundials_option(
+  SUNDIALS_ENABLE_BENCHMARKS BOOL "Build the SUNDIALS benchmark suite" OFF
+  DEPRECATED_NAMES BUILD_BENCHMARKS)
 
 sundials_option(
   SUNDIALS_BENCHMARKS_INSTALL_PATH PATH
   "Output directory for installing benchmark executables"
-  "${CMAKE_INSTALL_PREFIX}/benchmarks"
-  DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
+  "${CMAKE_INSTALL_PREFIX}/benchmarks" DEPRECATED_NAMES BENCHMARKS_INSTALL_PATH)
 
 sundials_option(
   SUNDIALS_SCHEDULER_COMMAND STRING

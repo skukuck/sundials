@@ -73,8 +73,7 @@ if(SUNDIALS_ENABLE_ADIAK_CHECKS)
     file(WRITE ${TEST_DIR}/compile.out "${COMPILE_OUTPUT}")
     message(
       FATAL_ERROR
-        "Could not compile Adiak test. Check output in ${TEST_DIR}/compile.out"
-    )
+        "Could not compile Adiak test. Check output in ${TEST_DIR}/compile.out")
   endif()
 
 else()

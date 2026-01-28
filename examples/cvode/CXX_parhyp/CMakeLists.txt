@@ -93,7 +93,8 @@ endforeach(example_tuple ${CVODE_examples})
 if(SUNDIALS_EXAMPLES_ENABLE_INSTALL)
 
   # Install the README file
-  install(FILES README DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/CXX_parhyp)
+  install(FILES README
+          DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/CXX_parhyp)
 
   # Install the extra files
   foreach(extrafile ${CVODE_extras})

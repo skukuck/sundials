@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # ----------------------------------------------------------------
 doc_version = "develop"
-sundials_version = "v7.5.0"
-arkode_version = "v6.5.0"
-cvode_version = "v7.5.0"
-cvodes_version = "v7.5.0"
-ida_version = "v7.5.0"
-idas_version = "v6.5.0"
-kinsol_version = "v7.5.0"
-year = "2025"
+sundials_version = "v7.6.0"
+arkode_version = "v6.6.0"
+cvode_version = "v7.6.0"
+cvodes_version = "v7.6.0"
+ida_version = "v7.6.0"
+idas_version = "v6.6.0"
+kinsol_version = "v7.6.0"
+year = "2026"
 
 # Warn about all references where the target cannot be found
 nitpicky = True

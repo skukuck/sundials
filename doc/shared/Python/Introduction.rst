@@ -1,6 +1,6 @@
 .. ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2025, Lawrence Livermore National Security,
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
    University of Maryland Baltimore County, and the SUNDIALS contributors.
    Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
@@ -113,12 +113,8 @@ For more information on usage, differences from the C/C++ API and examples, cont
      - ``sundials4py.arkode``
    * - ARKODE::FORCINGSTEP
      - ``sundials4py.arkode``
-   * - CVODE
-     - ``sundials4py.cvode``
    * - CVODES
      - ``sundials4py.cvodes``
-   * - IDA
-     - ``sundials4py.ida``
    * - IDAS
      - ``sundials4py.idas``
    * - KINSOL

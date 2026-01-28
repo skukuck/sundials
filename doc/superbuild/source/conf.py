@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -60,10 +60,10 @@ extlinks = {
 
 # Where to find cross-references to the Sphinx documentation.
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects.inv", None)),
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master", ("../objects-sphinx.inv", None)),
+    "python": ("https://docs.python.org/3", ("../objects-python.inv", None)),
+    "numpy": ("https://numpy.org/doc/stable/", ("../objects-numpy.inv", None)),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", ("../objects-scipy.inv", None)),
 }
 
 # Only setup Google analytics for the readthedocs being deployed (not local).

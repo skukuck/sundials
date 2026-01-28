@@ -2585,7 +2585,7 @@ int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  *tcur = ark_mem->tn;
+  *tn = ark_mem->tn;
   return (ARK_SUCCESS);
 }
 
@@ -2594,7 +2594,7 @@ int ARKodeGetLastTime(void* arkode_mem, sunrealtype* tn)
 
   Returns the last saved time step solution.
   ---------------------------------------------------------------*/
-int ARKodeGetLasState(void* arkode_mem, N_Vector* state)
+int ARKodeGetLastState(void* arkode_mem, N_Vector* yn)
 {
   ARKodeMem ark_mem;
   if (arkode_mem == NULL)
@@ -2605,7 +2605,7 @@ int ARKodeGetLasState(void* arkode_mem, N_Vector* state)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  *state = ark_mem->yn;
+  *yn = ark_mem->yn;
   return (ARK_SUCCESS);
 }
 

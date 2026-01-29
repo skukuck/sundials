@@ -202,6 +202,9 @@ m.def("ARKodeSetFixedStep", ARKodeSetFixedStep, nb::arg("arkode_mem"),
 m.def("ARKodeSetStepDirection", ARKodeSetStepDirection, nb::arg("arkode_mem"),
       nb::arg("stepdir"));
 
+m.def("ARKodeAllocateInternalData", ARKodeAllocateInternalData,
+      nb::arg("arkode_mem"));
+
 m.def("ARKodeSetNonlinearSolver", ARKodeSetNonlinearSolver,
       nb::arg("arkode_mem"), nb::arg("NLS"));
 

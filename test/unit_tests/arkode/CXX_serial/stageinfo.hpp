@@ -36,13 +36,13 @@ int preprocess_step(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Pre-step processing at t = " << std::setprecision(2)
-            << t << " (tn = " << tn << " , tcur = " << tcur << "),"
-            << std::setprecision(10) << "||y||_2 = "
-            << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl << std::flush;
+  std::cout << "    [Pre-step processing at t = " << std::setprecision(2) << t
+            << " (tn = " << tn << " , tcur = " << tcur << "),"
+            << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
   return 0;
 }
-
 
 int postprocess_step(sunrealtype t, N_Vector y, void* user_data)
 {
@@ -57,13 +57,13 @@ int postprocess_step(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Post-step processing at t = " << std::setprecision(2)
-            << t << " (tn = " << tn << " , tcur = " << tcur << "),"
-            << std::setprecision(10) << "||y||_2 = "
-            << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl << std::flush;
+  std::cout << "    [Post-step processing at t = " << std::setprecision(2) << t
+            << " (tn = " << tn << " , tcur = " << tcur << "),"
+            << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
   return 0;
 }
-
 
 int postprocess_step_fail(sunrealtype t, N_Vector y, void* user_data)
 {
@@ -78,13 +78,13 @@ int postprocess_step_fail(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetCurrentTime" << std::endl;
     return -1;
   }
-  std::cout << "    [Post-step failure processing at t = " << std::setprecision(2)
-            << t << " (tn = " << tn << " , tcur = " << tcur << "),"
-            << std::setprecision(10) << "||y||_2 = "
-            << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl << std::flush;
+  std::cout << "    [Post-step failure processing at t = "
+            << std::setprecision(2) << t << " (tn = " << tn
+            << " , tcur = " << tcur << ")," << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
   return 0;
 }
-
 
 int preprocess_stage(sunrealtype t, N_Vector y, void* user_data)
 {
@@ -106,12 +106,12 @@ int preprocess_stage(sunrealtype t, N_Vector y, void* user_data)
     return -1;
   }
   std::cout << "    [Pre-RHS processing (stage " << stage << " of " << max_stages
-      << ") at t = " << std::setprecision(2) << t << " (tn = " << tn << " , tcur = "
-      << tcur << "), " << std::setprecision(10) << "||y||_2 = "
-      << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl << std::flush;
+            << ") at t = " << std::setprecision(2) << t << " (tn = " << tn
+            << " , tcur = " << tcur << "), " << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
   return 0;
 }
-
 
 int postprocess_stage(sunrealtype t, N_Vector y, void* user_data)
 {
@@ -132,10 +132,12 @@ int postprocess_stage(sunrealtype t, N_Vector y, void* user_data)
     std::cerr << "Error in ARKodeGetStageIndex" << std::endl;
     return -1;
   }
-  std::cout << "    [Post-stage processing (stage " << stage << " of " << max_stages
-      << ") at t = " << std::setprecision(2) << t << " (tn = " << tn << " , tcur = "
-      << tcur << "), " << std::setprecision(10) << "||y||_2 = "
-      << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl << std::flush;
+  std::cout << "    [Post-stage processing (stage " << stage << " of "
+            << max_stages << ") at t = " << std::setprecision(2) << t
+            << " (tn = " << tn << " , tcur = " << tcur << "), "
+            << std::setprecision(10)
+            << "||y||_2 = " << SUNRsqrt(N_VDotProd(y, y)) << "]" << std::endl
+            << std::flush;
   return 0;
 }
 

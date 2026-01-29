@@ -43,7 +43,6 @@ void* arkode_mem = nullptr;
 // Include the pre/post step and stage processing routines now that arkode_mem is defined
 #include "stageinfo.hpp"
 
-
 int main(int argc, char* argv[])
 {
   cout << "Start LSRKStep StageInfo test" << endl;

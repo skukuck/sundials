@@ -43,7 +43,6 @@ void* arkode_mem = nullptr;
 // Include the pre/post step and stage processing routines now that arkode_mem is defined
 #include "stageinfo.hpp"
 
-
 int main(int argc, char* argv[])
 {
   cout << "Start SPRKStep StageInfo test" << endl;
@@ -59,8 +58,7 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "initial_condition")) { return 1; }
 
   // Create SPRKStep memory structure
-  arkode_mem = SPRKStepCreate(ode_rhs_force, ode_rhs_velocity, zero, y,
-                              sunctx);
+  arkode_mem = SPRKStepCreate(ode_rhs_force, ode_rhs_velocity, zero, y, sunctx);
   if (check_ptr(arkode_mem, "SPKStepCreate")) { return 1; }
 
   // Step size

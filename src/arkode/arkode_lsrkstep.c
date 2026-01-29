@@ -493,7 +493,7 @@ int lsrkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
         return ARK_RHSFUNC_FAIL;
       }
     }
-    N_VScale(ONE, ark_mem->fn, f);
+    N_VCopy(ark_mem->fn, f);
 
     break;
 
@@ -687,7 +687,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, ark_mem->ycur);
-  N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
+  N_VCopy(ark_mem->yn, ark_mem->tempv1);
 
   /* apply user-supplied stage postprocessing function (if supplied) */
   if (ark_mem->PostProcessStage != NULL)
@@ -749,7 +749,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Copy previous stage solution into tempv2 */
-    N_VScale(ONE, ark_mem->ycur, ark_mem->tempv2);
+    N_VCopy(ark_mem->ycur, ark_mem->tempv2);
 
     /* Compute new stage value and store in ycur */
     zj            = TWO * w0 * zjm1 - zjm2;
@@ -1035,7 +1035,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
   N_VLinearSum(ONE, ark_mem->yn, ark_mem->h * mus, ark_mem->fn, ark_mem->ycur);
-  N_VScale(ONE, ark_mem->yn, ark_mem->tempv1);
+  N_VCopy(ark_mem->yn, ark_mem->tempv1);
 
   /* apply user-supplied stage postprocessing function (if supplied) */
   if (ark_mem->PostProcessStage != NULL)
@@ -1088,7 +1088,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Copy previous stage solution into tempv2 */
-    N_VScale(ONE, ark_mem->ycur, ark_mem->tempv2);
+    N_VCopy(ark_mem->ycur, ark_mem->tempv2);
 
     /* Compute new stage value and store in ycur */
     temj          = (j + TWO) * (j - ONE);
@@ -1633,7 +1633,7 @@ int lsrkStep_TakeStepSSPs3(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   }
 
   /* Copy ycur into tempv2 before looping over second stage group */
-  N_VScale(ONE, ark_mem->ycur, ark_mem->tempv2);
+  N_VCopy(ark_mem->ycur, ark_mem->tempv2);
 
   /* Evaluate second stage group */
   for (int j = ((in - 1) * (in - 2) / 2 + 1); j <= (in * (in + 1) / 2 - 1); j++)
@@ -2177,7 +2177,7 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   const sunrealtype hfifth = ark_mem->h / FIVE;
 
   /* Copy yn into tempv2 for use in later stages */
-  N_VScale(ONE, ark_mem->yn, ark_mem->tempv2);
+  N_VCopy(ark_mem->yn, ark_mem->tempv2);
 
   /* Begin the first stage */
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
@@ -2670,7 +2670,7 @@ void lsrkStep_DomEigUpdateLogic(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
 {
   if (dsm <= ONE)
   {
-    N_VScale(ONE, ark_mem->tempv3, ark_mem->fn);
+    N_VCopy(ark_mem->tempv3, ark_mem->fn);
     ark_mem->fn_is_current = SUNTRUE;
 
     step_mem->dom_eig_is_current = (step_mem->const_Jac == SUNTRUE);

@@ -1338,7 +1338,7 @@ static int PSolvebd(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
 
   webdata = (UserData)user_data;
 
-  N_VScale(ONE, rvec, zvec);
+  N_VCopy(rvec, zvec);
 
   /* Loop through subgrid and apply preconditioner factors at each point. */
   for (ix = 0; ix < mxsub; ix++)

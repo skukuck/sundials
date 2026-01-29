@@ -55,10 +55,10 @@ static int save_history(sunrealtype t_n, N_Vector y_n, sunrealtype* t_hist,
 
   for (int i = i_start; i >= 0; i--)
   {
-    N_VScale(one, y_hist[i], y_hist[i + 1]);
-    N_VScale(one, f_hist[i], f_hist[i + 1]);
+    N_VCopy(y_hist[i], y_hist[i + 1]);
+    N_VCopy(f_hist[i], f_hist[i + 1]);
   }
-  N_VScale(one, y_n, y_hist[0]);
+  N_VCopy(y_n, y_hist[0]);
   int retval = ode_rhs(t_n, y_n, f_hist[0], user_data);
   if (retval) { return 1; }
 
@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
 
   N_Vector* y_hist = N_VCloneVectorArray(hist_size, y);
   if (check_ptr(y_hist, "N_VCloneVectorArray")) { return 1; }
-  N_VScale(one, y, y_hist[0]);
+  N_VCopy(y, y_hist[0]);
 
   N_Vector* f_hist = N_VCloneVectorArray(hist_size, y);
   if (check_ptr(f_hist, "N_VCloneVectorArray")) { return 1; }

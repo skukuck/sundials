@@ -2754,7 +2754,7 @@ int arkLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
                                       : NULL;
 
   /* Load ytemp with y = predicted y vector */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Set minimum increment based on uround and norm of f */
   srur   = SUNRsqrt(ark_mem->uround);
@@ -3433,7 +3433,7 @@ int arkLsSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype tnow, N_Vector ynow,
 
   /* Call solver, and copy x to b */
   retval = SUNLinSolSolve(arkls_mem->LS, arkls_mem->A, arkls_mem->x, b, delta);
-  N_VScale(ONE, arkls_mem->x, b);
+  N_VCopy(arkls_mem->x, b);
 
   /* If using a direct or matrix-iterative solver, scale the correction to
      account for change in gamma (this is only beneficial if M==I) */
@@ -3888,7 +3888,7 @@ int arkLsMassSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype nlscoef)
 
   /* Call solver, copy x to b, and increment mass solver counter */
   retval = SUNLinSolSolve(arkls_mem->LS, arkls_mem->M_lu, arkls_mem->x, b, delta);
-  N_VScale(ONE, arkls_mem->x, b);
+  N_VCopy(arkls_mem->x, b);
   arkls_mem->nmsolves++;
 
   /* Retrieve statistics from iterative linear solvers */

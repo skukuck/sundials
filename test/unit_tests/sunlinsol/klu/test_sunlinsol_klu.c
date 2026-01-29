@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
   SUNMatDestroy(B);
 
   /* copy x into y to print in case of solver failure */
-  N_VScale(ONE, x, y);
+  N_VCopy(x, y);
 
   /* create right-hand side vector for linear solve */
   fails = SUNMatMatvec(A, x, b);

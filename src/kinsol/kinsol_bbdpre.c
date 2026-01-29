@@ -550,7 +550,7 @@ static int KBBDDQJac(KBBDPrecData pdata, N_Vector uu, N_Vector uscale,
   kin_mem = (KINMem)pdata->kin_mem;
 
   /* load utemp with uu = predicted solution vector */
-  N_VScale(ONE, uu, utemp);
+  N_VCopy(uu, utemp);
 
   /* set pointers to the data for all vectors */
   udata     = N_VGetArrayPointer(uu);

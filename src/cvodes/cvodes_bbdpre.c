@@ -655,7 +655,7 @@ static int cvBBDDQJac(CVBBDPrecData pdata, sunrealtype t, N_Vector y,
   cv_mem = (CVodeMem)pdata->cvode_mem;
 
   /* Load ytemp with y = predicted solution vector */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Call cfn and gloc to get base value of g(t,y) */
   if (pdata->cfn != NULL)

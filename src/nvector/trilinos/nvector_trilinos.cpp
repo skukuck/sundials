@@ -109,6 +109,9 @@ N_Vector N_VNewEmpty_Trilinos(SUNContext sunctx)
   v->ops->nvconstrmask   = N_VConstrMask_Trilinos;
   v->ops->nvminquotient  = N_VMinQuotient_Trilinos;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Trilinos;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -320,6 +323,18 @@ void N_VScale_Trilinos(sunrealtype c, N_Vector x, N_Vector z)
   Teuchos::RCP<vector_type> zv       = N_VGetVector_Trilinos(z);
 
   zv->scale(c, *xv);
+}
+
+/*
+ * Copy vector: z = x
+ */
+SUNErrCode N_VCopy_Trilinos(N_Vector x, N_Vector z)
+{
+  Teuchos::RCP<const vector_type> xv = N_VGetVector_Trilinos(x);
+  Teuchos::RCP<vector_type> zv       = N_VGetVector_Trilinos(z);
+
+  zv->scale(ONE, *xv);
+  return SUN_SUCCESS;
 }
 
 /*

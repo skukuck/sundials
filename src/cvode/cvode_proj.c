@@ -304,7 +304,7 @@ int cvDoProjection(CVodeMem cv_mem, int* nflagPtr, sunrealtype saved_t,
   else { errP = NULL; }
 
   /* Copy acor into errP (if projecting the error) */
-  if (proj_mem->err_proj) { N_VScale(ONE, cv_mem->cv_acor, errP); }
+  if (proj_mem->err_proj) { N_VCopy(cv_mem->cv_acor, errP); }
 
   /* Call the user projection function */
   retval = proj_mem->pfun(cv_mem->cv_tn, cv_mem->cv_y, acorP,

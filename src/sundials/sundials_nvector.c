@@ -108,6 +108,9 @@ N_Vector N_VNewEmpty(SUNContext sunctx)
    * These operations provide default implementations that may be overridden.
    */
 
+  /* data copy */
+  ops->nvcopy = NULL;
+
   /* fused vector operations (optional) */
   ops->nvlinearcombination = NULL;
   ops->nvscaleaddmulti     = NULL;
@@ -231,6 +234,9 @@ SUNErrCode N_VCopyOps(N_Vector w, N_Vector v)
    *
    * These operations provide default implementations that may be overridden.
    */
+
+  /* data copy */
+  v->ops->nvcopy = w->ops->nvcopy;
 
   /* fused vector operations */
   v->ops->nvlinearcombination = w->ops->nvlinearcombination;
@@ -540,6 +546,37 @@ sunrealtype N_VMinQuotient(N_Vector num, N_Vector denom)
   result = ((sunrealtype)num->ops->nvminquotient(num, denom));
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(num));
   return (result);
+}
+
+/* -----------------------------------------------------------------
+ * OPTIONAL data copy
+ * -----------------------------------------------------------------*/
+
+SUNErrCode N_VCopy(N_Vector x, N_Vector z)
+{
+  SUNErrCode ier;
+
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(x));
+
+  if (z == x)
+  {
+    ier = SUN_SUCCESS;
+    SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(x));
+    return (ier);
+  }
+
+  if (z->ops->nvcopy != NULL)
+  {
+    ier = z->ops->nvcopy(x, z);
+  }
+  else
+  {
+    z->ops->nvscale(SUN_RCONST(1.0), x, z);
+    ier = SUN_SUCCESS;
+  }
+
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(x));
+  return (ier);
 }
 
 /* -----------------------------------------------------------------

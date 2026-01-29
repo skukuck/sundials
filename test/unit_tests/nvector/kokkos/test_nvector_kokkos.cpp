@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
     fails += Test_N_VMinQuotient(X, Y, length, 0);
     fails += Test_N_VProd(X, Y, Z, length, 0);
     fails += Test_N_VScale(X, Z, length, 0);
+    fails += Test_N_VCopy(X, Z, length, 0);
     fails += Test_N_VWL2Norm(X, Y, length, 0);
     fails += Test_N_VWrmsNorm(X, Y, length, 0);
     fails += Test_N_VWrmsNormMask(X, Y, Z, length, 0);

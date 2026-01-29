@@ -133,6 +133,9 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
   v->ops->nvconstrmask   = N_VConstrMask_MPIManyVector;
   v->ops->nvminquotient  = N_VMinQuotient_MPIManyVector;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_MPIManyVector;
+
   /* fused vector operations */
   v->ops->nvlinearcombination = N_VLinearCombination_MPIManyVector;
   v->ops->nvscaleaddmulti     = N_VScaleAddMulti_MPIManyVector;
@@ -352,6 +355,9 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
   v->ops->nvinvtest      = N_VInvTestLocal_ManyVector;
   v->ops->nvconstrmask   = N_VConstrMaskLocal_ManyVector;
   v->ops->nvminquotient  = N_VMinQuotientLocal_ManyVector;
+
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_ManyVector;
 
   /* fused vector operations */
   v->ops->nvlinearcombination = N_VLinearCombination_ManyVector;
@@ -695,6 +701,22 @@ void MVAPPEND(N_VScale)(sunrealtype c, N_Vector x, N_Vector z)
     SUNCheckLastErrVoid();
   }
   return;
+}
+
+/* Performs the copy operation z_j = x_j by calling N_VCopy on all subvectors;
+   this routine does not check that x and z are ManyVectors, if they have the
+   same number of subvectors, or if these subvectors are compatible. */
+SUNErrCode MVAPPEND(N_VCopy)(N_Vector x, N_Vector z)
+{
+  SUNFunctionBegin(x->sunctx);
+  sunindextype i;
+  SUNErrCode retval = SUN_SUCCESS;
+  for (i = 0; i < MANYVECTOR_NUM_SUBVECS(x); i++)
+  {
+    retval = N_VCopy(MANYVECTOR_SUBVEC(x, i), MANYVECTOR_SUBVEC(z, i));
+    if (retval != SUN_SUCCESS) { return retval; }
+  }
+  return SUN_SUCCESS;
 }
 
 /* Performs the operation z_j = |x_j| by calling N_VAbs on all subvectors;

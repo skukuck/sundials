@@ -678,8 +678,8 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
   IDA_mem->ida_tn  = t0;
 
   /* Initialize the phi array */
-  N_VScale(ONE, yy0, IDA_mem->ida_phi[0]);
-  N_VScale(ONE, yp0, IDA_mem->ida_phi[1]);
+  N_VCopy(yy0, IDA_mem->ida_phi[0]);
+  N_VCopy(yp0, IDA_mem->ida_phi[1]);
 
   /* create a Newton nonlinear solver object by default */
   NLS = SUNNonlinSol_Newton(yy0, IDA_mem->ida_sunctx);
@@ -840,8 +840,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
 
   /* Initialize the phi array */
 
-  N_VScale(ONE, yy0, IDA_mem->ida_phi[0]);
-  N_VScale(ONE, yp0, IDA_mem->ida_phi[1]);
+  N_VCopy(yy0, IDA_mem->ida_phi[0]);
+  N_VCopy(yp0, IDA_mem->ida_phi[1]);
 
   /* Initialize all the counters and other optional output values */
 
@@ -990,7 +990,7 @@ int IDASVtolerances(void* ida_mem, sunrealtype reltol, N_Vector abstol)
   }
 
   IDA_mem->ida_rtol = reltol;
-  N_VScale(ONE, abstol, IDA_mem->ida_Vatol);
+  N_VCopy(abstol, IDA_mem->ida_Vatol);
   IDA_mem->ida_atolmin0 = (atolmin == ZERO);
 
   IDA_mem->ida_itol = IDA_SV;
@@ -1075,7 +1075,7 @@ int IDAQuadInit(void* ida_mem, IDAQuadRhsFn rhsQ, N_Vector yQ0)
   }
 
   /* Initialize phiQ in the history array */
-  N_VScale(ONE, yQ0, IDA_mem->ida_phiQ[0]);
+  N_VCopy(yQ0, IDA_mem->ida_phiQ[0]);
 
   retval = N_VConstVectorArray(IDA_mem->ida_maxord, ZERO, IDA_mem->ida_phiQ + 1);
   if (retval != IDA_SUCCESS)
@@ -1140,7 +1140,7 @@ int IDAQuadReInit(void* ida_mem, N_Vector yQ0)
   }
 
   /* Initialize phiQ in the history array */
-  N_VScale(ONE, yQ0, IDA_mem->ida_phiQ[0]);
+  N_VCopy(yQ0, IDA_mem->ida_phiQ[0]);
 
   retval = N_VConstVectorArray(IDA_mem->ida_maxord, ZERO, IDA_mem->ida_phiQ + 1);
   if (retval != IDA_SUCCESS)
@@ -1278,7 +1278,7 @@ int IDAQuadSVtolerances(void* ida_mem, sunrealtype reltolQ, N_Vector abstolQ)
     IDA_mem->ida_VatolQMallocDone = SUNTRUE;
   }
 
-  N_VScale(ONE, abstolQ, IDA_mem->ida_VatolQ);
+  N_VCopy(abstolQ, IDA_mem->ida_VatolQ);
   IDA_mem->ida_atolQmin0 = (atolmin == ZERO);
 
   return (IDA_SUCCESS);
@@ -6621,7 +6621,7 @@ static int IDAQuadNls(IDAMem IDA_mem)
 
   if (IDA_mem->ida_quadr_sensi)
   {
-    N_VScale(ONE, IDA_mem->ida_eeQ, IDA_mem->ida_savrhsQ);
+    N_VCopy(IDA_mem->ida_eeQ, IDA_mem->ida_savrhsQ);
   }
 
   N_VLinearSum(ONE, IDA_mem->ida_eeQ, -ONE, IDA_mem->ida_ypQ, IDA_mem->ida_eeQ);
@@ -7655,11 +7655,11 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
   /* Save ee for possible order increase on next step */
   if (IDA_mem->ida_kused < IDA_mem->ida_maxord)
   {
-    N_VScale(ONE, IDA_mem->ida_ee, IDA_mem->ida_phi[IDA_mem->ida_kused + 1]);
+    N_VCopy(IDA_mem->ida_ee, IDA_mem->ida_phi[IDA_mem->ida_kused + 1]);
 
     if (IDA_mem->ida_quadr)
     {
-      N_VScale(ONE, IDA_mem->ida_eeQ, IDA_mem->ida_phiQ[IDA_mem->ida_kused + 1]);
+      N_VCopy(IDA_mem->ida_eeQ, IDA_mem->ida_phiQ[IDA_mem->ida_kused + 1]);
     }
 
     if (IDA_mem->ida_sensi || IDA_mem->ida_quadr_sensi)

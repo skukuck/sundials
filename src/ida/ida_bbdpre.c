@@ -594,8 +594,8 @@ static int IBBDDQJac(IBBDPrecData pdata, sunrealtype tt, sunrealtype cj,
   IDA_mem = (IDAMem)pdata->ida_mem;
 
   /* Initialize ytemp and yptemp. */
-  N_VScale(ONE, yy, ytemp);
-  N_VScale(ONE, yp, yptemp);
+  N_VCopy(yy, ytemp);
+  N_VCopy(yp, yptemp);
 
   /* Obtain pointers as required to the data array of vectors. */
   ydata     = N_VGetArrayPointer(yy);

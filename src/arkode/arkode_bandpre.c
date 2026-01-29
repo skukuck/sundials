@@ -500,7 +500,7 @@ static int ARKBandPDQJac(ARKBandPrecData pdata, sunrealtype t, N_Vector y,
                                       : NULL;
 
   /* Load ytemp with y = predicted y vector. */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Set minimum increment based on uround and norm of f. */
   srur   = SUNRsqrt(ark_mem->uround);

@@ -397,8 +397,8 @@ int arkInterpUpdate_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tne
   }
 
   /* copy ynew and fnew into yold and fold, respectively */
-  N_VScale(ONE, ark_mem->yn, HINT_YOLD(interp));
-  N_VScale(ONE, ark_mem->fn, HINT_FOLD(interp));
+  N_VCopy(ark_mem->yn, HINT_YOLD(interp));
+  N_VCopy(ark_mem->fn, HINT_FOLD(interp));
 
   /* update time values */
   HINT_TOLD(interp) = HINT_TNEW(interp);
@@ -1096,7 +1096,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
 
   /* set current time and state as first entries of (t,y) history, update counter */
   LINT_TJ(I, 0) = tnew;
-  N_VScale(ONE, ark_mem->yn, LINT_YJ(I, 0));
+  N_VCopy(ark_mem->yn, LINT_YJ(I, 0));
   LINT_NHIST(I) = 1;
 
   /* return with success */
@@ -1152,7 +1152,7 @@ int arkInterpUpdate_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
 
   /* copy tnew and ycur into first entry of history arrays */
   thist[0] = tnew;
-  N_VScale(ONE, ark_mem->ycur, yhist[0]);
+  N_VCopy(ark_mem->ycur, yhist[0]);
 
   /* update 'nhist' (first few steps) */
   LINT_NHIST(I) = nhist = SUNMIN(nhist + 1, nmax);
@@ -1225,7 +1225,7 @@ int arkInterpEvaluate_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tau,
   /* if constant interpolant is requested, just return ynew */
   if (q == 0)
   {
-    N_VScale(ONE, yhist[0], yout);
+    N_VCopy(yhist[0], yout);
     return (ARK_SUCCESS);
   }
 

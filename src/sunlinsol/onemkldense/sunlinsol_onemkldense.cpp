@@ -465,7 +465,7 @@ int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   }
 
   // Copy b into x
-  N_VScale(SUN_RCONST(1.0), b, x);
+  N_VCopy(b, x);
 
   // Access x vector data array
   sunrealtype* xdata = N_VGetDeviceArrayPointer(x);

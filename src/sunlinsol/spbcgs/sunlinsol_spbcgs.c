@@ -471,7 +471,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
   if (*zeroguess)
   {
-    N_VScale(ONE, b, r_star);
+    N_VCopy(b, r_star);
     SUNCheckLastErr();
   }
   else
@@ -511,7 +511,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   }
   else
   {
-    N_VScale(ONE, r_star, r);
+    N_VCopy(r_star, r);
     SUNCheckLastErr();
   }
 
@@ -522,7 +522,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   }
   else
   {
-    N_VScale(ONE, r, r_star);
+    N_VCopy(r, r_star);
     SUNCheckLastErr();
   }
 
@@ -554,9 +554,9 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
   /* Copy r_star to r and p */
 
-  N_VScale(ONE, r_star, r);
+  N_VCopy(r_star, r);
   SUNCheckLastErr();
-  N_VScale(ONE, r_star, p);
+  N_VCopy(r_star, p);
   SUNCheckLastErr();
 
   /* Set x = sx x if non-zero guess */
@@ -585,7 +585,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, p, vtemp);
+      N_VCopy(p, vtemp);
       SUNCheckLastErr();
     }
 
@@ -593,7 +593,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
     if (preOnRight)
     {
-      N_VScale(ONE, vtemp, Ap);
+      N_VCopy(vtemp, Ap);
       SUNCheckLastErr();
       status = psolve(P_data, Ap, vtemp, delta, SUN_PREC_RIGHT);
       if (status != 0)
@@ -643,7 +643,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, Ap, vtemp);
+      N_VCopy(Ap, vtemp);
       SUNCheckLastErr();
     }
 
@@ -656,7 +656,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, vtemp, Ap);
+      N_VCopy(vtemp, Ap);
       SUNCheckLastErr();
     }
 
@@ -682,7 +682,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, q, vtemp);
+      N_VCopy(q, vtemp);
       SUNCheckLastErr();
     }
 
@@ -690,7 +690,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
     if (preOnRight)
     {
-      N_VScale(ONE, vtemp, u);
+      N_VCopy(vtemp, u);
       SUNCheckLastErr();
       status = psolve(P_data, u, vtemp, delta, SUN_PREC_RIGHT);
       if (status != 0)
@@ -740,7 +740,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, u, vtemp);
+      N_VCopy(u, vtemp);
       SUNCheckLastErr();
     }
 
@@ -753,7 +753,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, vtemp, u);
+      N_VCopy(vtemp, u);
       SUNCheckLastErr();
     }
 
@@ -856,7 +856,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
 
         return (LASTFLAG(S));
       }
-      N_VScale(ONE, vtemp, x);
+      N_VCopy(vtemp, x);
       SUNCheckLastErr();
     }
 

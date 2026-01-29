@@ -147,6 +147,9 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
   v->ops->nvwl2norm      = N_VWL2Norm_Hip;
   v->ops->nvcompare      = N_VCompare_Hip;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Hip;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -804,6 +807,25 @@ void N_VScale_Hip(sunrealtype a, N_Vector X, N_Vector Z)
                                                   NVEC_HIP_DDATAp(Z),
                                                   NVEC_HIP_CONTENT(X)->length);
   PostKernelLaunch();
+}
+
+SUNErrCode N_VCopy_Hip(N_Vector X, N_Vector Z)
+{
+  size_t grid, block, shMemSize;
+  hipStream_t stream;
+
+  if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
+  {
+    SUNDIALS_DEBUG_PRINT(
+      "ERROR in N_VCopy_Hip: GetKernelParameters returned nonzero\n");
+    return SUN_ERR_GENERIC;
+  }
+
+  copyKernel<<<grid, block, shMemSize, stream>>>(NVEC_HIP_DDATAp(X),
+                                                 NVEC_HIP_DDATAp(Z),
+                                                 NVEC_HIP_CONTENT(X)->length);
+  PostKernelLaunch();
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Hip(N_Vector X, N_Vector Z)

@@ -207,28 +207,28 @@ int main(void)
   printf("  [x1,x2] = ");
   PrintOutput(u1);
 
-  N_VScale(ONE, u1, u);
+  N_VCopy(u1, u);
   glstr = KIN_NONE;
   mset  = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u1, u);
+  N_VCopy(u1, u);
   glstr = KIN_LINESEARCH;
   mset  = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u1, u);
+  N_VCopy(u1, u);
   glstr = KIN_NONE;
   mset  = 0;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u1, u);
+  N_VCopy(u1, u);
   glstr = KIN_LINESEARCH;
   mset  = 0;
   SolveIt(kmem, u, s, glstr, mset);
@@ -240,28 +240,28 @@ int main(void)
   printf("  [x1,x2] = ");
   PrintOutput(u2);
 
-  N_VScale(ONE, u2, u);
+  N_VCopy(u2, u);
   glstr = KIN_NONE;
   mset  = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u2, u);
+  N_VCopy(u2, u);
   glstr = KIN_LINESEARCH;
   mset  = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u2, u);
+  N_VCopy(u2, u);
   glstr = KIN_NONE;
   mset  = 0;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale(ONE, u2, u);
+  N_VCopy(u2, u);
   glstr = KIN_LINESEARCH;
   mset  = 0;
   SolveIt(kmem, u, s, glstr, mset);

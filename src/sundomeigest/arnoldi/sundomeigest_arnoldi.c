@@ -141,7 +141,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   content->q = N_VClone(q);
   SUNCheckLastErrNull();
 
-  N_VScale(ONE, q, content->q);
+  N_VCopy(q, content->q);
   SUNCheckLastErrNull();
 
   content->V = N_VCloneVectorArray(kry_dim + 1, q);
@@ -360,7 +360,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
                                &(Arnoldi_CONTENT(DEE)->Hes[i + 1][i])));
 
     /* Unitize the computed orthogonal vector */
-    N_VScale(SUN_RCONST(1.0) / Arnoldi_CONTENT(DEE)->Hes[i + 1][i],
+    N_VScale(ONE / Arnoldi_CONTENT(DEE)->Hes[i + 1][i],
              Arnoldi_CONTENT(DEE)->V[i + 1], Arnoldi_CONTENT(DEE)->V[i + 1]);
     SUNCheckLastErr();
   }

@@ -283,6 +283,23 @@ operations below.
       N_VScale(c, x, z);
 
 
+.. c:function:: SUNErrCode N_VCopy(N_Vector x, N_Vector z)
+
+   Performs a deep copies the ``N_Vector`` *x* into the ``N_Vector`` *z*:
+
+   .. math::
+      z_i = x_i, \quad i=0,\ldots,n-1.
+
+   This operation is *optional*, and if it is not provided by an
+   N_Vector implementation, :c:func:`N_VScale` will be used instead.
+
+   Usage:
+
+   .. code-block:: c
+
+      retval = N_VCopy(x, z);
+
+
 .. c:function:: void N_VAbs(N_Vector x, N_Vector z)
 
    Sets the components of the ``N_Vector`` *z* to be the absolute

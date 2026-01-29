@@ -483,7 +483,7 @@ static int PSolve(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
 
   webdata = (UserData)user_data;
 
-  N_VScale(ONE, rvec, zvec);
+  N_VCopy(rvec, zvec);
 
   for (jx = 0; jx < MX; jx++)
   {

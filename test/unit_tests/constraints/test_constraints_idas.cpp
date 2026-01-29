@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   N_Vector yp = N_VClone(rhs);
   if (check_ptr(y, "N_VClone")) { return 1; }
 
-  N_VScale(SUN_RCONST(1.0), rhs, yp);
+  N_VCopy(rhs, yp);
 
   // Create integrator
   void* ida_mem = IDACreate(sunctx);

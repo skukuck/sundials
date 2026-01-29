@@ -165,7 +165,7 @@ contains
     failure = 0
 
     ! try calling SetATimes routine: should pass/fail based on expected input
-    failure = FSUNLinSolSetATimes(S, ATdata, ATimes); 
+    failure = FSUNLinSolSetATimes(S, ATdata, ATimes);
     if (failure /= 0) then
       write (*, '(A,I0,A,I0)') &
         ">>> FAILED test -- FSUNLinSolSetATimes returned ", failure, ", Proc ", myid
@@ -187,7 +187,7 @@ contains
     integer(c_int)                 :: myid
 
     ! try calling SetPreconditioner routine: should pass/fail based on expected input
-    failure = FSUNLinSolSetPreconditioner(S, Pdata, PSetup, PSolve); 
+    failure = FSUNLinSolSetPreconditioner(S, Pdata, PSetup, PSolve);
     if (failure /= 0) then
       write (*, '(A,I0,A,I0)') &
         ">>> FAILED test -- FSUNLinSolSetPreconditioner returned ", failure, ", Proc ", myid
@@ -300,7 +300,7 @@ contains
 
     ! Check solution, and copy y into x for return
     failure = check_vector(x, y, 10.0d0*tol)
-    call FN_VScale(ONE, y, x)
+    call FN_VCopy(y, x)
 
     if (failure /= 0) then
       write (*, *) ">>> FAILED test -- FSUNLinSolSolve check, Proc ", myid

@@ -395,7 +395,7 @@ int resHeat(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr, void* user_da
   mm    = data->mm;
 
   /* Initialize rr to uu, to take care of boundary equations. */
-  N_VScale(ONE, uu, rr);
+  N_VCopy(uu, rr);
 
   /* Loop over interior points; set res = up - (central difference). */
   for (j = 1; j < MGRID - 1; j++)

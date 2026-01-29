@@ -529,7 +529,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   /* Set vtemp and V[0] to initial (unscaled) residual r_0 = b - A*x_0 */
   if (*zeroguess)
   {
-    N_VScale(ONE, b, vtemp);
+    N_VCopy(b, vtemp);
     SUNCheckLastErr();
   }
   else
@@ -549,7 +549,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     N_VLinearSum(ONE, b, -ONE, vtemp, vtemp);
     SUNCheckLastErr();
   }
-  N_VScale(ONE, vtemp, V[0]);
+  N_VCopy(vtemp, V[0]);
   SUNCheckLastErr();
 
   /* Apply left preconditioner and left scaling to V[0] = r_0 */
@@ -570,7 +570,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   }
   else
   {
-    N_VScale(ONE, V[0], vtemp);
+    N_VCopy(V[0], vtemp);
     SUNCheckLastErr();
   }
 
@@ -581,7 +581,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   }
   else
   {
-    N_VScale(ONE, vtemp, V[0]);
+    N_VCopy(vtemp, V[0]);
     SUNCheckLastErr();
   }
 
@@ -648,14 +648,14 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
       }
       else
       {
-        N_VScale(ONE, V[l], vtemp);
+        N_VCopy(V[l], vtemp);
         SUNCheckLastErr();
       }
 
       /*   Apply right preconditioner: vtemp = P2_inv s2_inv V[l] */
       if (preOnRight)
       {
-        N_VScale(ONE, vtemp, V[l_plus_1]);
+        N_VCopy(vtemp, V[l_plus_1]);
         SUNCheckLastErr();
         status = psolve(P_data, V[l_plus_1], vtemp, delta, SUN_PREC_RIGHT);
         if (status != 0)
@@ -703,7 +703,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
       }
       else
       {
-        N_VScale(ONE, V[l_plus_1], vtemp);
+        N_VCopy(V[l_plus_1], vtemp);
         SUNCheckLastErr();
       }
 
@@ -715,7 +715,7 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
       }
       else
       {
-        N_VScale(ONE, vtemp, V[l_plus_1]);
+        N_VCopy(vtemp, V[l_plus_1]);
         SUNCheckLastErr();
       }
 
@@ -818,14 +818,14 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
       }
       else
       {
-        N_VScale(ONE, xcor, vtemp);
+        N_VCopy(xcor, vtemp);
         SUNCheckLastErr();
       }
 
       /* Add vtemp to initial x to get final solution x, and return */
       if (*zeroguess)
       {
-        N_VScale(ONE, vtemp, x);
+        N_VCopy(vtemp, x);
         SUNCheckLastErr();
       }
       else
@@ -899,14 +899,14 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
     }
     else
     {
-      N_VScale(ONE, xcor, vtemp);
+      N_VCopy(xcor, vtemp);
       SUNCheckLastErr();
     }
 
     /* Add vtemp to initial x to get final solution x, and return */
     if (*zeroguess)
     {
-      N_VScale(ONE, vtemp, x);
+      N_VCopy(vtemp, x);
       SUNCheckLastErr();
     }
     else

@@ -713,7 +713,7 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
     return (CV_MEM_FAIL);
   }
 
-  /* We need to ensure Ns is set in the new CVODES object so that Ns is accessible 
+  /* We need to ensure Ns is set in the new CVODES object so that Ns is accessible
      in the Python callbacks which only have access to cvodeB_mem, not the original cvode_mem */
   ((CVodeMem)cvodeB_mem)->cv_Ns = cv_mem->cv_Ns;
 
@@ -831,7 +831,7 @@ int CVodeInitB(void* cvode_mem, int which, CVRhsFnB fB, sunrealtype tB0,
 
   cvB_mem->cv_t0 = tB0;
   cvB_mem->cv_y  = N_VClone(yB0);
-  N_VScale(ONE, yB0, cvB_mem->cv_y);
+  N_VCopy(yB0, cvB_mem->cv_y);
 
   SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
   return (CV_SUCCESS);
@@ -907,7 +907,7 @@ int CVodeInitBS(void* cvode_mem, int which, CVRhsFnBS fBs, sunrealtype tB0,
 
   cvB_mem->cv_t0 = tB0;
   cvB_mem->cv_y  = N_VClone(yB0);
-  N_VScale(ONE, yB0, cvB_mem->cv_y);
+  N_VCopy(yB0, cvB_mem->cv_y);
 
   SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
   return (CV_SUCCESS);
@@ -1686,7 +1686,7 @@ int CVodeGetB(void* cvode_mem, int which, sunrealtype* tret, N_Vector yB)
     cvB_mem = cvB_mem->cv_next;
   }
 
-  N_VScale(ONE, cvB_mem->cv_y, yB);
+  N_VCopy(cvB_mem->cv_y, yB);
   *tret = cvB_mem->cv_tout;
 
   return (CV_SUCCESS);
@@ -1747,7 +1747,7 @@ int CVodeGetQuadB(void* cvode_mem, int which, sunrealtype* tret, N_Vector qB)
 
   if (nstB == 0)
   {
-    N_VScale(ONE, cvB_mem->cv_mem->cv_znQ[0], qB);
+    N_VCopy(cvB_mem->cv_mem->cv_znQ[0], qB);
     *tret = cvB_mem->cv_tout;
   }
   else { flag = CVodeGetQuad(cvodeB_mem, tret, qB); }
@@ -1799,7 +1799,7 @@ static CVckpntMem CVAckpntInit(CVodeMem cv_mem)
   ck_mem->ck_zqm = 0;
 
   /* Load ckdata from cv_mem */
-  N_VScale(ONE, cv_mem->cv_zn[0], ck_mem->ck_zn[0]);
+  N_VCopy(cv_mem->cv_zn[0], ck_mem->ck_zn[0]);
   ck_mem->ck_t0  = cv_mem->cv_tn;
   ck_mem->ck_nst = 0;
   ck_mem->ck_q   = 1;
@@ -1820,7 +1820,7 @@ static CVckpntMem CVAckpntInit(CVodeMem cv_mem)
       return (NULL);
     }
 
-    N_VScale(ONE, cv_mem->cv_znQ[0], ck_mem->ck_znQ[0]);
+    N_VCopy(cv_mem->cv_znQ[0], ck_mem->ck_znQ[0]);
   }
 
   /* Do we need to carry sensitivities? */
@@ -2115,7 +2115,7 @@ static CVckpntMem CVAckpntNew(CVodeMem cv_mem)
 
   if (cv_mem->cv_q < qmax)
   {
-    N_VScale(ONE, cv_mem->cv_zn[qmax], ck_mem->ck_zn[qmax]);
+    N_VCopy(cv_mem->cv_zn[qmax], ck_mem->ck_zn[qmax]);
   }
 
   if (ck_mem->ck_quadr)
@@ -2127,7 +2127,7 @@ static CVckpntMem CVAckpntNew(CVodeMem cv_mem)
 
     if (cv_mem->cv_q < qmax)
     {
-      N_VScale(ONE, cv_mem->cv_znQ[qmax], ck_mem->ck_znQ[qmax]);
+      N_VCopy(cv_mem->cv_znQ[qmax], ck_mem->ck_znQ[qmax]);
     }
   }
 
@@ -2452,7 +2452,7 @@ static int CVAckpntGet(CVodeMem cv_mem, CVckpntMem ck_mem)
 
     if (cv_mem->cv_q < qmax)
     {
-      N_VScale(ONE, ck_mem->ck_zn[qmax], cv_mem->cv_zn[qmax]);
+      N_VCopy(ck_mem->ck_zn[qmax], cv_mem->cv_zn[qmax]);
     }
 
     if (ck_mem->ck_quadr)
@@ -2465,7 +2465,7 @@ static int CVAckpntGet(CVodeMem cv_mem, CVckpntMem ck_mem)
 
       if (cv_mem->cv_q < qmax)
       {
-        N_VScale(ONE, ck_mem->ck_znQ[qmax], cv_mem->cv_znQ[qmax]);
+        N_VCopy(ck_mem->ck_znQ[qmax], cv_mem->cv_znQ[qmax]);
       }
     }
 
@@ -2858,7 +2858,7 @@ static int CVAhermiteStorePnt(CVodeMem cv_mem, CVdtpntMem d)
 
   /* Load solution */
 
-  N_VScale(ONE, cv_mem->cv_zn[0], content->y);
+  N_VCopy(cv_mem->cv_zn[0], content->y);
 
   if (ca_mem->ca_IMstoreSensi)
   {
@@ -2953,7 +2953,7 @@ static int CVAhermiteGetY(CVodeMem cv_mem, sunrealtype t, N_Vector y, N_Vector* 
   if (index == 0)
   {
     content0 = (CVhermiteDataMem)(dt_mem[0]->content);
-    N_VScale(ONE, content0->y, y);
+    N_VCopy(content0->y, y);
 
     if (NS > 0)
     {
@@ -3253,7 +3253,7 @@ static int CVApolynomialStorePnt(CVodeMem cv_mem, CVdtpntMem d)
 
   content = (CVpolynomialDataMem)d->content;
 
-  N_VScale(ONE, cv_mem->cv_zn[0], content->y);
+  N_VCopy(cv_mem->cv_zn[0], content->y);
 
   if (ca_mem->ca_IMstoreSensi)
   {
@@ -3307,7 +3307,7 @@ static int CVApolynomialGetY(CVodeMem cv_mem, sunrealtype t, N_Vector y,
   if (index == 0)
   {
     content = (CVpolynomialDataMem)(dt_mem[0]->content);
-    N_VScale(ONE, content->y, y);
+    N_VCopy(content->y, y);
 
     if (NS > 0)
     {
@@ -3359,7 +3359,7 @@ static int CVApolynomialGetY(CVodeMem cv_mem, sunrealtype t, N_Vector y,
       {
         ca_mem->ca_T[j] = dt_mem[base - j]->t;
         content         = (CVpolynomialDataMem)(dt_mem[base - j]->content);
-        N_VScale(ONE, content->y, ca_mem->ca_Y[j]);
+        N_VCopy(content->y, ca_mem->ca_Y[j]);
 
         if (NS > 0)
         {
@@ -3376,7 +3376,7 @@ static int CVApolynomialGetY(CVodeMem cv_mem, sunrealtype t, N_Vector y,
       {
         ca_mem->ca_T[j] = dt_mem[base - 1 + j]->t;
         content         = (CVpolynomialDataMem)(dt_mem[base - 1 + j]->content);
-        N_VScale(ONE, content->y, ca_mem->ca_Y[j]);
+        N_VCopy(content->y, ca_mem->ca_Y[j]);
         if (NS > 0)
         {
           for (is = 0; is < NS; is++) { cv_mem->cv_cvals[is] = ONE; }

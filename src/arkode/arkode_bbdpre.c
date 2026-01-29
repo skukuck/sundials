@@ -606,7 +606,7 @@ static int ARKBBDDQJac(ARKBBDPrecData pdata, sunrealtype t, N_Vector y,
   ark_mem = (ARKodeMem)pdata->arkode_mem;
 
   /* Load ytemp with y = predicted solution vector */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Call cfn and gloc to get base value of g(t,y) */
   if (pdata->cfn != NULL)

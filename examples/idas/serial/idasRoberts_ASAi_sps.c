@@ -278,8 +278,8 @@ int main(int argc, char* argv[])
   yyTB1 = N_VClone(yy);
   ypTB1 = N_VClone(yp);
   /* Save the states at t=TB1. */
-  N_VScale(ONE, yy, yyTB1);
-  N_VScale(ONE, yp, ypTB1);
+  N_VCopy(yy, yyTB1);
+  N_VCopy(yp, ypTB1);
 
   /* Continue integrating till TOUT is reached. */
   retval = IDASolveF(ida_mem, TOUT, &time, yy, yp, IDA_NORMAL, &ncheck);

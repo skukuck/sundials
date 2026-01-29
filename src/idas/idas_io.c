@@ -573,7 +573,7 @@ int IDASetId(void* ida_mem, N_Vector id)
 
   /* Load the id vector */
 
-  N_VScale(ONE, id, IDA_mem->ida_id);
+  N_VCopy(id, IDA_mem->ida_id);
 
   return (IDA_SUCCESS);
 }
@@ -641,7 +641,7 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 
   /* Load the constraints vector */
 
-  N_VScale(ONE, constraints, IDA_mem->ida_constraints);
+  N_VCopy(constraints, IDA_mem->ida_constraints);
 
   return (IDA_SUCCESS);
 }
@@ -1287,8 +1287,8 @@ int IDAGetConsistentIC(void* ida_mem, N_Vector yy0, N_Vector yp0)
     return (IDA_ILL_INPUT);
   }
 
-  if (yy0 != NULL) { N_VScale(ONE, IDA_mem->ida_phi[0], yy0); }
-  if (yp0 != NULL) { N_VScale(ONE, IDA_mem->ida_phi[1], yp0); }
+  if (yy0 != NULL) { N_VCopy(IDA_mem->ida_phi[0], yy0); }
+  if (yp0 != NULL) { N_VCopy(IDA_mem->ida_phi[1], yp0); }
 
   return (IDA_SUCCESS);
 }
@@ -1535,7 +1535,7 @@ int IDAGetErrWeights(void* ida_mem, N_Vector eweight)
 
   IDA_mem = (IDAMem)ida_mem;
 
-  N_VScale(ONE, IDA_mem->ida_ewt, eweight);
+  N_VCopy(IDA_mem->ida_ewt, eweight);
 
   return (IDA_SUCCESS);
 }
@@ -1553,7 +1553,7 @@ int IDAGetEstLocalErrors(void* ida_mem, N_Vector ele)
   }
   IDA_mem = (IDAMem)ida_mem;
 
-  N_VScale(ONE, IDA_mem->ida_ee, ele);
+  N_VCopy(IDA_mem->ida_ee, ele);
 
   return (IDA_SUCCESS);
 }
@@ -1806,7 +1806,7 @@ int IDAGetQuadErrWeights(void* ida_mem, N_Vector eQweight)
     return (IDA_NO_QUAD);
   }
 
-  if (IDA_mem->ida_errconQ) { N_VScale(ONE, IDA_mem->ida_ewtQ, eQweight); }
+  if (IDA_mem->ida_errconQ) { N_VCopy(IDA_mem->ida_ewtQ, eQweight); }
 
   return (IDA_SUCCESS);
 }
@@ -1923,7 +1923,7 @@ int IDAGetQuadSensErrWeights(void* ida_mem, N_Vector* eQSweight)
   {
     for (is = 0; is < Ns; is++)
     {
-      N_VScale(ONE, IDA_mem->ida_ewtQS[is], eQSweight[is]);
+      N_VCopy(IDA_mem->ida_ewtQS[is], eQSweight[is]);
     }
   }
 
@@ -1996,7 +1996,7 @@ int IDAGetSensConsistentIC(void* ida_mem, N_Vector* yyS0, N_Vector* ypS0)
   {
     for (is = 0; is < IDA_mem->ida_Ns; is++)
     {
-      N_VScale(ONE, IDA_mem->ida_phiS[0][is], yyS0[is]);
+      N_VCopy(IDA_mem->ida_phiS[0][is], yyS0[is]);
     }
   }
 
@@ -2004,7 +2004,7 @@ int IDAGetSensConsistentIC(void* ida_mem, N_Vector* yyS0, N_Vector* ypS0)
   {
     for (is = 0; is < IDA_mem->ida_Ns; is++)
     {
-      N_VScale(ONE, IDA_mem->ida_phiS[1][is], ypS0[is]);
+      N_VCopy(IDA_mem->ida_phiS[1][is], ypS0[is]);
     }
   }
 
@@ -2139,7 +2139,7 @@ int IDAGetSensErrWeights(void* ida_mem, N_Vector* eSweight)
 
   for (is = 0; is < IDA_mem->ida_Ns; is++)
   {
-    N_VScale(ONE, IDA_mem->ida_ewtS[is], eSweight[is]);
+    N_VCopy(IDA_mem->ida_ewtS[is], eSweight[is]);
   }
 
   return (IDA_SUCCESS);

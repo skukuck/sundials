@@ -168,7 +168,7 @@ int SUNLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
   sunindextype* pivots;
 
   /* copy b into x */
-  N_VScale(ONE, b, x);
+  N_VCopy(b, x);
   SUNCheckLastErr();
 
   /* access data pointers (return with failure on NULL) */

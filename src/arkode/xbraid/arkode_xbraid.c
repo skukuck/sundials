@@ -277,7 +277,7 @@ int ARKBraid_GetSolution(braid_App app, sunrealtype* tout, N_Vector yout)
   content = (ARKBraidContent)app->content;
   if (content->yout == NULL) { return SUNBRAID_MEMFAIL; }
   *tout = content->tout;
-  N_VScale(ONE, content->yout, yout);
+  N_VCopy(content->yout, yout);
   return SUNBRAID_SUCCESS;
 }
 
@@ -382,7 +382,7 @@ int ARKBraid_Init(braid_App app, SUNDIALS_MAYBE_UNUSED sunrealtype t,
   if (flag != SUNBRAID_SUCCESS) { return flag; }
 
   /* Set initial solution at all time points */
-  N_VScale(ONE, content->ark_mem->yn, y);
+  N_VCopy(content->ark_mem->yn, y);
 
   return SUNBRAID_SUCCESS;
 }
@@ -438,7 +438,7 @@ int ARKBraid_Access(braid_App app, braid_Vector u, braid_AccessStatus astatus)
 
       /* Save solution for output to user */
       content->tout = time;
-      N_VScale(ONE, u->y, content->yout);
+      N_VCopy(u->y, content->yout);
     }
   }
 

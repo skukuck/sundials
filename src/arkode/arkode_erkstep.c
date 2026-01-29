@@ -632,7 +632,7 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
 
     /* copy RHS into output */
-    N_VScale(ONE, step_mem->F[0], f);
+    N_VCopy(step_mem->F[0], f);
 
     /* apply external polynomial forcing */
     if (step_mem->nforcing > 0)
@@ -676,10 +676,10 @@ int erkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
           return (ARK_RHSFUNC_FAIL);
         }
       }
-      else { N_VScale(ONE, step_mem->F[step_mem->stages - 1], step_mem->F[0]); }
+      else { N_VCopy(step_mem->F[step_mem->stages - 1], step_mem->F[0]); }
 
       /* copy RHS vector into output */
-      N_VScale(ONE, step_mem->F[0], f);
+      N_VCopy(step_mem->F[0], f);
 
       /* apply external polynomial forcing */
       if (step_mem->nforcing > 0)

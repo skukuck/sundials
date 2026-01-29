@@ -124,6 +124,9 @@ N_Vector N_VNewEmpty_Serial(sunindextype length, SUNContext sunctx)
   v->ops->nvconstrmask   = N_VConstrMask_Serial;
   v->ops->nvminquotient  = N_VMinQuotient_Serial;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Serial;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -552,6 +555,12 @@ void N_VScale_Serial(sunrealtype c, N_Vector x, N_Vector z)
   }
 
   return;
+}
+
+SUNErrCode N_VCopy_Serial(N_Vector x, N_Vector z)
+{
+  VCopy_Serial(x, z);
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Serial(N_Vector x, N_Vector z)

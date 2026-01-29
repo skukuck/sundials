@@ -788,7 +788,7 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
   cv_mem->cv_tn = t0;
 
   /* Initialize zn[0] in the history array */
-  N_VScale(ONE, y0, cv_mem->cv_zn[0]);
+  N_VCopy(y0, cv_mem->cv_zn[0]);
 
   /* create a Newton nonlinear solver object by default */
   NLS = SUNNonlinSol_Newton(y0, cv_mem->cv_sunctx);
@@ -959,7 +959,7 @@ int CVodeReInit(void* cvode_mem, sunrealtype t0, N_Vector y0)
 
   /* Initialize zn[0] in the history array */
 
-  N_VScale(ONE, y0, cv_mem->cv_zn[0]);
+  N_VCopy(y0, cv_mem->cv_zn[0]);
 
   /* Initialize all the counters */
 
@@ -1122,7 +1122,7 @@ int CVodeSVtolerances(void* cvode_mem, sunrealtype reltol, N_Vector abstol)
   }
 
   cv_mem->cv_reltol = reltol;
-  N_VScale(ONE, abstol, cv_mem->cv_Vabstol);
+  N_VCopy(abstol, cv_mem->cv_Vabstol);
   cv_mem->cv_atolmin0 = (atolmin == ZERO);
 
   cv_mem->cv_itol = CV_SV;
@@ -1203,7 +1203,7 @@ int CVodeQuadInit(void* cvode_mem, CVQuadRhsFn fQ, N_Vector yQ0)
   }
 
   /* Initialize znQ[0] in the history array */
-  N_VScale(ONE, yQ0, cv_mem->cv_znQ[0]);
+  N_VCopy(yQ0, cv_mem->cv_znQ[0]);
 
   /* Copy the input parameters into CVODES state */
   cv_mem->cv_fQ = fQ;
@@ -1256,7 +1256,7 @@ int CVodeQuadReInit(void* cvode_mem, N_Vector yQ0)
   }
 
   /* Initialize znQ[0] in the history array */
-  N_VScale(ONE, yQ0, cv_mem->cv_znQ[0]);
+  N_VCopy(yQ0, cv_mem->cv_znQ[0]);
 
   /* Initialize counters */
   cv_mem->cv_nfQe  = 0;
@@ -1399,7 +1399,7 @@ int CVodeQuadSVtolerances(void* cvode_mem, sunrealtype reltolQ, N_Vector abstolQ
     cv_mem->cv_VabstolQMallocDone = SUNTRUE;
   }
 
-  N_VScale(ONE, abstolQ, cv_mem->cv_VabstolQ);
+  N_VCopy(abstolQ, cv_mem->cv_VabstolQ);
   cv_mem->cv_atolQmin0 = (atolmin == ZERO);
 
   return (CV_SUCCESS);
@@ -3319,7 +3319,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
           if ((irfndp == 1) && (itask == CV_ONE_STEP))
           {
             cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-            N_VScale(ONE, cv_mem->cv_zn[0], yout);
+            N_VCopy(cv_mem->cv_zn[0], yout);
             SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
             return (CV_SUCCESS);
           }
@@ -3363,7 +3363,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
               return (CV_ILL_INPUT);
             }
           }
-          else { N_VScale(ONE, cv_mem->cv_zn[0], yout); }
+          else { N_VCopy(cv_mem->cv_zn[0], yout); }
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tstop;
           cv_mem->cv_tstopset         = SUNFALSE;
           SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
@@ -3402,7 +3402,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
         SUNRabs(cv_mem->cv_tn - cv_mem->cv_tretlast) > troundoff)
     {
       cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], yout);
+      N_VCopy(cv_mem->cv_zn[0], yout);
       SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
       return (CV_SUCCESS);
     }
@@ -3450,7 +3450,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
 
         istate              = CV_ILL_INPUT;
         cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-        N_VScale(ONE, cv_mem->cv_zn[0], yout);
+        N_VCopy(cv_mem->cv_zn[0], yout);
         break;
       }
 
@@ -3463,7 +3463,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                          MSGCV_EWTQ_NOW_BAD, cv_mem->cv_tn);
           istate              = CV_ILL_INPUT;
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-          N_VScale(ONE, cv_mem->cv_zn[0], yout);
+          N_VCopy(cv_mem->cv_zn[0], yout);
           break;
         }
       }
@@ -3477,7 +3477,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                          MSGCV_EWTS_NOW_BAD, cv_mem->cv_tn);
           istate              = CV_ILL_INPUT;
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-          N_VScale(ONE, cv_mem->cv_zn[0], yout);
+          N_VCopy(cv_mem->cv_zn[0], yout);
           break;
         }
       }
@@ -3491,7 +3491,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                          MSGCV_EWTQS_NOW_BAD, cv_mem->cv_tn);
           istate              = CV_ILL_INPUT;
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-          N_VScale(ONE, cv_mem->cv_zn[0], yout);
+          N_VCopy(cv_mem->cv_zn[0], yout);
           break;
         }
       }
@@ -3504,7 +3504,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                      MSGCV_MAX_STEPS, cv_mem->cv_tn);
       istate              = CV_TOO_MUCH_WORK;
       cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], yout);
+      N_VCopy(cv_mem->cv_zn[0], yout);
       break;
     }
 
@@ -3530,7 +3530,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
                      MSGCV_TOO_MUCH_ACC, cv_mem->cv_tn);
       istate              = CV_TOO_MUCH_ACC;
       cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], yout);
+      N_VCopy(cv_mem->cv_zn[0], yout);
       cv_mem->cv_tolsf *= TWO;
       break;
     }
@@ -3560,7 +3560,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     {
       istate              = cvHandleFailure(cv_mem, kflag);
       cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], yout);
+      N_VCopy(cv_mem->cv_zn[0], yout);
       break;
     }
 
@@ -3638,7 +3638,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
           {
             (void)CVodeGetDky(cv_mem, cv_mem->cv_tstop, 0, yout);
           }
-          else { N_VScale(ONE, cv_mem->cv_zn[0], yout); }
+          else { N_VCopy(cv_mem->cv_zn[0], yout); }
           cv_mem->cv_tretlast = *tret = cv_mem->cv_tstop;
           cv_mem->cv_tstopset         = SUNFALSE;
           istate                      = CV_TSTOP_RETURN;
@@ -3672,7 +3672,7 @@ int CVode(void* cvode_mem, sunrealtype tout, N_Vector yout, sunrealtype* tret,
     {
       istate              = CV_SUCCESS;
       cv_mem->cv_tretlast = *tret = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], yout);
+      N_VCopy(cv_mem->cv_zn[0], yout);
       cv_mem->cv_next_q = cv_mem->cv_qprime;
       cv_mem->cv_next_h = cv_mem->cv_hprime;
       break;
@@ -7290,7 +7290,7 @@ static int cvQuadNls(CVodeMem cv_mem)
    * for use in evaluating fQS */
   if (cv_mem->cv_quadr_sensi)
   {
-    N_VScale(ONE, cv_mem->cv_acorQ, cv_mem->cv_ftempQ);
+    N_VCopy(cv_mem->cv_acorQ, cv_mem->cv_ftempQ);
   }
 
   N_VLinearSum(cv_mem->cv_h, cv_mem->cv_acorQ, -ONE, cv_mem->cv_znQ[1],
@@ -7868,11 +7868,11 @@ static void cvCompleteStep(CVodeMem cv_mem)
   cv_mem->cv_qwait--;
   if ((cv_mem->cv_qwait == 1) && (cv_mem->cv_q != cv_mem->cv_qmax))
   {
-    N_VScale(ONE, cv_mem->cv_acor, cv_mem->cv_zn[cv_mem->cv_qmax]);
+    N_VCopy(cv_mem->cv_acor, cv_mem->cv_zn[cv_mem->cv_qmax]);
 
     if (cv_mem->cv_quadr)
     {
-      N_VScale(ONE, cv_mem->cv_acorQ, cv_mem->cv_znQ[cv_mem->cv_qmax]);
+      N_VCopy(cv_mem->cv_acorQ, cv_mem->cv_znQ[cv_mem->cv_qmax]);
     }
 
     if (cv_mem->cv_sensi)
@@ -8142,11 +8142,11 @@ static void cvChooseEta(CVodeMem cv_mem)
          * to order q+1, so it represents Delta_n in the ELTE at q+1
          */
 
-        N_VScale(ONE, cv_mem->cv_acor, cv_mem->cv_zn[cv_mem->cv_qmax]);
+        N_VCopy(cv_mem->cv_acor, cv_mem->cv_zn[cv_mem->cv_qmax]);
 
         if (cv_mem->cv_quadr && cv_mem->cv_errconQ)
         {
-          N_VScale(ONE, cv_mem->cv_acorQ, cv_mem->cv_znQ[cv_mem->cv_qmax]);
+          N_VCopy(cv_mem->cv_acorQ, cv_mem->cv_znQ[cv_mem->cv_qmax]);
         }
 
         if (cv_mem->cv_sensi && cv_mem->cv_errconS)
@@ -8902,14 +8902,14 @@ static int cvRcheck3(CVodeMem cv_mem, sunrealtype tout, int itask)
   if (itask == CV_ONE_STEP)
   {
     cv_mem->cv_thi = cv_mem->cv_tn;
-    N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
+    N_VCopy(cv_mem->cv_zn[0], cv_mem->cv_y);
   }
   if (itask == CV_NORMAL)
   {
     if ((tout - cv_mem->cv_tn) * cv_mem->cv_h >= ZERO)
     {
       cv_mem->cv_thi = cv_mem->cv_tn;
-      N_VScale(ONE, cv_mem->cv_zn[0], cv_mem->cv_y);
+      N_VCopy(cv_mem->cv_zn[0], cv_mem->cv_y);
     }
     else
     {

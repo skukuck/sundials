@@ -1017,7 +1017,7 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
   }
 
   /* Load the constraints vector */
-  N_VScale(ONE, constraints, cv_mem->cv_constraints);
+  N_VCopy(constraints, cv_mem->cv_constraints);
 
   return (CV_SUCCESS);
 }
@@ -1713,7 +1713,7 @@ int CVodeGetErrWeights(void* cvode_mem, N_Vector eweight)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  N_VScale(ONE, cv_mem->cv_ewt, eweight);
+  N_VCopy(cv_mem->cv_ewt, eweight);
 
   return (CV_SUCCESS);
 }
@@ -1736,7 +1736,7 @@ int CVodeGetEstLocalErrors(void* cvode_mem, N_Vector ele)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  N_VScale(ONE, cv_mem->cv_acor, ele);
+  N_VCopy(cv_mem->cv_acor, ele);
 
   return (CV_SUCCESS);
 }
@@ -2023,7 +2023,7 @@ int CVodeGetQuadErrWeights(void* cvode_mem, N_Vector eQweight)
     return (CV_NO_QUAD);
   }
 
-  if (cv_mem->cv_errconQ) { N_VScale(ONE, cv_mem->cv_ewtQ, eQweight); }
+  if (cv_mem->cv_errconQ) { N_VCopy(cv_mem->cv_ewtQ, eQweight); }
 
   return (CV_SUCCESS);
 }
@@ -2140,7 +2140,7 @@ int CVodeGetQuadSensErrWeights(void* cvode_mem, N_Vector* eQSweight)
   {
     for (is = 0; is < Ns; is++)
     {
-      N_VScale(ONE, cv_mem->cv_ewtQS[is], eQSweight[is]);
+      N_VCopy(cv_mem->cv_ewtQS[is], eQSweight[is]);
     }
   }
 
@@ -2311,7 +2311,7 @@ int CVodeGetSensErrWeights(void* cvode_mem, N_Vector* eSweight)
 
   for (is = 0; is < Ns; is++)
   {
-    N_VScale(ONE, cv_mem->cv_ewtS[is], eSweight[is]);
+    N_VCopy(cv_mem->cv_ewtS[is], eSweight[is]);
   }
 
   return (CV_SUCCESS);

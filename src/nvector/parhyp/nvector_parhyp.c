@@ -193,6 +193,9 @@ N_Vector N_VNewEmpty_ParHyp(MPI_Comm comm, sunindextype local_length,
   v->ops->nvconstrmask   = N_VConstrMask_ParHyp;
   v->ops->nvminquotient  = N_VMinQuotient_ParHyp;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_ParHyp;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -605,6 +608,13 @@ void N_VScale_ParHyp(sunrealtype c, N_Vector x, N_Vector z)
   HYPRE_ParVectorScale(value, (HYPRE_ParVector)NV_HYPRE_PARVEC_PH(z));
 
   return;
+}
+
+SUNErrCode N_VCopy_ParHyp(N_Vector x, N_Vector z)
+{
+  HYPRE_ParVectorCopy((HYPRE_ParVector)NV_HYPRE_PARVEC_PH(x),
+                      (HYPRE_ParVector)NV_HYPRE_PARVEC_PH(z));
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_ParHyp(N_Vector x, N_Vector z)

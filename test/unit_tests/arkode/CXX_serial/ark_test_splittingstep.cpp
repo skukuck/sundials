@@ -328,7 +328,7 @@ static SUNStepper create_exp_stepper(const sundials::Context& ctx,
   {
     auto& content = Content::from_stepper(s);
     content.t     = tR;
-    N_VScale(SUN_RCONST(1.0), vR, content.v);
+    N_VCopy(vR, content.v);
     return 0;
   };
   SUNStepper_SetResetFn(stepper, reset);

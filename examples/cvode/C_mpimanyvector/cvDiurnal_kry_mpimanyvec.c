@@ -1098,7 +1098,7 @@ static int PSolve(sunrealtype tn, N_Vector u, N_Vector fu, N_Vector r, N_Vector 
   /* Solve the block-diagonal system Px = r using LU factors stored
      in P and pivot data in pivot, and return the solution in z.
      First copy vector r to z. */
-  N_VScale(SUN_RCONST(1.0), r, z);
+  N_VCopy(r, z);
   z1data = N_VGetSubvectorArrayPointer_MPIManyVector(z, 0);
   z2data = N_VGetSubvectorArrayPointer_MPIManyVector(z, 1);
   for (lx = 0; lx < MXSUB; lx++)

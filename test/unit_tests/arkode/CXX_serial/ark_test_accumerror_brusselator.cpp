@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "ARKodeSStolerances", 1)) return 1;
   retval = ARKodeSetMaxNumSteps(arkode_ref, 1000000);
   if (check_retval(&retval, "ARKodeSetMaxNumSteps", 1)) return (1);
-  N_VScale(ONE, y, yref[0]);
+  N_VCopy(y, yref[0]);
   sunrealtype hpart = (Tf - T0) / udata.Npart;
   for (int ipart = 0; ipart < udata.Npart; ipart++)
   {
@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "ARKodeSetStopTime", 1)) return 1;
     retval = ARKodeEvolve(arkode_ref, t + hpart, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) return 1;
-    N_VScale(ONE, y, yref[ipart + 1]);
+    N_VCopy(y, yref[ipart + 1]);
   }
   ARKodeFree(&arkode_ref);
 
@@ -422,7 +422,7 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
       {
         // Reset integrator for this run, and evolve over partition interval
         t = T0 + ipart * hpart;
-        N_VScale(ONE, yref[ipart], y);
+        N_VCopy(yref[ipart], y);
         if (rk_type == 0)
         { // DIRK
           retval = ARKStepReInit(arkode_mem, NULL, fn, t, y);
@@ -508,7 +508,7 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
       {
         // Reset integrator for this run, and evolve to Tf
         t = T0 + ipart * hpart;
-        N_VScale(ONE, yref[ipart], y);
+        N_VCopy(yref[ipart], y);
         if (rk_type == 0)
         { // DIRK
           retval = ARKStepReInit(arkode_mem, NULL, fn, t, y);
@@ -571,8 +571,8 @@ static int fixed_run(void* arkode_mem, N_Vector y, sunrealtype T0, sunrealtype T
     {
       // Reset integrator for this run, and evolve over partition interval
       t = t2 = T0 + ipart * hpart;
-      N_VScale(ONE, yref[ipart], y);
-      N_VScale(ONE, yref[ipart], y2);
+      N_VCopy(yref[ipart], y);
+      N_VCopy(yref[ipart], y2);
       if (rk_type == 0)
       { // DIRK
         retval = ARKStepReInit(arkode_mem, NULL, fn, t, y);

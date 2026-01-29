@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
   /* copy A and x into B and y to print in case of solver failure */
   SUNMatCopy(A, B);
-  N_VScale(ONE, x, y);
+  N_VCopy(x, y);
 
   /* create right-hand side vector for linear solve */
   fails = SUNMatMatvec(A, x, b);

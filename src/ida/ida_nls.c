@@ -314,7 +314,7 @@ static int idaNlsResidual(N_Vector ycor, N_Vector res, void* ida_mem)
   IDA_mem->ida_nre++;
 
   /* save a copy of the residual vector in savres */
-  N_VScale(ONE, res, IDA_mem->ida_savres);
+  N_VCopy(res, IDA_mem->ida_savres);
 
   if (retval < 0) { return (IDA_RES_FAIL); }
   if (retval > 0) { return (IDA_RES_RECVR); }

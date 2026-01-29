@@ -235,7 +235,7 @@ int SUNLinSolSolve_SuperLUDIST(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 
   /* Copy b into x, and use xdata with SuperLU-DIST because
      SuperLU reuses b to store the solution vector. */
-  N_VScale(ONE, b, x);
+  N_VCopy(b, x);
   xdata = N_VGetArrayPointer(x);
   if (xdata == NULL)
   {

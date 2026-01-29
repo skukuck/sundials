@@ -351,7 +351,7 @@ int SolveProblem(ProgramArgs* args, ProblemResult* result, SUNContext sunctx)
   }
 
   /* Copy results */
-  N_VScale(SUN_RCONST(1.0), y, result->sol);
+  N_VCopy(y, result->sol);
   result->energy_error = Hamiltonian(y) - H0;
 
   free(udata);
@@ -510,7 +510,7 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "SolveProblem", 1)) { return 1; }
 
     /* Store the reference solution */
-    N_VScale(SUN_RCONST(1.0), result.sol, ref_sol);
+    N_VCopy(result.sol, ref_sol);
 
     /* Restore the program args */
     args.step_mode   = old_step_mode;

@@ -279,7 +279,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
   yy = N_VNew_Serial(4, sunctx);
 
   /* Copy initial condition into solution vector */
-  N_VScale(ONE, yy0, yy);
+  N_VCopy(yy0, yy);
 
   /* Get pointer to vector data */
   yydata = N_VGetArrayPointer(yy);

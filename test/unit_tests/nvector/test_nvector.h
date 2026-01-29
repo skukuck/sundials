@@ -84,6 +84,7 @@ int Test_N_VProd(N_Vector X, N_Vector Y, N_Vector Z, sunindextype local_length,
 int Test_N_VDiv(N_Vector X, N_Vector Y, N_Vector Z, sunindextype local_length,
                 int myid);
 int Test_N_VScale(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
+int Test_N_VCopy(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VAbs(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VInv(N_Vector X, N_Vector Z, sunindextype local_length, int myid);
 int Test_N_VAddConst(N_Vector X, N_Vector Z, sunindextype local_length, int myid);

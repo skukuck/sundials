@@ -526,7 +526,7 @@ static int reslocal(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
   /* Initialize all elements of rr to uu. This sets the boundary
      elements simply without indexing hassles. */
 
-  N_VScale(ONE, uu, rr);
+  N_VCopy(uu, rr);
 
   /* Copy local segment of u vector into the working extended array uext.
      This completes uext prior to the computation of the rr vector.

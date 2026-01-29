@@ -824,7 +824,7 @@ static int PSolve(sunrealtype tn, N_Vector u, N_Vector fu, N_Vector r, N_Vector 
   pivot = data->pivot;
   zdata = N_VGetArrayPointer(z);
 
-  N_VScale(ONE, r, z);
+  N_VCopy(r, z);
 
   /* Solve the block-diagonal system Px = r using LU factors stored
      in P and pivot data in pivot, and return the solution in z. */

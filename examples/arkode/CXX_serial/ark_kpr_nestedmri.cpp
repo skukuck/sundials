@@ -339,7 +339,7 @@ int main(int argc, char* argv[])
   // Set initial conditions
   retval = Ytrue(T0, y, opts);
   if (check_flag(retval, "Ytrue")) return 1;
-  N_VScale(ONE, y, yref);
+  N_VCopy(y, yref);
 
   // Create and configure reference solver object
   void* arkode_ref = ERKStepCreate(fn, T0, yref, sunctx);

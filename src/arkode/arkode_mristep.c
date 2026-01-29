@@ -1336,7 +1336,7 @@ int mriStep_Init(ARKodeMem ark_mem, sunrealtype tout, int init_type)
       {
         /*   initialize (tcur,ycur) to (t0,y0) */
         ark_mem->tcur = ark_mem->tn;
-        N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+        N_VCopy(ark_mem->yn, ark_mem->ycur);
 
         /*   tempv1 = fslow(t0, y0) */
         if (mriStep_SlowRHS(ark_mem, ark_mem->tcur, ark_mem->ycur,
@@ -1924,7 +1924,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       {
         N_VLinearSum(ONE, step_mem->Fsi[0], ONE, step_mem->Fse[0], ark_mem->fn);
       }
-      else { N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn); }
+      else { N_VCopy(step_mem->Fsi[0], ark_mem->fn); }
     }
   }
   else if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
@@ -2147,7 +2147,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
     /* Copy ark_mem->ycur into ark_mem->tempv4, since it serves as the initial condition
        for both this embedding stage, and the subsequent final stage. */
-    N_VScale(ONE, ark_mem->ycur, ark_mem->tempv4);
+    N_VCopy(ark_mem->ycur, ark_mem->tempv4);
 
     /* Reset ark_mem->tcur as the time value corresponding with the end of the step */
     /* Set relevant stage times (including desired stage time for implicit solves) */
@@ -2204,8 +2204,8 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     /* Copy embedding solution into ark_mem->tempv1 for later error estimation,
        reset ark_mem->ycur to ark_mem->tempv4 in preparation for the final stage,
        and reset the inner integrator */
-    N_VScale(ONE, ark_mem->ycur, ark_mem->tempv1);
-    N_VScale(ONE, ark_mem->tempv4, ark_mem->ycur);
+    N_VCopy(ark_mem->ycur, ark_mem->tempv1);
+    N_VCopy(ark_mem->tempv4, ark_mem->ycur);
     retval = mriStepInnerStepper_Reset(step_mem->stepper, t0, ark_mem->ycur);
     if (retval != ARK_SUCCESS)
     {
@@ -2466,7 +2466,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       {
         N_VLinearSum(ONE, step_mem->Fsi[0], ONE, step_mem->Fse[0], ark_mem->fn);
       }
-      else { N_VScale(ONE, step_mem->Fsi[0], ark_mem->fn); }
+      else { N_VCopy(step_mem->Fsi[0], ark_mem->fn); }
     }
   }
   if (ark_mem->fn != NULL && !ark_mem->fn_is_current)
@@ -2515,7 +2515,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     embedding = (stage == step_mem->stages);
 
     /* Set initial condition for this stage */
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VCopy(ark_mem->yn, ark_mem->ycur);
 
     /* Set current stage abscissa */
     cstage = (embedding) ? ONE : step_mem->MRIC->c[stage];
@@ -2785,7 +2785,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* If this is the solution stage, archive for error estimation */
-    if (solution) { N_VScale(ONE, ark_mem->ycur, ytilde); }
+    if (solution) { N_VCopy(ark_mem->ycur, ytilde); }
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -2798,7 +2798,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   {
     N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
-    N_VScale(ONE, ytilde, ark_mem->ycur);
+    N_VCopy(ytilde, ark_mem->ycur);
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
@@ -2990,7 +2990,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
 
     /* Set initial condition for this stage group */
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VCopy(ark_mem->yn, ark_mem->ycur);
     t0 = ark_mem->tn;
 
     /* Evolve fast IVP over each subinterval in stage group */
@@ -3148,7 +3148,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
 
       /* If this is the embedding stage, archive solution for error estimation */
-      if (embedding) { N_VScale(ONE, ark_mem->ycur, ytilde); }
+      if (embedding) { N_VCopy(ark_mem->ycur, ytilde); }
 
       SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
@@ -4078,7 +4078,7 @@ int mriStep_Predict(ARKodeMem ark_mem, int istage, N_Vector yguess)
   /* if the first step (or if resized), use initial condition as guess */
   if (ark_mem->initsetup)
   {
-    N_VScale(ONE, ark_mem->yn, yguess);
+    N_VCopy(ark_mem->yn, yguess);
     return (ARK_SUCCESS);
   }
 
@@ -4162,7 +4162,7 @@ int mriStep_Predict(ARKodeMem ark_mem, int istage, N_Vector yguess)
   }
 
   /* if we made it here, use the trivial predictor (previous step solution) */
-  N_VScale(ONE, ark_mem->yn, yguess);
+  N_VCopy(ark_mem->yn, yguess);
   return (ARK_SUCCESS);
 }
 
@@ -4330,8 +4330,8 @@ int mriStep_SlowRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
   }
   else
   {
-    if (step_mem->implicit_rhs) { N_VScale(ONE, step_mem->Fsi[0], f); }
-    else { N_VScale(ONE, step_mem->Fse[0], f); }
+    if (step_mem->implicit_rhs) { N_VCopy(step_mem->Fsi[0], f); }
+    else { N_VCopy(step_mem->Fse[0], f); }
   }
 
   return (ARK_SUCCESS);

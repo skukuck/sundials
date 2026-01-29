@@ -141,6 +141,9 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm, sunindextype local_length,
   v->ops->nvconstrmask   = N_VConstrMask_Parallel;
   v->ops->nvminquotient  = N_VMinQuotient_Parallel;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Parallel;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -592,6 +595,12 @@ void N_VScale_Parallel(sunrealtype c, N_Vector x, N_Vector z)
   }
 
   return;
+}
+
+SUNErrCode N_VCopy_Parallel(N_Vector x, N_Vector z)
+{
+  VCopy_Parallel(x, z);
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Parallel(N_Vector x, N_Vector z)

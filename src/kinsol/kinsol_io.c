@@ -895,7 +895,7 @@ int KINSetConstraints(void* kinmem, N_Vector constraints)
 
   /* Load the constraint vector */
 
-  N_VScale(ONE, constraints, kin_mem->kin_constraints);
+  N_VCopy(constraints, kin_mem->kin_constraints);
 
   return (KIN_SUCCESS);
 }

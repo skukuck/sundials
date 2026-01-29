@@ -435,7 +435,7 @@ int SUNLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
   }
 
   /* copy b into x */
-  N_VScale(ONE, b, x);
+  N_VCopy(b, x);
 
   /* access x data array */
   xdata = N_VGetArrayPointer(x);

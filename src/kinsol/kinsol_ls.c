@@ -693,7 +693,7 @@ int kinLsPSolve(void* kinmem, N_Vector r, N_Vector z,
 
   /* copy the rhs into z before the psolve call */
   /* Note: z returns with the solution */
-  N_VScale(ONE, r, z);
+  N_VCopy(r, z);
 
   /* note: user-supplied preconditioning with KINSOL does not
      support either the 'tol' or 'lr' inputs */
@@ -882,7 +882,7 @@ int kinLsBandDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
   utemp_data  = N_VGetArrayPointer(utemp);
 
   /* Load utemp with u */
-  N_VScale(ONE, u, utemp);
+  N_VCopy(u, utemp);
 
   /* Set bandwidth and number of column groups for band differencing */
   width   = mlower + mupper + 1;

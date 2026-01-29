@@ -285,7 +285,7 @@ int main(int argc, char* argv[])
   ydata[0]              = SUN_RCONST(1.2);
   ydata[1]              = SUN_RCONST(3.1);
   ydata[2]              = SUN_RCONST(3.0);
-  N_VScale(ONE, y, yref);
+  N_VCopy(y, yref);
 
   // Create and configure reference solver object
   void* arkode_ref = ERKStepCreate(fn, T0, yref, refctx);

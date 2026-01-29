@@ -171,6 +171,9 @@ N_Vector N_VNewEmpty_Cuda(SUNContext sunctx)
   v->ops->nvwl2norm      = N_VWL2Norm_Cuda;
   v->ops->nvcompare      = N_VCompare_Cuda;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Cuda;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -838,6 +841,25 @@ void N_VScale_Cuda(sunrealtype a, N_Vector X, N_Vector Z)
                                                   NVEC_CUDA_DDATAp(Z),
                                                   NVEC_CUDA_CONTENT(X)->length);
   PostKernelLaunch();
+}
+
+SUNErrCode N_VCopy_Cuda(N_Vector X, N_Vector Z)
+{
+  size_t grid, block, shMemSize;
+  cudaStream_t stream;
+
+  if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
+  {
+    SUNDIALS_DEBUG_PRINT(
+      "ERROR in N_VCopy_Cuda: GetKernelParameters returned nonzero\n");
+    return SUN_ERR_GENERIC;
+  }
+
+  copyKernel<<<grid, block, shMemSize, stream>>>(NVEC_CUDA_DDATAp(X),
+                                                 NVEC_CUDA_DDATAp(Z),
+                                                 NVEC_CUDA_CONTENT(X)->length);
+  PostKernelLaunch();
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Cuda(N_Vector X, N_Vector Z)

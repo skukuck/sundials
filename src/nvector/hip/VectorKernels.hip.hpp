@@ -84,6 +84,17 @@ __global__ void scaleKernel(T a, const T* X, T* Z, I n)
 }
 
 /*
+ * Copy vector data.
+ *
+ */
+
+template<typename T, typename I>
+__global__ void copyKernel(const T* X, T* Z, I n)
+{
+  GRID_STRIDE_XLOOP(I, i, n) { Z[i] = X[i]; }
+}
+
+/*
  * Stores absolute values of vector X elements into vector Z.
  *
  */

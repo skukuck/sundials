@@ -415,7 +415,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   /* Set r to initial residual r_0 = b - A*x_0 */
   if (*zeroguess)
   {
-    N_VScale(ONE, b, r);
+    N_VCopy(b, r);
     SUNCheckLastErr();
   }
   else
@@ -444,7 +444,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   }
   else
   {
-    N_VScale(ONE, r, Ap);
+    N_VCopy(r, Ap);
     SUNCheckLastErr();
   }
   rho = N_VDotProd(Ap, Ap);
@@ -484,7 +484,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   }
   else
   {
-    N_VScale(ONE, r, z);
+    N_VCopy(r, z);
     SUNCheckLastErr();
   }
 
@@ -493,7 +493,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
   SUNCheckLastErr();
 
   /* Copy z to p */
-  N_VScale(ONE, z, p);
+  N_VCopy(z, p);
   SUNCheckLastErr();
 
   SUNLogInfo(S->sunctx->logger, "end-iterations-list",
@@ -552,7 +552,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     }
     else
     {
-      N_VScale(ONE, r, Ap);
+      N_VCopy(r, Ap);
       SUNCheckLastErr();
     }
     rho = N_VDotProd(Ap, Ap);
@@ -589,7 +589,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix nul,
     }
     else
     {
-      N_VScale(ONE, r, z);
+      N_VCopy(r, z);
       SUNCheckLastErr();
     }
 

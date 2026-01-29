@@ -165,6 +165,9 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   v->ops->nvwl2norm      = N_VWL2Norm_Raja;
   v->ops->nvcompare      = N_VCompare_Raja;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Raja;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -808,6 +811,18 @@ void N_VScale_Raja(sunrealtype c, N_Vector X, N_Vector Z)
   RAJA::forall<SUNDIALS_RAJA_EXEC_STREAM>(RAJA::RangeSegment(zeroIdx, N),
                                           [=] RAJA_DEVICE(sunindextype i)
                                           { zdata[i] = c * xdata[i]; });
+}
+
+SUNErrCode N_VCopy_Raja(N_Vector X, N_Vector Z)
+{
+  const sunrealtype* xdata = NVEC_RAJA_DDATAp(X);
+  const sunindextype N     = NVEC_RAJA_CONTENT(X)->length;
+  sunrealtype* zdata       = NVEC_RAJA_DDATAp(Z);
+
+  RAJA::forall<SUNDIALS_RAJA_EXEC_STREAM>(RAJA::RangeSegment(zeroIdx, N),
+                                          [=] RAJA_DEVICE(sunindextype i)
+                                          { zdata[i] = xdata[i]; });
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Raja(N_Vector X, N_Vector Z)

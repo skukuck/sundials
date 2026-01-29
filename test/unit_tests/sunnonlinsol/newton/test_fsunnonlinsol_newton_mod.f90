@@ -215,7 +215,7 @@ contains
     call c_f_pointer(mem, Imem)
 
     retval = FSUNLinSolSolve(Imem%LS, Imem%A, Imem%x, b, 0.d0)
-    call FN_VScale(1.0d0, Imem%x, b)
+    call FN_VCopy(Imem%x, b)
 
   end function
 

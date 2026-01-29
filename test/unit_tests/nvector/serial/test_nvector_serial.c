@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
   fails += Test_N_VProd(X, Y, Z, length, 0);
   fails += Test_N_VDiv(X, Y, Z, length, 0);
   fails += Test_N_VScale(X, Z, length, 0);
+  fails += Test_N_VCopy(X, Z, length, 0);
   fails += Test_N_VAbs(X, Z, length, 0);
   fails += Test_N_VInv(X, Z, length, 0);
   fails += Test_N_VAddConst(X, Z, length, 0);

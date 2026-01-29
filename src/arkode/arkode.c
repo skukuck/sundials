@@ -176,7 +176,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   }
 
   /* Copy y0 into ark_yn to set the current solution */
-  N_VScale(ONE, y0, ark_mem->yn);
+  N_VCopy(y0, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
 
   /* Indicate that problem needs to be initialized */
@@ -364,7 +364,7 @@ int ARKodeSVtolerances(void* arkode_mem, sunrealtype reltol, N_Vector abstol)
     }
     ark_mem->VabstolMallocDone = SUNTRUE;
   }
-  N_VScale(ONE, abstol, ark_mem->Vabstol);
+  N_VCopy(abstol, ark_mem->Vabstol);
   ark_mem->reltol = reltol;
   ark_mem->itol   = ARK_SV;
 
@@ -573,7 +573,7 @@ int ARKodeResVtolerance(void* arkode_mem, N_Vector rabstol)
     }
     ark_mem->VRabstolMallocDone = SUNTRUE;
   }
-  N_VScale(ONE, rabstol, ark_mem->VRabstol);
+  N_VCopy(rabstol, ark_mem->VRabstol);
   ark_mem->ritol = ARK_SV;
 
   /* enforce use of arkRwtSet */
@@ -789,7 +789,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
 
         istate            = ARK_ILL_INPUT;
         ark_mem->tretlast = *tret = ark_mem->tcur;
-        N_VScale(ONE, ark_mem->yn, yout);
+        N_VCopy(ark_mem->yn, yout);
         break;
       }
 
@@ -811,7 +811,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
 
           istate            = ARK_ILL_INPUT;
           ark_mem->tretlast = *tret = ark_mem->tcur;
-          N_VScale(ONE, ark_mem->yn, yout);
+          N_VCopy(ark_mem->yn, yout);
           break;
         }
       }
@@ -824,7 +824,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                       MSG_ARK_MAX_STEPS, ark_mem->tcur);
       istate            = ARK_TOO_MUCH_WORK;
       ark_mem->tretlast = *tret = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, yout);
+      N_VCopy(ark_mem->yn, yout);
       break;
     }
 
@@ -837,7 +837,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
                       MSG_ARK_TOO_MUCH_ACC, ark_mem->tcur);
       istate            = ARK_TOO_MUCH_ACC;
       ark_mem->tretlast = *tret = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, yout);
+      N_VCopy(ark_mem->yn, yout);
       ark_mem->tolsf *= TWO;
       break;
     }
@@ -906,7 +906,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
 
       /* fill (tcur,ycur) with the last accepted step solution */
       ark_mem->tcur = ark_mem->tn;
-      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+      N_VCopy(ark_mem->yn, ark_mem->ycur);
 
       /* call the user-supplied step preprocessing function (if it exists) */
       if (ark_mem->PreProcessStep != NULL)
@@ -1033,7 +1033,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     {
       istate            = arkHandleFailure(ark_mem, kflag);
       ark_mem->tretlast = *tret = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, yout);
+      N_VCopy(ark_mem->yn, yout);
       break;
     }
 
@@ -1107,7 +1107,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
               break;
             }
           }
-          else { N_VScale(ONE, ark_mem->yn, yout); }
+          else { N_VCopy(ark_mem->yn, yout); }
           ark_mem->tretlast = *tret = ark_mem->tstop;
           ark_mem->tstopset         = SUNFALSE;
           istate                    = ARK_TSTOP_RETURN;
@@ -1141,7 +1141,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       }
       else
       {
-        N_VScale(ONE, ark_mem->yn, yout);
+        N_VCopy(ark_mem->yn, yout);
         ark_mem->tretlast = *tret = ark_mem->tcur;
       }
       ark_mem->next_h = ark_mem->hprime;
@@ -1715,7 +1715,7 @@ int arkRwtSet(N_Vector y, N_Vector weight, void* data)
   }
   else
   { /* this condition should not apply, but just in case */
-    N_VScale(ONE, y, My);
+    N_VCopy(y, My);
   }
 
   /* call appropriate routine to fill rwt */
@@ -1830,7 +1830,7 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
   ark_mem->tn   = t0;
 
   /* Initialize yn */
-  N_VScale(ONE, y0, ark_mem->yn);
+  N_VCopy(y0, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
 
   /* Clear any previous 'tstop' */
@@ -2389,7 +2389,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
           if ((irfndp == 1) && (itask == ARK_ONE_STEP))
           {
             ark_mem->tretlast = *tret = ark_mem->tcur;
-            N_VScale(ONE, ark_mem->yn, yout);
+            N_VCopy(ark_mem->yn, yout);
             *ier = ARK_SUCCESS;
             return (1);
           }
@@ -2433,7 +2433,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
             return (1);
           }
         }
-        else { N_VScale(ONE, ark_mem->yn, yout); }
+        else { N_VCopy(ark_mem->yn, yout); }
         ark_mem->tretlast = *tret = ark_mem->tstop;
         ark_mem->tstopset         = SUNFALSE;
         *ier                      = ARK_TSTOP_RETURN;
@@ -2467,7 +2467,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
     }
     else
     {
-      N_VScale(ONE, ark_mem->yn, yout);
+      N_VCopy(ark_mem->yn, yout);
       ark_mem->tretlast = *tret = ark_mem->tcur;
     }
     *ier = ARK_SUCCESS;
@@ -2479,7 +2479,7 @@ int arkStopTests(ARKodeMem ark_mem, sunrealtype tout, N_Vector yout,
       SUNRabs(ark_mem->tcur - ark_mem->tretlast) > troundoff)
   {
     ark_mem->tretlast = *tret = ark_mem->tcur;
-    N_VScale(ONE, ark_mem->yn, yout);
+    N_VCopy(ark_mem->yn, yout);
     *ier = ARK_SUCCESS;
     return (1);
   }
@@ -2546,7 +2546,7 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
        mass matrix solve when computing the full RHS. Before calling arkHin, h
        is set to |tout - tcur| or 1 and so we do not need to guard against
        h == 0 here before calling the full RHS. */
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VCopy(ark_mem->yn, ark_mem->ycur);
     retval = ark_mem->step_fullrhs(ark_mem, ark_mem->tn, ark_mem->ycur,
                                    ark_mem->fn, ARK_FULLRHS_START);
     if (retval) { return ARK_RHSFUNC_FAIL; }
@@ -2698,7 +2698,7 @@ int arkYddNorm(ARKodeMem ark_mem, sunrealtype hg, sunrealtype* yddnrm)
                ark_mem->tempv1);
 
   /* reset ycur to equal yn (unnecessary?) */
-  N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+  N_VCopy(ark_mem->yn, ark_mem->ycur);
 
   /* compute norm of y'' */
   *yddnrm = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
@@ -2780,7 +2780,7 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   }
 
   /* update yn to current solution */
-  N_VScale(ONE, ark_mem->ycur, ark_mem->yn);
+  N_VCopy(ark_mem->ycur, ark_mem->yn);
   ark_mem->fn_is_current = SUNFALSE;
 
   /* Notify time step controller object of successful step */

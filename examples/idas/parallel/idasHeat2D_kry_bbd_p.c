@@ -493,7 +493,7 @@ static int reslocal(sunindextype Nlocal, sunrealtype tres, N_Vector uu,
   /* Initialize all elements of res to uu. This sets the boundary
      elements simply without indexing hassles. */
 
-  N_VScale(ONE, uu, res);
+  N_VCopy(uu, res);
 
   /* Copy local segment of u vector into the working extended array uext.
      This completes uext prior to the computation of the res vector.     */

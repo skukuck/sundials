@@ -151,6 +151,9 @@ struct _generic_N_Vector_Ops
    * These operations provide default implementations that may be overridden.
    */
 
+  /* OPTIONAL data copy */
+  SUNErrCode (*nvcopy)(N_Vector, N_Vector);
+
   /* OPTIONAL fused vector operations */
   SUNErrCode (*nvlinearcombination)(int, sunrealtype*, N_Vector*, N_Vector);
   SUNErrCode (*nvscaleaddmulti)(int, sunrealtype*, N_Vector, N_Vector*,
@@ -260,6 +263,10 @@ SUNDIALS_EXPORT sunrealtype N_VMinQuotient(N_Vector num, N_Vector denom);
 /*
  * OPTIONAL operations with default implementations.
  */
+
+/* data copy */
+SUNDIALS_EXPORT
+SUNErrCode N_VCopy(N_Vector x, N_Vector z);
 
 /* fused vector operations */
 SUNDIALS_EXPORT

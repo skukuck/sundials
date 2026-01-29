@@ -504,7 +504,7 @@ static int reslocal(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
 
   /* Initialize all elements of rr to uu. This sets the boundary
      elements simply without indexing hassles. */
-  N_VScale(ONE, uu, rr);
+  N_VCopy(uu, rr);
 
   /* Get vector data arrays, extended work array uext. */
   Teuchos::RCP<vector_type> uuv = N_VGetVector_Trilinos(uu);

@@ -1206,7 +1206,7 @@ int Test_N_VScale(N_Vector X, N_Vector Z, sunindextype local_length, int myid)
   N_VConst(ZERO, Z);
 
   start_time = get_time();
-  N_VScale(ONE, X, Z);
+  N_VCopy(X, Z);
   sync_device(X);
   stop_time = get_time();
 
@@ -1285,6 +1285,38 @@ int Test_N_VScale(N_Vector X, N_Vector Z, sunindextype local_length, int myid)
   PRINT_TIME("N_VScale", maxt);
 
   return (fails);
+}
+
+/* ----------------------------------------------------------------------
+ * N_VCopy Test
+ * --------------------------------------------------------------------*/
+int Test_N_VCopy(N_Vector X, N_Vector Z, sunindextype local_length, int myid)
+{
+  int failure = 0;
+  double start_time, stop_time, maxt;
+
+  /* fill vector data */
+  N_VConst(NEG_ONE, X);
+  N_VConst(ZERO, Z);
+
+  start_time = get_time();
+  N_VCopy(X, Z);
+  sync_device(X);
+  stop_time = get_time();
+
+  /* Z should be vector of -1 */
+  failure = check_ans(NEG_ONE, Z, local_length);
+  if (failure)
+  {
+    printf(">>> FAILED test -- N_VCopy, Proc %d \n", myid);
+  }
+  else if (myid == 0) { printf("PASSED test -- N_VCopy \n"); }
+
+  /* find max time across all processes */
+  maxt = max_time(X, stop_time - start_time);
+  PRINT_TIME("N_VCopy", maxt);
+
+  return (failure);
 }
 
 /* ----------------------------------------------------------------------

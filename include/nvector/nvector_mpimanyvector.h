@@ -181,6 +181,10 @@ sunbooleantype N_VConstrMask_MPIManyVector(N_Vector c, N_Vector x, N_Vector m);
 SUNDIALS_EXPORT
 sunrealtype N_VMinQuotient_MPIManyVector(N_Vector num, N_Vector denom);
 
+/* data copy */
+SUNDIALS_EXPORT
+SUNErrCode N_VCopy_MPIManyVector(N_Vector x, N_Vector z);
+
 /* fused vector operations */
 SUNDIALS_EXPORT
 SUNErrCode N_VLinearCombination_MPIManyVector(int nvec, sunrealtype* c,

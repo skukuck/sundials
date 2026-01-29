@@ -290,7 +290,7 @@ int adjoint_rhs(sunrealtype t, N_Vector uvec, N_Vector lvec, N_Vector ldotvec,
                 void* user_data)
 {
   vjp(lvec, ldotvec, t, uvec, user_data);
-  N_VScale(-1.0, ldotvec, ldotvec);
+  N_VScale(SUN_RCONST(-1.0), ldotvec, ldotvec);
   return 0;
 }
 

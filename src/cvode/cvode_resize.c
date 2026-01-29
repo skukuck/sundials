@@ -50,7 +50,7 @@ static int cvBuildNordsieckArrayAdams(sunrealtype* t, N_Vector y, N_Vector* f,
   if (order > 1)
   {
     /* Compute Newton polynomial coefficients interpolating f history */
-    for (int i = 0; i < order; i++) { N_VScale(ONE, f[i], wrk[i]); }
+    for (int i = 0; i < order; i++) { N_VCopy(f[i], wrk[i]); }
 
     for (int i = 1; i < order; i++)
     {
@@ -63,7 +63,7 @@ static int cvBuildNordsieckArrayAdams(sunrealtype* t, N_Vector y, N_Vector* f,
     }
 
     /* Compute derivatives of Newton polynomial of f history */
-    N_VScale(ONE, wrk[order - 1], zn[1]);
+    N_VCopy(wrk[order - 1], zn[1]);
     for (int i = 2; i <= order; i++) { N_VConst(ZERO, zn[i]); }
 
     for (int i = order - 2; i >= 0; i--)
@@ -77,8 +77,8 @@ static int cvBuildNordsieckArrayAdams(sunrealtype* t, N_Vector y, N_Vector* f,
   }
 
   /* Overwrite first two columns with input values */
-  N_VScale(ONE, y, zn[0]);
-  N_VScale(ONE, f[0], zn[1]);
+  N_VCopy(y, zn[0]);
+  N_VCopy(f[0], zn[1]);
 
   /* Scale entries */
   sunrealtype scale = ONE;
@@ -122,8 +122,8 @@ static int cvBuildNordsieckArrayBDF(sunrealtype* t, N_Vector* y, N_Vector f,
     for (int i = 1; i <= order; i++) { t_ext[i] = t[i - 1]; }
 
     /* Compute Hermite polynomial coefficients interpolating y history and f */
-    N_VScale(ONE, y[0], wrk[0]);
-    for (int i = 1; i <= order; i++) { N_VScale(ONE, y[i - 1], wrk[i]); }
+    N_VCopy(y[0], wrk[0]);
+    for (int i = 1; i <= order; i++) { N_VCopy(y[i - 1], wrk[i]); }
 
     for (int i = 1; i <= order; i++)
     {
@@ -132,7 +132,7 @@ static int cvBuildNordsieckArrayBDF(sunrealtype* t, N_Vector* y, N_Vector f,
         if (i == 1 && j == 1)
         {
           /* Replace with actual derivative value */
-          N_VScale(ONE, f, wrk[j]);
+          N_VCopy(f, wrk[j]);
         }
         else
         {
@@ -144,7 +144,7 @@ static int cvBuildNordsieckArrayBDF(sunrealtype* t, N_Vector* y, N_Vector f,
     }
 
     /* Compute derivatives of Hermite polynomial */
-    N_VScale(ONE, wrk[order], zn[0]);
+    N_VCopy(wrk[order], zn[0]);
     for (int i = 1; i <= order; i++) { N_VConst(ZERO, zn[i]); }
 
     for (int i = order - 1; i >= 0; i--)
@@ -158,8 +158,8 @@ static int cvBuildNordsieckArrayBDF(sunrealtype* t, N_Vector* y, N_Vector f,
   }
 
   /* Overwrite first two columns with input values */
-  N_VScale(ONE, y[0], zn[0]);
-  N_VScale(ONE, f, zn[1]);
+  N_VCopy(y[0], zn[0]);
+  N_VCopy(f, zn[1]);
 
   /* Scale entries */
   sunrealtype scale = ONE;
@@ -178,7 +178,7 @@ static int cvBuildNordsieckArrayBDF(sunrealtype* t, N_Vector* y, N_Vector f,
 
 static int cvPredictY(int order, N_Vector* zn, N_Vector ypred)
 {
-  N_VScale(ONE, zn[0], ypred);
+  N_VCopy(zn[0], ypred);
   for (int j = 1; j <= order; j++)
   {
     N_VLinearSum(ONE, zn[j], ONE, ypred, ypred);

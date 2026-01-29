@@ -144,6 +144,9 @@ N_Vector N_VNewEmpty_OpenMP(sunindextype length, int num_threads,
   v->ops->nvconstrmask   = N_VConstrMask_OpenMP;
   v->ops->nvminquotient  = N_VMinQuotient_OpenMP;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_OpenMP;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction kernels */
@@ -590,7 +593,7 @@ void N_VDiv_OpenMP(N_Vector x, N_Vector y, N_Vector z)
 }
 
 /* ----------------------------------------------------------------------------
- * Compute scaler multiplication z[i] = c*x[i]
+ * Compute scalar multiplication z[i] = c*x[i]
  */
 
 void N_VScale_OpenMP(sunrealtype c, N_Vector x, N_Vector z)
@@ -621,6 +624,16 @@ void N_VScale_OpenMP(sunrealtype c, N_Vector x, N_Vector z)
   }
 
   return;
+}
+
+/* ----------------------------------------------------------------------------
+ * Copy data z[i] = x[i]
+ */
+
+SUNErrCode N_VCopy_OpenMP(N_Vector x, N_Vector z)
+{
+  VCopy_OpenMP(x, z);
+  return SUN_SUCCESS;
 }
 
 /* ----------------------------------------------------------------------------

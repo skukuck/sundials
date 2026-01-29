@@ -977,7 +977,7 @@ static int PSolve(sunrealtype tn, N_Vector c, N_Vector fc, N_Vector r, N_Vector 
 
   wdata = (WebData)user_data;
 
-  N_VScale(ONE, r, z);
+  N_VCopy(r, z);
 
   /* call GSIter for Gauss-Seidel iterations */
 

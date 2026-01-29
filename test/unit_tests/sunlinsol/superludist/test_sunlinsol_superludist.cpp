@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
     }
 
     /* copy x into y to print in case of solver failure */
-    N_VScale(ONE, gx, gy);
+    N_VCopy(gx, gy);
 
     matdata = NULL;
     rowptrs = NULL;

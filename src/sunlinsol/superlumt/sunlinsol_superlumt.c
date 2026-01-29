@@ -416,7 +416,7 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   trans_t trans;
 
   /* copy b into x */
-  N_VScale(ONE, b, x);
+  N_VCopy(b, x);
 
   /* access x data array */
   xdata = N_VGetArrayPointer(x);

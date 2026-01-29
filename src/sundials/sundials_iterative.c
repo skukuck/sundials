@@ -344,7 +344,7 @@ SUNErrCode SUNQRAdd_MGS(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr();
   for (j = 0; j < m; j++)
   {
@@ -356,7 +356,7 @@ SUNErrCode SUNQRAdd_MGS(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   R[m * mMax + m] = N_VDotProd(qrdata->vtemp, qrdata->vtemp);
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -378,7 +378,7 @@ SUNErrCode SUNQRAdd_ICWY(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j, k;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr(); /* stores d_fi in temp */
 
   if (m > 0)
@@ -415,7 +415,7 @@ SUNErrCode SUNQRAdd_ICWY(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
   /* Q(:,k) = df / \| df \| */
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -437,7 +437,7 @@ SUNErrCode SUNQRAdd_ICWY_SB(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j, k;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr(); /* stores d_fi in temp */
 
   if (m > 0)
@@ -485,7 +485,7 @@ SUNErrCode SUNQRAdd_ICWY_SB(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
   /* Q(:,k) = df / \| df \| */
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -507,7 +507,7 @@ SUNErrCode SUNQRAdd_CGS2(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr(); /* temp = df */
 
   if (m > 0)
@@ -540,7 +540,7 @@ SUNErrCode SUNQRAdd_CGS2(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
   /* Q(:,k) = df / R(k,k) */
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -562,7 +562,7 @@ SUNErrCode SUNQRAdd_DCGS2(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr(); /* temp = df */
 
   if (m > 0)
@@ -599,7 +599,7 @@ SUNErrCode SUNQRAdd_DCGS2(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
   /* Q(:,k) = df / R(k,k) */
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;
@@ -621,7 +621,7 @@ SUNErrCode SUNQRAdd_DCGS2_SB(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   sunindextype j;
   SUNQRData qrdata = (SUNQRData)QRdata;
 
-  N_VScale(ONE, df, qrdata->vtemp);
+  N_VCopy(df, qrdata->vtemp);
   SUNCheckLastErr(); /* temp = df */
 
   if (m > 0)
@@ -671,7 +671,7 @@ SUNErrCode SUNQRAdd_DCGS2_SB(N_Vector* Q, sunrealtype* R, N_Vector df, int m,
   SUNCheckLastErr();
   R[m * mMax + m] = SUNRsqrt(R[m * mMax + m]);
   /* Q(:,k) = df / R(k,k) */
-  N_VScale((1 / R[m * mMax + m]), qrdata->vtemp, Q[m]);
+  N_VScale((ONE / R[m * mMax + m]), qrdata->vtemp, Q[m]);
   SUNCheckLastErr();
 
   return SUN_SUCCESS;

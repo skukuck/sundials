@@ -406,7 +406,7 @@ int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   sunindextype nblocks = SUNMatrix_MagmaDense_NumBlocks(A);
 
   /* Copy b into x */
-  N_VScale(ONE, b, x);
+  N_VCopy(b, x);
 
   /* Access x data array */
   sunrealtype* xdata = N_VGetDeviceArrayPointer(x);

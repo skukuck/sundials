@@ -164,6 +164,9 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   v->ops->nvwl2norm      = N_VWL2Norm_Sycl;
   v->ops->nvcompare      = N_VCompare_Sycl;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Sycl;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -969,6 +972,26 @@ void N_VScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
   SYCL_FOR(
     Q, nthreads_total, nthreads_per_block, item,
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = c * xdata[i]; });
+}
+
+SUNErrCode N_VCopy_Sycl(N_Vector x, N_Vector z)
+{
+  const sunindextype N     = NVEC_SYCL_LENGTH(z);
+  const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
+  sunrealtype* zdata       = NVEC_SYCL_DDATAp(z);
+  ::sycl::queue* Q         = NVEC_SYCL_QUEUE(z);
+  size_t nthreads_total, nthreads_per_block;
+
+  if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
+  {
+    SUNDIALS_DEBUG_PRINT(
+      "ERROR in N_VCopy_Sycl: GetKernelParameters returned nonzero\n");
+  }
+
+  SYCL_FOR(
+    Q, nthreads_total, nthreads_per_block, item,
+    GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = xdata[i]; });
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Sycl(N_Vector x, N_Vector z)

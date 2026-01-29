@@ -127,6 +127,9 @@ SUNDIALS_EXPORT sunbooleantype N_VConstrMask_Trilinos(N_Vector c, N_Vector x,
                                                       N_Vector m);
 SUNDIALS_EXPORT sunrealtype N_VMinQuotient_Trilinos(N_Vector num, N_Vector denom);
 
+/* data copy */
+SUNDIALS_EXPORT SUNErrCode N_VCopy_Trilinos(N_Vector x, N_Vector z);
+
 /* OPTIONAL local reduction kernels (no parallel communication) */
 SUNDIALS_EXPORT sunrealtype N_VDotProdLocal_Trilinos(N_Vector x, N_Vector y);
 SUNDIALS_EXPORT sunrealtype N_VMaxNormLocal_Trilinos(N_Vector x);

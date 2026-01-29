@@ -626,7 +626,7 @@ int arkStep_NlsResidual_MassIdent_TrivialPredAutonomous(N_Vector zcor, N_Vector 
 
   if (nls_iter == 0 && step_mem->fn_implicit)
   {
-    N_VScale(ONE, step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
+    N_VCopy(step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
   }
   else
   {
@@ -743,7 +743,7 @@ int arkStep_NlsResidual_MassFixed_TrivialPredAutonomous(N_Vector zcor, N_Vector 
 
   if (nls_iter == 0 && step_mem->fn_implicit)
   {
-    N_VScale(ONE, step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
+    N_VCopy(step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
   }
   else
   {
@@ -921,7 +921,7 @@ int arkStep_NlsFPFunction_MassIdent_TrivialPredAutonomous(N_Vector zcor,
 
   if (nls_iter == 0 && step_mem->fn_implicit)
   {
-    N_VScale(ONE, step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
+    N_VCopy(step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
   }
   else
   {
@@ -1035,7 +1035,7 @@ int arkStep_NlsFPFunction_MassFixed_TrivialPredAutonomous(N_Vector zcor,
 
   if (nls_iter == 0 && step_mem->fn_implicit)
   {
-    N_VScale(ONE, step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
+    N_VCopy(step_mem->fn_implicit, step_mem->Fi[step_mem->istage]);
   }
   else
   {

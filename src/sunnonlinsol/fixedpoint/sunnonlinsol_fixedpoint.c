@@ -207,7 +207,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     SUNLogInfo(NLS->sunctx->logger, "begin-iterations-list", "");
 
     /* update previous solution guess */
-    N_VScale(ONE, ycor, yprev);
+    N_VCopy(ycor, yprev);
     SUNCheckLastErr();
 
     /* Compute fixed-point iteration function, store in gy.
@@ -226,7 +226,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS,
     /* perform fixed point update, based on choice of acceleration or not */
     if (FP_CONTENT(NLS)->m == 0)
     { /* basic fixed-point solver */
-      N_VScale(ONE, gy, ycor);
+      N_VCopy(gy, ycor);
       SUNCheckLastErr();
     }
     else
@@ -453,15 +453,15 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     N_VLinearSum(ONE, fv, -ONE, fold, df[i_pt]);
     SUNCheckLastErr(); /* df_new = fv - fold */
   }
-  N_VScale(ONE, gval, gold);
+  N_VCopy(gval, gold);
   SUNCheckLastErr();
-  N_VScale(ONE, fv, fold);
+  N_VCopy(fv, fold);
   SUNCheckLastErr();
 
   /* on first iteration, just do basic fixed-point update */
   if (iter == 0)
   {
-    N_VScale(ONE, gval, x);
+    N_VCopy(gval, x);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -481,7 +481,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
   else if (iter <= maa)
   { /* another iteration before we've reached maa */
 
-    N_VScale(ONE, df[i_pt], vtemp);
+    N_VCopy(df[i_pt], vtemp);
     SUNCheckLastErr();
     for (j = 0; j < iter - 1; j++)
     {
@@ -496,7 +496,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     R[(iter - 1) * maa + iter - 1] = SUNRsqrt(R[(iter - 1) * maa + iter - 1]);
     if (R[(iter - 1) * maa + iter - 1] == ZERO)
     {
-      N_VScale(ZERO, vtemp, Q[i_pt]);
+      N_VConst(ZERO, Q[i_pt]);
       SUNCheckLastErr();
     }
     else
@@ -534,7 +534,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
       SUNCheckLastErr();
       N_VLinearSum(-s, Q[i], c, Q[i + 1], Q[i + 1]);
       SUNCheckLastErr();
-      N_VScale(ONE, vtemp, Q[i]);
+      N_VCopy(vtemp, Q[i]);
       SUNCheckLastErr();
     }
 
@@ -545,7 +545,7 @@ static SUNErrCode AndersonAccelerate(SUNNonlinearSolver NLS, N_Vector gval,
     }
 
     /* add the new df vector */
-    N_VScale(ONE, df[i_pt], vtemp);
+    N_VCopy(df[i_pt], vtemp);
     SUNCheckLastErr();
     for (j = 0; j < maa - 1; j++)
     {

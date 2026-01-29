@@ -1695,7 +1695,7 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
   }
 
   /* Load the constraints vector */
-  N_VScale(ONE, constraints, ark_mem->constraints);
+  N_VCopy(constraints, ark_mem->constraints);
 
   return (ARK_SUCCESS);
 }
@@ -2719,7 +2719,7 @@ int ARKodeGetErrWeights(void* arkode_mem, N_Vector eweight)
     return (ARK_STEPPER_UNSUPPORTED);
   }
 
-  N_VScale(ONE, ark_mem->ewt, eweight);
+  N_VCopy(ark_mem->ewt, eweight);
   return (ARK_SUCCESS);
 }
 
@@ -2747,7 +2747,7 @@ int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight)
     return (ARK_STEPPER_UNSUPPORTED);
   }
 
-  N_VScale(ONE, ark_mem->rwt, rweight);
+  N_VCopy(ark_mem->rwt, rweight);
   return (ARK_SUCCESS);
 }
 

@@ -253,7 +253,7 @@ int LSolve(N_Vector b, void* mem)
   Imem = (IntegratorMem)mem;
 
   retval = SUNLinSolSolve(Imem->LS, Imem->A, Imem->x, b, ZERO);
-  N_VScale(ONE, Imem->x, b);
+  N_VCopy(Imem->x, b);
 
   return (retval);
 }

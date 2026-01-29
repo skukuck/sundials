@@ -171,6 +171,9 @@ N_Vector N_VNewEmpty_Petsc(MPI_Comm comm, sunindextype local_length,
   v->ops->nvconstrmask   = N_VConstrMask_Petsc;
   v->ops->nvminquotient  = N_VMinQuotient_Petsc;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Petsc;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -511,6 +514,14 @@ void N_VScale_Petsc(sunrealtype c, N_Vector x, N_Vector z)
   VecAXPBY(zv, c, 0.0, xv);
 
   return;
+}
+
+SUNErrCode N_VCopy_Petsc(N_Vector x, N_Vector z)
+{
+  Vec xv = NV_PVEC_PTC(x);
+  Vec zv = NV_PVEC_PTC(z);
+  VecAXPBY(zv, 1.0, 0.0, xv);
+  return SUN_SUCCESS;
 }
 
 void N_VAbs_Petsc(N_Vector x, N_Vector z)

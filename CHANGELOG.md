@@ -24,6 +24,9 @@ matrices, iterative linear solvers with automatically-approximated Jacobian-time
 product, temporal root-finding, discrete adjoint modules in ARKStep or ERKStep, the
 SPRKStep stepper, and LSRKStep's use of the automated dominant eigenvalue estimation module.
 
+An optional N_Vector routine, `N_VCopy`, was added, to streamline data copies between two
+vectors.  For user-supplied N_Vector modules that do not provide this function, `N_VScale`
+will be used instead.
 
 ### Bug Fixes
 

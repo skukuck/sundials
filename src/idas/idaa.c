@@ -700,7 +700,7 @@ int IDACreateB(void* ida_mem, int* which)
     return (IDA_MEM_FAIL);
   }
 
-  /* We need to ensure Ns is set in the new IDAS object so that Ns is accessible 
+  /* We need to ensure Ns is set in the new IDAS object so that Ns is accessible
      in the Python callbacks which only have access to ida_memB, not the original cvode_mem */
   ((IDAMem)ida_memB)->ida_Ns = IDA_mem->ida_Ns;
 
@@ -821,8 +821,8 @@ int IDAInitB(void* ida_mem, int which, IDAResFnB resB, sunrealtype tB0,
   /* Allocate and initialize space workspace vectors. */
   IDAB_mem->ida_yy = N_VClone(yyB0);
   IDAB_mem->ida_yp = N_VClone(yyB0);
-  N_VScale(ONE, yyB0, IDAB_mem->ida_yy);
-  N_VScale(ONE, ypB0, IDAB_mem->ida_yp);
+  N_VCopy(yyB0, IDAB_mem->ida_yy);
+  N_VCopy(ypB0, IDAB_mem->ida_yp);
 
   SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
   return (flag);
@@ -913,8 +913,8 @@ int IDAInitBS(void* ida_mem, int which, IDAResFnBS resS, sunrealtype tB0,
   IDAB_mem->ida_t0 = tB0;
   IDAB_mem->ida_yy = N_VClone(yyB0);
   IDAB_mem->ida_yp = N_VClone(ypB0);
-  N_VScale(ONE, yyB0, IDAB_mem->ida_yy);
-  N_VScale(ONE, ypB0, IDAB_mem->ida_yp);
+  N_VCopy(yyB0, IDAB_mem->ida_yy);
+  N_VCopy(ypB0, IDAB_mem->ida_yp);
 
   SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
   return (IDA_SUCCESS);
@@ -1430,8 +1430,8 @@ int IDACalcICB(void* ida_mem, int which, sunrealtype tout1, N_Vector yy0,
 
   /* Save (y, y') in yyTmp and ypTmp for use in the res wrapper.*/
   /* yyTmp and ypTmp workspaces are safe to use if IDAADataStore is not called.*/
-  N_VScale(ONE, yy0, IDAADJ_mem->ia_yyTmp);
-  N_VScale(ONE, yp0, IDAADJ_mem->ia_ypTmp);
+  N_VCopy(yy0, IDAADJ_mem->ia_yyTmp);
+  N_VCopy(yp0, IDAADJ_mem->ia_ypTmp);
 
   /* Set noInterp flag to SUNTRUE, so IDAARes will use user provided values for
      y and y' and will not call the interpolation routine(s). */
@@ -1532,8 +1532,8 @@ int IDACalcICBS(void* ida_mem, int which, sunrealtype tout1, N_Vector yy0,
      for residual will use these values instead of calling interpolation routine.*/
 
   /* The four workspaces variables are safe to use if IDAADataStore is not called.*/
-  N_VScale(ONE, yy0, IDAADJ_mem->ia_yyTmp);
-  N_VScale(ONE, yp0, IDAADJ_mem->ia_ypTmp);
+  N_VCopy(yy0, IDAADJ_mem->ia_yyTmp);
+  N_VCopy(yp0, IDAADJ_mem->ia_ypTmp);
 
   for (is = 0; is < IDA_mem->ida_Ns; is++) { IDA_mem->ida_cvals[is] = ONE; }
 
@@ -1898,8 +1898,8 @@ int IDAGetB(void* ida_mem, int which, sunrealtype* tret, N_Vector yy, N_Vector y
     IDAB_mem = IDAB_mem->ida_next;
   }
 
-  N_VScale(ONE, IDAB_mem->ida_yy, yy);
-  N_VScale(ONE, IDAB_mem->ida_yp, yp);
+  N_VCopy(IDAB_mem->ida_yy, yy);
+  N_VCopy(IDAB_mem->ida_yp, yp);
   *tret = IDAB_mem->ida_tout;
 
   return (IDA_SUCCESS);
@@ -1966,7 +1966,7 @@ int IDAGetQuadB(void* ida_mem, int which, sunrealtype* tret, N_Vector qB)
 
   if (nstB == 0)
   {
-    N_VScale(ONE, IDAB_mem->IDA_mem->ida_phiQ[0], qB);
+    N_VCopy(IDAB_mem->IDA_mem->ida_phiQ[0], qB);
     *tret = IDAB_mem->ida_tout;
   }
   else { flag = IDAGetQuad(ida_memB, tret, qB); }
@@ -2518,14 +2518,14 @@ static int IDAAckpntGet(IDAMem IDA_mem, IDAckpntMem ck_mem)
     /* Copy the arrays from check point data structure */
     for (j = 0; j < ck_mem->ck_phi_alloc; j++)
     {
-      N_VScale(ONE, ck_mem->ck_phi[j], IDA_mem->ida_phi[j]);
+      N_VCopy(ck_mem->ck_phi[j], IDA_mem->ida_phi[j]);
     }
 
     if (ck_mem->ck_quadr)
     {
       for (j = 0; j < ck_mem->ck_phi_alloc; j++)
       {
-        N_VScale(ONE, ck_mem->ck_phiQ[j], IDA_mem->ida_phiQ[j]);
+        N_VCopy(ck_mem->ck_phiQ[j], IDA_mem->ida_phiQ[j]);
       }
     }
 
@@ -2535,7 +2535,7 @@ static int IDAAckpntGet(IDAMem IDA_mem, IDAckpntMem ck_mem)
       {
         for (j = 0; j < ck_mem->ck_phi_alloc; j++)
         {
-          N_VScale(ONE, ck_mem->ck_phiS[j][is], IDA_mem->ida_phiS[j][is]);
+          N_VCopy(ck_mem->ck_phiS[j][is], IDA_mem->ida_phiS[j][is]);
         }
       }
     }
@@ -2546,7 +2546,7 @@ static int IDAAckpntGet(IDAMem IDA_mem, IDAckpntMem ck_mem)
       {
         for (j = 0; j < ck_mem->ck_phi_alloc; j++)
         {
-          N_VScale(ONE, ck_mem->ck_phiQS[j][is], IDA_mem->ida_phiQS[j][is]);
+          N_VCopy(ck_mem->ck_phiQS[j][is], IDA_mem->ida_phiQS[j][is]);
         }
       }
     }
@@ -2788,7 +2788,7 @@ static int IDAAhermiteStorePnt(IDAMem IDA_mem, IDAdtpntMem d)
   content = (IDAhermiteDataMem)d->content;
 
   /* Load solution(s) */
-  N_VScale(ONE, IDA_mem->ida_phi[0], content->y);
+  N_VCopy(IDA_mem->ida_phi[0], content->y);
 
   if (IDAADJ_mem->ia_storeSensi)
   {
@@ -2859,8 +2859,8 @@ static int IDAAhermiteGetY(IDAMem IDA_mem, sunrealtype t, N_Vector yy,
   if (index == 0)
   {
     content0 = (IDAhermiteDataMem)(dt_mem[0]->content);
-    N_VScale(ONE, content0->y, yy);
-    N_VScale(ONE, content0->yd, yp);
+    N_VCopy(content0->y, yy);
+    N_VCopy(content0->yd, yp);
 
     if (NS > 0)
     {
@@ -3272,7 +3272,7 @@ static int IDAApolynomialStorePnt(IDAMem IDA_mem, IDAdtpntMem d)
   IDAADJ_mem = IDA_mem->ida_adj_mem;
   content    = (IDApolynomialDataMem)d->content;
 
-  N_VScale(ONE, IDA_mem->ida_phi[0], content->y);
+  N_VCopy(IDA_mem->ida_phi[0], content->y);
 
   /* copy also the derivative for the first data point (in this case
      content->yp is non-null). */
@@ -3332,8 +3332,8 @@ static int IDAApolynomialGetY(IDAMem IDA_mem, sunrealtype t, N_Vector yy,
   if (index == 0)
   {
     content = (IDApolynomialDataMem)(dt_mem[0]->content);
-    N_VScale(ONE, content->y, yy);
-    N_VScale(ONE, content->yd, yp);
+    N_VCopy(content->y, yy);
+    N_VCopy(content->yd, yp);
 
     if (NS > 0)
     {
@@ -3387,7 +3387,7 @@ static int IDAApolynomialGetY(IDAMem IDA_mem, sunrealtype t, N_Vector yy,
       {
         IDAADJ_mem->ia_T[j] = dt_mem[base - j]->t;
         content             = (IDApolynomialDataMem)(dt_mem[base - j]->content);
-        N_VScale(ONE, content->y, IDAADJ_mem->ia_Y[j]);
+        N_VCopy(content->y, IDAADJ_mem->ia_Y[j]);
 
         if (NS > 0)
         {
@@ -3404,7 +3404,7 @@ static int IDAApolynomialGetY(IDAMem IDA_mem, sunrealtype t, N_Vector yy,
       {
         IDAADJ_mem->ia_T[j] = dt_mem[base - 1 + j]->t;
         content = (IDApolynomialDataMem)(dt_mem[base - 1 + j]->content);
-        N_VScale(ONE, content->y, IDAADJ_mem->ia_Y[j]);
+        N_VCopy(content->y, IDAADJ_mem->ia_Y[j]);
 
         if (NS > 0)
         {
@@ -3517,7 +3517,7 @@ static int IDAAGettnSolutionYp(IDAMem IDA_mem, N_Vector yp)
   if (IDA_mem->ida_nst == 0)
   {
     /* If no integration was done, return the yp supplied by user.*/
-    N_VScale(ONE, IDA_mem->ida_phi[1], yp);
+    N_VCopy(IDA_mem->ida_phi[1], yp);
 
     return (0);
   }

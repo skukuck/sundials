@@ -125,7 +125,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Power(N_Vector q, long int max_iters,
   content->q = N_VClone(q);
   SUNCheckLastErrNull();
 
-  N_VScale(ONE, q, content->q);
+  N_VCopy(q, content->q);
   SUNCheckLastErrNull();
 
   content->V = N_VClone(q);

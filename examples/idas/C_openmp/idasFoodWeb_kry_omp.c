@@ -515,7 +515,7 @@ static int PSolve(sunrealtype tt, N_Vector cc, N_Vector cp, N_Vector rr,
 
   webdata = (UserData)user_data;
 
-  N_VScale(ONE, rvec, zvec);
+  N_VCopy(rvec, zvec);
 
 #pragma omp parallel for collapse(2) default(shared) private(jx, jy, zxy, Pxy, \
                                                                pivot)          \

@@ -269,8 +269,8 @@ int heatres(sunrealtype tres, N_Vector uu, N_Vector up, N_Vector resval,
   mm    = data->mm;
   coeff = data->coeff;
 
-  /* Initialize resval to uu, to take care of boundary equations. */
-  N_VScale(ZERO, uu, resval);
+  /* Initialize resval to zero, to take care of boundary equations. */
+  N_VConst(ZERO, resval);
 
   /* Loop over interior points; set res = up - (central difference). */
   for (j = 1; j < mm - 1; j++)

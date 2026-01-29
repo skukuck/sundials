@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "ARKodeSStolerances", 1)) return 1;
   retval = ARKodeSetMaxNumSteps(arkode_ref, 1000000);
   if (check_retval(&retval, "ARKodeSetMaxNumSteps", 1)) return (1);
-  N_VScale(ONE, y, yref[0]);
+  N_VCopy(y, yref[0]);
   sunrealtype hpart = (Tf - T0) / udata.Npart;
   for (int ipart = 0; ipart < udata.Npart; ipart++)
   {
@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
     if (check_retval(&retval, "ARKodeSetStopTime", 1)) return 1;
     retval = ARKodeEvolve(arkode_ref, t + hpart, y, &t, ARK_NORMAL);
     if (check_retval(&retval, "ARKodeEvolve", 1)) return 1;
-    N_VScale(ONE, y, yref[ipart + 1]);
+    N_VCopy(y, yref[ipart + 1]);
   }
 
   // Set up fast ERKStep integrator as fifth-order adaptive method
@@ -505,14 +505,14 @@ static int run_test(void* mristep_mem, void* arkode_ref, N_Vector y,
     {
       // Reset integrators for this run
       t = t2 = T0 + ipart * hpart;
-      N_VScale(ONE, yref[ipart], y);
+      N_VCopy(yref[ipart], y);
       retval = ARKodeReset(mristep_mem, t, y);
       if (check_retval(&retval, "ARKodeReset", 1)) return 1;
       retval = ARKodeSetFixedStep(mristep_mem, Hvals[iH]);
       if (check_retval(&retval, "ARKodeSetFixedStep", 1)) return 1;
       retval = ARKodeResetAccumulatedError(mristep_mem);
       if (check_retval(&retval, "ARKodeResetAccumulatedError", 1)) return 1;
-      N_VScale(ONE, yref[ipart], y2);
+      N_VCopy(yref[ipart], y2);
       retval = ARKodeReset(arkode_ref, t2, y2);
       if (check_retval(&retval, "ARKodeReset", 1)) return 1;
       retval = ARKodeSetStopTime(arkode_ref, t2 + Hvals[iH]);

@@ -1401,12 +1401,12 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     else if (step_mem->implicit)
     {
       /* implicit */
-      N_VScale(ONE, step_mem->Fi[0], f);
+      N_VCopy(step_mem->Fi[0], f);
     }
     else
     {
       /* explicit */
-      N_VScale(ONE, step_mem->Fe[0], f);
+      N_VCopy(step_mem->Fe[0], f);
     }
 
     /* compute M^{-1} f for output but do not store */
@@ -1527,11 +1527,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
       {
         if (step_mem->explicit)
         {
-          N_VScale(ONE, step_mem->Fe[step_mem->stages - 1], step_mem->Fe[0]);
+          N_VCopy(step_mem->Fe[step_mem->stages - 1], step_mem->Fe[0]);
         }
         if (step_mem->implicit)
         {
-          N_VScale(ONE, step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
+          N_VCopy(step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
         }
       }
     }
@@ -1545,12 +1545,12 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     else if (step_mem->implicit)
     {
       /* implicit */
-      N_VScale(ONE, step_mem->Fi[0], f);
+      N_VCopy(step_mem->Fi[0], f);
     }
     else
     {
       /* explicit */
-      N_VScale(ONE, step_mem->Fe[0], f);
+      N_VCopy(step_mem->Fe[0], f);
     }
 
     /* compute M^{-1} f for output but do not store */
@@ -1620,11 +1620,11 @@ int arkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     }
     else if (step_mem->implicit)
     { /* implicit */
-      N_VScale(ONE, step_mem->sdata, f);
+      N_VCopy(step_mem->sdata, f);
     }
     else
     { /* explicit */
-      N_VScale(ONE, ark_mem->tempv2, f);
+      N_VCopy(ark_mem->tempv2, f);
     }
 
     /* compute M^{-1} f for output but do not store */
@@ -1759,7 +1759,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* explicit first stage -- store stage if necessary for relaxation or checkpointing */
   if (is_start == 1)
   {
-    if (save_stages) { N_VScale(ONE, ark_mem->yn, step_mem->z[0]); }
+    if (save_stages) { N_VCopy(ark_mem->yn, step_mem->z[0]); }
 
     if (ark_mem->checkpoint_scheme)
     {
@@ -1867,7 +1867,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
          necessary) for reuse in the residual */
       if (stiffly_accurate)
       {
-        N_VScale(ONE, step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
+        N_VCopy(step_mem->Fi[step_mem->stages - 1], step_mem->Fi[0]);
       }
       else
       {
@@ -1906,7 +1906,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       if (imex_method || step_mem->mass_type == MASS_FIXED)
       {
         /* Copy from Fi[0] as fn includes fe or M^{-1} */
-        N_VScale(ONE, step_mem->Fi[0], ark_mem->tempv5);
+        N_VCopy(step_mem->Fi[0], ark_mem->tempv5);
         step_mem->fn_implicit = ark_mem->tempv5;
       }
       else
@@ -2063,7 +2063,7 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* successful stage solve */
 
     /*    store stage (if necessary for relaxation) */
-    if (save_stages) { N_VScale(ONE, ark_mem->ycur, step_mem->z[is]); }
+    if (save_stages) { N_VCopy(ark_mem->ycur, step_mem->z[is]); }
 
     /*    checkpoint stage for adjoint (if necessary) */
     if (ark_mem->checkpoint_scheme)
@@ -2888,7 +2888,7 @@ int arkStep_Predict(ARKodeMem ark_mem, int istage, N_Vector yguess)
   /* if the first step, use initial condition as guess */
   if (ark_mem->initsetup)
   {
-    N_VScale(ONE, ark_mem->yn, yguess);
+    N_VCopy(ark_mem->yn, yguess);
     return (ARK_SUCCESS);
   }
 
@@ -3007,7 +3007,7 @@ int arkStep_Predict(ARKodeMem ark_mem, int istage, N_Vector yguess)
   }
 
   /* if we made it here, use the trivial predictor (previous step solution) */
-  N_VScale(ONE, ark_mem->yn, yguess);
+  N_VCopy(ark_mem->yn, yguess);
   return (ARK_SUCCESS);
 }
 
@@ -3136,7 +3136,7 @@ int arkStep_StageSetup(ARKodeMem ark_mem, sunbooleantype implicit)
   /* If implicit with fixed M!=I, update sdata with M*sdata */
   if (implicit && (step_mem->mass_type == MASS_FIXED))
   {
-    N_VScale(ONE, step_mem->sdata, ark_mem->tempv1);
+    N_VCopy(step_mem->sdata, ark_mem->tempv1);
     retval = step_mem->mmult((void*)ark_mem, ark_mem->tempv1, step_mem->sdata);
     if (retval != ARK_SUCCESS) { return (ARK_MASSMULT_FAIL); }
   }
@@ -3467,7 +3467,7 @@ int arkStep_ComputeSolutions_MassFixed(ARKodeMem ark_mem, sunrealtype* dsmPtr)
     if (retval < 0)
     {
       *dsmPtr = SUN_RCONST(2.0); /* indicate too much error, step with smaller step */
-      N_VScale(ONE, ark_mem->yn, y); /* place old solution into y */
+      N_VCopy(ark_mem->yn, y); /* place old solution into y */
       return (CONV_FAIL);
     }
 
@@ -4090,7 +4090,7 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     {
       if (step_mem->mass_type == MASS_FIXED)
       {
-        N_VScale(ONE, step_mem->Fe[i], rhs_tmp);
+        N_VCopy(step_mem->Fe[i], rhs_tmp);
       }
       else { rhs_tmp = step_mem->Fe[i]; }
       bi = step_mem->Be->b[i];
@@ -4099,7 +4099,7 @@ int arkStep_RelaxDeltaE(ARKodeMem ark_mem, ARKRelaxJacFn relax_jac_fn,
     {
       if (step_mem->mass_type == MASS_FIXED)
       {
-        N_VScale(ONE, step_mem->Fi[i], rhs_tmp);
+        N_VCopy(step_mem->Fi[i], rhs_tmp);
       }
       else { rhs_tmp = step_mem->Fi[i]; }
       bi = step_mem->Bi->b[i];

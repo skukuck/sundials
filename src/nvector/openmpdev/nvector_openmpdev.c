@@ -131,6 +131,9 @@ N_Vector N_VNewEmpty_OpenMPDEV(sunindextype length, SUNContext sunctx)
   v->ops->nvconstrmask   = N_VConstrMask_OpenMPDEV;
   v->ops->nvminquotient  = N_VMinQuotient_OpenMPDEV;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_OpenMPDEV;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -687,7 +690,7 @@ void N_VDiv_OpenMPDEV(N_Vector x, N_Vector y, N_Vector z)
 }
 
 /* ----------------------------------------------------------------------------
- * Compute scaler multiplication z[i] = c*x[i]
+ * Compute scalar multiplication z[i] = c*x[i]
  */
 
 void N_VScale_OpenMPDEV(sunrealtype c, N_Vector x, N_Vector z)
@@ -721,6 +724,16 @@ void N_VScale_OpenMPDEV(sunrealtype c, N_Vector x, N_Vector z)
   }
 
   return;
+}
+
+/* ----------------------------------------------------------------------------
+ * Copy data z[i] = x[i]
+ */
+
+SUNErrCode N_VCopy_OpenMPDEV(N_Vector x, N_Vector z)
+{
+  VCopy_OpenMPDEV(x, z);
+  return (SUN_SUCCESS);
 }
 
 /* ----------------------------------------------------------------------------

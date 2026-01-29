@@ -154,6 +154,7 @@ int main(int argc, char* argv[])
   fails += Test_N_VProd(X, Y, Z, local_length, myid);
   fails += Test_N_VDiv(X, Y, Z, local_length, myid);
   fails += Test_N_VScale(X, Z, local_length, myid);
+  fails += Test_N_VCopy(X, Z, local_length, myid);
   fails += Test_N_VAbs(X, Z, local_length, myid);
   fails += Test_N_VInv(X, Z, local_length, myid);
   fails += Test_N_VAddConst(X, Z, local_length, myid);

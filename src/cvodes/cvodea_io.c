@@ -757,9 +757,9 @@ int CVodeGetAdjDataPointHermite(void* cvode_mem, int which, sunrealtype* t,
 
   content = (CVhermiteDataMem)(dt_mem[which]->content);
 
-  if (y != NULL) { N_VScale(ONE, content->y, y); }
+  if (y != NULL) { N_VCopy(content->y, y); }
 
-  if (yd != NULL) { N_VScale(ONE, content->yd, yd); }
+  if (yd != NULL) { N_VCopy(content->yd, yd); }
 
   return (CV_SUCCESS);
 }
@@ -808,7 +808,7 @@ int CVodeGetAdjDataPointPolynomial(void* cvode_mem, int which, sunrealtype* t,
 
   content = (CVpolynomialDataMem)(dt_mem[which]->content);
 
-  if (y != NULL) { N_VScale(ONE, content->y, y); }
+  if (y != NULL) { N_VCopy(content->y, y); }
 
   *order = content->order;
 

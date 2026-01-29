@@ -466,8 +466,8 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
   IDA_mem->ida_tn  = t0;
 
   /* Initialize the phi array */
-  N_VScale(ONE, yy0, IDA_mem->ida_phi[0]);
-  N_VScale(ONE, yp0, IDA_mem->ida_phi[1]);
+  N_VCopy(yy0, IDA_mem->ida_phi[0]);
+  N_VCopy(yp0, IDA_mem->ida_phi[1]);
 
   /* create a Newton nonlinear solver object by default */
   NLS = SUNNonlinSol_Newton(yy0, IDA_mem->ida_sunctx);
@@ -620,8 +620,8 @@ int IDAReInit(void* ida_mem, sunrealtype t0, N_Vector yy0, N_Vector yp0)
 
   /* Initialize the phi array */
 
-  N_VScale(ONE, yy0, IDA_mem->ida_phi[0]);
-  N_VScale(ONE, yp0, IDA_mem->ida_phi[1]);
+  N_VCopy(yy0, IDA_mem->ida_phi[0]);
+  N_VCopy(yp0, IDA_mem->ida_phi[1]);
 
   /* Initialize all the counters and other optional output values */
 
@@ -770,7 +770,7 @@ int IDASVtolerances(void* ida_mem, sunrealtype reltol, N_Vector abstol)
   }
 
   IDA_mem->ida_rtol = reltol;
-  N_VScale(ONE, abstol, IDA_mem->ida_Vatol);
+  N_VCopy(abstol, IDA_mem->ida_Vatol);
   IDA_mem->ida_atolmin0 = (atolmin == ZERO);
 
   IDA_mem->ida_itol = IDA_SV;
@@ -3393,7 +3393,7 @@ static void IDACompleteStep(IDAMem IDA_mem, sunrealtype err_k, sunrealtype err_k
   /* Save ee for possible order increase on next step */
   if (IDA_mem->ida_kused < IDA_mem->ida_maxord)
   {
-    N_VScale(ONE, IDA_mem->ida_ee, IDA_mem->ida_phi[IDA_mem->ida_kused + 1]);
+    N_VCopy(IDA_mem->ida_ee, IDA_mem->ida_phi[IDA_mem->ida_kused + 1]);
   }
 
   /* Update phi arrays */

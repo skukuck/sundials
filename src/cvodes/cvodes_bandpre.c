@@ -520,7 +520,7 @@ static int cvBandPrecDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
   }
 
   /* Load ytemp with y = predicted y vector. */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Set minimum increment based on uround and norm of f. */
   srur   = SUNRsqrt(cv_mem->cv_uround);

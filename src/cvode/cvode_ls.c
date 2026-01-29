@@ -1179,7 +1179,7 @@ int cvLsBandDQJac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix Jac,
   }
 
   /* Load ytemp with y = predicted y vector */
-  N_VScale(ONE, y, ytemp);
+  N_VCopy(y, ytemp);
 
   /* Set minimum increment based on uround and norm of f */
   srur   = SUNRsqrt(cv_mem->cv_uround);
@@ -1795,7 +1795,7 @@ int cvLsSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ynow,
 
   /* Call solver, and copy x to b */
   retval = SUNLinSolSolve(cvls_mem->LS, cvls_mem->A, cvls_mem->x, b, delta);
-  N_VScale(ONE, cvls_mem->x, b);
+  N_VCopy(cvls_mem->x, b);
 
   /* If using a direct or matrix-iterative solver, BDF method, and gamma has changed,
      scale the correction to account for change in gamma */

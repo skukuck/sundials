@@ -215,6 +215,9 @@ N_Vector N_VNewEmpty_Pthreads(sunindextype length, int num_threads,
   v->ops->nvconstrmask   = N_VConstrMask_Pthreads;
   v->ops->nvminquotient  = N_VMinQuotient_Pthreads;
 
+  /* data copy operation */
+  v->ops->nvcopy = N_VCopy_Pthreads;
+
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
@@ -1000,6 +1003,17 @@ static void* nvScalePt(void* thread_data)
 
   /* exit */
   pthread_exit(NULL);
+}
+
+/* ----------------------------------------------------------------------------
+ * Copy data z[i] = x[i]
+ */
+
+SUNErrCode N_VCopy_Pthreads(N_Vector x, N_Vector z)
+{
+  SUNFunctionBegin(x->sunctx);
+  VCopy_Pthreads(x, z);
+  return SUN_SUCCESS;
 }
 
 /* ----------------------------------------------------------------------------

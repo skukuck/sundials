@@ -656,7 +656,7 @@ int Test_N_VScale(N_Vector X, sunindextype local_length, int ntests)
 
     ClearCache();
     start_time = get_time();
-    N_VScale(ONE, X, Z);
+    N_VCopy(X, Z);
     sync_device(X);
     stop_time = get_time();
 
@@ -1350,7 +1350,7 @@ int Test_N_VLinearCombination(N_Vector X, sunindextype local_length, int nvecs,
     {
       ClearCache();
       start_time = get_time();
-      N_VScale(ONE, Y[0], Y[0]);
+      N_VCopy(Y[0], Y[0]);
       sync_device(X);
       stop_time = get_time();
     }
@@ -2461,7 +2461,7 @@ int Test_N_VLinearCombinationVectorArray(N_Vector V, sunindextype local_length,
     {
       ClearCache();
       start_time = get_time();
-      for (k = 0; k < nvecs; k++) { N_VScale(ONE, X[0][k], X[0][k]); }
+      for (k = 0; k < nvecs; k++) { N_VCopy(X[0][k], X[0][k]); }
       sync_device(V);
       stop_time = get_time();
     }

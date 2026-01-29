@@ -632,14 +632,14 @@ int arkRootCheck3(void* arkode_mem, sunrealtype tout, int itask)
   if (itask == ARK_ONE_STEP)
   {
     rootmem->thi = ark_mem->tcur;
-    N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+    N_VCopy(ark_mem->yn, ark_mem->ycur);
   }
   if (itask == ARK_NORMAL)
   {
     if ((tout - ark_mem->tcur) * ark_mem->h >= ZERO)
     {
       rootmem->thi = ark_mem->tcur;
-      N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
+      N_VCopy(ark_mem->yn, ark_mem->ycur);
     }
     else
     {

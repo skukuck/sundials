@@ -153,6 +153,10 @@ sunrealtype N_VWL2Norm_ManyVector(N_Vector x, N_Vector w);
 SUNDIALS_EXPORT
 void N_VCompare_ManyVector(sunrealtype c, N_Vector x, N_Vector z);
 
+/* data copy */
+SUNDIALS_EXPORT
+SUNErrCode N_VCopy_ManyVector(N_Vector x, N_Vector z);
+
 /* fused vector operations */
 
 SUNDIALS_EXPORT

@@ -445,6 +445,22 @@ void N_VScale_Kokkos(sunrealtype c, N_Vector x, N_Vector z)
 }
 
 template<class VectorType>
+SUNErrCode N_VCopy_Kokkos(N_Vector x, N_Vector z)
+{
+  auto xvec{GetVec<VectorType>(x)};
+  auto xdata{xvec->View()};
+  auto zvec{GetVec<VectorType>(z)};
+  auto zdata{zvec->View()};
+
+  using size_type = typename VectorType::size_type;
+
+  Kokkos::parallel_for(
+    "N_VCopy", typename VectorType::range_policy(0, xvec->Length()),
+    KOKKOS_LAMBDA(const size_type i) { zdata(i) = xdata(i); });
+  return SUN_SUCCESS;
+}
+
+template<class VectorType>
 sunrealtype N_VWL2Norm_Kokkos(N_Vector x, N_Vector w)
 {
   return std::sqrt(impl::N_VWSqrSumLocal_Kokkos<VectorType>(x, w));

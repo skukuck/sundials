@@ -1141,8 +1141,8 @@ int idaLsBandDQJac(sunrealtype tt, sunrealtype c_j, N_Vector yy, N_Vector yp,
   }
 
   /* Initialize ytemp and yptemp. */
-  N_VScale(ONE, yy, ytemp);
-  N_VScale(ONE, yp, yptemp);
+  N_VCopy(yy, ytemp);
+  N_VCopy(yp, yptemp);
 
   /* Compute miscellaneous values for the Jacobian computation. */
   srur    = SUNRsqrt(IDA_mem->ida_uround);
@@ -1605,9 +1605,9 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
     if ((nli_inc == 0) &&
         (SUNLinSolGetType(idals_mem->LS) != SUNLINEARSOLVER_MATRIX_EMBEDDED))
     {
-      N_VScale(ONE, SUNLinSolResid(idals_mem->LS), b);
+      N_VCopy(SUNLinSolResid(idals_mem->LS), b);
     }
-    else { N_VScale(ONE, idals_mem->x, b); }
+    else { N_VCopy(idals_mem->x, b); }
 
     /* Increment nli counter */
     idals_mem->nli += nli_inc;
@@ -1615,7 +1615,7 @@ int idaLsSolve(IDAMem IDA_mem, N_Vector b, N_Vector weight, N_Vector ycur,
   else
   {
     /* Copy x to b */
-    N_VScale(ONE, idals_mem->x, b);
+    N_VCopy(idals_mem->x, b);
   }
 
   /* If using a direct or matrix-iterative solver, scale the correction to

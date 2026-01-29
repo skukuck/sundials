@@ -137,7 +137,7 @@ int SUNBraidVector_Clone(SUNDIALS_MAYBE_UNUSED braid_App app, braid_Vector u,
   if (flag != SUNBRAID_SUCCESS) { return flag; }
 
   /* Copy data from u to v */
-  N_VScale(ONE, u->y, vy);
+  N_VCopy(u->y, vy);
 
   return SUNBRAID_SUCCESS;
 }

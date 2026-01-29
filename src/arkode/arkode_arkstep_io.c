@@ -1214,7 +1214,7 @@ int arkStep_GetEstLocalErrors(ARKodeMem ark_mem, N_Vector ele)
   }
 
   /* otherwise, copy local truncation error vector to output */
-  N_VScale(ONE, ark_mem->tempv1, ele);
+  N_VCopy(ark_mem->tempv1, ele);
   return (ARK_SUCCESS);
 }
 

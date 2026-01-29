@@ -702,7 +702,7 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
     }
 
     /* update uu after the iteration */
-    N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
+    N_VCopy(kin_mem->kin_unew, kin_mem->kin_uu);
 
     kin_mem->kin_f1norm = f1normp;
 
@@ -1636,7 +1636,7 @@ static int KINLineSearch(KINMem kin_mem, sunrealtype* fnormp,
       /* unew sufficiently distinct from uu cannot be found.
          copy uu into unew (step remains unchanged) and
          return STEP_TOO_SMALL */
-      N_VScale(ONE, kin_mem->kin_uu, kin_mem->kin_unew);
+      N_VCopy(kin_mem->kin_uu, kin_mem->kin_unew);
       return (STEP_TOO_SMALL);
     }
 
@@ -2304,7 +2304,7 @@ static int KINPicardAA(KINMem kin_mem)
       else
       {
         /* standard fixed point */
-        N_VScale(ONE, kin_mem->kin_gval, kin_mem->kin_unew);
+        N_VCopy(kin_mem->kin_gval, kin_mem->kin_unew);
       }
     }
     else
@@ -2363,7 +2363,7 @@ static int KINPicardAA(KINMem kin_mem)
 
     /* Update the solution. Always return the newest iteration. Note this is
        also consistent with last function evaluation. */
-    N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
+    N_VCopy(kin_mem->kin_unew, kin_mem->kin_uu);
 
     if (ret == CONTINUE_ITERATIONS && kin_mem->kin_callForcingTerm)
     {
@@ -2523,7 +2523,7 @@ static int KINFP(KINMem kin_mem)
       else
       {
         /* standard fixed point */
-        N_VScale(ONE, kin_mem->kin_fval, kin_mem->kin_unew);
+        N_VCopy(kin_mem->kin_fval, kin_mem->kin_unew);
 
         /* tolerance adjustment */
         tolfac = ONE;
@@ -2588,7 +2588,7 @@ static int KINFP(KINMem kin_mem)
        evaluation. */
     if (ret == CONTINUE_ITERATIONS || kin_mem->kin_ret_newest)
     {
-      N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
+      N_VCopy(kin_mem->kin_unew, kin_mem->kin_uu);
     }
 
   } /* end of loop; return */
@@ -2635,7 +2635,7 @@ static int AndersonAccQRDelete(KINMem kin_mem, N_Vector* Q, sunrealtype* R,
     }
     N_VLinearSum(c, Q[i], s, Q[i + 1], kin_mem->kin_vtemp2);
     N_VLinearSum(-s, Q[i], c, Q[i + 1], Q[i + 1]);
-    N_VScale(ONE, kin_mem->kin_vtemp2, Q[i]);
+    N_VCopy(kin_mem->kin_vtemp2, Q[i]);
   }
 
   /* Shift R to the left by one. */
@@ -2738,8 +2738,8 @@ static int AndersonAcc(KINMem kin_mem, N_Vector gval, N_Vector fv, N_Vector x,
                kin_mem->kin_current_depth);
 #endif
 
-  N_VScale(ONE, gval, kin_mem->kin_gold_aa);
-  N_VScale(ONE, fv, kin_mem->kin_fold_aa);
+  N_VCopy(gval, kin_mem->kin_gold_aa);
+  N_VCopy(fv, kin_mem->kin_fold_aa);
 
   /* on first iteration, do fixed point update */
   if (kin_mem->kin_current_depth == 0)
@@ -2772,7 +2772,7 @@ static int AndersonAcc(KINMem kin_mem, N_Vector gval, N_Vector fv, N_Vector x,
     else
     {
       /* standard fixed point */
-      N_VScale(ONE, gval, x);
+      N_VCopy(gval, x);
     }
 
     return KIN_SUCCESS;
@@ -2851,7 +2851,7 @@ static int AndersonAcc(KINMem kin_mem, N_Vector gval, N_Vector fv, N_Vector x,
       else
       {
         /* standard fixed point */
-        N_VScale(ONE, gval, x);
+        N_VCopy(gval, x);
       }
 
       return KIN_SUCCESS;

@@ -64,7 +64,7 @@ inline int true_sol(sunrealtype t, N_Vector y, UserData& user_data)
 // Compute the true solution derivative
 inline int true_sol_p(sunrealtype t, N_Vector yp, UserData& user_data)
 {
-  N_VScale(SUN_RCONST(1.0), user_data.rhs_, yp);
+  N_VCopy(user_data.rhs_, yp);
   return 0;
 }
 
@@ -72,7 +72,7 @@ inline int true_sol_p(sunrealtype t, N_Vector yp, UserData& user_data)
 inline int ode_rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   auto udata = static_cast<UserData*>(user_data);
-  N_VScale(SUN_RCONST(1.0), udata->rhs_, ydot);
+  N_VCopy(udata->rhs_, ydot);
   return 0;
 }
 

@@ -993,7 +993,7 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
   }
 
   /* Load the constraints vector */
-  N_VScale(ONE, constraints, cv_mem->cv_constraints);
+  N_VCopy(constraints, cv_mem->cv_constraints);
 
   return (CV_SUCCESS);
 }
@@ -1449,7 +1449,7 @@ int CVodeGetErrWeights(void* cvode_mem, N_Vector eweight)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  N_VScale(ONE, cv_mem->cv_ewt, eweight);
+  N_VCopy(cv_mem->cv_ewt, eweight);
 
   return (CV_SUCCESS);
 }
@@ -1472,7 +1472,7 @@ int CVodeGetEstLocalErrors(void* cvode_mem, N_Vector ele)
 
   cv_mem = (CVodeMem)cvode_mem;
 
-  N_VScale(ONE, cv_mem->cv_acor, ele);
+  N_VCopy(cv_mem->cv_acor, ele);
 
   return (CV_SUCCESS);
 }

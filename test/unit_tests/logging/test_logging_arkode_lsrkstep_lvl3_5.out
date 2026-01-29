@@ -25,7 +25,7 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 10, tcur = 6.103515625e-12
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
-[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 0
+[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 8.07793566946316e-18
   6.103515625000001e-12  6.103515625000001e-12  8.077935669463161e-28
 [INFO][rank 0][ARKodeEvolve][begin-step-attempt] step = 2, tn = 6.103515625e-12, h = 6.103515625e-08
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 0, tcur = 6.103515625e-12
@@ -75,8 +75,8 @@ Start LSRKStep Logging test
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
 [INFO][rank 0][lsrkStep_TakeStepSSP104][begin-stages-list] stage = 10, tcur = 1.28174438476563e-06
 [INFO][rank 0][lsrkStep_TakeStepSSP104][end-stages-list] status = success
-[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 8.46516223087607e-12
-  1.281744384765625e-06  1.281744384764922e-06  6.352747104407253e-22
+[INFO][rank 0][ARKodeEvolve][end-step-attempt] status = success, dsm = 1.05814527885951e-11
+  1.281744384765625e-06  1.281744384764922e-06  8.470329472543003e-22
 ---------------------------------------------------------------------
 Current time                  = 1.28174438476563e-06
 Steps                         = 3

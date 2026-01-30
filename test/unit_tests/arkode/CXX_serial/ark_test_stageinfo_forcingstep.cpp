@@ -38,7 +38,7 @@ using namespace problems::estep;
 // store the main integrator global memory for these tests only, so that we
 // can call ARKodeGetLastTime etc in the callback functions from stageinfo.hpp.
 // This would normally be stored in user_data, but here we reuse problem
-// defintions from other tests.
+// definitions from other tests.
 void* arkode_mem = nullptr;
 
 // Include the pre/post step and stage processing routines now that arkode_mem is defined

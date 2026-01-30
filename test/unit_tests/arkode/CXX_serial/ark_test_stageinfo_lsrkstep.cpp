@@ -68,27 +68,33 @@ int main(int argc, char* argv[])
   int flag;
   if (method == 0)
   {
+    cout << "Using RKC method" << endl;
     flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKC_2");
   }
   else if (method == 1)
   {
+    cout << "Using RKL method" << endl;
     flag = LSRKStepSetSTSMethodByName(arkode_mem, "ARKODE_LSRK_RKL_2");
   }
   else if (method == 2)
   {
+    cout << "Using SSP(s,2) method" << endl;
     flag = LSRKStepSetSSPMethodByName(arkode_mem, "ARKODE_LSRK_SSP_S_2");
   }
   else if (method == 3)
   {
+    cout << "Using SSP(s,3) method" << endl;
     flag = LSRKStepSetSSPMethodByName(arkode_mem, "ARKODE_LSRK_SSP_S_3");
   }
   else if (method == 4)
   {
+    cout << "Using SSP(4,3) method" << endl;
     flag = LSRKStepSetSSPMethodByName(arkode_mem, "ARKODE_LSRK_SSP_S_3");
     if (flag == 0) { flag = LSRKStepSetNumSSPStages(arkode_mem, 4); }
   }
   else if (method == 5)
   {
+    cout << "Using SSP(10,4) method" << endl;
     flag = LSRKStepSetSSPMethodByName(arkode_mem, "ARKODE_LSRK_SSP_10_4");
   }
   else

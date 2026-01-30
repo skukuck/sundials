@@ -261,7 +261,6 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-
 // Callback functions
 static int preprocess_step(sunrealtype t, N_Vector y, void* user_data)
 {

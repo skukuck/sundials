@@ -501,6 +501,26 @@ m.def("ARKodeWriteParameters", ARKodeWriteParameters, nb::arg("arkode_mem"),
       nb::arg("fp"));
 
 m.def(
+  "ARKodeGetStageIndex",
+  [](void* arkode_mem) -> std::tuple<int, int, int>
+  {
+    auto ARKodeGetStageIndex_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, int, int>
+    {
+      int stage_adapt_modifiable;
+      int max_stages_adapt_modifiable;
+
+      int r = ARKodeGetStageIndex(arkode_mem, &stage_adapt_modifiable,
+                                  &max_stages_adapt_modifiable);
+      return std::make_tuple(r, stage_adapt_modifiable,
+                             max_stages_adapt_modifiable);
+    };
+
+    return ARKodeGetStageIndex_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
   "ARKodeGetNumExpSteps",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
@@ -673,6 +693,40 @@ m.def(
       arkode_mem);
   },
   nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetLastTime",
+  [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+  {
+    auto ARKodeGetLastTime_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, sunrealtype>
+    {
+      sunrealtype tn_adapt_modifiable;
+
+      int r = ARKodeGetLastTime(arkode_mem, &tn_adapt_modifiable);
+      return std::make_tuple(r, tn_adapt_modifiable);
+    };
+
+    return ARKodeGetLastTime_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"));
+
+m.def(
+  "ARKodeGetLastState",
+  [](void* arkode_mem) -> std::tuple<int, N_Vector>
+  {
+    auto ARKodeGetLastState_adapt_modifiable_immutable_to_return =
+      [](void* arkode_mem) -> std::tuple<int, N_Vector>
+    {
+      N_Vector state_adapt_modifiable;
+
+      int r = ARKodeGetLastState(arkode_mem, &state_adapt_modifiable);
+      return std::make_tuple(r, state_adapt_modifiable);
+    };
+
+    return ARKodeGetLastState_adapt_modifiable_immutable_to_return(arkode_mem);
+  },
+  nb::arg("arkode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
 m.def(
   "ARKodeGetCurrentTime",

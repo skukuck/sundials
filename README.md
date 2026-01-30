@@ -2,6 +2,7 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/llnl/sundials)](https://github.com/llnl/sundials/releases/latest)
 [![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
+[![Read the Docs](https://readthedocs.org/projects/sundials/badge/?version=latest)](https://sundials.readthedocs.io/en/latest/)
 [![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
 
 ### Version 7.6.0 (Jan 2026) ###

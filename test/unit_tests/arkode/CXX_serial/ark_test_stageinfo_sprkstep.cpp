@@ -30,6 +30,7 @@
 
 #include "problems/kepler.hpp"
 #include "utilities/check_return.hpp"
+#include "stageinfo.hpp"
 
 using namespace std;
 using namespace problems::kepler;
@@ -39,9 +40,6 @@ using namespace problems::kepler;
 // This would normally be stored in user_data, but here we reuse problem
 // definitions from other tests.
 void* arkode_mem = nullptr;
-
-// Include the pre/post step and stage processing routines now that arkode_mem is defined
-#include "stageinfo.hpp"
 
 int main(int argc, char* argv[])
 {

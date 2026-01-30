@@ -23,6 +23,8 @@
 #include "arkode/arkode.h"
 #include "sundials/sundials_math.h"
 
+extern void* arkode_mem;
+
 int preprocess_step(sunrealtype t, N_Vector y, void* user_data)
 {
   sunrealtype tn, tcur;

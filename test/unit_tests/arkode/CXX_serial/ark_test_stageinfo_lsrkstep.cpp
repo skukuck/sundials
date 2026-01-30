@@ -28,9 +28,9 @@
 #include "nvector/nvector_serial.h"
 
 #include "problems/prv.hpp"
+#include "stageinfo.hpp"
 #include "sundials/sundials_nvector.h"
 #include "utilities/check_return.hpp"
-#include "stageinfo.hpp"
 
 using namespace std;
 using namespace problems::prv;

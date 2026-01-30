@@ -34,8 +34,8 @@
 #include "sunlinsol/sunlinsol_spgmr.h"
 
 #include "problems/kpr.hpp"
-#include "utilities/check_return.hpp"
 #include "stageinfo.hpp"
+#include "utilities/check_return.hpp"
 
 using namespace std;
 using namespace problems::kpr;

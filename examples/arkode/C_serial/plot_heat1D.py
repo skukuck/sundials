@@ -1,10 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # ----------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -20,31 +23,31 @@ import pylab as plt
 import numpy as np
 
 # load mesh data file
-mesh = np.loadtxt('heat_mesh.txt', dtype=np.double)
+mesh = np.loadtxt("heat_mesh.txt", dtype=np.double)
 
 # load solution data file
-data = np.loadtxt('heat1D.txt', dtype=np.double)
+data = np.loadtxt("heat1D.txt", dtype=np.double)
 
 # determine number of time steps, mesh size
-nt,nx = np.shape(data)
+nt, nx = np.shape(data)
 
 # determine maximum temperature
-maxtemp = 1.1*data.max()
+maxtemp = 1.1 * data.max()
 
 # generate plots of results
 for tstep in range(nt):
 
     # set string constants for output plots, current time, mesh size
-    pname = 'heat1d.' + repr(tstep).zfill(3) + '.png'
-    tstr  = repr(tstep)
+    pname = "heat1d." + repr(tstep).zfill(3) + ".png"
+    tstr = repr(tstep)
     nxstr = repr(nx)
 
     # plot current solution and save to disk
     plt.figure(1)
-    plt.plot(mesh,data[tstep,:])
-    plt.xlabel('x')
-    plt.ylabel('solution')
-    plt.title('u(x) at output ' + tstr + ', mesh = ' + nxstr)
+    plt.plot(mesh, data[tstep, :])
+    plt.xlabel("x")
+    plt.ylabel("solution")
+    plt.title("u(x) at output " + tstr + ", mesh = " + nxstr)
     plt.axis((0.0, 1.0, 0.0, maxtemp))
     plt.grid()
     plt.savefig(pname)

@@ -1,9 +1,12 @@
-..
-   Programmer(s): Daniel R. Reynolds @ SMU
+.. ----------------------------------------------------------------
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -12,15 +15,13 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-:tocdepth: 3
-
 .. _SUNMatrix:
 
-=======================
+**********************
 Matrix Data Structures
-=======================
+**********************
 
-The SUNDIALS library comes packaged with a variety of ``SUNMatrix``
+The SUNDIALS library comes packaged with a variety of :c:type:`SUNMatrix`
 implementations, designed for simulations requiring direct linear
 solvers for problems in serial or shared-memory parallel
 environments.  SUNDIALS additionally provides a simple interface for
@@ -28,8 +29,8 @@ generic matrices (akin to a C++ *abstract base class*).  All of the
 major SUNDIALS packages (CVODE(s), IDA(s), KINSOL, ARKODE), are
 constructed to only depend on these generic matrix operations, making
 them immediately extensible to new user-defined matrix objects.  For
-each of the SUNDIALS-provided matrix types, SUNDIALS also provides at
-least two ``SUNLinearSolver`` implementations that factor these
+each of the SUNDIALS-provided matrix types, SUNDIALS also provides
+:c:type:`SUNLinearSolver` implementations that factor these
 matrix objects and use them in the solution of linear systems.
 
 
@@ -37,14 +38,5 @@ matrix objects and use them in the solution of linear systems.
 .. toctree::
    :maxdepth: 1
 
-   SUNMatrix_Description
-   SUNMatrix_Operations
-   SUNMatrix_Compatibility
-   SUNMatrix_Dense
-   SUNMatrix_MagmaDense
-   SUNMatrix_Band
-   SUNMatrix_cuSparse
-   SUNMatrix_Sparse
-   SUNMatrix_SLUNRloc
-   SUNMatrix_Examples
-   ARKode_requirements
+   SUNMatrix_links.rst
+   ARKODE_requirements

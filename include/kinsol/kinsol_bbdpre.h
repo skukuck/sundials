@@ -1,11 +1,14 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ SMU
+ * Programmer(s): Daniel R. Reynolds @ UMBC
  *                Alan Hindmarsh, Radu Serban, and
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2021, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -23,41 +26,39 @@
 
 #include <sundials/sundials_nvector.h>
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
+#ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
 #endif
 
 /* KINBBDPRE return values */
 
-#define KINBBDPRE_SUCCESS          0
-#define KINBBDPRE_PDATA_NULL     -11
-#define KINBBDPRE_FUNC_UNRECVR   -12
+#define KINBBDPRE_SUCCESS      0
+#define KINBBDPRE_PDATA_NULL   -11
+#define KINBBDPRE_FUNC_UNRECVR -12
 
 /* User-supplied function Types */
 
-typedef int (*KINBBDCommFn)(sunindextype Nlocal, N_Vector u,
-                            void *user_data);
+typedef int (*KINBBDCommFn)(sunindextype Nlocal, N_Vector u, void* user_data);
 
-typedef int (*KINBBDLocalFn)(sunindextype Nlocal, N_Vector uu,
-                             N_Vector gval, void *user_data);
+typedef int (*KINBBDLocalFn)(sunindextype Nlocal, N_Vector uu, N_Vector gval,
+                             void* user_data);
 
 /* Exported Functions */
 
-SUNDIALS_EXPORT int KINBBDPrecInit(void *kinmem, sunindextype Nlocal,
+SUNDIALS_EXPORT int KINBBDPrecInit(void* kinmem, sunindextype Nlocal,
                                    sunindextype mudq, sunindextype mldq,
                                    sunindextype mukeep, sunindextype mlkeep,
-                                   realtype dq_rel_uu,
-                                   KINBBDLocalFn gloc, KINBBDCommFn gcomm);
+                                   sunrealtype dq_rel_uu, KINBBDLocalFn gloc,
+                                   KINBBDCommFn gcomm);
 
 /* Optional output functions */
 
-SUNDIALS_EXPORT int KINBBDPrecGetWorkSpace(void *kinmem,
-                                           long int *lenrwBBDP,
-                                           long int *leniwBBDP);
+SUNDIALS_DEPRECATED_EXPORT_MSG(
+  "Work space functions will be removed in version 8.0.0")
+int KINBBDPrecGetWorkSpace(void* kinmem, long int* lenrwBBDP,
+                           long int* leniwBBDP);
 
-SUNDIALS_EXPORT int KINBBDPrecGetNumGfnEvals(void *kinmem,
-                                             long int *ngevalsBBDP);
-
+SUNDIALS_EXPORT int KINBBDPrecGetNumGfnEvals(void* kinmem, long int* ngevalsBBDP);
 
 #ifdef __cplusplus
 }

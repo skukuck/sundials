@@ -4,8 +4,11 @@
  *                Aaron Collier @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2021, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -20,10 +23,10 @@
 #define _KINBBDPRE_IMPL_H
 
 #include <kinsol/kinsol_bbdpre.h>
-#include <sunmatrix/sunmatrix_band.h>
 #include <sunlinsol/sunlinsol_band.h>
+#include <sunmatrix/sunmatrix_band.h>
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
+#ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
 #endif
 
@@ -31,15 +34,15 @@ extern "C" {
   Definition of KBBDData
   ------------------------------------------------------------------*/
 
-typedef struct KBBDPrecDataRec {
-
+typedef struct KBBDPrecDataRec
+{
   /* passed by user to KINBBDPrecAlloc, used by pset/psolve functions */
   sunindextype mudq, mldq, mukeep, mlkeep;
-  realtype rel_uu;  /* relative error for the Jacobian DQ routine */
+  sunrealtype rel_uu; /* relative error for the Jacobian DQ routine */
   KINBBDLocalFn gloc;
   KINBBDCommFn gcomm;
 
-  /* set by KINBBDPrecSetup and used by KINBBDPrecSetup and 
+  /* set by KINBBDPrecSetup and used by KINBBDPrecSetup and
      KINBBDPrecSolve functions */
   sunindextype n_local;
   SUNMatrix PP;
@@ -56,9 +59,9 @@ typedef struct KBBDPrecDataRec {
   long int nge;
 
   /* pointer to KINSol memory */
-  void *kin_mem;
+  void* kin_mem;
 
-} *KBBDPrecData;
+}* KBBDPrecData;
 
 /*
  *-----------------------------------------------------------------
@@ -66,14 +69,18 @@ typedef struct KBBDPrecDataRec {
  *-----------------------------------------------------------------
  */
 
-#define MSGBBD_MEM_NULL    "KINSOL Memory is NULL."
-#define MSGBBD_LMEM_NULL   "Linear solver memory is NULL. One of the SPILS linear solvers must be attached."
+#define MSGBBD_MEM_NULL "KINSOL Memory is NULL."
+#define MSGBBD_LMEM_NULL                                                   \
+  "Linear solver memory is NULL. One of the SPILS linear solvers must be " \
+  "attached."
 #define MSGBBD_MEM_FAIL    "A memory request failed."
 #define MSGBBD_BAD_NVECTOR "A required vector operation is not implemented."
 #define MSGBBD_SUNMAT_FAIL "An error arose from a SUNBandMatrix routine."
 #define MSGBBD_SUNLS_FAIL  "An error arose from a SUNBandLinearSolver routine."
-#define MSGBBD_PMEM_NULL   "BBD peconditioner memory is NULL. IDABBDPrecInit must be called."
-#define MSGBBD_FUNC_FAILED "The gloc or gcomm routine failed in an unrecoverable manner."
+#define MSGBBD_PMEM_NULL \
+  "BBD peconditioner memory is NULL. IDABBDPrecInit must be called."
+#define MSGBBD_FUNC_FAILED \
+  "The gloc or gcomm routine failed in an unrecoverable manner."
 
 #ifdef __cplusplus
 }

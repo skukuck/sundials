@@ -1,9 +1,12 @@
-..
+.. ----------------------------------------------------------------
    Programmer(s): David J. Gardner @ LLNL
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -12,109 +15,171 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-:tocdepth: 3
-
-
 .. _ARKodeButcherTable:
 
 ==============================
 Butcher Table Data Structure
 ==============================
 
-To store the Butcher table defining a Runge Kutta method ARKode provides the
-:c:type:`ARKodeButcherTable` type and several related utilitiy routines. We use
-the following Butcher table notation (shown for a 3-stage method):
+To store a Butcher table, :math:`B`, defining a Runge--Kutta method ARKODE
+provides the :c:type:`ARKodeButcherTable` type and several related utility
+routines. We use the following notation
 
 .. math::
 
+   B \; \equiv \;
    \begin{array}{r|c}
      c & A \\
      \hline
      q & b \\
      p & \tilde{b}
    \end{array}
-   =
-   \begin{array}{r|ccc}
-     c_1 & a_{1,1} & a_{1,2} & a_{1,3} \\
-     c_2 & a_{2,1} & a_{2,2} & a_{2,3} \\
-     c_3 & a_{3,1} & a_{3,2} & a_{3,3} \\
-     \hline
-     q & b_1 & b_2 & b_3 \\
-     p & \tilde{b}_1 & \tilde{b}_2 & \tilde{b}_3
-   \end{array}
+   \; = \;
+   \begin{array}{c|cccc}
+   c_1    & a_{1,1} & \cdots & a_{1,s-1} & a_{1,s} \\
+   c_2    & a_{2,1} & \cdots & a_{2,s-1} & a_{2,s} \\
+   \vdots & \vdots  & \vdots & \vdots    & \vdots  \\
+   c_s    & a_{s,1} & \cdots & a_{s,s-1} & a_{s,s} \\
+   \hline
+   q      & b_1         & \cdots & b_{s-1}         & b_s \\
+   p      & \tilde{b}_1 & \cdots & \tilde{b}_{s-1} & \tilde{b}_s
+   \end{array}.
 
-where the method and embedding share stage :math:`A` and abscissa :math:`c`
-values, but use their stages :math:`z_i` differently through the coefficients
-:math:`b` and :math:`\tilde{b}` to generate methods of orders :math:`q` (the
-main method) and :math:`p` (the embedding, typically :math:`q = p+1`, though
-sometimes this is reversed). :c:type:`ARKodeButcherTable` is defined as
+An :c:type:`ARKodeButcherTable` is a pointer to the
+:c:struct:`ARKodeButcherTableMem` structure:
 
-.. c:type:: typedef ARKodeButcherTableMem* ARKodeButcherTable
+.. c:type:: ARKodeButcherTableMem* ARKodeButcherTable
 
-where ``ARKodeButcherTableMem`` is the structure
+.. c:struct:: ARKodeButcherTableMem
 
-.. code-block:: c
+   Structure for storing a Butcher table
 
-   typedef struct ARKodeButcherTableMem {
+   .. c:member:: int q
 
-     int q;
-     int p;
-     int stages;
-     realtype **A;
-     realtype *c;
-     realtype *b;
-     realtype *d;
+      The method order of accuracy
 
-   };
+   .. c:member:: int p
 
-where ``stages`` is the number of stages in the RK method, the variables ``q``,
-``p``, ``A``, ``c``, and ``b`` have the same meaning as in the Butcher table
-above, and ``d`` is used to store :math:`\tilde{b}`.
+      The embedding order of accuracy, typically :math:`q = p + 1`
+
+   .. c:member:: int stages
+
+      The number of stages in the method, :math:`s`
+
+   .. c:member:: sunrealtype **A
+
+      The method coefficients :math:`A \in \mathbb{R}^s`
+
+   .. c:member:: sunrealtype *c
+
+      The method abscissa :math:`c \in \mathbb{R}^s`
+
+   .. c:member:: sunrealtype *b
+
+      The method coefficients :math:`b \in \mathbb{R}^s`
+
+   .. c:member:: sunrealtype *d
+
+      The method embedding coefficients :math:`\tilde{b} \in \mathbb{R}^s`
 
 .. _ARKodeButcherTable.Functions:
 
 ARKodeButcherTable functions
 -----------------------------
 
-.. cssclass:: table-bordered
+.. _ARKodeButcherTable.FunctionsTable:
+.. table:: ARKodeButcherTable functions
 
-============================================ ==========================================================
-Function name                                Description
-============================================ ==========================================================
-:c:func:`ARKodeButcherTable_LoadERK()`       Retrieve a given explicit Butcher table by its unique name
-:c:func:`ARKodeButcherTable_LoadDIRK()`      Retrieve a given implicit Butcher table by its unique name
-:c:func:`ARKodeButcherTable_Alloc()`         Allocate an empty Butcher table
-:c:func:`ARKodeButcherTable_Create()`        Create a new Butcher table
-:c:func:`ARKodeButcherTable_Copy()`          Create a copy of a Butcher table
-:c:func:`ARKodeButcherTable_Space()`         Get the Butcher table real and integer workspace size
-:c:func:`ARKodeButcherTable_Free()`          Deallocate a Butcher table
-:c:func:`ARKodeButcherTable_Write()`         Write the Butcher table to an output file
-:c:func:`ARKodeButcherTable_CheckOrder()`    Check the order of a Butcher table
-:c:func:`ARKodeButcherTable_CheckARKOrder()` Check the order of an ARK pair of Butcher tables
-============================================ ==========================================================
+   +--------------------------------------------------+------------------------------------------------------------+
+   | **Function name**                                | **Description**                                            |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_LoadERK()`           | Retrieve a given explicit Butcher table by its unique ID   |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_LoadERKByName()`     | Retrieve a given explicit Butcher table by its unique name |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_ERKIDToName()`       | Convert an explicit Butcher table ID to its name           |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_LoadDIRK()`          | Retrieve a given implicit Butcher table by its unique ID   |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_LoadDIRKByName()`    | Retrieve a given implicit Butcher table by its unique name |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_DIRKIDToName()`      | Convert an implicit Butcher table ID to its name           |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Alloc()`             | Allocate an empty Butcher table                            |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Create()`            | Create a new Butcher table                                 |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Copy()`              | Create a copy of a Butcher table                           |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Space()`             | Get the Butcher table real and integer workspace size      |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Free()`              | Deallocate a Butcher table                                 |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_Write()`             | Write the Butcher table to an output file                  |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_IsStifflyAccurate()` | Determine if ``A[stages - 1][i] == b[i]``                  |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_CheckOrder()`        | Check the order of a Butcher table                         |
+   +--------------------------------------------------+------------------------------------------------------------+
+   | :c:func:`ARKodeButcherTable_CheckARKOrder()`     | Check the order of an ARK pair of Butcher tables           |
+   +--------------------------------------------------+------------------------------------------------------------+
 
-.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadERK(int emethod)
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadERK(ARKODE_ERKTableID emethod)
 
    Retrieves a specified explicit Butcher table. The prototype for this
    function, as well as the integer names for each provided method, are defined
    in the header file ``arkode/arkode_butcher_erk.h``.  For further information
-   on these tables and their corresponding identifiers, see :ref:`Butcher`.
+   on these tables and their corresponding identifiers, see :numref:`Butcher`.
 
    **Arguments:**
       * *emethod* -- integer input specifying the given Butcher table.
 
    **Return value:**
       * :c:type:`ARKodeButcherTable` structure if successful.
-      * ``NULL`` pointer if *imethod* was invalid.
+      * ``NULL`` pointer if *emethod* was invalid.
 
 
-.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadDIRK(int imethod)
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadERKByName(const char *emethod)
+
+   Retrieves a specified explicit Butcher table. The prototype for this
+   function, as well as the names for each provided method, are defined in the
+   header file ``arkode/arkode_butcher_erk.h``.  For further information on
+   these tables and their corresponding names, see :numref:`Butcher`.
+
+   **Arguments:**
+      * *emethod* -- name of the Butcher table.
+
+   **Return value:**
+      * :c:type:`ARKodeButcherTable` structure if successful.
+      * ``NULL`` pointer if *emethod* was invalid or ``"ARKODE_ERK_NONE"``.
+
+   **Notes:**
+      This function is case sensitive.
+
+.. c:function:: const char* ARKodeButcherTable_ERKIDToName(ARKODE_ERKTableID emethod)
+
+   Converts a specified explicit Butcher table ID to a string of the same name.
+   The prototype for this function, as well as the integer names for each
+   provided method, are defined in the header file
+   ``arkode/arkode_butcher_erk.h``.  For further information on these tables and
+   their corresponding identifiers, see :numref:`Butcher`.
+
+   **Arguments:**
+      * *emethod* -- integer input specifying the given Butcher table.
+
+   **Return value:**
+      * The name associated with *emethod*.
+      * ``NULL`` pointer if *emethod* was invalid.
+   
+   .. versionadded:: 6.1.0
+
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadDIRK(ARKODE_DIRKTableID imethod)
 
    Retrieves a specified diagonally-implicit Butcher table. The prototype for
    this function, as well as the integer names for each provided method, are
    defined in the header file ``arkode/arkode_butcher_dirk.h``.  For further
    information on these tables and their corresponding identifiers, see
-   :ref:`Butcher`.
+   :numref:`Butcher`.
 
    **Arguments:**
       * *imethod* -- integer input specifying the given Butcher table.
@@ -123,7 +188,44 @@ Function name                                Description
       * :c:type:`ARKodeButcherTable` structure if successful.
       * ``NULL`` pointer if *imethod* was invalid.
 
-.. c:function:: ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, booleantype embedded)
+
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_LoadDIRKByName(const char *imethod)
+
+   Retrieves a specified diagonally-implicit Butcher table. The prototype for
+   this function, as well as the names for each provided method, are defined in
+   the header file ``arkode/arkode_butcher_dirk.h``.  For further information
+   on these tables and their corresponding names, see :numref:`Butcher`.
+
+   **Arguments:**
+      * *imethod* -- name of the Butcher table.
+
+   **Return value:**
+      * :c:type:`ARKodeButcherTable` structure if successful.
+      * ``NULL`` pointer if *imethod* was invalid or ``"ARKODE_DIRK_NONE"``.
+
+   **Notes:**
+      This function is case sensitive.
+
+
+.. c:function:: const char* ARKodeButcherTable_DIRKIDToName(ARKODE_DIRKTableID imethod)
+
+   Converts a specified diagonally-implicit Butcher table ID to a string of the
+   same name. The prototype for this function, as well as the integer names for
+   each provided method, are defined in the header file
+   ``arkode/arkode_butcher_dirk.h``.  For further information on these tables
+   and their corresponding identifiers, see :numref:`Butcher`.
+
+   **Arguments:**
+      * *imethod* -- integer input specifying the given Butcher table.
+
+   **Return value:**
+      * The name associated with *imethod*.
+      * ``NULL`` pointer if *imethod* was invalid.
+   
+   .. versionadded:: 6.1.0
+
+
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_Alloc(int stages, sunbooleantype embedded)
 
    Allocates an empty Butcher table.
 
@@ -134,9 +236,9 @@ Function name                                Description
 
    **Return value:**
       * :c:type:`ARKodeButcherTable` structure if successful.
-      * ``NULL`` pointer if *stages* was invalid or an allocation error occured.
+      * ``NULL`` pointer if *stages* was invalid or an allocation error occurred.
 
-.. c:function:: ARKodeButcherTable ARKodeButcherTable_Create(int s, int q, int p, realtype *c, realtype *A, realtype *b, realtype *d)
+.. c:function:: ARKodeButcherTable ARKodeButcherTable_Create(int s, int q, int p, sunrealtype *c, sunrealtype *A, sunrealtype *b, sunrealtype *d)
 
    Allocates a Butcher table and fills it with the given values.
 
@@ -152,10 +254,15 @@ Function name                                Description
 
    **Return value:**
       * :c:type:`ARKodeButcherTable` structure if successful.
-      * ``NULL`` pointer if *stages* was invalid or an allocation error occured.
+      * ``NULL`` pointer if *stages* was invalid or an allocation error occurred.
 
-   **Notes:** If the method does not have an embedding then *d* should be
-   ``NULL`` and *p* should be equal to zero.
+   **Notes:**
+      If the method does not have an embedding then *d* should be
+      ``NULL`` and *p* should be equal to zero.
+
+      .. warning::
+         When calling this function from Fortran, it is important to note that ``A`` is expected
+         to be in row-major ordering.
 
 .. c:function:: ARKodeButcherTable ARKodeButcherTable_Copy(ARKodeButcherTable B)
 
@@ -166,7 +273,7 @@ Function name                                Description
 
    **Return value:**
       * :c:type:`ARKodeButcherTable` structure if successful.
-      * ``NULL`` pointer an allocation error occured.
+      * ``NULL`` pointer an allocation error occurred.
 
 .. c:function:: void ARKodeButcherTable_Space(ARKodeButcherTable B, sunindextype *liw, sunindextype *lrw)
 
@@ -174,12 +281,16 @@ Function name                                Description
 
    **Arguments:**
       * *B* -- the Butcher table.
-      * *lenrw* -- the number of ``realtype`` values in the Butcher table workspace.
+      * *lenrw* -- the number of ``sunrealtype`` values in the Butcher table workspace.
       * *leniw* -- the number of integer values in the Butcher table workspace.
 
    **Return value:**
       * *ARK_SUCCESS* if successful.
       * *ARK_MEM_NULL* if the Butcher table memory was ``NULL``.
+
+   .. deprecated:: 6.3.0
+
+      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: void ARKodeButcherTable_Free(ARKodeButcherTable B)
 
@@ -196,8 +307,22 @@ Function name                                Description
       * *B* -- the Butcher table.
       * *outfile* -- pointer to use for printing the Butcher table.
 
-   **Notes:** The *outfile* argument can be ``stdout`` or ``stderr``, or it
-   may point to a specific file created using ``fopen``.
+   **Notes:**
+      The *outfile* argument can be ``stdout`` or ``stderr``, or it
+      may point to a specific file created using ``fopen``.
+
+.. c:function:: sunbooleantype ARKodeButcherTable_IsStifflyAccurate(ARKodeButcherTable B)
+
+   Determine if the table satisfies ``A[stages - 1][i] == b[i]``
+
+   **Arguments:**
+      * *B* -- the Butcher table.
+
+   **Returns**
+      * ``SUNTRUE`` if the method is "stiffly accurate", otherwise returns
+        ``SUNFALSE``
+
+   .. versionadded:: v5.7.0
 
 .. c:function:: int ARKodeButcherTable_CheckOrder(ARKodeButcherTable B, int* q, int* p, FILE* outfile)
 
@@ -226,9 +351,11 @@ Function name                                Description
       * *-2* -- failure, the input Butcher table or critical table contents are
         ``NULL``.
 
-   **Notes:** For embedded methods, if the return flags for *q* and *p* would
-   differ, failure takes precedence over warning, which takes precedence over
-   success.
+   **Notes:**
+      For embedded methods, if the return flags for *q* and *p* would
+      differ, failure takes precedence over warning, which takes precedence over
+      success.
+
 
 .. c:function:: int ARKodeButcherTable_CheckARKOrder(ARKodeButcherTable B1, ARKodeButcherTable B2, int *q, int *p, FILE *outfile)
 
@@ -254,5 +381,6 @@ Function name                                Description
       * *-1* -- failure, the input Butcher tables or critical table contents are
         ``NULL``.
 
-   **Notes:** For embedded methods, if the return flags for *q* and *p* would
-   differ, warning takes precedence over success.
+   **Notes:**
+      For embedded methods, if the return flags for *q* and *p* would
+      differ, warning takes precedence over success.

@@ -1,9 +1,12 @@
-..
-   Programmer(s): Daniel R. Reynolds @ SMU
+.. ----------------------------------------------------------------
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -12,13 +15,11 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-:tocdepth: 3
-
 .. _NVectors:
 
-=======================
+######################
 Vector Data Structures
-=======================
+######################
 
 The SUNDIALS library comes packaged with a variety of NVECTOR
 implementations, designed for simulations in serial, shared-memory
@@ -43,22 +44,6 @@ patterns in the NVECTORS used.
 .. toctree::
    :maxdepth: 1
 
-   NVector_Description
-   NVector_Operations
-   NVector_Serial
-   NVector_Parallel
-   NVector_OpenMP
-   NVector_Pthreads
-   NVector_ParHyp
-   NVector_PETSc
-   NVector_CUDA
-   NVector_HIP
-   NVector_RAJA
-   NVector_SYCL
-   NVector_OpenMPDEV
-   NVector_Trilinos
-   NVector_ManyVector
-   NVector_MPIManyVector
-   NVector_MPIPlusX
-   NVector_Examples
-   ARKode_requirements
+   NVector_API_link.rst
+   ARKODE_requirements.rst
+   NVector_links.rst

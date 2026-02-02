@@ -2,8 +2,11 @@
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2021, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -24,30 +27,29 @@
  * -----------------------------------------------------------------
  */
 
+#include <kinsol/kinsol.h> /* access to KINSOL func., consts. */
+#include <math.h>
+#include <nvector/nvector_serial.h> /* access to serial N_Vector       */
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-
-#include <kinsol/kinsol.h>             /* access to KINSOL func., consts. */
-#include <nvector/nvector_serial.h>    /* access to serial N_Vector       */
-#include <sunmatrix/sunmatrix_band.h>  /* access to band SUNMatrix        */
-#include <sunlinsol/sunlinsol_band.h>  /* access to band SUNLinearSolver  */
-#include <sundials/sundials_types.h>   /* defs. of realtype, sunindextype */
-#include <sundials/sundials_math.h>    /* access to SUNRexp               */
+#include <sundials/sundials_math.h>   /* access to SUNRexp               */
+#include <sundials/sundials_types.h>  /* defs. of sunrealtype, sunindextype */
+#include <sunlinsol/sunlinsol_band.h> /* access to band SUNLinearSolver  */
+#include <sunmatrix/sunmatrix_band.h> /* access to band SUNMatrix        */
 
 /* Problem Constants */
 
-#define NX   31             /* no. of points in x direction */
-#define NY   31             /* no. of points in y direction */
-#define NEQ  NX*NY          /* problem dimension */
+#define NX  31     /* no. of points in x direction */
+#define NY  31     /* no. of points in y direction */
+#define NEQ NX* NY /* problem dimension */
 
-#define SKIP 3              /* no. of points skipped for printing */
+#define SKIP 3 /* no. of points skipped for printing */
 
-#define FTOL RCONST(1.e-12) /* function tolerance */
+#define FTOL SUN_RCONST(1.e-12) /* function tolerance */
 
-#define ZERO RCONST(0.0)
-#define ONE  RCONST(1.0)
-#define TWO  RCONST(2.0)
+#define ZERO SUN_RCONST(0.0)
+#define ONE  SUN_RCONST(1.0)
+#define TWO  SUN_RCONST(2.0)
 
 /* IJth is defined in order to isolate the translation from the
    mathematical 2-dimensional structure of the dependent variable vector
@@ -58,14 +60,14 @@
    where v is an N_Vector.
    The variables are ordered by the y index j, then by the x index i. */
 
-#define IJth(vdata,i,j) (vdata[(j-1) + (i-1)*NY])
+#define IJth(vdata, i, j) (vdata[(j - 1) + (i - 1) * NY])
 
 /* Private functions */
 
-static int func(N_Vector u, N_Vector f, void *user_data);
+static int func(N_Vector u, N_Vector f, void* user_data);
 static void PrintOutput(N_Vector u);
-static void PrintFinalStats(void *kmem);
-static int check_flag(void *flagvalue, const char *funcname, int opt);
+static void PrintFinalStats(void* kmem);
+static int check_retval(void* retvalvalue, const char* funcname, int opt);
 
 /*
  *--------------------------------------------------------------------
@@ -73,19 +75,20 @@ static int check_flag(void *flagvalue, const char *funcname, int opt);
  *--------------------------------------------------------------------
  */
 
-int main()
+int main(void)
 {
-  realtype fnormtol, fnorm;
+  SUNContext sunctx;
+  sunrealtype fnormtol, fnorm;
   N_Vector y, scale;
-  int mset, msubset, flag;
-  void *kmem;
+  int mset, msubset, retval;
+  void* kmem;
   SUNMatrix J;
   SUNLinearSolver LS;
 
   y = scale = NULL;
-  kmem = NULL;
-  J = NULL;
-  LS = NULL;
+  kmem      = NULL;
+  J         = NULL;
+  LS        = NULL;
 
   /* -------------------------
    * Print problem description
@@ -95,29 +98,34 @@ int main()
   printf("   d^2 u / dx^2 + d^2 u / dy^2 = u^3 - u + 2.0\n");
   printf(" + homogeneous Dirichlet boundary conditions\n\n");
   printf("Solution method: Modified Newton with band linear solver\n");
-  printf("Problem size: %2ld x %2ld = %4ld\n", (long int) NX, (long int) NY, (long int) NEQ);
+  printf("Problem size: %2ld x %2ld = %4ld\n", (long int)NX, (long int)NY,
+         (long int)NEQ);
+
+  /* Create the SUNDIALS context that all SUNDIALS objects require */
+  retval = SUNContext_Create(SUN_COMM_NULL, &sunctx);
+  if (check_retval(&retval, "SUNContext_Create", 1)) { return (1); }
 
   /* --------------------------------------
    * Create vectors for solution and scales
    * -------------------------------------- */
 
-  y = N_VNew_Serial(NEQ);
-  if (check_flag((void *)y, "N_VNew_Serial", 0)) return(1);
+  y = N_VNew_Serial(NEQ, sunctx);
+  if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
 
-  scale = N_VNew_Serial(NEQ);
-  if (check_flag((void *)scale, "N_VNew_Serial", 0)) return(1);
+  scale = N_VNew_Serial(NEQ, sunctx);
+  if (check_retval((void*)scale, "N_VNew_Serial", 0)) { return (1); }
 
   /* -----------------------------------------
    * Initialize and allocate memory for KINSOL
    * ----------------------------------------- */
 
-  kmem = KINCreate();
-  if (check_flag((void *)kmem, "KINCreate", 0)) return(1);
+  kmem = KINCreate(sunctx);
+  if (check_retval((void*)kmem, "KINCreate", 0)) { return (1); }
 
   /* y is used as a template */
 
-  flag = KINInit(kmem, func, y);
-  if (check_flag(&flag, "KINInit", 1)) return(1);
+  retval = KINInit(kmem, func, y);
+  if (check_retval(&retval, "KINInit", 1)) { return (1); }
 
   /* -------------------
    * Set optional inputs
@@ -125,45 +133,45 @@ int main()
 
   /* Specify stopping tolerance based on residual */
 
-  fnormtol  = FTOL;
-  flag = KINSetFuncNormTol(kmem, fnormtol);
-  if (check_flag(&flag, "KINSetFuncNormTol", 1)) return(1);
+  fnormtol = FTOL;
+  retval   = KINSetFuncNormTol(kmem, fnormtol);
+  if (check_retval(&retval, "KINSetFuncNormTol", 1)) { return (1); }
 
   /* -------------------------
    * Create band SUNMatrix
    * ------------------------- */
 
-  J = SUNBandMatrix(NEQ, NX, NX);
-  if(check_flag((void *)J, "SUNBandMatrix", 0)) return(1);
+  J = SUNBandMatrix(NEQ, NX, NX, sunctx);
+  if (check_retval((void*)J, "SUNBandMatrix", 0)) { return (1); }
 
   /* ---------------------------
    * Create band SUNLinearSolver
    * --------------------------- */
 
-  LS = SUNLinSol_Band(y, J);
-  if(check_flag((void *)LS, "SUNLinSol_Band", 0)) return(1);
+  LS = SUNLinSol_Band(y, J, sunctx);
+  if (check_retval((void*)LS, "SUNLinSol_Band", 0)) { return (1); }
 
   /* -------------------------
    * Attach band linear solver
    * ------------------------- */
 
-  flag = KINSetLinearSolver(kmem, LS, J);
-  if(check_flag(&flag, "KINSetLinearSolver", 1)) return(1);
+  retval = KINSetLinearSolver(kmem, LS, J);
+  if (check_retval(&retval, "KINSetLinearSolver", 1)) { return (1); }
 
   /* ------------------------------
    * Parameters for Modified Newton
    * ------------------------------ */
 
   /* Force a Jacobian re-evaluation every mset iterations */
-  mset = 100;
-  flag = KINSetMaxSetupCalls(kmem, mset);
-  if (check_flag(&flag, "KINSetMaxSetupCalls", 1)) return(1);
+  mset   = 100;
+  retval = KINSetMaxSetupCalls(kmem, mset);
+  if (check_retval(&retval, "KINSetMaxSetupCalls", 1)) { return (1); }
 
   /* Every msubset iterations, test if a Jacobian evaluation
      is necessary */
   msubset = 1;
-  flag = KINSetMaxSubSetupCalls(kmem, msubset);
-  if (check_flag(&flag, "KINSetMaxSubSetupCalls", 1)) return(1);
+  retval  = KINSetMaxSubSetupCalls(kmem, msubset);
+  if (check_retval(&retval, "KINSetMaxSubSetupCalls", 1)) { return (1); }
 
   /* -------------
    * Initial guess
@@ -176,16 +184,15 @@ int main()
    * ---------------------------- */
 
   /* No scaling used */
-  N_VConst(ONE,scale);
+  N_VConst(ONE, scale);
 
   /* Call main solver */
-  flag = KINSol(kmem,           /* KINSol memory block */
-                y,              /* initial guess on input; solution vector */
-                KIN_LINESEARCH, /* global strategy choice */
-                scale,          /* scaling vector, for the variable cc */
-                scale);         /* scaling vector for function values fval */
-  if (check_flag(&flag, "KINSol", 1)) return(1);
-
+  retval = KINSol(kmem,           /* KINSol memory block */
+                  y,              /* initial guess on input; solution vector */
+                  KIN_LINESEARCH, /* global strategy choice */
+                  scale,          /* scaling vector, for the variable cc */
+                  scale);         /* scaling vector for function values fval */
+  if (check_retval(&retval, "KINSol", 1)) { return (1); }
 
   /* ------------------------------------
    * Print solution and solver statistics
@@ -193,13 +200,13 @@ int main()
 
   /* Get scaled norm of the system function */
 
-  flag = KINGetFuncNorm(kmem, &fnorm);
-  if (check_flag(&flag, "KINGetfuncNorm", 1)) return(1);
+  retval = KINGetFuncNorm(kmem, &fnorm);
+  if (check_retval(&retval, "KINGetfuncNorm", 1)) { return (1); }
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("\nComputed solution (||F|| = %Lg):\n\n",fnorm);
+  printf("\nComputed solution (||F|| = %Lg):\n\n", fnorm);
 #else
-  printf("\nComputed solution (||F|| = %g):\n\n",fnorm);
+  printf("\nComputed solution (||F|| = %g):\n\n", fnorm);
 #endif
   PrintOutput(y);
 
@@ -214,8 +221,9 @@ int main()
   KINFree(&kmem);
   SUNLinSolFree(LS);
   SUNMatDestroy(J);
+  SUNContext_Free(&sunctx);
 
-  return(0);
+  return (0);
 }
 
 /*
@@ -228,47 +236,47 @@ int main()
  * System function
  */
 
-static int func(N_Vector u, N_Vector f, void *user_data)
+static int func(N_Vector u, N_Vector f, void* user_data)
 {
-  realtype dx, dy, hdiff, vdiff;
-  realtype hdc, vdc;
-  realtype uij, udn, uup, ult, urt;
-  realtype *udata, *fdata;
+  sunrealtype dx, dy, hdiff, vdiff;
+  sunrealtype hdc, vdc;
+  sunrealtype uij, udn, uup, ult, urt;
+  sunrealtype *udata, *fdata;
 
   int i, j;
 
-  dx = ONE/(NX+1);
-  dy = ONE/(NY+1);
-  hdc = ONE/(dx*dx);
-  vdc = ONE/(dy*dy);
+  dx  = ONE / (NX + 1);
+  dy  = ONE / (NY + 1);
+  hdc = ONE / (dx * dx);
+  vdc = ONE / (dy * dy);
 
   udata = N_VGetArrayPointer(u);
   fdata = N_VGetArrayPointer(f);
 
-  for (j=1; j <= NY; j++) {
-    for (i=1; i <= NX; i++) {
-
+  for (j = 1; j <= NY; j++)
+  {
+    for (i = 1; i <= NX; i++)
+    {
       /* Extract u at x_i, y_j and four neighboring points */
 
       uij = IJth(udata, i, j);
-      udn = (j == 1)  ? ZERO : IJth(udata, i, j-1);
-      uup = (j == NY) ? ZERO : IJth(udata, i, j+1);
-      ult = (i == 1)  ? ZERO : IJth(udata, i-1, j);
-      urt = (i == NX) ? ZERO : IJth(udata, i+1, j);
+      udn = (j == 1) ? ZERO : IJth(udata, i, j - 1);
+      uup = (j == NY) ? ZERO : IJth(udata, i, j + 1);
+      ult = (i == 1) ? ZERO : IJth(udata, i - 1, j);
+      urt = (i == NX) ? ZERO : IJth(udata, i + 1, j);
 
       /* Evaluate diffusion components */
 
-      hdiff = hdc*(ult - TWO*uij + urt);
-      vdiff = vdc*(uup - TWO*uij + udn);
+      hdiff = hdc * (ult - TWO * uij + urt);
+      vdiff = vdc * (uup - TWO * uij + udn);
 
       /* Set residual at x_i, y_j */
 
-      IJth(fdata, i, j) = hdiff + vdiff + uij - uij*uij*uij + 2.0;
-
+      IJth(fdata, i, j) = hdiff + vdiff + uij - uij * uij * uij + 2.0;
     }
   }
 
-  return(0);
+  return (0);
 }
 
 /*
@@ -278,43 +286,46 @@ static int func(N_Vector u, N_Vector f, void *user_data)
 static void PrintOutput(N_Vector u)
 {
   int i, j;
-  realtype dx, dy, x, y;
-  realtype *udata;
+  sunrealtype dx, dy, x, y;
+  sunrealtype* udata;
 
-  dx = ONE/(NX+1);
-  dy = ONE/(NY+1);
+  dx = ONE / (NX + 1);
+  dy = ONE / (NY + 1);
 
-  udata =  N_VGetArrayPointer(u);
+  udata = N_VGetArrayPointer(u);
 
   printf("            ");
-  for (i=1; i<=NX; i+= SKIP) {
-    x = i*dx;
+  for (i = 1; i <= NX; i += SKIP)
+  {
+    x = i * dx;
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      printf("%-8.5Lf ", x);
+    printf("%-8.5Lf ", x);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf("%-8.5f ", x);
+    printf("%-8.5f ", x);
 #else
-      printf("%-8.5f ", x);
+    printf("%-8.5f ", x);
 #endif
   }
   printf("\n\n");
 
-  for (j=1; j<=NY; j+= SKIP) {
-    y = j*dy;
+  for (j = 1; j <= NY; j += SKIP)
+  {
+    y = j * dy;
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      printf("%-8.5Lf    ", y);
+    printf("%-8.5Lf    ", y);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf("%-8.5f    ", y);
+    printf("%-8.5f    ", y);
 #else
-      printf("%-8.5f    ", y);
+    printf("%-8.5f    ", y);
 #endif
-    for (i=1; i<=NX; i+= SKIP) {
+    for (i = 1; i <= NX; i += SKIP)
+    {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-      printf("%-8.5Lf ", IJth(udata,i,j));
+      printf("%-8.5Lf ", IJth(udata, i, j));
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-      printf("%-8.5f ", IJth(udata,i,j));
+      printf("%-8.5f ", IJth(udata, i, j));
 #else
-      printf("%-8.5f ", IJth(udata,i,j));
+      printf("%-8.5f ", IJth(udata, i, j));
 #endif
     }
     printf("\n");
@@ -325,43 +336,43 @@ static void PrintOutput(N_Vector u)
  * Print final statistics
  */
 
-static void PrintFinalStats(void *kmem)
+static void PrintFinalStats(void* kmem)
 {
   long int nni, nfe, nje, nfeD;
   long int lenrw, leniw, lenrwB, leniwB;
   long int nbcfails, nbacktr;
-  int flag;
+  int retval;
 
   /* Main solver statistics */
 
-  flag = KINGetNumNonlinSolvIters(kmem, &nni);
-  check_flag(&flag, "KINGetNumNonlinSolvIters", 1);
-  flag = KINGetNumFuncEvals(kmem, &nfe);
-  check_flag(&flag, "KINGetNumFuncEvals", 1);
+  retval = KINGetNumNonlinSolvIters(kmem, &nni);
+  check_retval(&retval, "KINGetNumNonlinSolvIters", 1);
+  retval = KINGetNumFuncEvals(kmem, &nfe);
+  check_retval(&retval, "KINGetNumFuncEvals", 1);
 
   /* Linesearch statistics */
 
-  flag = KINGetNumBetaCondFails(kmem, &nbcfails);
-  check_flag(&flag, "KINGetNumBetacondFails", 1);
-  flag = KINGetNumBacktrackOps(kmem, &nbacktr);
-  check_flag(&flag, "KINGetNumBacktrackOps", 1);
+  retval = KINGetNumBetaCondFails(kmem, &nbcfails);
+  check_retval(&retval, "KINGetNumBetacondFails", 1);
+  retval = KINGetNumBacktrackOps(kmem, &nbacktr);
+  check_retval(&retval, "KINGetNumBacktrackOps", 1);
 
   /* Main solver workspace size */
 
-  flag = KINGetWorkSpace(kmem, &lenrw, &leniw);
-  check_flag(&flag, "KINGetWorkSpace", 1);
+  retval = KINGetWorkSpace(kmem, &lenrw, &leniw);
+  check_retval(&retval, "KINGetWorkSpace", 1);
 
   /* Band linear solver statistics */
 
-  flag = KINGetNumJacEvals(kmem, &nje);
-  check_flag(&flag, "KINGetNumJacEvals", 1);
-  flag = KINGetNumLinFuncEvals(kmem, &nfeD);
-  check_flag(&flag, "KINGetNumLinFuncEvals", 1);
+  retval = KINGetNumJacEvals(kmem, &nje);
+  check_retval(&retval, "KINGetNumJacEvals", 1);
+  retval = KINGetNumLinFuncEvals(kmem, &nfeD);
+  check_retval(&retval, "KINGetNumLinFuncEvals", 1);
 
   /* Band linear solver workspace size */
 
-  flag = KINGetLinWorkSpace(kmem, &lenrwB, &leniwB);
-  check_flag(&flag, "KINGetLinWorkSpace", 1);
+  retval = KINGetLinWorkSpace(kmem, &lenrwB, &leniwB);
+  check_retval(&retval, "KINGetLinWorkSpace", 1);
 
   printf("\nFinal Statistics.. \n\n");
   printf("nni      = %6ld    nfe     = %6ld \n", nni, nfe);
@@ -370,49 +381,49 @@ static void PrintFinalStats(void *kmem)
   printf("\n");
   printf("lenrw    = %6ld    leniw   = %6ld \n", lenrw, leniw);
   printf("lenrwB   = %6ld    leniwB  = %6ld \n", lenrwB, leniwB);
-
 }
 
 /*
  * Check function return value...
  *    opt == 0 means SUNDIALS function allocates memory so check if
  *             returned NULL pointer
- *    opt == 1 means SUNDIALS function returns a flag so check if
- *             flag >= 0
+ *    opt == 1 means SUNDIALS function returns a retval so check if
+ *             retval >= 0
  *    opt == 2 means function allocates memory so check if returned
  *             NULL pointer
  */
 
-static int check_flag(void *flagvalue, const char *funcname, int opt)
+static int check_retval(void* retvalvalue, const char* funcname, int opt)
 {
-  int *errflag;
+  int* errretval;
 
   /* Check if SUNDIALS function returned NULL pointer - no memory allocated */
-  if (opt == 0 && flagvalue == NULL) {
-    fprintf(stderr,
-            "\nSUNDIALS_ERROR: %s() failed - returned NULL pointer\n\n",
-	    funcname);
-    return(1);
+  if (opt == 0 && retvalvalue == NULL)
+  {
+    fprintf(stderr, "\nSUNDIALS_ERROR: %s() failed - returned NULL pointer\n\n",
+            funcname);
+    return (1);
   }
 
-  /* Check if flag < 0 */
-  else if (opt == 1) {
-    errflag = (int *) flagvalue;
-    if (*errflag < 0) {
-      fprintf(stderr,
-              "\nSUNDIALS_ERROR: %s() failed with flag = %d\n\n",
-	      funcname, *errflag);
-      return(1);
+  /* Check if retval < 0 */
+  else if (opt == 1)
+  {
+    errretval = (int*)retvalvalue;
+    if (*errretval < 0)
+    {
+      fprintf(stderr, "\nSUNDIALS_ERROR: %s() failed with retval = %d\n\n",
+              funcname, *errretval);
+      return (1);
     }
   }
 
   /* Check if function returned NULL pointer - no memory allocated */
-  else if (opt == 2 && flagvalue == NULL) {
-    fprintf(stderr,
-            "\nMEMORY_ERROR: %s() failed - returned NULL pointer\n\n",
-	    funcname);
-    return(1);
+  else if (opt == 2 && retvalvalue == NULL)
+  {
+    fprintf(stderr, "\nMEMORY_ERROR: %s() failed - returned NULL pointer\n\n",
+            funcname);
+    return (1);
   }
 
-  return(0);
+  return (0);
 }

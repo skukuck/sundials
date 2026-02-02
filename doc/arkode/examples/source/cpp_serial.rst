@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -27,7 +30,7 @@ Serial C++ example problems
 ark_analytic_sys
 ===============================================
 
-This example demonstrates the use of ARKode's fully implicit solver on
+This example demonstrates the use of ARKODE's fully implicit solver on
 a stiff ODE system that has a simple analytical solution.  The problem
 is that of a linear ODE system,
 
@@ -61,33 +64,33 @@ We evolve the problem for :math:`t` in the interval :math:`\left[0,\,
 Numerical method
 ----------------
 
-The stiffness of the problem is directly proportional to the 
+The stiffness of the problem is directly proportional to the
 value of :math:`\lambda`.  The value of :math:`\lambda` should be
 negative to result in a well-posed ODE; for values with magnitude
-larger than 100 the problem becomes quite stiff. 
+larger than 100 the problem becomes quite stiff.
 
 Here, we choose :math:`\lambda = -100`, along with scalar relative and
 absolute tolerances of :math:`rtol=10^{-6}` and :math:`atol=10^{-10}`,
-respectively. 
- 
+respectively.
+
 This program solves the problem with the DIRK method,
 Newton iteration with the SUNMATRIX_DENSE matrix module and
 accompanying SUNLINSOL_DENSE linear solver module, ARKDLS direct
 linear solver interface, and a user-supplied dense Jacobian
-routine.  Output is printed every 0.005 units of time (10 total). 
+routine.  Output is printed every 0.005 units of time (10 total).
 Run statistics (optional outputs) are printed at the end.
 
 
-   
+
 Solutions
 ---------
 
 This problem is included both as a simple example to test systems of
-ODE within ARKode on a problem having an analytical solution,
+ODE within ARKODE on a problem having an analytical solution,
 :math:`Y(t) = V e^{Dt} V^{-1} Y(0)`.  As seen in the plots below, the
 computed solution tracks the analytical solution quite well (left),
 and results in errors with exactly the magnitude as specified by the
-requested error tolerances (right). 
+requested error tolerances (right).
 
 .. image:: figs/plot-ark_analytic_sys.png
    :width: 45 %

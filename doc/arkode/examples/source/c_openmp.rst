@@ -1,9 +1,12 @@
 ..
-   Programmer(s): Daniel R. Reynolds @ SMU
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -32,7 +35,7 @@ This problem is mathematically identical to the one-dimensional
 reaction-diffusion brusselator model, :ref:`ark_brusselator1D`.  As
 before, we investigate a time-dependent system of partial differential
 equations with 3 components, :math:`Y = [u,\, v,\, w]^T` that satisfy
-the equations,  
+the equations,
 
 .. math::
 
@@ -43,8 +46,8 @@ the equations,
    \frac{\partial w}{\partial t} &= d_w \frac{\partial^2 w}{\partial
       x^2} + \frac{b-w}{\varepsilon} - w u.
 
-We integrate for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with 
-initial conditions 
+We integrate for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with
+initial conditions
 
 .. math::
 
@@ -52,7 +55,7 @@ initial conditions
    v(0,x) &= \frac{b}{a} + \frac{1}{10}\sin(\pi x),\\
    w(0,x) &=  b + \frac{1}{10}\sin(\pi x),
 
-and with stationary boundary conditions, i.e. 
+and with stationary boundary conditions, i.e.
 
 .. math::
 

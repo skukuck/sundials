@@ -1,9 +1,12 @@
-..
-   Programmer(s): Daniel R. Reynolds @ SMU
+.. ----------------------------------------------------------------
+   Programmer(s): Daniel R. Reynolds @ UMBC
    ----------------------------------------------------------------
    SUNDIALS Copyright Start
-   Copyright (c) 2002-2021, Lawrence Livermore National Security
+   Copyright (c) 2025-2026, Lawrence Livermore National Security,
+   University of Maryland Baltimore County, and the SUNDIALS contributors.
+   Copyright (c) 2013-2025, Lawrence Livermore National Security
    and Southern Methodist University.
+   Copyright (c) 2002-2013, Lawrence Livermore National Security.
    All rights reserved.
 
    See the top-level LICENSE and NOTICE files for details.
@@ -11,72 +14,72 @@
    SPDX-License-Identifier: BSD-3-Clause
    SUNDIALS Copyright End
    ----------------------------------------------------------------
-   ARKode documentation master file, created by
-   sphinx-quickstart on Sat Dec 22 20:38:03 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-====================================
-ARKode Documentation
-====================================
+********************
+ARKODE Documentation
+********************
 
-This is the documentation for ARKode, an adaptive step time
+This is the documentation for ARKODE, an adaptive step time
 integration package for stiff, nonstiff and mixed stiff/nonstiff
-systems of ordinary differential equations (ODEs) using Runge-Kutta
-(i.e. one-step, multi-stage) methods.  The ARKode solver is a
+systems of ordinary differential equations (ODEs) using Runge--Kutta
+(i.e., one-step, multi-stage) methods.  The ARKODE solver is a
 component of the `SUNDIALS
-<https://computing.llnl.gov/casc/sundials/main.html>`_ suite of
+<https://computing.llnl.gov/projects/sundials>`_ suite of
 nonlinear and differential/algebraic equation solvers. It is designed
 to have a similar user experience to the `CVODE
 <https://computing.llnl.gov/casc/sundials/description/description.html#descr_cvode>`_
 solver, including user modes to allow adaptive integration to specified
 output times, return after each internal step and root-finding
 capabilities, and for calculations in serial, using shared-memory
-parallelism (via OpenMP, Pthreads, CUDA, Raja) or distributed-memory
+parallelism (e.g., via OpenMP, CUDA, Raja, Kokkos) or distributed-memory
 parallelism (via MPI).  The default integration and solver options
 should apply to most users, though control over nearly all internal
 parameters and time adaptivity algorithms is enabled through optional
 interface routines.
 
-ARKode is written in C, with C++ and Fortran interfaces.
+ARKODE is written in C, with C++ and Fortran interfaces.
 
-ARKode is developed by `Southern Methodist University
-<http://www.smu.edu>`_, with support by the `US Department of Energy
-<http://www.doe.gov>`_ through the `FASTMath
-<http://www.fastmath-scidac.org/>`_ SciDAC Institute, under subcontract
-B598130 from `Lawrence Livermore National Laboratory
-<http://www.llnl.gov>`_.
+ARKODE is developed by `Southern Methodist University <https://www.smu.edu>`_ and
+`Lawrence Livermore National Security <https://www.llnl.gov>`_,
+with support by the `US Department of Energy <http://www.doe.gov>`_,
+`Office of Science <https://www.energy.gov/science/office-science>`_.
 
 
+.. include:: Landing.rst
 
 .. only:: html
 
-   Documentation sections:
+   **Table of Contents**
+
 
 .. toctree::
+   :numbered:
    :maxdepth: 1
 
    Introduction
    Mathematics
    Organization
-   ARKStep_c_interface/index.rst
-   ERKStep_c_interface/index.rst
-   MRIStep_c_interface/index.rst
-   ARKode_f_interface/index.rst
+   sundials/index.rst
+   Usage/index.rst
    ARKodeButcherTable
-   ARKodeGpu
+   ARKodeSPRKTable
    nvectors/index.rst
    sunmatrix/index.rst
    sunlinsol/index.rst
    sunnonlinsol/index.rst
+   sundomeigest/index.rst
+   sunadaptcontroller/index.rst
+   sunstepper/index.rst
+   sunadjoint/index.rst
    sunmemory/index.rst
-   Install
+   sundials/Install_link.rst
    Constants
    Butcher
-   History
+   Fortran/index.rst
+   Python/index.rst
+   History_link.rst
+   Changelog_link.rst
    References
-
 .. only:: html
 
    * :ref:`genindex`
-   * :ref:`search`

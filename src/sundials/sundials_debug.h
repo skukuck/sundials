@@ -1,10 +1,12 @@
-/*
- * -----------------------------------------------------------------
+/* -----------------------------------------------------------------
  * Programmer(s): Cody J. Balos @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2021, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -14,20 +16,19 @@
  * -----------------------------------------------------------------
  * This header files defines internal utility functions and macros
  * for SUNDIALS debugging.
- * -----------------------------------------------------------------
- */
+ * -----------------------------------------------------------------*/
 
 #ifndef _SUNDIALS_DEBUG_H
 #define _SUNDIALS_DEBUG_H
 
 #include <stdio.h>
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
+#ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
 #endif
 
 /*
- * Macro which prints to stderr when in debug mode 
+ * Macro which prints to stderr when in debug mode
  */
 #ifdef SUNDIALS_DEBUG
 #define SUNDIALS_DEBUG_PRINT(str) fprintf(stderr, str)
@@ -35,7 +36,18 @@ extern "C" {
 #define SUNDIALS_DEBUG_PRINT(str)
 #endif
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
+/*
+ * Macro which prints error messages in debug mode
+ */
+#ifdef SUNDIALS_DEBUG
+#define SUNDIALS_DEBUG_ERROR(msg)                                     \
+  fprintf(stderr, "ERROR in %s (%s line %d): %s", __func__, __FILE__, \
+          __LINE__, msg);
+#else
+#define SUNDIALS_DEBUG_ERROR(msg)
+#endif
+
+#ifdef __cplusplus /* wrapper to enable C++ usage */
 }
 #endif
 

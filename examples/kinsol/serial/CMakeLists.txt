@@ -3,8 +3,11 @@
 #                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -15,45 +18,50 @@
 # CMakeLists.txt file for KINSOL serial examples
 # ---------------------------------------------------------------
 
-# Example lists are tuples "name\;args\;type" where the type is
-# 'develop' for examples excluded from 'make test' in releases
+# Example lists are tuples "name\;args\;type" where the type is 'develop' for
+# examples excluded from 'make test' in releases
 
 # Examples using SUNDIALS linear solvers
 set(KINSOL_examples
-  "kinAnalytic_fp\;\;"
-  "kinAnalytic_fp\;2\;"
-  "kinAnalytic_fp\;2 0.5\;develop"
-  "kinFerTron_dns\;\;develop"
-  "kinFoodWeb_kry\;\;develop"
-  "kinKrylovDemo_ls\;\;develop"
-  "kinLaplace_bnd\;\;develop"
-  "kinLaplace_picard_bnd\;\;develop"
-  "kinLaplace_picard_kry\;\;develop"
-  "kinRoberts_fp\;\;develop"
-  "kinRoboKin_dns\;\;develop"
-  )
+    "kinAnalytic_fp\;\;"
+    "kinAnalytic_fp\;--damping_fp 0.5\;develop"
+    "kinAnalytic_fp\;--damping_fn\;develop"
+    "kinAnalytic_fp\;--m_aa 2\;"
+    "kinAnalytic_fp\;--m_aa 2 --delay_aa 2\;"
+    "kinAnalytic_fp\;--m_aa 2 --damping_aa 0.5\;develop"
+    "kinAnalytic_fp\;--m_aa 2 --damping_fn\;develop"
+    "kinAnalytic_fp\;--m_aa 3 --depth_fn\;develop"
+    "kinAnalytic_fp\;--m_aa 2 --orth_aa 1\;"
+    "kinAnalytic_fp\;--m_aa 2 --orth_aa 2\;"
+    "kinAnalytic_fp\;--m_aa 2 --orth_aa 3\;"
+    "kinFerTron_dns\;\;develop"
+    "kinFoodWeb_kry\;\;exclude-single"
+    "kinKrylovDemo_ls\;\;exclude-single"
+    "kinLaplace_bnd\;\;exclude-single"
+    "kinLaplace_picard_bnd\;\;exclude-single"
+    "kinLaplace_picard_kry\;\;exclude-single"
+    "kinRoberts_fp\;\;develop"
+    "kinRoberts_fp\;kinsol.m_aa 1\;develop"
+    "kinRoboKin_dns\;\;exclude-single")
 
 # Examples using LAPACK linear solvers
-set(KINSOL_examples_BL
-  )
+set(KINSOL_examples_BL)
 
 # Examples using KLU linear solver
-set(KINSOL_examples_KLU
-  "kinFerTron_klu\;develop"
-  )
+set(KINSOL_examples_KLU "kinFerTron_klu\;develop")
 
 # Examples using SuperLU_MT linear solver
-set(KINSOL_examples_SUPERLUMT
-  "kinRoboKin_slu\;develop"
-  )
+set(KINSOL_examples_SUPERLUMT "kinRoboKin_slu\;develop")
+
+# Auxiliary files to install
+set(KINSOL_extras kinRoboKin_dns_stats.csv)
 
 # Specify libraries to link against
 set(KINSOL_LIB sundials_kinsol)
 set(NVECS_LIB sundials_nvecserial)
 
 # Set-up linker flags and link libraries
-set(SUNDIALS_LIBS ${KINSOL_LIB} ${NVECS_LIB} ${EXTRA_LINK_LIBS})
-
+set(SUNDIALS_LIBS ${KINSOL_LIB} ${NVECS_LIB} ${EXE_EXTRA_LINK_LIBS})
 
 # Add the build and install targets for each example
 foreach(example_tuple ${KINSOL_examples})
@@ -63,12 +71,12 @@ foreach(example_tuple ${KINSOL_examples})
   list(GET example_tuple 1 example_args)
   list(GET example_tuple 2 example_type)
 
-  # check if this example has already been added, only need to add
-  # example source files once for testing with different inputs
+  # check if this example has already been added, only need to add example
+  # source files once for testing with different inputs
   if(NOT TARGET ${example})
 
     # example source files
-    add_executable(${example} ${example}.c)
+    sundials_add_executable(${example} ${example}.c)
 
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
@@ -85,7 +93,8 @@ foreach(example_tuple ${KINSOL_examples})
   endif()
 
   # add example to regression tests
-  sundials_add_test(${test_name} ${example}
+  sundials_add_test(
+    ${test_name} ${example}
     TEST_ARGS ${example_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out
@@ -97,22 +106,17 @@ foreach(example_tuple ${KINSOL_examples})
   # install example source and out files
   if(EXAMPLES_INSTALL)
     install(FILES ${example}.c ${example}.out
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
   endif()
 
 endforeach(example_tuple ${KINSOL_examples})
-
 
 # Add the build and install targets for each LAPACK example (if needed)
 if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
 
   # Sundials LAPACK linear solver modules
-  set(SUNLINSOLLAPACK_LIBS
-    sundials_sunlinsollapackband
-    sundials_sunlinsollapackdense)
-
-  # LAPACK libraries
-  list(APPEND SUNLINSOLLAPACK_LIBS ${LAPACK_LIBRARIES})
+  set(SUNLINSOLLAPACK_LIBS sundials_sunlinsollapackband
+                           sundials_sunlinsollapackdense)
 
   foreach(example_tuple ${KINSOL_examples_BL})
 
@@ -121,12 +125,13 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     list(GET example_tuple 1 example_type)
 
     # example source files
-    add_executable(${example} ${example}.c)
+    sundials_add_executable(${example} ${example}.c)
 
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
     # add example to regression tests
-    sundials_add_test(${example} ${example}
+    sundials_add_test(
+      ${example} ${example}
       ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
       ANSWER_FILE ${example}.out
       EXAMPLE_TYPE ${example_type})
@@ -137,13 +142,12 @@ if(BUILD_SUNLINSOL_LAPACKBAND AND BUILD_SUNLINSOL_LAPACKDENSE)
     # install example source and out files
     if(EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-        DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_BL})
 
 endif()
-
 
 # Add the build and install targets for each KLU example (if needed)
 if(BUILD_SUNLINSOL_KLU)
@@ -161,12 +165,13 @@ if(BUILD_SUNLINSOL_KLU)
     list(GET example_tuple 1 example_type)
 
     # example source files
-    add_executable(${example} ${example}.c)
+    sundials_add_executable(${example} ${example}.c)
 
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
     # add example to regression tests
-    sundials_add_test(${example} ${example}
+    sundials_add_test(
+      ${example} ${example}
       ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
       ANSWER_FILE ${example}.out
       EXAMPLE_TYPE ${example_type})
@@ -177,13 +182,12 @@ if(BUILD_SUNLINSOL_KLU)
     # install example source and out files
     if(EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-        DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_KLU})
 
 endif()
-
 
 # Add the build and install targets for each SuperLU_MT example (if needed)
 if(BUILD_SUNLINSOL_SUPERLUMT)
@@ -201,12 +205,13 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
     list(GET example_tuple 1 example_type)
 
     # example source files
-    add_executable(${example} ${example}.c)
+    sundials_add_executable(${example} ${example}.c)
 
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
     # add example to regression tests
-    sundials_add_test(${example} ${example}
+    sundials_add_test(
+      ${example} ${example}
       ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
       ANSWER_FILE ${example}.out
       EXAMPLE_TYPE ${example_type})
@@ -217,19 +222,24 @@ if(BUILD_SUNLINSOL_SUPERLUMT)
     # install example source and out files
     if(EXAMPLES_INSTALL)
       install(FILES ${example}.c ${example}.out
-        DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+              DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
     endif()
 
   endforeach(example_tuple ${KINSOL_examples_SUPERLUMT})
 
 endif()
 
-
-# create Makfile and CMakeLists.txt for examples
+# create Makefile and CMakeLists.txt for examples
 if(EXAMPLES_INSTALL)
 
   # Install the README file
   install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+
+  # Install the extra files
+  foreach(extrafile ${KINSOL_extras})
+    install(FILES ${extrafile}
+            DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
+  endforeach()
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
   set(SOLVER "KINSOL")
@@ -251,7 +261,7 @@ if(EXAMPLES_INSTALL)
 
   if(BUILD_SUNLINSOL_SUPERLUMT)
     examples2string(KINSOL_examples_SUPERLUMT EXAMPLES_SLUMT)
-    if (SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
+    if(SUNDIALS_SUPERLUMT_THREAD_TYPE STREQUAL "PTHREAD")
       set(THREAD_LIBRARY_SLUMT ${CMAKE_THREAD_LIBS_INIT})
     else()
       set(THREAD_LIBRARY_SLUMT "")
@@ -262,39 +272,32 @@ if(EXAMPLES_INSTALL)
   endif()
 
   # Regardless of the platform we're on, we will generate and install
-  # CMakeLists.txt file for building the examples. This file  can then
-  # be used as a template for the user's own programs.
+  # CMakeLists.txt file for building the examples. This file  can then be used
+  # as a template for the user's own programs.
 
   # generate CMakelists.txt in the binary directory
   configure_file(
     ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_C_ex.in
-    ${PROJECT_BINARY_DIR}/examples/kinsol/serial/CMakeLists.txt
-    @ONLY
-    )
+    ${PROJECT_BINARY_DIR}/examples/kinsol/serial/CMakeLists.txt @ONLY)
 
   # install CMakelists.txt
-  install(
-    FILES ${PROJECT_BINARY_DIR}/examples/kinsol/serial/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial
-    )
+  install(FILES ${PROJECT_BINARY_DIR}/examples/kinsol/serial/CMakeLists.txt
+          DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial)
 
   # On UNIX-type platforms, we also  generate and install a makefile for
-  # building the examples. This makefile can then be used as a template
-  # for the user's own programs.
+  # building the examples. This makefile can then be used as a template for the
+  # user's own programs.
 
   if(UNIX)
     # generate Makefile and place it in the binary dir
     configure_file(
       ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_C_ex.in
-      ${PROJECT_BINARY_DIR}/examples/kinsol/serial/Makefile_ex
-      @ONLY
-      )
+      ${PROJECT_BINARY_DIR}/examples/kinsol/serial/Makefile_ex @ONLY)
     # install the configured Makefile_ex as Makefile
     install(
       FILES ${PROJECT_BINARY_DIR}/examples/kinsol/serial/Makefile_ex
       DESTINATION ${EXAMPLES_INSTALL_PATH}/kinsol/serial
-      RENAME Makefile
-      )
+      RENAME Makefile)
   endif()
 
   # add test_install target

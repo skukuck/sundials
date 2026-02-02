@@ -2,8 +2,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -38,20 +41,21 @@ endif()
 
 # Using XBRAID requires building with MPI enabled
 if(NOT ENABLE_MPI)
-  message(FATAL_ERROR
-    "MPI is required for XBraid support. Set ENABLE_MPI to ON.")
+  message(
+    FATAL_ERROR "MPI is required for XBraid support. Set ENABLE_MPI to ON.")
 endif()
 
 # XBraid does not support single or extended precision
 if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
-  message(FATAL_ERROR
-    "XBraid is not compatible with ${SUNDIALS_PRECISION} precision")
+  message(
+    FATAL_ERROR "XBraid is not compatible with ${SUNDIALS_PRECISION} precision")
 endif()
 
 # XBraid does not support 64-bit index sizes
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
-  message(FATAL_ERROR
-    "XBraid is not compatible with ${SUNDIALS_INDEX_SIZE}-bit indices")
+  message(
+    FATAL_ERROR
+      "XBraid is not compatible with ${SUNDIALS_INDEX_SIZE}-bit indices")
 endif()
 
 # -----------------------------------------------------------------------------
@@ -76,12 +80,14 @@ if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
   file(MAKE_DIRECTORY ${XBRAID_TEST_DIR})
 
   # Create a CMakeLists.txt file
-  file(WRITE ${XBRAID_TEST_DIR}/CMakeLists.txt
+  file(
+    WRITE ${XBRAID_TEST_DIR}/CMakeLists.txt
     "cmake_minimum_required(VERSION ${CMAKE_VERSION})\n"
     "project(ltest C)\n"
     "set(CMAKE_VERBOSE_MAKEFILE ON)\n"
     "set(CMAKE_BUILD_TYPE \"${CMAKE_BUILD_TYPE}\")\n"
     "set(CMAKE_C_COMPILER ${MPI_C_COMPILER})\n"
+    "set(CMAKE_C_STANDARD ${CMAKE_C_STANDARD})\n"
     "set(CMAKE_C_FLAGS \"${CMAKE_C_FLAGS}\")\n"
     "set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE}\")\n"
     "set(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG}\")\n"
@@ -93,28 +99,33 @@ if(XBRAID_FOUND AND (NOT XBRAID_WORKS))
     "target_link_libraries(ltest m)\n")
 
   # Create a C source file
-  file(WRITE ${XBRAID_TEST_DIR}/ltest.c
+  file(
+    WRITE ${XBRAID_TEST_DIR}/ltest.c
     "\#include <stdlib.h>\n"
     "\#include \"braid.h\"\n"
-    "int main(){\n"
+    "int main(void) {\n"
     "braid_Int rand;\n"
     "rand = braid_Rand();\n"
     "if (rand < 0) return 1;\n"
     "return 0;\n"
     "}\n")
 
-  # To ensure we do not use stuff from the previous attempts,
-  # we must remove the CMakeFiles directory.
+  # To ensure we do not use stuff from the previous attempts, we must remove the
+  # CMakeFiles directory.
   file(REMOVE_RECURSE ${XBRAID_TEST_DIR}/CMakeFiles)
 
   # Attempt to build and link the "ltest" executable
-  try_compile(COMPILE_OK ${XBRAID_TEST_DIR} ${XBRAID_TEST_DIR} ltest
+  try_compile(
+    COMPILE_OK ${XBRAID_TEST_DIR}
+    ${XBRAID_TEST_DIR} ltest
     OUTPUT_VARIABLE COMPILE_OUTPUT)
 
   # Process test result
   if(COMPILE_OK)
     message(STATUS "Checking if XBRAID works... OK")
-    set(XBRAID_WORKS TRUE CACHE BOOL "XBRAID works as configured" FORCE)
+    set(XBRAID_WORKS
+        TRUE
+        CACHE BOOL "XBRAID works as configured" FORCE)
   else()
     message(STATUS "Checking if XBRAID works... FAILED")
     message(STATUS "Check output: ")

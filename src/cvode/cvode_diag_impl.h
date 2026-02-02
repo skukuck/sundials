@@ -4,8 +4,11 @@
  *                Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
- * Copyright (c) 2002-2021, Lawrence Livermore National Security
+ * Copyright (c) 2025-2026, Lawrence Livermore National Security,
+ * University of Maryland Baltimore County, and the SUNDIALS contributors.
+ * Copyright (c) 2013-2025, Lawrence Livermore National Security
  * and Southern Methodist University.
+ * Copyright (c) 2002-2013, Lawrence Livermore National Security.
  * All rights reserved.
  *
  * See the top-level LICENSE and NOTICE files for details.
@@ -22,7 +25,7 @@
 
 #include <cvode/cvode_diag.h>
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
+#ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
 #endif
 
@@ -57,21 +60,21 @@ typedef int(*CVDiagUpdateM)(const realtype r, N_Vector M);
  * -----------------------------------------------------------------
  */
 
-typedef struct {
+typedef struct
+{
+  sunrealtype di_gammasv; /* gammasv = gamma at the last call to setup */
+                          /* or solve                                  */
 
-  realtype di_gammasv; /* gammasv = gamma at the last call to setup */
-                       /* or solve                                  */
+  N_Vector di_M; /* M = (I - gamma J)^{-1} , gamma = h / l1   */
 
-  N_Vector di_M;       /* M = (I - gamma J)^{-1} , gamma = h / l1   */
-
-  N_Vector di_bit;     /* temporary storage vector                  */
+  N_Vector di_bit; /* temporary storage vector                  */
 
   N_Vector di_bitcomp; /* temporary storage vector                  */
 
-  long int di_nfeDI;   /* no. of calls to f due to difference
+  long int di_nfeDI; /* no. of calls to f due to difference
                           quotient diagonal Jacobian approximation  */
 
-  long int di_last_flag;    /* last error return flag               */
+  long int di_last_flag; /* last error return flag               */
 
   booleantype   usefused;
   CVDiagFormY   formy_fused;
@@ -82,11 +85,12 @@ typedef struct {
 
 /* Error Messages */
 
-#define MSGDG_CVMEM_NULL "Integrator memory is NULL."
+#define MSGDG_CVMEM_NULL  "Integrator memory is NULL."
 #define MSGDG_BAD_NVECTOR "A required vector operation is not implemented."
-#define MSGDG_MEM_FAIL "A memory request failed."
-#define MSGDG_LMEM_NULL "CVDIAG memory is NULL."
-#define MSGDG_RHSFUNC_FAILED "The right-hand side routine failed in an unrecoverable manner."
+#define MSGDG_MEM_FAIL    "A memory request failed."
+#define MSGDG_LMEM_NULL   "CVDIAG memory is NULL."
+#define MSGDG_RHSFUNC_FAILED \
+  "The right-hand side routine failed in an unrecoverable manner."
 
 #ifdef __cplusplus
 }

@@ -3,8 +3,11 @@
 #                Shelby Lockhart @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,12 +24,16 @@ if(EXAMPLES_ENABLE_C)
   if(ENABLE_OPENMP AND OPENMP_FOUND)
     add_subdirectory(C_openmp)
   endif()
-  if(ENABLE_OPENMP_DEVICE AND OPENMP_FOUND AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
+  if(ENABLE_OPENMP_DEVICE
+     AND OPENMP_FOUND
+     AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
     add_subdirectory(C_openmpdev)
   endif()
   if(ENABLE_MPI AND MPI_C_FOUND)
     add_subdirectory(parallel)
-    add_subdirectory(C_mpimanyvector)
+    if(BUILD_NVECTOR_MPIMANYVECTOR)
+      add_subdirectory(C_mpimanyvector)
+    endif()
   endif()
   if(ENABLE_HYPRE AND HYPRE_FOUND)
     add_subdirectory(parhyp)
@@ -45,6 +52,21 @@ if(EXAMPLES_ENABLE_CXX)
   if(ENABLE_MAGMA AND MAGMA_FOUND)
     add_subdirectory(magma)
   endif()
+  if(ENABLE_GINKGO AND Ginkgo_FOUND)
+    add_subdirectory(ginkgo)
+  endif()
+  if(BUILD_SUNLINSOL_KOKKOSDENSE)
+    add_subdirectory(kokkos)
+  endif()
+  if(BUILD_SUNLINSOL_ONEMKLDENSE)
+    add_subdirectory(CXX_onemkl)
+  endif()
+  if(ENABLE_RAJA AND RAJA_FOUND)
+    add_subdirectory(raja)
+  endif()
+  if(BUILD_NVECTOR_SYCL)
+    add_subdirectory(CXX_sycl)
+  endif()
   # MPI based examples
   if(ENABLE_MPI AND MPI_CXX_FOUND)
     add_subdirectory(CXX_parallel)
@@ -60,15 +82,11 @@ if(EXAMPLES_ENABLE_CXX)
 endif()
 
 # Fortran examples
-if(BUILD_FORTRAN77_INTERFACE AND EXAMPLES_ENABLE_F77)
-  add_subdirectory(fcmix_serial)
-  if(ENABLE_MPI AND MPI_Fortran_FOUND)
-    add_subdirectory(fcmix_parallel)
-  endif()
-endif()
-
 if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
+  if(ENABLE_MPI)
+    add_subdirectory(F2003_parallel)
+  endif()
 endif()
 
 # CUDA examples
@@ -76,10 +94,6 @@ if(EXAMPLES_ENABLE_CUDA)
 
   if(ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
     add_subdirectory(cuda)
-  endif()
-
-  if(ENABLE_RAJA AND RAJA_FOUND)
-    add_subdirectory(raja)
   endif()
 
 endif()

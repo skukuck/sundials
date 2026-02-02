@@ -1,10 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
 # ------------------------------------------------------------------------------
 # Programmer(s): David J. Gardner @ LLNL
 # ------------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -18,8 +21,8 @@
 # Set the SUNDIALS major, minor, and patch numbers and the label string. For
 # development releases the label string is of the form "-dev.#" and for full
 # releases the label string is "".
-sun_major=${1:-5}
-sun_minor=${2:-7}
+sun_major=${1:-7}
+sun_minor=${2:-6}
 sun_patch=${3:-0}
 sun_label=${4:-""}
 month=${5:-$(date +"%b")}
@@ -38,7 +41,7 @@ else
     sun_ver="${sun_major}.${sun_minor}.${sun_patch}-${sun_label}"
 fi
 
-# Set the ARKode version values. Assume the major version is one less than the
+# Set the ARKODE version values. Assume the major version is one less than the
 # SUNDIALS major version.
 ark_major=$(( sun_major - 1 ))
 ark_minor=$sun_minor
@@ -164,12 +167,23 @@ else
     nls_ver="${nls_major}.${nls_minor}.${nls_patch}-${nls_label}"
 fi
 
+# Set the SUNDomEigEstimator version values. Assume the major version is six
+# less than the SUNDIALS major version.
+dee_major=$(( sun_major - 6 ))
+dee_minor=$(( sun_minor - 5 )) # TODO(DJG): Will need to remove this at the next major release
+dee_patch=$sun_patch
+dee_label=$sun_label
+
+if [ "${dee_label}" == "" ]; then
+    dee_ver="${dee_major}.${dee_minor}.${dee_patch}"
+else
+    dee_ver="${dee_major}.${dee_minor}.${dee_patch}-${dee_label}"
+fi
+
 # ------------------------------------------------------------------------------
-# Workaround to support different sed implementations
+# Wrapper for editing inplace with different sed implementations
 # ------------------------------------------------------------------------------
 
-# wrapper for that appends the correct flags for editing inplace with OS X or
-# Linux sed implementations
 sedi() {
     case $(uname) in
         Darwin*) sedi=('-i' '') ;;
@@ -177,6 +191,12 @@ sedi() {
     esac
     sed "${sedi[@]}" "$@"
 }
+
+# ------------------------------------------------------------------------------
+# Update the pyproject.toml file
+# ------------------------------------------------------------------------------
+fn="../pyproject.toml"
+sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
 
 # ------------------------------------------------------------------------------
 # Update the main CMakeLists.txt file
@@ -219,6 +239,9 @@ sedi "/sunlinsollib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${ls_major}\")/" $fn
 sedi "/sunnonlinsollib_VERSION.*/   s/VERSION.*/VERSION \"${nls_ver}\")/" $fn
 sedi "/sunnonlinsollib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${nls_major}\")/" $fn
 
+sedi "/sundomeigestlib_VERSION.*/   s/VERSION.*/VERSION \"${dee_ver}\")/" $fn
+sedi "/sundomeigestlib_SOVERSION.*/ s/SOVERSION.*/SOVERSION \"${dee_major}\")/" $fn
+
 # ------------------------------------------------------------------------------
 # Update README files
 # ------------------------------------------------------------------------------
@@ -227,9 +250,9 @@ sedi "s/### Version.*/### Version ${sun_ver} (${date}) ###/" ../README.md
 
 fn="../src/arkode/README.md"
 sedi "s/### Version.*/### Version ${ark_ver} (${date})/" $fn
-sedi "s/\"User Documentation for ARKode v.*/\"User Documentation for ARKode v${ark_ver},\" LLNL technical report/" $fn
+sedi "s/\"User Documentation for ARKODE v.*/\"User Documentation for ARKODE v${ark_ver},\" LLNL technical report/" $fn
 sedi "s/LLNL-SM-668082,.*/LLNL-SM-668082, ${date}./" $fn
-sedi "s/\"Example Programs for ARKode v.*/\"Example Programs for ARKode v${ark_ver},\" Technical Report,/" $fn
+sedi "s/\"Example Programs for ARKODE v.*/\"Example Programs for ARKODE v${ark_ver},\" Technical Report,/" $fn
 sedi "s/Scientific Computation.*/Scientific Computation, ${date}./" $fn
 
 fn="../src/cvode/README.md"
@@ -271,7 +294,7 @@ sedi "s/UCRL-SM-208114,.*/UCRL-SM-208114, ${date}./" $fn
 # Update tarscript
 # ------------------------------------------------------------------------------
 
-fn="tarscript"
+fn="tarscript.sh"
 sedi "s/SUN_VER=.*/SUN_VER=\"${sun_ver}\"/"    $fn
 sedi "s/CV_VER=.*/CV_VER=\"${cv_ver}\"/"       $fn
 sedi "s/CVS_VER=.*/CVS_VER=\"${cvs_ver}\"/"    $fn
@@ -294,86 +317,121 @@ sedi "s/idasrelease.*/idasrelease}{v${idas_ver}}/" $fn
 sedi "s/kinrelease.*/kinrelease}{v${kin_ver}}/"    $fn
 sedi "s/arkrelease.*/arkrelease}{v${ark_ver}}/"    $fn
 
-# update titles for user guides and example docs
-fn="../doc/sundials/biblio.bib"
-sedi "/User Documentation for ARKODE v/ s/v.*/v${ark_ver}}},/" $fn
-sedi "/Example Programs for ARKODE v/ s/v.*/v${ark_ver}}},/"   $fn
+# update reference titles for user guides and example docs
+for fn in "../doc/sundials/biblio.bib" "../doc/shared/sundials.bib";
+do
+    sedi "/User Documentation for ARKODE v/ s/v.*/v${ark_ver}}},/" $fn
+    sedi "/Example Programs for ARKODE v/ s/v.*/v${ark_ver}}},/"   $fn
+    sedi "/User Documentation for CVODE v/ s/v.*/v${cv_ver}}},/" $fn
+    sedi "/Example Programs for CVODE v/ s/v.*/v${cv_ver}}},/"   $fn
+    sedi "/User Documentation for CVODES v/ s/v.*/v${cvs_ver}}},/" $fn
+    sedi "/Example Programs for CVODES v/ s/v.*/v${cvs_ver}}},/"   $fn
+    sedi "/User Documentation for IDA v/ s/v.*/v${ida_ver}}},/" $fn
+    sedi "/Example Programs for IDA v/ s/v.*/v${ida_ver}}},/"   $fn
+    sedi "/User Documentation for IDAS v/ s/v.*/v${idas_ver}}},/" $fn
+    sedi "/Example Programs for IDAS v/ s/v.*/v${idas_ver}}},/"   $fn
+    sedi "/User Documentation for KINSOL v/ s/v.*/v${kin_ver}}},/" $fn
+    sedi "/Example Programs for KINSOL v/ s/v.*/v${kin_ver}}},/"   $fn
+    # update dates for user guides and example doc by checking lines between the
+    # first and second latex comment patterns
+    sedi "/% CURRENT.*/,/% ORIGINAL.*/ s/year.*/year        = ${year}/" $fn
+done
 
-sedi "/User Documentation for CVODE v/ s/v.*/v${cv_ver}}},/" $fn
-sedi "/Example Programs for CVODE v/ s/v.*/v${cv_ver}}},/"   $fn
-
-sedi "/User Documentation for CVODES v/ s/v.*/v${cvs_ver}}},/" $fn
-sedi "/Example Programs for CVODES v/ s/v.*/v${cvs_ver}}},/"   $fn
-
-sedi "/User Documentation for IDA v/ s/v.*/v${ida_ver}}},/" $fn
-sedi "/Example Programs for IDA v/ s/v.*/v${ida_ver}}},/"   $fn
-
-sedi "/User Documentation for IDAS v/ s/v.*/v${idas_ver}}},/" $fn
-sedi "/Example Programs for IDAS v/ s/v.*/v${idas_ver}}},/"   $fn
-
-sedi "/User Documentation for KINSOL v/ s/v.*/v${kin_ver}}},/" $fn
-sedi "/Example Programs for KINSOL v/ s/v.*/v${kin_ver}}},/"   $fn
-
-# update dates for user guides and example doc by checking lines between the
-# first and second latex comment patterns
-sedi "/% CURRENT.*/,/% ORIGINAL.*/ s/year=.*/year=${year}/" $fn
-
-# insert new line in release table
-sedi '/%% Version Table/ a\
-'${month}' & '${year}' & '\
-${sun_ver}' & '\
-${ark_ver}' & '\
-${cv_ver}' & '\
-${cvs_ver}' & '\
-${ida_ver}' & '\
-${idas_ver}' & '\
-${kin_ver}' \\\\'$'\n' ../doc/sundials/sundials_release_history.tex
+# # insert new line in release table
+# sedi '/%% Version Table/ a\
+# '${month}' & '${year}' & '\
+# ${sun_ver}' & '\
+# ${ark_ver}' & '\
+# ${cv_ver}' & '\
+# ${cvs_ver}' & '\
+# ${ida_ver}' & '\
+# ${idas_ver}' & '\
+# ${kin_ver}' \\\\'$'\n' ../doc/sundials/sundials_release_history.tex
 
 # ------------------------------------------------------------------------------
 # Update rst documentation
 # ------------------------------------------------------------------------------
 
-# user guide
-fn="../doc/arkode/guide/source/conf.py"
-sedi "s/version =.*/version = \'v${ark_ver}\'/" $fn
-sedi "s/sun_version =.*/sun_version = \'v${sun_ver}\'/" $fn
+fn="../doc/shared/sundials_vars.py"
+sedi "s/arkode_version =.*/arkode_version = \"v${ark_ver}\"/" $fn
+sedi "s/cvode_version =.*/cvode_version = \"v${cv_ver}\"/" $fn
+sedi "s/cvodes_version =.*/cvodes_version = \"v${cvs_ver}\"/" $fn
+sedi "s/ida_version =.*/ida_version = \"v${ida_ver}\"/" $fn
+sedi "s/idas_version =.*/idas_version = \"v${idas_ver}\"/" $fn
+sedi "s/kinsol_version =.*/kinsol_version = \"v${kin_ver}\"/" $fn
+sedi "s/sundials_version =.*/sundials_version = \"v${sun_ver}\"/" $fn
+sedi "s/doc_version =.*/doc_version = \"v${sun_ver}\"/" $fn
+sedi "s/year =.*/year = \"${year}\"/" $fn
 
-fn="../doc/arkode/guide/source/References.rst"
-sedi "/UCRL-SM-208108/ s/.*/            v${cv_ver}. Technical Report UCRL-SM-208108, LLNL, ${year}./" $fn
-sedi "/Programs for CVODE/ s/.*/             Programs for CVODE v${cv_ver}. Technical Report/" $fn
-sedi "/UCRL-SM-208110/ s/.*/             UCRL-SM-208110, LLNL, ${year}./" $fn
-sedi "/Computation,/ s/.*/           Computation, ${year}./" $fn
+# release history table
+fn="../doc/shared/History.rst"
+new_entry=$(printf "| %-3s %-4s | %-30s | %-17s | %-17s | %-17s | %-17s | %-17s | %-17s |" \
+    ${month} ${year} ":ref:\`${sun_ver} <Changelog.${sun_ver}>\`" ${ark_ver} ${cv_ver} ${cvs_ver} ${ida_ver} \
+    ${idas_ver} ${kin_ver})
+divider="+----------+--------------------------------+-------------------+-------------------+-------------------+-------------------+-------------------+-------------------+"
 
-# insert new release history row after line 25
-fn="../doc/arkode/guide/source/History.rst"
-if [ "${sun_label}" == "" ]; then
-sedi '25 a\
-'${month}' '${year}'  '\
-${sun_ver}'        '\
-${ark_ver}'        '\
-${cv_ver}'        '\
-${cvs_ver}'        '\
-${ida_ver}'        '\
-${idas_ver}'        '\
-${kin_ver}$'\n' $fn
-else
-sedi '25 a\
-'${month}' '${year}'  '\
-${sun_ver}'  '\
-${ark_ver}'  '\
-${cv_ver}'  '\
-${cvs_ver}'  '\
-${ida_ver}'  '\
-${idas_ver}'  '\
-${kin_ver}$'\n' $fn
-fi
+# insert new release history row after line 26
+sedi '26 a\
+'"${divider}"''$'\n' $fn
+sedi '26 a\
+'"${new_entry}"''$'\n' $fn
 
-# example doc
-fn="../doc/arkode/examples/source/conf.py"
-sedi "s/version =.*/version = \'v${ark_ver}\'/" $fn
-sedi "s/sun_version =.*/sun_version = \'v${sun_ver}\'/" $fn
+# Update CITATIONS.md
+fn="../CITATIONS.md"
+sedi '71s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '72s/.*/\ \ note   = {v'${ark_ver}'}/' $fn
+sedi '80s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '81s/.*/\ \ note   = {v'${cv_ver}'}/' $fn
+sedi '89s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '90s/.*/\ \ note   = {v'${cvs_ver}'}/' $fn
+sedi '98s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '99s/.*/\ \ note   = {v'${ida_ver}'}/' $fn
+sedi '107s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '108s/.*/\ \ note   = {v'${idas_ver}'}/' $fn
+sedi '116s/.*/\ \ year   = {'${year}'},/' $fn
+sedi '117s/.*/\ \ note   = {v'${kin_ver}'}/' $fn
 
-fn="../doc/arkode/examples/source/References.rst"
-sedi "/Programs for CVODE/ s/.*/             Programs for CVODE v${cv_ver}. Technical Report/" $fn
-sedi "/UCRL-SM-208110/ s/.*/             UCRL-SM-208110, LLNL, ${year}./" $fn
-sedi "/LLNL-CODE-667205/ s/.*/           v${ark_ver}. Technical Report LLNL-CODE-667205, LLNL, ${year}./" $fn
+# Update all occurrences of x.y.z and X.Y.Z to the current version number
+fn="../CHANGELOG.md"
+sedi "s/x.y.z/${sun_ver}/gI" $fn
+
+fn="../doc/shared/Changelog.rst"
+sedi "s/x.y.z/${sun_ver}/gI" $fn
+
+fn="../doc/shared/sundials/Install.rst"
+sedi "s/x.y.z/${sun_ver}/gI" $fn
+
+for fn in $(grep -Iirl "x.y.z" ../doc/shared/*)
+do
+    sedi "s/x.y.z/${sun_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/arkode/guide/source/*)
+do
+    sedi "s/x.y.z/${ark_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/cvode/guide/source/*)
+do
+    sedi "s/x.y.z/${cv_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/cvodes/guide/source/*)
+do
+    sedi "s/x.y.z/${cvs_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/ida/guide/source/*)
+do
+    sedi "s/x.y.z/${ida_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/idas/guide/source/*)
+do
+    sedi "s/x.y.z/${idas_ver}/gI" $fn
+done
+
+for fn in $(grep -Iirl "x.y.z" ../doc/kinsol/guide/source/*)
+do
+    sedi "s/x.y.z/${kin_ver}/gI" $fn
+done

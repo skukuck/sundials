@@ -1,69 +1,85 @@
 # SUNDIALS: SUite of Nonlinear and DIfferential/ALgebraic equation Solvers #
-### Version 5.7.0 (Jan 2021) ###
+
+[![GitHub Release](https://img.shields.io/github/v/release/llnl/sundials)](https://github.com/llnl/sundials/releases/latest)
+[![PyPI - Version](https://img.shields.io/pypi/v/sundials4py?label=sundials4py)](https://pypi.org/project/sundials4py/)
+[![track SUNDIALS downloads](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml/badge.svg)](https://github.com/sundials-codes/sundials-download-tracker/actions/workflows/nightly.yml)
+
+### Version 7.6.0 (Jan 2026) ###
 
 **Center for Applied Scientific Computing, Lawrence Livermore National Laboratory**
 
-SUNDIALS is a family of software packages implemented with the goal of
-providing robust time integrators and nonlinear solvers that can easily be
-incorporated into existing simulation codes. The primary design goals are to
-require minimal information from the user, allow users to easily supply their
-own data structures underneath the packages, and allow for easy incorporation
-of user-supplied linear solvers and preconditioners. The various packages share
-many subordinate modules and are organized as a family with a directory
-structure that exploits sharing common functionality.
+SUNDIALS is a family of software packages providing robust and efficient time
+integrators and nonlinear solvers that can easily be incorporated into existing
+simulation codes. The library is primarily written in C with interfaces to C++,
+[Fortran](https://sundials.readthedocs.io/en/latest/Fortran/index.html), and
+[Python](https://sundials.readthedocs.io/en/latest/Python/index.html) (beta
+version) and provides support for serial, threaded, distributed, and GPU
+accelerated computing. The packages are designed to require minimal information
+from the user, allow users to supply their own data structures underneath the
+packages, and enable interfacing with user-supplied or third-party algebraic
+solvers and preconditioners.
 
-The SUNDIALS suite consists of the following packages:
+The SUNDIALS suite consists of the following packages for ordinary differential
+equation (ODE) systems, differential-algebraic equation (DAE) systems, and
+nonlinear algebraic systems:
 
-* ARKODE - for integration of stiff, nonstiff, and multirate ordinary
-differential equation systems (ODEs) of the form
+* ARKODE - for integrating stiff, nonstiff, and multirate ODEs of the form
 
-  ``` M y' = f1(t,y) + f2(t,y), y(t0) = y0 ```
+  $$M(t) y' = f_1(t,y) + f_2(t,y), \quad y(t_0) = y_0$$
 
-* CVODE - for integration of stiff and nonstiff ordinary differential equation
-systems (ODEs) of the form
+* CVODE - for integrating stiff and nonstiff ODEs of the form
 
-  ``` y' = f(t,y), y(t0) = y0 ```
+  $$y' = f(t,y), \quad y(t_0) = y_0$$
 
-* CVODES - for integration and sensitivity analysis (forward and adjoint) of
-ordinary differential equation systems (ODEs) of the form
+* CVODES - for integrating and sensitivity analysis (forward and adjoint) of
+  ODEs of the form
 
-  ``` y' = f(t,y,p), y(t0) = y0(p) ```
+  $$y' = f(t,y,p), \quad y(t_0) = y_0(p)$$
 
-* IDA - for integration of differential-algebraic equation systems (DAEs) of
-the form
+* IDA - for integrating DAEs of the form
 
-  ``` F(t,y,y') = 0, y(t0) = y0, y'(t0) = y0' ```
+  $$F(t,y,y') = 0, \quad y(t_0) = y_0, \quad y'(t_0) = y_0'$$
 
-* IDAS - for integration and sensitivity analysis (forward and adjoint) of
-differential-algebraic equation systems (DAEs) of the form
+* IDAS - for integrating and sensitivity analysis (forward and adjoint) of DAEs
+  of the form
 
-  ``` F(t,y,y',p) = 0, y(t0) = y0(p), y'(t0) = y0'(p) ```
+  $$F(t,y,y',p) = 0, \quad y(t_0) = y_0(p), \quad y'(t_0) = y_0'(p)$$
 
-* KINSOL - for solution of nonlinear algebraic systems of the form
+* KINSOL - for solving nonlinear algebraic systems of the form
 
-  ``` F(u) = 0 ```
+  $$F(u) = 0 \quad \text{or} \quad G(u) = u$$
 
 ## Installation ##
 
-For installation directions see the [INSTALL_GUIDE](./INSTALL_GUIDE.pdf) or
-the installation chapter in any of the package user guides.
+For installation directions, see the [getting started](https://sundials.readthedocs.io/en/latest/sundials/index.html#getting-started)
+section in the online documentation. In the [released tarballs](https://github.com/LLNL/sundials/releases),
+installation directions are also available in `INSTALL_GUIDE.pdf` and the
+installation chapter of the user guides in the `doc` directory.
 
 Warning to users who receive more than one of the individual packages at
-different times: Mixing old and new versions of SUNDIALS may fail. To avoid
-such failures, obtain all desired package at the same time.
+different times: Mixing old and new versions of SUNDIALS may fail. To avoid such
+failures, obtain all desired package at the same time.
 
 ## Support ##
 
-Full user guides for SUNDIALS packages are provided in the [doc](./doc)
-directory along with documentation for example programs.
+Full user guides for all of the SUNDIALS packages are available [online](https://sundials.readthedocs.io).
+In the [released tarballs](https://github.com/LLNL/sundials/releases), the `doc`
+directory includes PDFs of the user guides and documentation for the example
+programs. The example program documentation PDFs are also available on the
+[releases page](https://github.com/LLNL/sundials/releases).
+
+For information on recent changes to SUNDIALS see the [CHANGELOG](./CHANGELOG.md)
+or the introduction chapter of any package user guide.
 
 A list of Frequently Asked Questions on build and installation procedures as
-well as common usage issues is available on the SUNDIALS [FAQ](https://computing.llnl.gov/projects/sundials/faq).
-For dealing with systems with unphysical solutions or discontinuities see the
-SUNDIALS [usage notes](https://computing.llnl.gov/projects/sundials/usage-notes).
+well as common usage issues is available on the SUNDIALS
+[FAQ](https://computing.llnl.gov/projects/sundials/faq). For dealing with
+systems with nonphysical solutions or discontinuities see the SUNDIALS
+[usage notes](https://computing.llnl.gov/projects/sundials/usage-notes).
 
-If you have a question not covered in the FAQ or usage notes, please submit
-your question to the SUNDIALS [mailing list](https://computing.llnl.gov/projects/sundials/mailing-list).
+If you have a question not covered in the FAQ or usage notes, please submit your
+question as a [GitHub issue](https://github.com/LLNL/sundials/issues) or to the
+SUNDIALS [mailing list](https://computing.llnl.gov/projects/sundials/mailing-list).
 
 ## Contributing ##
 
@@ -71,36 +87,42 @@ Bug fixes or minor changes are preferred via a pull request to the
 [SUNDIALS GitHub repository](https://github.com/LLNL/sundials). For more
 information on contributing see the [CONTRIBUTING](./CONTRIBUTING.md) file.
 
-## Release History ##
+## Citing ##
 
-Information on recent changes to SUNDIALS can be found in the "Introduction"
-chapter of each package's user guide and a complete release history is available
-in the "SUNDIALS Release History" appendix of each user guide.
+See the [online documentation](https://sundials.readthedocs.io/en/latest/index.html#citing)
+or [CITATIONS](./CITATIONS.md) file for information on how to cite SUNDIALS in
+any publications reporting work done using SUNDIALS packages.
 
 ## Authors ##
 
 The SUNDIALS library has been developed over many years by a number of
 contributors. The current SUNDIALS team consists of Cody J. Balos,
-David J. Gardner, Alan C. Hindmarsh, Daniel R. Reynolds, and Carol S. Woodward.
-We thank Radu Serban for significant and critical past contributions.
+David J. Gardner, Alan C. Hindmarsh, Daniel R. Reynolds, Steven B. Roberts, and
+Carol S. Woodward. We thank Radu Serban for significant and critical past
+contributions.
 
-Other contributors to SUNDIALS include: James Almgren-Bell, Lawrence E. Banks,
+Other contributors to SUNDIALS include: Mustafa Aggul, James Almgren-Bell, Lawrence E. Banks,
 Peter N. Brown, George Byrne, Rujeko Chinomona, Scott D. Cohen, Aaron Collier,
 Keith E. Grant, Steven L. Lee, Shelby L. Lockhart, John Loffeld, Daniel McGreer,
-Slaven Peles, Cosmin Petra, H. Hunter Schwartz, Jean M. Sexton,
-Dan Shumaker, Steve G. Smith, Allan G. Taylor, Hilari C. Tiedeman, Chris White,
-Ting Yan, and Ulrike M. Yang.
+Yu Pan, Slaven Peles, Cosmin Petra, H. Hunter Schwartz, Jean M. Sexton,
+Dan Shumaker, Steve G. Smith, Shahbaj Sohal, Allan G. Taylor,
+Hilari C. Tiedeman, Chris White, Ting Yan, and Ulrike M. Yang.
 
+## Acknowledgements ##
 
-### Citing SUNDIALS ###
+This material is based on work supported by the U.S. Department of Energy,
+Office of Science, Office of Advanced Scientific Computing Research, Scientific
+Discovery through Advanced Computing (SciDAC) program via the Frameworks,
+Algorithms, and Scalable Technologies for Mathematics (FASTMath) Institute under
+DOE awards DE-AC52-07NA27344 and DE-SC-0021354.
 
-We ask users of SUNDIALS to cite the following paper in any publications
-reporting work done with SUNDIALS:
+This material is also based on work supported by the U.S. Department of Energy,
+Office of Science, Office of Advanced Scientific Computing Research,
+Next-Generation Scientific Software Technologies program under contract
+DE-AC52-07NA27344.  Additional support is also provided by SciDAC
+partnerships with the U.S. Department of Energy’s FES, NP, BES, OE, and BER
+offices as well as the LLNL Institutional Scientific Capability Portfolio.
 
-* Alan C. Hindmarsh, Peter N. Brown, Keith E. Grant, Steven L. Lee, Radu
-Serban, Dan E. Shumaker, and Carol S. Woodward. 2005. SUNDIALS: Suite of
-nonlinear and differential/algebraic equation solvers. ACM Trans. Math. Softw.
-31, 3 (September 2005), 363-396. DOI=http://dx.doi.org/10.1145/1089014.1089020
 
 ## License ##
 
@@ -109,7 +131,7 @@ and [NOTICE](./NOTICE) files for details. All new contributions must be made
 under the BSD 3-clause license.
 
 **Please Note** If you are using SUNDIALS with any third party libraries linked
-in (e.g., LAPACK, KLU, SuperLU_MT, PETSc, or *hypre*), be sure to review the
+in (e.g., LAPACK, KLU, SuperLU_MT, PETSc, *hypre*, etc.), be sure to review the
 respective license of the package as that license may have more restrictive
 terms than the SUNDIALS license.
 

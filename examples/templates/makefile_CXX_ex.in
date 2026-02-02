@@ -2,8 +2,11 @@
 # Programmer(s): David J. Gardner @ LLNL
 # -----------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -21,11 +24,11 @@ SHELL = @SHELL@
 includedir = @CMAKE_INSTALL_FULL_INCLUDEDIR@
 libdir     = @CMAKE_INSTALL_FULL_LIBDIR@
 
-CPP      = @CMAKE_C_COMPILER@
+CPP      = @_EXAMPLES_C_COMPILER@
 CPPFLAGS = @CMAKE_C_FLAGS@
-CC       = @CMAKE_C_COMPILER@
+CC       = @_EXAMPLES_C_COMPILER@
 CFLAGS   = @CMAKE_C_FLAGS@
-CXX      = @CMAKE_CXX_COMPILER@
+CXX      = @_EXAMPLES_CXX_COMPILER@
 CXXFLAGS = @CMAKE_CXX_FLAGS@
 LDFLAGS  = @CMAKE_EXE_LINKER_FLAGS@
 

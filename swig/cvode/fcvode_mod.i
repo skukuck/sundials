@@ -2,8 +2,11 @@
 // Programmer: Cody J. Balos @ LLNL
 // ---------------------------------------------------------------
 // SUNDIALS Copyright Start
-// Copyright (c) 2002-2021, Lawrence Livermore National Security
+// Copyright (c) 2025-2026, Lawrence Livermore National Security,
+// University of Maryland Baltimore County, and the SUNDIALS contributors.
+// Copyright (c) 2013-2025, Lawrence Livermore National Security
 // and Southern Methodist University.
+// Copyright (c) 2002-2013, Lawrence Livermore National Security.
 // All rights reserved.
 //
 // See the top-level LICENSE and NOTICE files for details.
@@ -18,6 +21,9 @@
 
 %include "../sundials/fsundials.i"
 
+// Ignore command-line processing functions since they are not supported in Fortran
+%ignore CVodeSetOptions;
+
 %{
 #include "cvode/cvode.h"
 #include "cvode/cvode_bandpre.h"
@@ -27,12 +33,7 @@
 #include "cvode/cvode_proj.h"
 %}
 
-// Load the typedefs and generate a "use" statements in the module
-%import "../sundials/fsundials_nvector_mod.i"
-%import "../sundials/fsundials_matrix_mod.i"
-%import "../sundials/fsundials_linearsolver_mod.i"
-%import "../sundials/fsundials_nonlinearsolver_mod.i"
-%import "../sundials/fsundials_types_mod.i"
+%import "../sundials/fsundials_core_mod.i"
 
 // Process definitions from these files
 %include "cvode/cvode.h"

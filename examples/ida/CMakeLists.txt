@@ -3,8 +3,11 @@
 #                Cody Balos @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -31,27 +34,28 @@ endif()
 
 # C++ examples
 if(EXAMPLES_ENABLE_CXX)
+  if(ENABLE_RAJA AND RAJA_FOUND)
+    add_subdirectory(raja)
+    if(ENABLE_MPI
+       AND MPI_C_FOUND
+       AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
+      add_subdirectory(mpiraja)
+    endif()
+  endif()
   if(ENABLE_TRILINOS AND Trilinos_FOUND)
     add_subdirectory(trilinos)
   endif()
 endif()
 
 # Fortran examples
-if(BUILD_FORTRAN77_INTERFACE AND EXAMPLES_ENABLE_F77)
-  add_subdirectory(fcmix_serial)
-  if(ENABLE_OPENMP AND OPENMP_FOUND)
-    add_subdirectory(fcmix_openmp)
-  endif()
-  if(ENABLE_PTHREAD AND PTHREADS_FOUND)
-    add_subdirectory(fcmix_pthreads)
-  endif()
-  if(ENABLE_MPI AND MPI_Fortran_FOUND)
-    add_subdirectory(fcmix_parallel)
-  endif()
-endif()
-
 if(BUILD_FORTRAN_MODULE_INTERFACE AND EXAMPLES_ENABLE_F2003)
   add_subdirectory(F2003_serial)
+  if(ENABLE_MPI)
+    add_subdirectory(F2003_parallel)
+  endif()
+  if(ENABLE_OPENMP AND OPENMP_FOUND)
+    add_subdirectory(F2003_openmp)
+  endif()
 endif()
 
 # cuda examples
@@ -61,13 +65,6 @@ if(EXAMPLES_ENABLE_CUDA)
     add_subdirectory(cuda)
     if(ENABLE_MPI AND MPI_C_FOUND)
       add_subdirectory(mpicuda)
-    endif()
-  endif()
-
-  if(ENABLE_RAJA AND RAJA_FOUND)
-    add_subdirectory(raja)
-    if(ENABLE_MPI AND MPI_C_FOUND)
-      add_subdirectory(mpiraja)
     endif()
   endif()
 

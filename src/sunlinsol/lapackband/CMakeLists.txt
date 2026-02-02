@@ -1,9 +1,12 @@
 # ---------------------------------------------------------------
-# Programmer(s): Daniel R. Reynolds @ SMU
+# Programmer(s): Daniel R. Reynolds @ UMBC
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -16,41 +19,24 @@
 
 install(CODE "MESSAGE(\"\nInstall SUNLINSOL_LAPACKBAND\n\")")
 
+# Workaround bug in older versions of CMake where the BLAS::BLAS target, which
+# LAPACK::LAPACK depends on, is not picked up by LINK_LIBRARIES
+set(_lapack_targets LAPACK::LAPACK)
+if(CMAKE_VERSION VERSION_LESS 3.20)
+  list(APPEND _lapack_targets BLAS::BLAS)
+endif()
+
 # Add the library
-sundials_add_library(sundials_sunlinsollapackband
-  SOURCES
-    sunlinsol_lapackband.c
-  HEADERS
-    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_lapackband.h
-  INCLUDE_SUBDIR
-    sunlinsol
+sundials_add_library(
+  sundials_sunlinsollapackband
+  SOURCES sunlinsol_lapackband.c
+  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_lapackband.h
+  INCLUDE_SUBDIR sunlinsol
+  LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES
-    sundials_generic_obj
-  LINK_LIBRARIES
-    PUBLIC sundials_sunmatrixband ${LAPACK_LIBRARIES}
-  OUTPUT_NAME
-    sundials_sunlinsollapackband
-  VERSION
-    ${sunlinsollib_VERSION}
-  SOVERSION
-    ${sunlinsollib_VERSION}
-)
+  LINK_LIBRARIES PUBLIC sundials_sunmatrixband ${_lapack_targets}
+  OUTPUT_NAME sundials_sunlinsollapackband
+  VERSION ${sunlinsollib_VERSION}
+  SOVERSION ${sunlinsollib_SOVERSION})
 
 message(STATUS "Added SUNLINSOL_LAPACKBAND module")
-
-# If FCMIX is enabled, build and install the Fortran77 library
-if(BUILD_FORTRAN77_INTERFACE)
-  sundials_add_library(sundials_fsunlinsollapackband
-    SOURCES
-    fsunlinsol_lapackband.c
-    LINK_LIBRARIES
-      PRIVATE sundials_fnvecserial sundials_fsunmatrixband sundials_sunlinsollapackband
-    OUTPUT_NAME
-      sundials_fsunlinsollapackband
-    VERSION
-      ${sunlinsollib_VERSION}
-    SOVERSION
-      ${sunlinsollib_SOVERSION}
-  )
-  message(STATUS "Added SUNLINSOL_LAPACKBAND F77 interface")
-endif()

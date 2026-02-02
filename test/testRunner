@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # ---------------------------------------------------------------
 # Programmer(s): Steven Smith @ LLNL
 #                David J. Gardner @ LLNL
@@ -6,8 +6,11 @@
 # Acknowledgement: Based on code from Chris White @ LLNL
 # ---------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
 # All rights reserved.
 #
 # See the top-level LICENSE and NOTICE files for details.
@@ -16,7 +19,7 @@
 # SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # Sundials test runner for CTest. Note examples must be enabled
-# to use the test runner (e.g. EXAMPLES_ENABLE_C=ON). 
+# to use the test runner (e.g. EXAMPLES_ENABLE_C=ON).
 #
 # All output from the test runner output will be collected in
 # <build directory>/Testing/Temporary/LastTest.log
@@ -29,6 +32,8 @@ import subprocess
 import sys
 import argparse
 import re
+import datetime
+import math
 
 def main():
     parser = argparse.ArgumentParser(description='Sundials test runner for use in ctest.')
@@ -52,9 +57,9 @@ def main():
     parser.add_argument('--runargs', dest='runArgs', type=str,
                         help='command line arguments passed to test executable')
 
-    parser.add_argument('--floatprecision', dest='floatPrecision', type=int,
+    parser.add_argument('--floatprecision', dest='floatPrecision', type=int, default=4,
                         help='precision for floating point failure comparison (number of digits')
-    parser.add_argument('--integerpercentage', dest='integerPercentage', type=int,
+    parser.add_argument('--integerpercentage', dest='integerPercentage', type=int, default=10,
                         help='integer percentage difference for failure comparison')
 
     parser.add_argument('--nodiff', dest='CheckDiff', action='store_false',
@@ -65,8 +70,13 @@ def main():
     parser.add_argument('--buildcmd', dest='buildCmd', type=str,
                         help='CMake command used to build the example')
 
+    parser.add_argument('--profile', dest='profile', action='store_true',
+                        help='Gather profiling data (requires Caliper to be enabled)')
+
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         help='run verbosely')
+
+    parser.add_argument('--calidir', dest='caliDir', type=str, help='path to directory to write .cali files to')
 
     args = parser.parse_args()
 
@@ -80,10 +90,13 @@ def main():
         print("runArgs=%s"%(args.runArgs))
         print("buildDir=%s"%(args.buildDir))
         print("buildCmd=%s"%(args.buildCmd))
+        print("profile=%s"%(args.profile))
+        print("caliDir=%s"%{args.caliDir})
 
-    # regression test name and output directory 
+    # regression test name and output directory
     testName  = args.testName
     outDir    = args.outputDir
+    caliDir   = args.caliDir
 
     # path to Sundials test directory
     testDir = os.path.dirname(sys.argv[0])
@@ -93,9 +106,9 @@ def main():
         answerDir = args.answerDir
     else:
         answerDir = os.path.join(testDir, "answers")
-    
+
     if(args.verbose):
-        print("testName %s"%testDir)
+        print("testName %s"%testName)
         print("outDir %s"%outDir)
         print("testDir %s"%testDir)
         print("answerDir %s"%answerDir)
@@ -132,7 +145,7 @@ def main():
                 error("cmake exited with error code " + str(process.returncode)
                       + "for ", args.buildDir)
                 success = False
-                
+
             # build the example
             process = subprocess.Popen(makeCommand, stdout=outFile, stderr=outFile)
             process.wait()
@@ -179,7 +192,7 @@ def main():
             else:
                 answerFileName = testName
 
-        # if user supplies filename overide default choices
+        # if user supplies filename override default choices
         if(args.answerFile):
             answerFileName = args.answerFile
 
@@ -187,30 +200,42 @@ def main():
 
         answerPath = os.path.join(answerDir, answerFileName)
 
-        # if user supplies precision info overide the default choices
-        if(args.floatPrecision):
+        # If profiling set the CALI_CONFIG environment variable
+        if(args.profile):
+            dateTime = datetime.datetime.now().strftime("%m%d%Y_%H%M%S")
+            profilePath = os.path.join(caliDir, args.testName+".%s.cali" % dateTime)
+            os.environ['CALI_SERVICES_ENABLE'] = 'env'
+            os.environ['TEST_NAME'] = testName
+            os.environ['CALI_ENV_EXTRA'] = 'TEST_NAME'
+            os.environ['CALI_CONFIG'] = 'spot(output=%s)' % profilePath
+
+        # if user supplies precision info override the default choices
+        if(args.floatPrecision >= 0):
             testInfo.floatPrecision=args.floatPrecision
 
-        if(args.integerPercentage):
+        if(args.integerPercentage >= 0):
             testInfo.integerPercentage=args.integerPercentage
-        
+
         if(args.verbose):
             print("Starting test...")
             print("  Floating Point Precision = " + str(testInfo.floatPrecision))
             print("  Integer Precision = " + str(testInfo.integerPercentage))
             print("  Command " + ' '.join(testCommand))
             print("  Answer File = " + answerPath)
-            print("  Output File = " + outPath + "\n")
+            print("  Output File = " + outPath)
+            if(args.profile):
+                print("  ENV{CALI_CONFIG} = " + os.environ['CALI_CONFIG'])
+            print("\n")
 
         outFile = open(outPath, 'w')
         try:
             if(args.verbose):
                 print("Running command : " + ' '.join(testCommand))
-                        
+
             # run the test
             process = subprocess.Popen(testCommand, stdout=outFile, stderr=outFile)
             process.wait()
-            
+
             # check test return value
             if process.returncode != 0:
                 error("Exited with error code " + str(process.returncode) + ".", testName)
@@ -314,7 +339,7 @@ def intCompare(answer, value, percentage):
     # Check if error between value and answer is greater than the allowed percentage
     if answer == value:
         return True
-    if percentage != 0:
+    if percentage != 0 and answer != 0:
         percentageOff = abs(int(100 - (float(value)/float(answer) * 100)))
         if percentageOff <= percentage:
             return True
@@ -330,10 +355,8 @@ def isFloat(value):
 
 def floatCompare(answer, value, precision):
     # Check if two floating point numbers are the same to a given number of digits
-    if precision == 0:
-        if answer == value:
-            return True
-    elif round(answer, precision) == round(value, precision):
+    tol = 0 if precision == 0 else 10**-precision
+    if math.isclose(answer, value, rel_tol=tol, abs_tol=tol):
         return True
     print("Error: Floating point difference found:\n Value = " + str(value) + ", Answer = " + str(answer) + ", allowance = " + str(precision) + " decimals")
     return False
@@ -387,8 +410,8 @@ def getInfo(testName, testDir):
                                           lineInfo[3].strip()))
 
     if len(testInfos) == 0:
-        # Note: If no info is found in the testInfo file then run the test 
-        # without arguments and use the default comparisions values
+        # Note: If no info is found in the testInfo file then run the test
+        # without arguments and use the default comparisons values
         testInfos.append(TestInfo(4,10,""))
     return testInfos
 

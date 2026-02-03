@@ -474,7 +474,13 @@ int mriStep_NlsResidual(N_Vector zcor, N_Vector r, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
+  if (ark_mem->PreProcessRHS != NULL)
+  {
+    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+                                    ark_mem->user_data);
+    if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);
@@ -529,7 +535,13 @@ int mriStep_NlsFPFunction(N_Vector zcor, N_Vector g, void* arkode_mem)
   /* update 'ycur' value as stored predictor + current corrector */
   N_VLinearSum(ONE, step_mem->zpred, ONE, zcor, ark_mem->ycur);
 
-  /* compute slow implicit RHS and save for later */
+  /* apply user-supplied RHS preprocessing function (if supplied), and then call RHS */
+  if (ark_mem->PreProcessRHS != NULL)
+  {
+    retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+                                    ark_mem->user_data);
+    if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
+  }
   retval = step_mem->nls_fsi(ark_mem->tcur, ark_mem->ycur,
                              step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
                              ark_mem->user_data);

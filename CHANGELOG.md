@@ -23,6 +23,10 @@ ARKBBDPRE, banded or dense linear solvers with automatically-approximated Jacobi
 matrices, iterative linear solvers with automatically-approximated Jacobian-times-vector
 product, temporal root-finding, discrete adjoint modules in ARKStep or ERKStep, the
 SPRKStep stepper, and LSRKStep's use of the automated dominant eigenvalue estimation module.
+The default numbers of stages for the SSP Runge--Kutta methods `ARKODE_LSRK_SSP_S_2` and
+`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to their minimum
+allowable values of 2 and 4.  Users may revert to the previous values by calling
+`LSRKStepSetNumSSPStages`.
 
 An optional N_Vector routine, `N_VCopy`, was added, to streamline data copies between two
 vectors.  For user-supplied N_Vector modules that do not provide this function, `N_VScale`

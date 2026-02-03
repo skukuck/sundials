@@ -209,12 +209,8 @@ endif()
 
 # Fortran 2003 interface is disabled by default
 sundials_option(
-  BUILD_FORTRAN_MODULE_INTERFACE
-  BOOL
-  "Enable Fortran 2003 modules"
-  OFF
-  DEPRECATED_NAMES
-  F2003_INTERFACE_ENABLE)
+  BUILD_FORTRAN_MODULE_INTERFACE BOOL "Enable Fortran 2003 modules" OFF
+  DEPRECATED_NAMES F2003_INTERFACE_ENABLE)
 
 if(BUILD_FORTRAN_MODULE_INTERFACE)
   # F2003 interface only supports double precision

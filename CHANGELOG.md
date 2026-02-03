@@ -15,8 +15,11 @@ the provided preconditioners ARKBANDPRE and ARKBBDPRE, banded or dense linear
 solvers with automatically-approximated Jacobian matrices, iterative linear solvers
 with automatically-approximated Jacobian-times-vector product, temporal root-finding,
 discrete adjoint modules in ARKStep or ERKStep, the SPRKStep stepper, and LSRKStep's
-use of the automated dominant eigenvalue estimation module.
-
+use of the automated dominant eigenvalue estimation module.  The default numbers of
+stages for the SSP Runge--Kutta methods `ARKODE_LSRK_SSP_S_2` and `ARKODE_LSRK_SSP_S_3`
+in LSRKStep were changed from 10 and 9, respectively, to their minimum allowable
+values of 2 and 4.  Users may revert to the previous values by calling
+`LSRKStepSetNumSSPStages`.
 
 ### Bug Fixes
 

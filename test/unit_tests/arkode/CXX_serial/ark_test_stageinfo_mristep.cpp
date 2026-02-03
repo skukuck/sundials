@@ -177,6 +177,12 @@ int main(int argc, char* argv[])
   flag = ARKodeSStolerances(arkode_mem, rtol, atol);
   if (check_flag(flag, "ARKodeSStolerances")) { return 1; }
 
+  // Set the slow step size
+  const sunrealtype hfixed = SUN_RCONST(0.001);
+
+  flag = ARKodeSetFixedStep(arkode_mem, hfixed);
+  if (check_flag(flag, "ARKodeSetFixedStep")) { return 1; }
+
   SUNMatrix A        = nullptr;
   SUNLinearSolver LS = nullptr;
 

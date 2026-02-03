@@ -44,7 +44,7 @@ Using SSP(s,3) method
     [Post-stage processing (stage 7 of 9) at t = 5.09e-08 (tn = 6.10e-12 , tcur = 5.09e-08), ||y||_2 = 5.0868733724e-08]
     [Pre-RHS processing (stage 8 of 9) at t = 5.09e-08 (tn = 6.10e-12 , tcur = 5.09e-08), ||y||_2 = 5.0868733724e-08]
     [Post-step processing at t = 6.10e-08 (tn = 6.10e-12 , tcur = 6.10e-08),||y||_2 = 6.1041259766e-08]
-       6.1041259766e-08       6.1041259766e-08       1.3234889801e-23
+       6.1041259766e-08       6.1041259766e-08       0.0000000000e+00
     [Pre-step processing at t = 6.10e-08 (tn = 6.10e-08 , tcur = 6.10e-08),||y||_2 = 6.1041259766e-08]
     [Pre-RHS processing (stage 0 of 9) at t = 6.10e-08 (tn = 6.10e-08 , tcur = 6.10e-08), ||y||_2 = 6.1041259766e-08]
     [Post-stage processing (stage 0 of 9) at t = 2.64e-07 (tn = 6.10e-08 , tcur = 2.64e-07), ||y||_2 = 2.6449178060e-07]

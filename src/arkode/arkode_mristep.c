@@ -2025,8 +2025,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       if (ark_mem->PreProcessRHS != NULL)
       {
         if (step_mem->explicit_rhs ||
-            (step_mem->implicit_rhs && (!step_mem->deduce_rhs ||
-             (step_mem->stagetypes[is] != MRISTAGE_DIRK_NOFAST))))
+            (step_mem->implicit_rhs &&
+             (!step_mem->deduce_rhs ||
+              (step_mem->stagetypes[is] != MRISTAGE_DIRK_NOFAST))))
         {
           retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);

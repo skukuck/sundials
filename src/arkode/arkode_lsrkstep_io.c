@@ -121,7 +121,7 @@ int LSRKStepSetSSPMethod(void* arkode_mem, ARKODE_LSRKMethodType method)
     step_mem->p = ark_mem->hadapt_mem->p = 1;
     break;
   case ARKODE_LSRK_SSP_S_3:
-    ark_mem->step          = lsrkStep_TakeStepSSPs3;
+    ark_mem->step          = lsrkStep_TakeStepSSP43;
     step_mem->is_SSP       = SUNTRUE;
     step_mem->req_stages   = 4;
     step_mem->nfusedopvecs = 3;
@@ -465,7 +465,14 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
                         "reset the default value");
         return ARK_ILL_INPUT;
       }
-      if (num_of_stages == 4) { ark_mem->step = lsrkStep_TakeStepSSP43; }
+      if (num_of_stages == 4)
+      {
+        ark_mem->step = lsrkStep_TakeStepSSP43;
+      }
+      else
+      {
+        ark_mem->step = lsrkStep_TakeStepSSPs3;
+      }
       break;
 
     case ARKODE_LSRK_SSP_10_4:

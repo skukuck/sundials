@@ -465,14 +465,8 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
                         "reset the default value");
         return ARK_ILL_INPUT;
       }
-      if (num_of_stages == 4)
-      {
-        ark_mem->step = lsrkStep_TakeStepSSP43;
-      }
-      else
-      {
-        ark_mem->step = lsrkStep_TakeStepSSPs3;
-      }
+      if (num_of_stages == 4) { ark_mem->step = lsrkStep_TakeStepSSP43; }
+      else { ark_mem->step = lsrkStep_TakeStepSSPs3; }
       break;
 
     case ARKODE_LSRK_SSP_10_4:

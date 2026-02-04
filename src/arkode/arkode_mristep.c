@@ -2706,7 +2706,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       if (ark_mem->PreProcessRHS != NULL)
       {
         if (step_mem->explicit_rhs ||
-            step_mem->implicit_rhs && (!step_mem->deduce_rhs || !impl_corr))
+            (step_mem->implicit_rhs && (!step_mem->deduce_rhs || !impl_corr)))
         {
           retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
                                           ark_mem->user_data);

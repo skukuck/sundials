@@ -2106,13 +2106,16 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
        of tcur corresponds to the stage time from the implicit table (c_i^I). */
     if (ark_mem->PreProcessRHS != NULL)
     {
-      retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
-                                      ark_mem->user_data);
-      if (retval != 0)
+      if ((step_mem->implicit && !deduce_stage) || (step_mem->explicit))
       {
-        SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                   "status = failed preprocess stage, retval = %i", retval);
-        return (ARK_POSTPROCESS_STAGE_FAIL);
+        retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+                                        ark_mem->user_data);
+        if (retval != 0)
+        {
+          SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                     "status = failed preprocess stage, retval = %i", retval);
+          return (ARK_POSTPROCESS_STAGE_FAIL);
+        }
       }
     }
 

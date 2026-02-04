@@ -2045,13 +2045,18 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       /* apply user-supplied stage preprocessing function (if supplied) */
       if (ark_mem->PreProcessRHS != NULL)
       {
-        retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
-        if (retval != 0)
+        if (step_mem->explicit_rhs ||
+            (step_mem->implicit_rhs && (!step_mem->deduce_rhs ||
+             (step_mem->stagetypes[is] != MRISTAGE_DIRK_NOFAST))))
         {
-          SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                     "status = failed preprocess stage, retval = %i", retval);
-          return (ARK_POSTPROCESS_STAGE_FAIL);
+          retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+          if (retval != 0)
+          {
+            SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                       "status = failed preprocess stage, retval = %i", retval);
+            return (ARK_POSTPROCESS_STAGE_FAIL);
+          }
         }
       }
 
@@ -2684,13 +2689,17 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       /* apply user-supplied stage preprocessing function (if supplied) */
       if (ark_mem->PreProcessRHS != NULL)
       {
-        retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
-                                        ark_mem->user_data);
-        if (retval != 0)
+        if (step_mem->explicit_rhs ||
+            step_mem->implicit_rhs && (!step_mem->deduce_rhs || !impl_corr))
         {
-          SUNLogInfo(ARK_LOGGER, "end-stages-list",
-                     "status = failed preprocess stage, retval = %i", retval);
-          return (ARK_POSTPROCESS_STAGE_FAIL);
+          retval = ark_mem->PreProcessRHS(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
+          if (retval != 0)
+          {
+            SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                       "status = failed preprocess stage, retval = %i", retval);
+            return (ARK_POSTPROCESS_STAGE_FAIL);
+          }
         }
       }
 

@@ -59,6 +59,7 @@ module fnvector_openmp_mod
  public :: FN_VInvTest_OpenMP
  public :: FN_VConstrMask_OpenMP
  public :: FN_VMinQuotient_OpenMP
+ public :: FN_VCopy_OpenMP
  public :: FN_VLinearCombination_OpenMP
  public :: FN_VScaleAddMulti_OpenMP
  public :: FN_VDotProdMulti_OpenMP
@@ -342,6 +343,15 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
+end function
+
+function swigc_FN_VCopy_OpenMP(farg1, farg2) &
+bind(C, name="_wrap_FN_VCopy_OpenMP") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
 end function
 
 function swigc_FN_VLinearCombination_OpenMP(farg1, farg2, farg3, farg4) &
@@ -1031,6 +1041,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(num)
 farg2 = c_loc(denom)
 fresult = swigc_FN_VMinQuotient_OpenMP(farg1, farg2)
+swig_result = fresult
+end function
+
+function FN_VCopy_OpenMP(x, z) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: z
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(x)
+farg2 = c_loc(z)
+fresult = swigc_FN_VCopy_OpenMP(farg1, farg2)
 swig_result = fresult
 end function
 

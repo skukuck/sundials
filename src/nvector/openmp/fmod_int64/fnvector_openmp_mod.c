@@ -601,6 +601,20 @@ SWIGEXPORT double _wrap_FN_VMinQuotient_OpenMP(N_Vector farg1, N_Vector farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FN_VCopy_OpenMP(N_Vector farg1, N_Vector farg2) {
+  int fresult ;
+  N_Vector arg1 = (N_Vector) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (N_Vector)(farg1);
+  arg2 = (N_Vector)(farg2);
+  result = (SUNErrCode)N_VCopy_OpenMP(arg1,arg2);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FN_VLinearCombination_OpenMP(int const *farg1, double *farg2, void *farg3, N_Vector farg4) {
   int fresult ;
   int arg1 ;

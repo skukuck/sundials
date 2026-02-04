@@ -53,6 +53,7 @@ module fnvector_manyvector_mod
  public :: FN_VWrmsNormMask_ManyVector
  public :: FN_VWL2Norm_ManyVector
  public :: FN_VCompare_ManyVector
+ public :: FN_VCopy_ManyVector
  public :: FN_VLinearCombination_ManyVector
  public :: FN_VScaleAddMulti_ManyVector
  public :: FN_VDotProdMulti_ManyVector
@@ -293,6 +294,15 @@ real(C_DOUBLE), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 end subroutine
+
+function swigc_FN_VCopy_ManyVector(farg1, farg2) &
+bind(C, name="_wrap_FN_VCopy_ManyVector") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
 
 function swigc_FN_VLinearCombination_ManyVector(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VLinearCombination_ManyVector") &
@@ -974,6 +984,22 @@ farg2 = c_loc(x)
 farg3 = c_loc(z)
 call swigc_FN_VCompare_ManyVector(farg1, farg2, farg3)
 end subroutine
+
+function FN_VCopy_ManyVector(x, z) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: z
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(x)
+farg2 = c_loc(z)
+fresult = swigc_FN_VCopy_ManyVector(farg1, farg2)
+swig_result = fresult
+end function
 
 function FN_VLinearCombination_ManyVector(nvec, c, v, z) &
 result(swig_result)

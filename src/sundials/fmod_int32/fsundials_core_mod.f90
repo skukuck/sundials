@@ -221,6 +221,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvinvtest
   type(C_FUNPTR), public :: nvconstrmask
   type(C_FUNPTR), public :: nvminquotient
+  type(C_FUNPTR), public :: nvcopy
   type(C_FUNPTR), public :: nvlinearcombination
   type(C_FUNPTR), public :: nvscaleaddmulti
   type(C_FUNPTR), public :: nvdotprodmulti
@@ -285,6 +286,7 @@ module fsundials_core_mod
  public :: FN_VInvTest
  public :: FN_VConstrMask
  public :: FN_VMinQuotient
+ public :: FN_VCopy
  public :: FN_VLinearCombination
  public :: FN_VScaleAddMulti
  public :: FN_VDotProdMulti
@@ -1320,6 +1322,15 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE) :: fresult
+end function
+
+function swigc_FN_VCopy(farg1, farg2) &
+bind(C, name="_wrap_FN_VCopy") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
 end function
 
 function swigc_FN_VLinearCombination(farg1, farg2, farg3, farg4) &
@@ -4122,6 +4133,22 @@ type(C_PTR) :: farg2
 farg1 = c_loc(num)
 farg2 = c_loc(denom)
 fresult = swigc_FN_VMinQuotient(farg1, farg2)
+swig_result = fresult
+end function
+
+function FN_VCopy(x, z) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(N_Vector), target, intent(inout) :: x
+type(N_Vector), target, intent(inout) :: z
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(x)
+farg2 = c_loc(z)
+fresult = swigc_FN_VCopy(farg1, farg2)
 swig_result = fresult
 end function
 

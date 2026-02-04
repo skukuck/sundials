@@ -2309,10 +2309,7 @@ int CVodeGetSensErrWeights(void* cvode_mem, N_Vector* eSweight)
 
   Ns = cv_mem->cv_Ns;
 
-  for (is = 0; is < Ns; is++)
-  {
-    N_VCopy(cv_mem->cv_ewtS[is], eSweight[is]);
-  }
+  for (is = 0; is < Ns; is++) { N_VCopy(cv_mem->cv_ewtS[is], eSweight[is]); }
 
   return (CV_SUCCESS);
 }

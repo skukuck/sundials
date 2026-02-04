@@ -7288,10 +7288,7 @@ static int cvQuadNls(CVodeMem cv_mem)
 
   /* If needed, save the value of yQdot = fQ into ftempQ
    * for use in evaluating fQS */
-  if (cv_mem->cv_quadr_sensi)
-  {
-    N_VCopy(cv_mem->cv_acorQ, cv_mem->cv_ftempQ);
-  }
+  if (cv_mem->cv_quadr_sensi) { N_VCopy(cv_mem->cv_acorQ, cv_mem->cv_ftempQ); }
 
   N_VLinearSum(cv_mem->cv_h, cv_mem->cv_acorQ, -ONE, cv_mem->cv_znQ[1],
                cv_mem->cv_acorQ);

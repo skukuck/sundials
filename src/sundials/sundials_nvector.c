@@ -565,10 +565,7 @@ SUNErrCode N_VCopy(N_Vector x, N_Vector z)
     return (ier);
   }
 
-  if (z->ops->nvcopy != NULL)
-  {
-    ier = z->ops->nvcopy(x, z);
-  }
+  if (z->ops->nvcopy != NULL) { ier = z->ops->nvcopy(x, z); }
   else
   {
     z->ops->nvscale(SUN_RCONST(1.0), x, z);

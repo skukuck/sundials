@@ -1306,10 +1306,7 @@ int Test_N_VCopy(N_Vector X, N_Vector Z, sunindextype local_length, int myid)
 
   /* Z should be vector of -1 */
   failure = check_ans(NEG_ONE, Z, local_length);
-  if (failure)
-  {
-    printf(">>> FAILED test -- N_VCopy, Proc %d \n", myid);
-  }
+  if (failure) { printf(">>> FAILED test -- N_VCopy, Proc %d \n", myid); }
   else if (myid == 0) { printf("PASSED test -- N_VCopy \n"); }
 
   /* find max time across all processes */

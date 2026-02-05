@@ -253,64 +253,13 @@ def log_file_to_list(filename):
     return step_attempts
 
 
-def _print_log_list(a_list, indent=0):
-    """Print list value from a log entry dictionary"""
-    spaces = (indent + 2) * " "
-    for entry in a_list:
-        if type(entry) is list:
-            print(f"{spaces}[")
-            _print_log_list(entry, indent + 2)
-            print(f"{spaces}]")
-        elif type(entry) is dict:
-            print(f"{spaces}{{")
-            _print_log_dict(entry, indent + 2)
-            print(f"{spaces}}}")
-        else:
-            print(f"{spaces}{entry}")
-
-
-def _print_log_dict(a_dict, indent=0):
-    """Print dictionary value from a log entry dictionary"""
-    spaces = (indent + 2) * " "
-    for key in a_dict:
-        if type(a_dict[key]) is list:
-            print(f"{spaces}{key} :")
-            print(f"{spaces}[")
-            _print_log_list(a_dict[key], indent=indent + 2)
-            print(f"{spaces}]")
-        elif type(a_dict[key]) is dict:
-            print(f"{spaces}{key} :")
-            print(f"{spaces}{{")
-            _print_log_dict(a_dict[key], indent=indent + 2)
-            print(f"{spaces}}}")
-        else:
-            print(f"{spaces}{key} : {a_dict[key]}")
-
-
-def print_log(log, indent=0):
-    """Print a log file list created by :py:func:`log_file_to_list`.
+def print_log(log, indent=2):
+    """Print a log file list created by :py:func:`log_file_to_list` as formatted JSON.
 
     :param list log: The log file list to print.
-    :param int indent: The number of spaces to indent the output.
+    :param int indent: The number of spaces to indent the JSON output (default: 2).
     """
-    spaces = indent * " "
-    subspaces = (indent + 2) * " "
-    for entry in log:
-        print(f"{spaces}{{")
-        for key in entry:
-            if type(entry[key]) is list:
-                print(f"{subspaces}{key} :")
-                print(f"{subspaces}[")
-                _print_log_list(entry[key], indent=indent + 2)
-                print(f"{subspaces}]")
-            elif type(entry[key]) is dict:
-                print(f"{subspaces}{key} :")
-                print(f"{subspaces}{{")
-                _print_log_dict(entry[key], indent=indent + 2)
-                print(f"{subspaces}}}")
-            else:
-                print(f"{subspaces}{key} : {entry[key]}")
-        print(f"{spaces}}}")
+    print(json.dumps(log, indent=indent))
 
 
 def get_history(

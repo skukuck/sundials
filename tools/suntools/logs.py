@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 
 import re
-from collections import ChainMap
+import json
 
 
 def _convert_to_num(s):
@@ -117,53 +117,41 @@ class StepData:
     """
 
     def __init__(self):
-        self.container = [ChainMap()]
-        self.parent_keys = ["main"]
+        self.stack = [{}]
 
     def __repr__(self):
-        tmp = "Container:"
-        for entry in self.container:
-            tmp += f"\n  {entry}"
-        tmp += "\nParent Keys:"
-        for entry in self.parent_keys:
-            tmp += f"\n  {entry}"
-        return tmp
+        return json.dumps(self.stack[0], indent=2)
 
     def update(self, data):
         """Update the active dictionary"""
-        self.container[-1].update(data)
+        self.stack[-1].update(data)
 
     def open_dict(self, key):
-        """Activate a dictionary"""
-        self.container[-1][key] = {}
-        self.container[-1] = self.container[-1].new_child(self.container[-1][key])
+        """Activate a nested dictionary"""
+        self.stack[-1][key] = {}
+        self.stack.append(self.stack[-1][key])
 
     def close_dict(self):
         """Deactivate the active dictionary"""
-        self.container[-1] = self.container[-1].parents
+        self.stack.pop()
 
     def open_list(self, key):
         """Activate a list of dictionaries"""
-        if key in self.container[-1]:
-            self.container.append(ChainMap())
-        else:
-            self.container[-1][key] = []
-            self.container.append(ChainMap())
-        self.parent_keys.append(key)
+        if key not in self.stack[-1]:
+            self.stack[-1][key] = []
+        new_dict = {}
+        self.stack[-1][key].append(new_dict)
+        self.stack.append(new_dict)
 
     def close_list(self):
         """Deactivate the active list"""
-        tmp = self.container[-1].maps[0]
-        self.container[-2][self.parent_keys[-1]].append(tmp)
-        self.parent_keys.pop()
-        self.container.pop()
+        self.stack.pop()
 
     def get_step(self):
         """Get the step dictionary and reset the container"""
-        tmp = self.container.pop().maps[0]
-        self.container = [ChainMap()]
-        self.parent_keys = ["main"]
-        return tmp
+        result = self.stack[0]
+        self.stack = [{}]
+        return result
 
 
 def log_file_to_list(filename):

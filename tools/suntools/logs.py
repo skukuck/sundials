@@ -64,10 +64,10 @@ def _parse_logfile_payload(payload, line_number, all_lines, array_indicator="(:)
                 for line in all_lines[line_number + 1 :]:
                     if line.startswith("[") or not line.strip():
                         break
-                    values.append(float(line))
+                    values.append(_convert_to_num(line.strip()))
                 kvp_dict[key.strip()] = values
             else:
-                kvp_dict[key.strip()] = value.strip()
+                kvp_dict[key.strip()] = _convert_to_num(value.strip())
     return kvp_dict
 
 
@@ -327,7 +327,7 @@ def _get_history(log, key, step_status, time_range, step_range):
         if key in entry and save_data:
             steps.append(step)
             times.append(time)
-            values.append(_convert_to_num(entry[key]))
+            values.append(entry[key])
             levels.append(level)
 
         if "stages" in entry:

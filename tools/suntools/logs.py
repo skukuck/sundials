@@ -99,7 +99,7 @@ def _parse_logfile_line(line, line_number, all_lines):
        y_2
        ...
     """
-    pattern = re.compile(r"\[(\w+)\]\[(rank \d+)\]\[(.*)\]\[(.*)\](.*)")
+    pattern = re.compile(r"\[(\w+)\]\[(rank \d+)\]\[(.*?)\]\[(.*?)\](.*)")
     matches = pattern.findall(line)
     line_dict = {}
     if matches:

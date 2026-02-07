@@ -128,7 +128,8 @@ class StepData:
 
     def open_dict(self, key):
         """Activate a nested dictionary"""
-        self.stack[-1][key] = {}
+        if key not in self.stack[-1]:
+            self.stack[-1][key] = {}
         self.stack.append(self.stack[-1][key])
 
     def close_dict(self):

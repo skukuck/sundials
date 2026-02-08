@@ -51,7 +51,7 @@ def _parse_logfile_payload(payload, line_number, all_lines, array_indicator="(:)
     kvpstrs = payload.split(",")
     kvp_dict = {}
     for kvpstr in kvpstrs:
-        kvp = kvpstr.split("=", 1) # only split on first =
+        kvp = kvpstr.split("=", 1)  # only split on first =
         if len(kvp) == 1:
             # Check for empty payload
             if not kvp[0].strip():
@@ -124,6 +124,9 @@ class StepData:
 
     def update(self, data):
         """Update the active dictionary"""
+        conflicts = self.stack[-1].keys() & data.keys()
+        if conflicts:
+            raise KeyError(f"Cannot update: keys already exist: {conflicts}")
         self.stack[-1].update(data)
 
     def open_dict(self, key):

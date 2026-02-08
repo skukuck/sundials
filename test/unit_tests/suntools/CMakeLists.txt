@@ -33,7 +33,7 @@ add_test(
 
 set_tests_properties(test_logfile_parse_payload PROPERTIES
   ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
-  LABELS "suntools;logs"
+  LABELS "suntools;logging"
 )
 
 # Add the test and configure the environment
@@ -44,7 +44,18 @@ add_test(
 
 set_tests_properties(test_logfile_parse_line PROPERTIES
   ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
-  LABELS "suntools;logs"
+  LABELS "suntools;logging"
+)
+
+# Add the test and configure the environment
+add_test(
+  NAME test_logfile_to_list
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_logfile_to_list.py
+)
+
+set_tests_properties(test_logfile_to_list PROPERTIES
+  ENVIRONMENT "PYTHONPATH=${SUNTOOLS_DIR}"
+  LABELS "suntools;logging"
 )
 
 message(STATUS "Added suntools log parser tests")

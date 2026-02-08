@@ -159,17 +159,80 @@ class StepData:
 
 
 def log_file_to_list(filename):
-    """Parses a log file and returns a list of dictionaries.
+    """Parse a log file and return as a Python list of dictionaries.
+
+    This is the core parsing function that converts SUNDIALS log files into Python
+    data structures. Use this function when you need to work with the data directly
+    in Python (analysis, filtering, custom processing).
 
     :param str filename: The name of the log file to parse.
-    :returns: A list of dictionaries.
+    :returns: A list of dictionaries, one per step attempt.
+    :rtype: list[dict]
 
     The list returned for a time integrator log file will contain a dictionary for each
-    step attempt e.g.,
+    step attempt:
 
-    .. code-block:: none
+    .. code-block:: python
 
-       [ {step : 1, tn : 0.0, h : 0.01, ...}, {step : 2, tn : 0.01, h : 0.10, ...}, ...]
+       [
+         {
+           "step": 1,
+           "tn": 0.0,
+           "h": 0.01,
+           "status": "success",
+           "dsm": 2.6e-13,
+           "level": 0,
+           "stages": [
+             {"stage": 0, "implicit": 0, "tcur": 0.0, "status": "success"},
+             {"stage": 1, "implicit": 0, "tcur": 0.001, "status": "success"},
+             ...
+           ],
+           "compute-solution": {
+             "mass type": 0,
+             "status": "success"
+           }
+         },
+         {
+           "step": 2,
+           "tn": 0.01,
+           "h": 0.02,
+           ...
+         },
+         ...
+       ]
+
+    **Example usage:**
+
+    .. code-block:: python
+
+       from suntools import logs
+       import matplotlib.pyplot as plt
+
+       # Parse the log file
+       data = logs.log_file_to_list("sun.log")
+
+       # Extract lists of passed and failed step data
+       passed = [s for s in data if "success" in s["status"]]
+       failed = [s for s in data if "failed" in s["status"]]
+
+       print("Steps stats: ")
+       print(f"  Attempted:  {len(data)}")
+       print(f"  Successful: {len(passed)}")
+       print(f"  Failed:     {len(failed)}")
+       print(f"  Min Step:   {min(s["h"] for s in passed)}")
+       print(f"  Max Step:   {max(s["h"] for s in passed)}")
+       print(f"  Avg Step:   {sum(s["h"] for s in passed) / len(passed)}")
+
+       # Plot step size history
+       s_steps, s_times, s_steps = logs.get_history(passed, "h")
+       f_steps, f_times, f_steps = logs.get_history(failed, "h")
+
+       fig, ax = plt.subplots()
+       ax.plot(s_times, s_steps, color="b", marker=".", label="passed")
+       ax.scatter(f_times, f_steps, color="r", marker="x", label="failed")
+       ax.legend(loc="best")
+       ax.set(xlabel="time", ylabel="step size", title="Step Size History")
+       plt.show()
     """
     with open(filename, "r") as logfile:
 
@@ -258,10 +321,25 @@ def log_file_to_list(filename):
 
 
 def print_log(log, indent=2):
-    """Print a log file list created by :py:func:`log_file_to_list` as formatted JSON.
+    """Print a log file list as formatted JSON.
 
-    :param list log: The log file list to print.
+    This function takes parsed log data and prints it in a human-readable JSON
+    format. Useful for debugging and quick inspection.
+
+    :param list log: The log file list from :py:func:`log_file_to_list()`.
     :param int indent: The number of spaces to indent the JSON output (default: 2).
+
+    **Example usage:**
+
+    .. code-block:: python
+
+       from suntools import logs
+
+       # Parse the log file
+       data = logs.log_file_to_list("sun.log")
+
+       # Print just the first few steps
+       logs.print_log(data[:5])
     """
     print(json.dumps(log, indent=indent))
 

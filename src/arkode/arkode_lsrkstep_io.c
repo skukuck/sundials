@@ -317,6 +317,41 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
+  LSRKStepSetUseEllipseForStability sets whether to use the ellipse or the exact stability region for 
+  stability checks. The stability region check for RKC and RKL methods is performed with the dominant
+  eigenvalue and the current step size to ensure stability. While this is sufficient for a stability
+  region of disk, the stability region of RKC and RKL methods is not a disk but rather a more complicated 
+  region that can be approximated by an inscribed ellipse. By default, the ellipse is used for stability 
+  checks, which is a conservative approximation of the stability region that possibly reduces the step 
+  sizes to ensure stability. Setting use_ellipse to SUNFALSE allows the use of the exact stability region, 
+  which can potentially allow for larger step sizes but possibly cause stability failures for the second 
+  dominant eigenvalue since it might be outside of the stability region even if the dominant eigenvalue 
+  is inside the stability region. Using ellipse for stability checks can be beneficial when two dominant 
+  eigenvalues are close to the stability boundary. Nevertheless, unless the full spectrum is used for
+  stability checks, there is always a risk of stability failures one way or another. Thus, the user should 
+  have the option to choose between the ellipse or the exact stability region for stability checks based 
+  on their problem characteristics and their preference for a more conservative or more aggressive approach 
+  to stability. This input is only used for RKC and RKL methods.
+  ---------------------------------------------------------------*/
+int LSRKStepSetUseEllipseForStability(void* arkode_mem, sunbooleantype use_ellipse)
+{
+  ARKodeMem ark_mem;
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeLSRKStepMem structures */
+  retval = lsrkStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem,
+                                        &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  step_mem->dom_eig_update = SUNTRUE;
+  step_mem->dom_eig_is_current = SUNFALSE;
+  step_mem->use_ellipse = use_ellipse;
+
+  return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
   LSRKStepSetNumDomEigEstInitPreprocessIters sets the number of the preprocessing
   iterations before the very first estimate call.
   ---------------------------------------------------------------*/
@@ -760,6 +795,7 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   /* Spectral info */
   step_mem->dom_eig_safety   = DOM_EIG_SAFETY_DEFAULT;
   step_mem->dom_eig_freq     = DOM_EIG_FREQ_DEFAULT;
+  step_mem->rkc_damping      = RKC_DAMPING_DEFAULT;
   step_mem->const_Jac        = SUNFALSE;
   step_mem->num_init_warmups = DOM_EIG_NUM_INIT_WARMUPS_DEFAULT;
   step_mem->num_warmups      = DOM_EIG_NUM_WARMUPS_DEFAULT;
@@ -874,6 +910,8 @@ int lsrkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
             step_mem->spectral_radius);
     fprintf(fp, "  Safety factor for the dom eig = " SUN_FORMAT_G "\n",
             step_mem->dom_eig_safety);
+    fprintf(fp, "  Damping factor for RKC = " SUN_FORMAT_G "\n",
+            step_mem->rkc_damping);
     fprintf(fp, "  Max num of successful steps before new dom eig update = %li\n",
             step_mem->dom_eig_freq);
     fprintf(fp, "  Number of first preprocessing warmups = %i\n",

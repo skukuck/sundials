@@ -189,7 +189,7 @@ SUNErrCode SUNDomEigEstimator_SetComplex_Power(SUNDomEigEstimator DEE)
   
   /* allocate q_prev vector */
   PI_CONTENT(DEE)->q_prev = N_VClone(PI_CONTENT(DEE)->q);
-  SUNCheckLastErrNull();
+  SUNCheckLastErr();
 
   return SUN_SUCCESS;
 }

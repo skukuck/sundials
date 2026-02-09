@@ -635,46 +635,46 @@ class TestLogParsing(unittest.TestCase):
 
     def test_fast_steps_create_nested_levels(self):
         """Test that begin/end-fast-steps creates nested time levels."""
-        test_log = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.log')
+        test_log = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log")
         test_log.write(
             # Start outer step 1
-            '[INFO][rank 0][OuterScope][begin-step-attempt] outerkey1 = outerval1\n'
+            "[INFO][rank 0][OuterScope][begin-step-attempt] outerkey1 = outerval1\n"
             "[INFO][rank 0][OuterScope][label] outerkey2 = outerval2\n"
-            '[INFO][rank 0][OuterScope][begin-fast-steps]\n'
+            "[INFO][rank 0][OuterScope][begin-fast-steps]\n"
             # Start middle step 1
-            '[INFO][rank 0][MiddleScope][begin-step-attempt] middlekey1 = middleval1\n'
+            "[INFO][rank 0][MiddleScope][begin-step-attempt] middlekey1 = middleval1\n"
             "[INFO][rank 0][MiddleScope][label] middlekey2 = middleval2\n"
-            '[INFO][rank 0][MiddleScope][begin-fast-steps]\n'
+            "[INFO][rank 0][MiddleScope][begin-fast-steps]\n"
             # Inner steps 1
-            '[INFO][rank 0][InnerScope][begin-step-attempt] innerkey1 = innerval1\n'
+            "[INFO][rank 0][InnerScope][begin-step-attempt] innerkey1 = innerval1\n"
             "[INFO][rank 0][InnerScope][label] innerkey2 = innerval2\n"
-            '[INFO][rank 0][InnerScope][end-step-attempt] innerkey3 = innerval3\n'
-            '[INFO][rank 0][InnerScope][begin-step-attempt] innerkey4 = innerval4\n'
+            "[INFO][rank 0][InnerScope][end-step-attempt] innerkey3 = innerval3\n"
+            "[INFO][rank 0][InnerScope][begin-step-attempt] innerkey4 = innerval4\n"
             "[INFO][rank 0][InnerScope][label] innerkey5 = innerval5\n"
-            '[INFO][rank 0][InnerScope][end-step-attempt] innerkey6 = innerval6\n'
+            "[INFO][rank 0][InnerScope][end-step-attempt] innerkey6 = innerval6\n"
             # End middle step 1
-            '[INFO][rank 0][MiddleScope][end-fast-steps]\n'
+            "[INFO][rank 0][MiddleScope][end-fast-steps]\n"
             "[INFO][rank 0][MiddleScope][label] middlekey3 = middleval3\n"
-            '[INFO][rank 0][MiddleScope][end-step-attempt] middlekey4 = middleval4\n'
+            "[INFO][rank 0][MiddleScope][end-step-attempt] middlekey4 = middleval4\n"
             # Start middle step 2
-            '[INFO][rank 0][MiddleScope][begin-step-attempt] middlekey5 = middleval5\n'
+            "[INFO][rank 0][MiddleScope][begin-step-attempt] middlekey5 = middleval5\n"
             "[INFO][rank 0][MiddleScope][label] middlekey6 = middleval6\n"
-            '[INFO][rank 0][MiddleScope][begin-fast-steps]\n'
+            "[INFO][rank 0][MiddleScope][begin-fast-steps]\n"
             # Inner steps 2
-            '[INFO][rank 0][InnerScope][begin-step-attempt] innerkey7 = innerval7\n'
+            "[INFO][rank 0][InnerScope][begin-step-attempt] innerkey7 = innerval7\n"
             "[INFO][rank 0][InnerScope][label] innerkey8 = innerval8\n"
-            '[INFO][rank 0][InnerScope][end-step-attempt] innerkey9 = innerval9\n'
-            '[INFO][rank 0][InnerScope][begin-step-attempt] innerkey10 = innerval10\n'
+            "[INFO][rank 0][InnerScope][end-step-attempt] innerkey9 = innerval9\n"
+            "[INFO][rank 0][InnerScope][begin-step-attempt] innerkey10 = innerval10\n"
             "[INFO][rank 0][InnerScope][label] innerkey11 = innerval11\n"
-            '[INFO][rank 0][InnerScope][end-step-attempt] innerkey12 = innerval12\n'
+            "[INFO][rank 0][InnerScope][end-step-attempt] innerkey12 = innerval12\n"
             # End middle step 2
-            '[INFO][rank 0][MiddleScope][end-fast-steps]\n'
+            "[INFO][rank 0][MiddleScope][end-fast-steps]\n"
             "[INFO][rank 0][MiddleScope][label] middlekey7 = middleval7\n"
-            '[INFO][rank 0][MiddleScope][end-step-attempt] middlekey8 = middleval8\n'
+            "[INFO][rank 0][MiddleScope][end-step-attempt] middlekey8 = middleval8\n"
             # End outer step 1
-            '[INFO][rank 0][OuterScope][end-fast-steps]\n'
+            "[INFO][rank 0][OuterScope][end-fast-steps]\n"
             "[INFO][rank 0][OuterScope][label] outerkey3 = outerval3\n"
-            '[INFO][rank 0][Outer][end-step-attempt] outerkey4 = outerval4\n'
+            "[INFO][rank 0][Outer][end-step-attempt] outerkey4 = outerval4\n"
         )
         test_log.close()
 
@@ -721,7 +721,7 @@ class TestLogParsing(unittest.TestCase):
             # Inner step 1
             data0_time_level2_step0 = data0_time_level2[0]
             self.assertIsInstance(data0_time_level2_step0, dict)
-            self.assertEqual(len(data0_time_level2_step0), 4)   # parser adds 1 key (time level)
+            self.assertEqual(len(data0_time_level2_step0), 4)  # parser adds 1 key (time level)
 
             self.assertIn("level", data0_time_level2_step0)
             self.assertEqual(data0_time_level2_step0["level"], 2)
@@ -733,7 +733,7 @@ class TestLogParsing(unittest.TestCase):
             # Inner step 2
             data0_time_level2_step1 = data0_time_level2[1]
             self.assertIsInstance(data0_time_level2_step1, dict)
-            self.assertEqual(len(data0_time_level2_step1), 4)   # parser adds 1 key (time level)
+            self.assertEqual(len(data0_time_level2_step1), 4)  # parser adds 1 key (time level)
 
             self.assertIn("level", data0_time_level2_step1)
             self.assertEqual(data0_time_level2_step1["level"], 2)
@@ -763,7 +763,7 @@ class TestLogParsing(unittest.TestCase):
             # Inner step 3
             data0_time_level2_step0 = data0_time_level2[0]
             self.assertIsInstance(data0_time_level2_step0, dict)
-            self.assertEqual(len(data0_time_level2_step0), 4)   # parser adds 1 key (time level)
+            self.assertEqual(len(data0_time_level2_step0), 4)  # parser adds 1 key (time level)
 
             self.assertIn("level", data0_time_level2_step0)
             self.assertEqual(data0_time_level2_step0["level"], 2)
@@ -775,7 +775,7 @@ class TestLogParsing(unittest.TestCase):
             # Inner step 4
             data0_time_level2_step1 = data0_time_level2[1]
             self.assertIsInstance(data0_time_level2_step1, dict)
-            self.assertEqual(len(data0_time_level2_step1), 4)   # parser adds 1 key (time level)
+            self.assertEqual(len(data0_time_level2_step1), 4)  # parser adds 1 key (time level)
 
             self.assertIn("level", data0_time_level2_step1)
             self.assertEqual(data0_time_level2_step1["level"], 2)
@@ -789,48 +789,48 @@ class TestLogParsing(unittest.TestCase):
 
     def test_partitions_list(self):
         """Test that begin/end-partitions-list creates partition structures."""
-        test_log = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.log')
+        test_log = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log")
         test_log.write(
             # Overall step
-            '[INFO][rank 0][TestScope][begin-step-attempt] key1 = val1\n'
+            "[INFO][rank 0][TestScope][begin-step-attempt] key1 = val1\n"
             "[INFO][rank 0][TestScope][label] key2 = val2\n"
             # First partition -- creates list
-            '[INFO][rank 0][TestScope][begin-partitions-list] parkey1 = parval1\n'
+            "[INFO][rank 0][TestScope][begin-partitions-list] parkey1 = parval1\n"
             "[INFO][rank 0][TestScope][label] parkey2 = parval2\n"
             # Steps -- adds evolve entry
-            '[INFO][rank 0][TestScope][begin-step-attempt] parstepkey1 = parstepval1\n'
+            "[INFO][rank 0][TestScope][begin-step-attempt] parstepkey1 = parstepval1\n"
             "[INFO][rank 0][TestScope][label] parstepkey2 = parstepval2\n"
-            '[INFO][rank 0][TestScope][end-step-attempt] parstepkey3 = parstepval3\n'
+            "[INFO][rank 0][TestScope][end-step-attempt] parstepkey3 = parstepval3\n"
             # First partition -- updates first partition entry
             "[INFO][rank 0][TestScope][label] parkey3 = parval3\n"
             # Steps -- adds new entry to evolve list
-            '[INFO][rank 0][TestScope][begin-step-attempt] parstepkey4 = parstepval4\n'
+            "[INFO][rank 0][TestScope][begin-step-attempt] parstepkey4 = parstepval4\n"
             "[INFO][rank 0][TestScope][label] parstepkey5 = parstepval5\n"
-            '[INFO][rank 0][TestScope][end-step-attempt] parstepkey6 = parstepval6\n'
+            "[INFO][rank 0][TestScope][end-step-attempt] parstepkey6 = parstepval6\n"
             # First partition -- updates first partition entry
             "[INFO][rank 0][TestScope][label] parkey4 = parval4\n"
-            '[INFO][rank 0][TestScope][end-partitions-list] parkey5 = parval5\n'
+            "[INFO][rank 0][TestScope][end-partitions-list] parkey5 = parval5\n"
             # Overall step -- updates overall entry
             "[INFO][rank 0][TestScope][label] key3 = val3\n"
             # Second partition -- adds new entry to partition list
-            '[INFO][rank 0][TestScope][begin-partitions-list] parkey6 = parval6\n'
+            "[INFO][rank 0][TestScope][begin-partitions-list] parkey6 = parval6\n"
             "[INFO][rank 0][TestScope][label] parkey7 = parval7\n"
             # Steps -- creates evolve entry
-            '[INFO][rank 0][TestScope][begin-step-attempt] parstepkey7 = parstepval7\n'
+            "[INFO][rank 0][TestScope][begin-step-attempt] parstepkey7 = parstepval7\n"
             "[INFO][rank 0][TestScope][label] parstepkey8 = parstepval8\n"
-            '[INFO][rank 0][TestScope][end-step-attempt] parstepkey9 = parstepval9\n'
+            "[INFO][rank 0][TestScope][end-step-attempt] parstepkey9 = parstepval9\n"
             # Second partition -- updates second partition entry
             "[INFO][rank 0][TestScope][label] parkey8 = parval8\n"
             # Steps -- adds new entry to evolve list
-            '[INFO][rank 0][TestScope][begin-step-attempt] parstepkey10 = parstepval10\n'
+            "[INFO][rank 0][TestScope][begin-step-attempt] parstepkey10 = parstepval10\n"
             "[INFO][rank 0][TestScope][label] parstepkey11 = parstepval11\n"
-            '[INFO][rank 0][TestScope][end-step-attempt] parstepkey12 = parstepval12\n'
+            "[INFO][rank 0][TestScope][end-step-attempt] parstepkey12 = parstepval12\n"
             # Second partition -- updates second partition entry
             "[INFO][rank 0][TestScope][label] parkey9 = parval9\n"
-            '[INFO][rank 0][TestScope][end-partitions-list] parkey10 = parval10\n'
+            "[INFO][rank 0][TestScope][end-partitions-list] parkey10 = parval10\n"
             # Overall step -- updates overall step
             "[INFO][rank 0][TestScope][label] key4 = val4\n"
-            '[INFO][rank 0][TestScope][end-step-attempt] key5 = val5\n'
+            "[INFO][rank 0][TestScope][end-step-attempt] key5 = val5\n"
         )
         test_log.close()
 
@@ -875,7 +875,7 @@ class TestLogParsing(unittest.TestCase):
             # Step 1
             data0_partitions0_evolve0 = data0_partitions0_evolve[0]
             self.assertIsInstance(data0_partitions0_evolve0, dict)
-            self.assertEqual(len(data0_partitions0_evolve0), 4) # parser adds 1 key (time level)
+            self.assertEqual(len(data0_partitions0_evolve0), 4)  # parser adds 1 key (time level)
 
             for i in range(1, 4):
                 self.assertIn(f"parstepkey{i}", data0_partitions0_evolve0)
@@ -884,7 +884,7 @@ class TestLogParsing(unittest.TestCase):
             # Step 2
             data0_partitions0_evolve1 = data0_partitions0_evolve[1]
             self.assertIsInstance(data0_partitions0_evolve1, dict)
-            self.assertEqual(len(data0_partitions0_evolve1), 4) # parser adds 1 key (time level)
+            self.assertEqual(len(data0_partitions0_evolve1), 4)  # parser adds 1 key (time level)
 
             for i in range(4, 7):
                 self.assertIn(f"parstepkey{i}", data0_partitions0_evolve1)
@@ -908,7 +908,7 @@ class TestLogParsing(unittest.TestCase):
             # Step 1
             data0_partitions1_evolve0 = data0_partitions1_evolve[0]
             self.assertIsInstance(data0_partitions1_evolve0, dict)
-            self.assertEqual(len(data0_partitions1_evolve0), 4) # parser adds 1 key (time level)
+            self.assertEqual(len(data0_partitions1_evolve0), 4)  # parser adds 1 key (time level)
 
             for i in range(7, 10):
                 self.assertIn(f"parstepkey{i}", data0_partitions1_evolve0)
@@ -917,7 +917,7 @@ class TestLogParsing(unittest.TestCase):
             # Step 2
             data0_partitions1_evolve1 = data0_partitions1_evolve[1]
             self.assertIsInstance(data0_partitions1_evolve1, dict)
-            self.assertEqual(len(data0_partitions1_evolve1), 4) # parser adds 1 key (time level)
+            self.assertEqual(len(data0_partitions1_evolve1), 4)  # parser adds 1 key (time level)
 
             for i in range(10, 13):
                 self.assertIn(f"parstepkey{i}", data0_partitions1_evolve1)
@@ -941,6 +941,7 @@ class TestLogParsing(unittest.TestCase):
 
         finally:
             os.unlink(test_log.name)
+
 
 def run_tests():
     """Run all tests and print summary."""

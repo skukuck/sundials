@@ -50,10 +50,8 @@ struct SUNDomEigEstimator_Ops_
                            const char* file_name, int argc, char* argv[]);
   SUNErrCode (*setmaxiters)(SUNDomEigEstimator, long int);
   SUNErrCode (*setnumpreprocessiters)(SUNDomEigEstimator, int);
-  SUNErrCode (*settolpreprocessiters)(SUNDomEigEstimator, sunrealtype);
   SUNErrCode (*setreltol)(SUNDomEigEstimator, sunrealtype);
   SUNErrCode (*setinitialguess)(SUNDomEigEstimator, N_Vector);
-  SUNErrCode (*setcomplex)(SUNDomEigEstimator);
   SUNErrCode (*initialize)(SUNDomEigEstimator);
   SUNErrCode (*estimate)(SUNDomEigEstimator, sunrealtype*, sunrealtype*);
   SUNErrCode (*getres)(SUNDomEigEstimator, sunrealtype*);
@@ -102,17 +100,10 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE,
                                                     int num_iters);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters(SUNDomEigEstimator DEE,
-                                                    sunrealtype tol);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRelTol(SUNDomEigEstimator DEE, sunrealtype tol);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator DEE, N_Vector q);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetComplex(SUNDomEigEstimator DEE);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE);

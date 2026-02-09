@@ -149,7 +149,6 @@ int main(int argc, char* argv[])
   // It should return with SUN_SUCCESS
   fails += Test_SUNDomEigEstimator_SetMaxIters(DEE, kry_dim, 0);
   fails += Test_SUNDomEigEstimator_SetNumPreprocessIters(DEE, num_warmups, 0);
-  fails += Test_SUNDomEigEstimator_SetTolPreprocessIters(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetRelTol(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetInitialGuess(DEE, q, 0);
   fails += Test_SUNDomEigEstimator_Initialize(DEE, 0);

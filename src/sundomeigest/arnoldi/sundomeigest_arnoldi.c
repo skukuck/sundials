@@ -105,8 +105,6 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->ops->setatimes = SUNDomEigEstimator_SetATimes_Arnoldi;
   DEE->ops->setnumpreprocessiters =
     SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi;
-  DEE->ops->settolpreprocessiters =
-    SUNDomEigEstimator_SetTolPreprocessIters_Arnoldi;
   DEE->ops->setinitialguess   = SUNDomEigEstimator_SetInitialGuess_Arnoldi;
   DEE->ops->initialize        = SUNDomEigEstimator_Initialize_Arnoldi;
   DEE->ops->estimate          = SUNDomEigEstimator_Estimate_Arnoldi;
@@ -389,9 +387,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      res = SUNRabs(newnormlambda - oldnormlambda) / SUNRabs(newnormlambda);
+      res = SUNRabs(newnormlambda - oldnormlambda);
       oldnormlambda = newnormlambda;
-      if(res < Arnoldi_CONTENT(DEE)->tol_preprocess)
+      if(res <= Arnoldi_CONTENT(DEE)->tol_preprocess * SUNRabs(newnormlambda))
       {
         break;
       }

@@ -47,7 +47,6 @@ struct SUNDomEigEstimatorContent_Power_
   long int max_iters; /* Maximum number of power iterations */
   long int num_iters; /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Type of warmup iterations */
-  sunrealtype tol_preprocess; /* Tolerance for preprocessing iterations */
 
   long int num_ATimes; /* Number of ATimes calls */
 
@@ -81,10 +80,6 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Power(SUNDomEigEstimator DEE
                                                           int num_iters);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters_Power(SUNDomEigEstimator DEE,
-                                                          sunrealtype tol);
-
-SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRelTol_Power(SUNDomEigEstimator DEE,
                                               sunrealtype tol);
 
@@ -93,7 +88,7 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
                                                     N_Vector q);
 
 SUNDIALS_EXPORT
-SUNErrCode SUNDomEigEstimator_SetComplex_Power(SUNDomEigEstimator DEE);
+SUNErrCode SUNDomEigEstimator_SetReal_Power(SUNDomEigEstimator DEE);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE);

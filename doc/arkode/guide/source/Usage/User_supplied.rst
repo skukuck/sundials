@@ -58,25 +58,29 @@ The user-supplied functions for ARKODE consist of:
 
   * one or two functions that
     :ref:`define the mass matrix preconditioner <ARKODE.Usage.MassPrecSolveFn>`
-    for use if an iterative mass matrix solver is chosen (optional), and
+    for use if an iterative mass matrix solver is chosen (optional),
 
 * a function that
   :ref:`handles vector resizing operations <ARKODE.Usage.VecResizeFn>`, if the
   underlying vector structure supports resizing (as opposed to
   deletion/recreation), and if the user plans to call
-  :c:func:`ARKodeResize` (optional).
+  :c:func:`ARKodeResize` (optional),
 
 * MRIStep only: functions to be
   :ref:`called before and after each inner integration <ARKODE.Usage.PreInnerFn>`
   to perform any communication or memory transfers of forcing data supplied
   by the outer integrator to the inner integrator, or state data supplied
-  by the inner integrator to the outer integrator.
+  by the inner integrator to the outer integrator,
 
 * if relaxation is enabled (optional), a function that
   :ref:`evaluates the conservative or dissipative function <ARKODE.Usage.RelaxFn>`
   :math:`\xi(y(t))` (required) and a function to
   :ref:`evaluate its Jacobian <ARKODE.Usage.RelaxJacFn>`
   :math:`\xi'(y(t))` (required).
+
+* functions that can optionally be called :ref:`before and after each time step or
+  within the stages of supported ARKODE time stepping modules
+  <ARKODE.Usage.ARKodeProcessingFunctions>`.
 
 
 .. _ARKODE.Usage.ODERHS:
@@ -1020,12 +1024,11 @@ integrator for the inner integration.
    :param f: an ``N_Vector`` array of outer forcing vectors.
    :param num_vecs: the number of vectors in the ``N_Vector`` array.
    :param user_data: the `user_data` pointer that was passed to
-                     :c:func:`MRIStepSetUserData`.
+                     :c:func:`ARKodeSetUserData`.
 
    :return: An *MRIStepPreInnerFn* function should return 0 if successful, a positive value
             if a recoverable error occurred, or a negative value if an unrecoverable
-            error occurred. As the MRIStep module only supports fixed step sizes at this
-            time any non-zero return value will halt the integration.
+            error occurred.
 
    .. note::
 
@@ -1049,12 +1052,11 @@ outer integrator for the outer integration.
    :param t: the current value of the independent variable.
    :param y: the current value of the dependent variable vector.
    :param user_data: the ``user_data`` pointer that was passed to
-                     :c:func:`MRIStepSetUserData`.
+                     :c:func:`ARKodeSetUserData`.
 
    :return:  An :c:func:`MRIStepPostInnerFn` function should return 0 if successful, a
              positive value if a recoverable error occurred, or a negative value if an
-             unrecoverable error occurred. As the MRIStep module only supports fixed step
-             sizes at this time any non-zero return value will halt the integration.
+             unrecoverable error occurred.
 
    .. note::
 
@@ -1102,3 +1104,33 @@ Relaxation Jacobian function
             positive value if a recoverable error occurred, or a negative value if an
             unrecoverable error occurred. If a recoverable error occurs, the step size
             will be reduced and the step repeated.
+
+
+.. _ARKODE.Usage.ARKodeProcessingFunctions:
+
+Step and stage processing functions
+------------------------------------
+
+The user may supply functions of type :c:type:`ARKPostProcessFn` that will be
+called before each internal time step (:c:func:`ARKodeSetPreprocessStepFn`), after
+each successful internal time step (:c:func:`ARKodeSetPostprocessStepFn`), after each
+failed internal time step (:c:func:`ARKodeSetPostprocessStepFailFn`), before user-supplied
+right-hand side function(s) are called on an updated state (:c:func:`ARKodeSetPreprocessRHSFn`),
+or after each internal stage is computed (:c:func:`ARKodeSetPostprocessStageFn`).
+
+
+.. c:type:: int (*ARKPostProcessFn)(sunrealtype t, N_Vector y, void* user_data)
+
+   :param t: the current value of the independent variable.
+   :param y: the current value of the dependent variable vector.
+   :param user_data: the ``user_data`` pointer that was passed to
+                     :c:func:`ARKodeSetUserData`.
+
+   :return:  An :c:func:`ARKPostProcessFn` function should return 0 if successful, a
+             positive value if a recoverable error occurred, or a negative value if an
+             unrecoverable error occurred.
+
+   .. warning::
+
+      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA IN *y*, THEN ALL
+      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.

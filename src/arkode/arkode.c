@@ -663,6 +663,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
   int ewtsetOK;
   sunrealtype troundoff, nrm;
   sunbooleantype inactive_roots;
+  sunbooleantype skip_preprocess;
   sunrealtype dsm;
   int nflag, ncf, nef, constrfails;
   int relax_fails;
@@ -883,11 +884,12 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
 
     /* Looping point for step attempts */
-    dsm      = ZERO;
-    kflag    = ARK_SUCCESS;
+    dsm             = ZERO;
+    kflag           = ARK_SUCCESS;
+    skip_preprocess = SUNFALSE;
+    relax_fails     = 0;
+    nflag           = FIRST_CALL;
     attempts = ncf = nef = constrfails = ark_mem->last_kflag = 0;
-    relax_fails                                              = 0;
-    nflag                                                    = FIRST_CALL;
     for (;;)
     {
       /* increment attempt counters
@@ -909,12 +911,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       N_VScale(ONE, ark_mem->yn, ark_mem->ycur);
 
       /* call the user-supplied step preprocessing function (if it exists) */
-      if (ark_mem->PreProcessStep != NULL)
+      if (ark_mem->PreProcessStep != NULL && !skip_preprocess)
       {
         retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur,
                                          ark_mem->ps_data);
         if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
       }
+      skip_preprocess = SUNFALSE;
 
       /* Call time stepper module to attempt a step:
             0 => step completed successfully
@@ -1019,6 +1022,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
         retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur,
                                               ark_mem->ps_data);
         if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+        skip_preprocess = SUNTRUE;
       }
 
     } /* end looping for step attempts */

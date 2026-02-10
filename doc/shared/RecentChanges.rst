@@ -5,11 +5,24 @@
 
 **New Features and Enhancements**
 
-  The default numbers of stages for the SSP Runge--Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
-  and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
-  their minimum allowable values of 2 and 4.  Users may revert to the previous values by calling
-  :c:func:`LSRKStepSetNumSSPStages`.
+ARKODE now allows users to supply functions that will be called before each internal
+time step, after each successful time step, after each failed time step, before
+right-hand side routines are called on an updated state, and/or once each internal
+stage is computed (:c:func:`ARKodeSetPreprocessStepFn`,
+:c:func:`ARKodeSetPostprocessStepFn`, :c:func:`ARKodeSetPostprocessStepFailFn`,
+:c:func:`ARKodeSetPreprocessRHSFn`, and :c:func:`ARKodeSetPostprocessStageFn`).
+These are considered **advanced** functions, as they should treat the state vector as
+read-only, otherwise all theoretical guarantees of solution accuracy and stability
+will be lost.
+
+The default numbers of stages for the SSP Runge--Kutta methods :c:enumerator:`ARKODE_LSRK_SSP_S_2`
+and :c:enumerator:`ARKODE_LSRK_SSP_S_3` in LSRKStep were changed from 10 and 9, respectively, to
+their minimum allowable values of 2 and 4.  Users may revert to the previous values by calling
+:c:func:`LSRKStepSetNumSSPStages`.
 
 **Bug Fixes**
+
+Fixed a CMake bug where the SuperLU_MT interface would not be built and
+installed without setting the ``SUPERLUMT_WORKS`` option to ``TRUE``.
 
 **Deprecation Notices**

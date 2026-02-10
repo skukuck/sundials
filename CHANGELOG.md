@@ -28,11 +28,23 @@ The default numbers of stages for the SSP Runge--Kutta methods `ARKODE_LSRK_SSP_
 allowable values of 2 and 4.  Users may revert to the previous values by calling
 `LSRKStepSetNumSSPStages`.
 
+ARKODE now allows users to supply functions that will be called before each internal
+time step, after each successful time step, after each failed time step, before
+right-hand side routines are called on an updated state, and/or once each internal
+stage is computed (`ARKodeSetPreprocessStepFn`, `ARKodeSetPostprocessStepFn`,
+`ARKodeSetPostprocessStepFailFn`, `ARKodeSetPreprocessRHSFn`, and
+`ARKodeSetPostprocessStageFn`).  These are considered **advanced** functions, as they
+should treat the state vector as read-only, otherwise all theoretical guarantees of
+solution accuracy and stability will be lost.
+
 An optional N_Vector routine, `N_VCopy`, was added, to streamline data copies between two
 vectors.  For user-supplied N_Vector modules that do not provide this function, `N_VScale`
 will be used instead.
 
 ### Bug Fixes
+
+Fixed a CMake bug where the SuperLU_MT interface would not be built and
+installed without setting the `SUPERLUMT_WORKS` option to `TRUE`.
 
 ### Deprecation Notices
 

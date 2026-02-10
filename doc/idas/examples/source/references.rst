@@ -14,24 +14,11 @@
    SUNDIALS Copyright End
    -----------------------------------------------------------------------------
 
-.. _IDAS.Examples:
-
-*************
-IDAS Examples
-*************
-
 .. only:: html
 
-   The IDAS examples documentation is intended to serve as a companion document
-   to the IDAS User Documentation. These example programs demonstrate a large
-   variety (but not exhaustive set) of IDAS options and can be used as templates
-   for new problems. Further information on the IDAS package itself may be found
-   in the IDAS user guide.
+   Bibliography
+   ============
 
-.. toctree::
-   :maxdepth: 1
-
-   introduction.rst
-   fwd_examples.rst
-   adj_examples.rst
-   references.rst
+.. bibliography::
+   :cited:
+   :style: plain

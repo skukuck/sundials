@@ -126,37 +126,40 @@ extern "C" {
 /* ARK_POSTPROCESS_FAIL equals ARK_POSTPROCESS_STEP_FAIL
    for backwards compatibility. Note that we use these
    same constants for step and stage preprocessing errors */
-#define ARK_POSTPROCESS_FAIL       -37
-#define ARK_POSTPROCESS_STEP_FAIL  -37
-#define ARK_POSTPROCESS_STAGE_FAIL -38
+#define ARK_POSTPROCESS_FAIL             -37
+#define ARK_POSTPROCESS_STEP_FAIL        -37
+#define ARK_POSTPROCESS_STAGE_FAIL       -38
+#define ARK_POSTPROCESS_FAILED_STEP_FAIL -39
+#define ARK_PREPROCESS_STEP_FAIL         -40
+#define ARK_PREPROCESS_RHS_FAIL          -41
 
-#define ARK_USER_PREDICT_FAIL -39
-#define ARK_INTERP_FAIL       -40
+#define ARK_USER_PREDICT_FAIL -42
+#define ARK_INTERP_FAIL       -43
 
-#define ARK_INVALID_TABLE -41
+#define ARK_INVALID_TABLE -44
 
-#define ARK_CONTEXT_ERR -42
+#define ARK_CONTEXT_ERR -45
 
-#define ARK_RELAX_FAIL      -43
-#define ARK_RELAX_MEM_NULL  -44
-#define ARK_RELAX_FUNC_FAIL -45
-#define ARK_RELAX_JAC_FAIL  -46
+#define ARK_RELAX_FAIL      -46
+#define ARK_RELAX_MEM_NULL  -47
+#define ARK_RELAX_FUNC_FAIL -48
+#define ARK_RELAX_JAC_FAIL  -49
 
-#define ARK_CONTROLLER_ERR -47
+#define ARK_CONTROLLER_ERR -50
 
-#define ARK_STEPPER_UNSUPPORTED -48
+#define ARK_STEPPER_UNSUPPORTED -51
 
-#define ARK_DOMEIG_FAIL          -49
-#define ARK_MAX_STAGE_LIMIT_FAIL -50
+#define ARK_DOMEIG_FAIL          -52
+#define ARK_MAX_STAGE_LIMIT_FAIL -53
 
-#define ARK_SUNSTEPPER_ERR     -51
-#define ARK_STEP_DIRECTION_ERR -52
+#define ARK_SUNSTEPPER_ERR     -54
+#define ARK_STEP_DIRECTION_ERR -55
 
-#define ARK_ADJ_CHECKPOINT_FAIL -53
-#define ARK_ADJ_RECOMPUTE_FAIL  -54
-#define ARK_SUNADJSTEPPER_ERR   -55
+#define ARK_ADJ_CHECKPOINT_FAIL -56
+#define ARK_ADJ_RECOMPUTE_FAIL  -57
+#define ARK_SUNADJSTEPPER_ERR   -58
 
-#define ARK_DEE_FAIL -56
+#define ARK_DEE_FAIL -59
 
 #define ARK_UNRECOGNIZED_ERROR -99
 

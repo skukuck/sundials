@@ -3253,6 +3253,13 @@ char* ARKodeGetReturnFlagName(long int flag)
   case ARK_POSTPROCESS_STAGE_FAIL:
     sprintf(name, "ARK_POSTPROCESS_STAGE_FAIL");
     break;
+  case ARK_POSTPROCESS_FAILED_STEP_FAIL:
+    sprintf(name, "ARK_POSTPROCESS_FAILED_STEP_FAIL");
+    break;
+  case ARK_PREPROCESS_STEP_FAIL:
+    sprintf(name, "ARK_PREPROCESS_STEP_FAIL");
+    break;
+  case ARK_PREPROCESS_RHS_FAIL: sprintf(name, "ARK_PREPROCESS_RHS_FAIL"); break;
   case ARK_USER_PREDICT_FAIL: sprintf(name, "ARK_USER_PREDICT_FAIL"); break;
   case ARK_INTERP_FAIL: sprintf(name, "ARK_INTERP_FAIL"); break;
   case ARK_INVALID_TABLE: sprintf(name, "ARK_INVALID_TABLE"); break;

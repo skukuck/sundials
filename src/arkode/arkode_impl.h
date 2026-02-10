@@ -823,7 +823,7 @@ void arkode_user_supplied_fn_table_destroy(void* ptr);
   ", the step postprocessing routine failed in an unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_FAILED_STEP_FAIL                              \
   "At " MSG_TIME ", the failed step postprocessing routine failed in an " \
-                 "unrecoverable manner."
+  "unrecoverable manner."
 #define MSG_ARK_POSTPROCESS_STAGE_FAIL \
   "At " MSG_TIME                       \
   ", the stage postprocessing routine failed in an unrecoverable manner."

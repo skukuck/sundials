@@ -122,23 +122,23 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
   DEE->content = content;
 
   /* Fill content */
-  content->ATimes       = NULL;
-  content->ATdata       = NULL;
-  content->V            = NULL;
-  content->q            = NULL;
-  content->kry_dim      = kry_dim;
-  content->num_warmups  = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->num_iters    = 0;
-  content->num_ATimes   = 0;
-  content->warmup_to_tol = SUNFALSE;
+  content->ATimes         = NULL;
+  content->ATdata         = NULL;
+  content->V              = NULL;
+  content->q              = NULL;
+  content->kry_dim        = kry_dim;
+  content->num_warmups    = DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT;
+  content->num_iters      = 0;
+  content->num_ATimes     = 0;
+  content->warmup_to_tol  = SUNFALSE;
   content->tol_preprocess = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  content->LAPACK_A     = NULL;
-  content->LAPACK_wr    = NULL;
-  content->LAPACK_wi    = NULL;
-  content->LAPACK_work  = NULL;
-  content->LAPACK_lwork = 0;
-  content->LAPACK_arr   = NULL;
-  content->Hes          = NULL;
+  content->LAPACK_A       = NULL;
+  content->LAPACK_wr      = NULL;
+  content->LAPACK_wi      = NULL;
+  content->LAPACK_work    = NULL;
+  content->LAPACK_lwork   = 0;
+  content->LAPACK_arr     = NULL;
+  content->Hes            = NULL;
 
   /* Allocate content */
   content->q = N_VClone(q);
@@ -287,7 +287,7 @@ SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator D
   Arnoldi_CONTENT(DEE)->num_warmups = num_iters;
 
   /* set the type of warmup iterations */
-  Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;  
+  Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNFALSE;
   return SUN_SUCCESS;
 }
 
@@ -300,14 +300,8 @@ SUNErrCode SUNDomEigEstimator_SetTolPreprocessIters_Arnoldi(SUNDomEigEstimator D
   SUNAssert(Arnoldi_CONTENT(DEE), SUN_ERR_ARG_CORRUPT);
 
   /* set the tolerance for preprocessing iterations */
-  if(tol <= SUN_RCONST(0.0))
-  {
-    tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT;
-  }
-  else
-  {
-    Arnoldi_CONTENT(DEE)->tol_preprocess = tol;
-  }
+  if (tol <= SUN_RCONST(0.0)) { tol = DEE_TOL_OF_WARMUPS_ARNOLDI_DEFAULT; }
+  else { Arnoldi_CONTENT(DEE)->tol_preprocess = tol; }
 
   /* set the type of warmup iterations */
   Arnoldi_CONTENT(DEE)->warmup_to_tol = SUNTRUE;
@@ -384,12 +378,12 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
     normq = SUNRsqrt(normq);
     N_VScale(ONE / normq, Arnoldi_CONTENT(DEE)->q, Arnoldi_CONTENT(DEE)->V[0]);
     SUNCheckLastErr();
-    
+
     if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
     {
-      res = SUNRabs(newnormlambda - oldnormlambda);
+      res           = SUNRabs(newnormlambda - oldnormlambda);
       oldnormlambda = newnormlambda;
-      if(res <= Arnoldi_CONTENT(DEE)->tol_preprocess * SUNRabs(newnormlambda))
+      if (res <= Arnoldi_CONTENT(DEE)->tol_preprocess * SUNRabs(newnormlambda))
       {
         break;
       }

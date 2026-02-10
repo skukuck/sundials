@@ -45,11 +45,11 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   N_Vector* V;
   N_Vector q;
 
-  int kry_dim;        /* Krylov subspace dimension */
-  int num_warmups;    /* Number of preprocessing iterations */
-  long int num_iters; /* Number of iterations in last Estimate call */
+  int kry_dim;                  /* Krylov subspace dimension */
+  int num_warmups;              /* Number of preprocessing iterations */
+  long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Type of warmup iterations */
-  sunrealtype tol_preprocess; /* Tolerance for preprocessing iterations */
+  sunrealtype tol_preprocess;   /* Tolerance for preprocessing iterations */
 
   long int num_ATimes; /* Number of ATimes calls */
 

@@ -559,7 +559,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype* cvals = step_mem->cvals;
   N_Vector* Xvecs    = step_mem->Xvecs;
 
-  const sunrealtype coefz = THREE/TWO / (ONE - TWO/SUN_RCONST(15.0) * step_mem->rkc_damping);
+  const sunrealtype coefz =
+    THREE / TWO / (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
 
   /* Compute dominant eigenvalue and update stats */
   if (step_mem->dom_eig_update)
@@ -573,7 +574,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype zR = SUNRabs(ark_mem->h) * step_mem->lambdaR;
   sunrealtype zI = SUNRabs(ark_mem->h) * step_mem->lambdaI;
   sunrealtype ss = SUNRceil(SUNRsqrt(ONE - coefz * zR));
-  ss = SUNMAX(ss, SUN_RCONST(2.0));
+  ss             = SUNMAX(ss, SUN_RCONST(2.0));
 
   /* Check if number of stages exceeds maximum allowed.
      If so, and if adaptive stepping is enabled, reduce step size
@@ -589,7 +590,8 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
     if (!ark_mem->fixedstep)
     {
-      hmax = ark_mem->hadapt_mem->safety * (ONE - SUNSQR(step_mem->stage_max_limit)) /
+      hmax = ark_mem->hadapt_mem->safety *
+             (ONE - SUNSQR(step_mem->stage_max_limit)) /
              (coefz * step_mem->lambdaR);
       ark_mem->eta = hmax / ark_mem->h;
       *nflagPtr    = ARK_RETRY_STEP;
@@ -634,14 +636,16 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      while (stability_norm > ONE - SUN_SMALL_REAL && step_mem->req_stages < step_mem->stage_max_limit)
+      while (stability_norm > ONE - SUN_SMALL_REAL &&
+             step_mem->req_stages < step_mem->stage_max_limit)
       {
         step_mem->req_stages += 1;
         retval = lsrkStep_RKC_CheckStabilityNorm(ark_mem, step_mem,
                                                  &stability_norm);
         if (retval != ARK_SUCCESS) { return retval; }
       }
-      if (stability_norm > ONE - SUN_SMALL_REAL || step_mem->req_stages >= step_mem->stage_max_limit)
+      if (stability_norm > ONE - SUN_SMALL_REAL ||
+          step_mem->req_stages >= step_mem->stage_max_limit)
       {
         arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
                         __FILE__,
@@ -652,7 +656,7 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  step_mem->stage_max  = SUNMAX(step_mem->req_stages, step_mem->stage_max);
+  step_mem->stage_max = SUNMAX(step_mem->req_stages, step_mem->stage_max);
 
   SUNLogInfo(ARK_LOGGER, "compute-num-stages",
              "spectral radius = " SUN_FORMAT_G
@@ -1004,14 +1008,16 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else
     {
-      while (stability_norm > ONE - SUN_SMALL_REAL && step_mem->req_stages < step_mem->stage_max_limit)
+      while (stability_norm > ONE - SUN_SMALL_REAL &&
+             step_mem->req_stages < step_mem->stage_max_limit)
       {
         step_mem->req_stages += 1;
         retval = lsrkStep_RKL_CheckStabilityNorm(ark_mem, step_mem,
                                                  &stability_norm);
         if (retval != ARK_SUCCESS) { return retval; }
       }
-      if (stability_norm > ONE - SUN_SMALL_REAL || step_mem->req_stages >= step_mem->stage_max_limit)
+      if (stability_norm > ONE - SUN_SMALL_REAL ||
+          step_mem->req_stages >= step_mem->stage_max_limit)
       {
         arkProcessError(ark_mem, ARK_MAX_STAGE_LIMIT_FAIL, __LINE__, __func__,
                         __FILE__,
@@ -1022,7 +1028,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  step_mem->stage_max  = SUNMAX(step_mem->req_stages, step_mem->stage_max);
+  step_mem->stage_max = SUNMAX(step_mem->req_stages, step_mem->stage_max);
 
   SUNLogInfo(ARK_LOGGER, "compute-num-stages",
              "spectral radius = " SUN_FORMAT_G
@@ -2503,8 +2509,7 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
   we compute the stability norm directly from the stability function using the Chebyshev polynomial. 
   The stability norm is then computed as the magnitude of the stability function evaluated at z = h*lambda.
   ---------------------------------------------------------------*/
-int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, 
-                                    ARKodeLSRKStepMem step_mem,
+int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
 {
   sunrealtype ss = step_mem->req_stages;
@@ -2521,21 +2526,22 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem,
        of the inscribed ellipse. The value of re_stab_min is determined by the damping parameter 
       and the number of stages by reverting the formula for finding the required number of 
       stages for a given spectral radius times step size. im_stab_min is then determined by 
-      herustically by deviding re_stab_min by the aspect ratio of the ellipse, which is 
+      herustically by dividing re_stab_min by the aspect ratio of the ellipse, which is 
       approximateted as 3.65*ss, where ss is the number of stages. In particular, if ss=2,
       the aspect ratio is estimated to be 0.6*ss. This heuristic is based on the observation 
       that imaginary extend of the stability region grows linearly with the number of stages. 
       The factors of 3.65 and 0.6 are determined empirically by plotting the stability region for 
       different number of stages and the default damping parameter. It is subject to change if the 
       default damping parameter is changed. */
-    re_stab_min = TWO/THREE * (ONE - SUNSQR(ss)) * 
-                  (ONE - TWO/SUN_RCONST(15.0) * step_mem->rkc_damping);        
-    im_stab_min = -re_stab_min / (ss == 2 ? SUN_RCONST(0.6) * ss : SUN_RCONST(3.65) * ss);
+    re_stab_min = TWO / THREE * (ONE - SUNSQR(ss)) *
+                  (ONE - TWO / SUN_RCONST(15.0) * step_mem->rkc_damping);
+    im_stab_min = -re_stab_min /
+                  (ss == 2 ? SUN_RCONST(0.6) * ss : SUN_RCONST(3.65) * ss);
 
     xc = re_stab_min / TWO;
     yc = ZERO;
-    a = SUNRabs(re_stab_min) / TWO;
-    b = SUNRabs(im_stab_min);
+    a  = SUNRabs(re_stab_min) / TWO;
+    b  = SUNRabs(im_stab_min);
 
     *stability_norm = SUNRsqrt(SUNSQR((zR - xc) / a) + SUNSQR((zI - yc) / b));
   }
@@ -2546,10 +2552,10 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem,
     sh = SUNRsinh(th);
     ch = SUNRcosh(th);
 
-    Ts = SUNRcosh(ss * th);
-    Ts_p = ss * SUNRsinh(ss * th) / sh;
-    Ts_pp = (ss * ss * SUNRcosh(ss * th) / (sh * sh)) - ss * ch * SUNRsinh(ss * th) /
-            (sh * sh * sh);
+    Ts    = SUNRcosh(ss * th);
+    Ts_p  = ss * SUNRsinh(ss * th) / sh;
+    Ts_pp = (ss * ss * SUNRcosh(ss * th) / (sh * sh)) -
+            ss * ch * SUNRsinh(ss * th) / (sh * sh * sh);
 
     b_s = Ts_pp / (Ts_p * Ts_p);
     a_s = ONE - b_s * Ts;
@@ -2585,8 +2591,7 @@ int lsrkStep_RKC_CheckStabilityNorm(ARKodeMem ark_mem,
   we compute the stability norm directly from the stability function using the Legendre polynomial. 
   The stability norm is then computed as the magnitude of the stability function evaluated at z = h*lambda.
   ---------------------------------------------------------------*/
-int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, 
-                                    ARKodeLSRKStepMem step_mem,
+int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem,
                                     sunrealtype* stability_norm)
 {
   sunrealtype ss = step_mem->req_stages;
@@ -2602,13 +2607,13 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem,
        where re_stab_min and im_stab_min are the real and imaginary parts of the leftmost point 
        of the inscribed ellipse. The value of re_stab_min is determined by  the number of stages 
        by reverting the formula for finding the required number of stages for a given spectral 
-       radius times step size. im_stab_min is then determined by herustically by deviding 
+       radius times step size. im_stab_min is then determined by herustically by dividing 
        re_stab_min by the aspect ratio of the ellipse, which is approximated as 
        imag_extend_factor*ss, where ss is the number of stages and the factor imag_extend_factor 
        is determined empirically by plotting the stability region for different number of stages. 
        This factor is as follows: */
 
-      /*s = 2 -> 0.6
+    /*s = 2 -> 0.6
         s = 3 -> 1.5
         s = 4 -> 1.33
         s = 5 -> 1.33
@@ -2624,12 +2629,14 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem,
       1.2,  /* s >= 20 and odd */
       1.06  /* s >= 20 and even */
     };
-    re_stab_min = -((TWO*ss + ONE)*(TWO*ss + ONE)- SUN_RCONST(9.0)) / SUN_RCONST(8.0);
+    re_stab_min = -((TWO * ss + ONE) * (TWO * ss + ONE) - SUN_RCONST(9.0)) /
+                  SUN_RCONST(8.0);
     if (ss < 7)
     {
-      im_stab_min = -re_stab_min / (imag_extend_factor[(int)ss-2] * ss);
+      im_stab_min = -re_stab_min / (imag_extend_factor[(int)ss - 2] * ss);
     }
-    else {
+    else
+    {
       if (ss <= 20)
       {
         im_stab_min = -re_stab_min / (imag_extend_factor[4] * ss);
@@ -2640,23 +2647,23 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem,
       }
     }
     // TODO:get opinon on whether we want to use the heuristic with different factors for different number of stages or
-    // to use a single global factor for all number of stages. The heuristic with different factors for different number 
+    // to use a single global factor for all number of stages. The heuristic with different factors for different number
     // of stages is more accurate, especially for small number of stages, but it is also more complicated.
     // Instead we can use a single global factor of 1.5 for all number of stages as follows:
     // im_stab_min = -re_stab_min / (SUN_RCONST(1.5) * ss);
 
     xc = re_stab_min / TWO;
     yc = ZERO;
-    a = SUNRabs(re_stab_min) / TWO;
-    b = SUNRabs(im_stab_min);
+    a  = SUNRabs(re_stab_min) / TWO;
+    b  = SUNRabs(im_stab_min);
 
     *stability_norm = SUNRsqrt(SUNSQR((zR - xc) / a) + SUNSQR((zI - yc) / b));
   }
   else
   {
-    b_s = (ss*ss + ss - TWO) / (TWO * ss * (ss + ONE));
+    b_s = (ss * ss + ss - TWO) / (TWO * ss * (ss + ONE));
     a_s = ONE - b_s;
-    w1  = FOUR / (ss * ss + ss - TWO);   // Eq.(15) in Meyer et al. (2014)
+    w1  = FOUR / (ss * ss + ss - TWO); // Eq.(15) in Meyer et al. (2014)
     wr  = ONE + w1 * zR;
     wi  = w1 * zI;
 
@@ -2684,7 +2691,7 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem,
     T_{k+1}(z) = 2*z*T_k(z) - T_{k-1}(z),  k = 1,...,s-1
   ---------------------------------------------------------------*/
 int lsrkStep_cheb_T_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
-                             sunrealtype* TsR, sunrealtype* TsI)
+                            sunrealtype* TsR, sunrealtype* TsI)
 {
   if (s < 0)
   {
@@ -2707,7 +2714,7 @@ int lsrkStep_cheb_T_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
   else
   {
     sunrealtype Tkm1R = ONE, Tkm1I = ZERO; // T_0(z)
-    sunrealtype TkR = zR, TkI = zI; // T_1(z)
+    sunrealtype TkR = zR, TkI = zI;        // T_1(z)
     sunrealtype Tkp1R, Tkp1I;
     for (int k = 1; k < s; k++)
     {
@@ -2735,7 +2742,7 @@ int lsrkStep_cheb_T_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
   ---------------------------------------------------------------*/
 
 int lsrkStep_legendre_P_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
-                                  sunrealtype* PsR, sunrealtype* PsI)
+                                sunrealtype* PsR, sunrealtype* PsI)
 {
   if (s < 0)
   {
@@ -2758,7 +2765,7 @@ int lsrkStep_legendre_P_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
   else
   {
     sunrealtype Pkm1R = ONE, Pkm1I = ZERO; // P_0(z)
-    sunrealtype PkR = zR, PkI = zI; // P_1(z)
+    sunrealtype PkR = zR, PkI = zI;        // P_1(z)
     sunrealtype Pkp1R, Pkp1I;
     for (int k = 1; k < s; k++)
     {

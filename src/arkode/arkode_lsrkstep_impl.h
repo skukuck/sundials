@@ -32,7 +32,7 @@ extern "C" {
 
 #define STAGE_MAX_LIMIT_DEFAULT          200
 #define DOM_EIG_SAFETY_DEFAULT           SUN_RCONST(1.01)
-#define RKC_DAMPING_DEFAULT              SUN_RCONST(2.0)/SUN_RCONST(13.0)
+#define RKC_DAMPING_DEFAULT              SUN_RCONST(2.0) / SUN_RCONST(13.0)
 #define DOM_EIG_FREQ_DEFAULT             25
 #define DOM_EIG_NUM_WARMUPS_DEFAULT      0
 #define DOM_EIG_NUM_INIT_WARMUPS_DEFAULT -1 /* use DEE's default value */
@@ -196,8 +196,8 @@ typedef struct ARKodeLSRKStepMemRec
   sunbooleantype const_Jac;      /* flag indicating Jacobian is constant */
   sunbooleantype dom_eig_is_current; /* SUNTRUE if dom_eig has been evaluated at tn */
   sunbooleantype use_ellipse; /* flag indicating whether to use ellipse or exact stability region for stability checks */
-  sunbooleantype is_SSP;             /* flag indicating SSP method*/
-  sunbooleantype init_warmup;        /* flag indicating initial warm-up*/
+  sunbooleantype is_SSP;      /* flag indicating SSP method*/
+  sunbooleantype init_warmup; /* flag indicating initial warm-up*/
 
   /* Reusable fused vector operation arrays */
   sunrealtype* cvals;
@@ -251,7 +251,7 @@ int lsrkStep_RKL_CheckStabilityNorm(ARKodeMem ark_mem, ARKodeLSRKStepMem step_me
 int lsrkStep_cheb_T_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
                             sunrealtype* TsR, sunrealtype* TsI);
 int lsrkStep_legendre_P_complex(sunrealtype s, sunrealtype zR, sunrealtype zI,
-                            sunrealtype* PsR, sunrealtype* PsI);
+                                sunrealtype* PsR, sunrealtype* PsI);
 int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv);
 
 /*===============================================================

@@ -344,9 +344,9 @@ int LSRKStepSetUseEllipseForStability(void* arkode_mem, sunbooleantype use_ellip
                                         &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
-  step_mem->dom_eig_update = SUNTRUE;
+  step_mem->dom_eig_update     = SUNTRUE;
   step_mem->dom_eig_is_current = SUNFALSE;
-  step_mem->use_ellipse = use_ellipse;
+  step_mem->use_ellipse        = use_ellipse;
 
   return ARK_SUCCESS;
 }

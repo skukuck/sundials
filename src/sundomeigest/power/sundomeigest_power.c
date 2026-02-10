@@ -57,12 +57,9 @@
 * --------------------------------------------------------------------------
 */
 
-SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(SUNDomEigEstimator DEE,
-                                               sunrealtype lambdaR,
-                                               N_Vector v_prev,
-                                               N_Vector v,
-                                               sunrealtype* lambdaR_out,
-                                               sunrealtype* lambdaI_out);
+SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, N_Vector v_prev, N_Vector v,
+  sunrealtype* lambdaR_out, sunrealtype* lambdaI_out);
 
 /* ----------------------------------------------------------------------------
  * Function to create a new PI estimator
@@ -217,7 +214,7 @@ SUNErrCode SUNDomEigEstimator_Initialize_Power(SUNDomEigEstimator DEE)
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
 
-  if(PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->complex)
   {
     SUNAssert(PI_CONTENT(DEE)->q_prev == NULL, SUN_ERR_ARG_CORRUPT);
   }
@@ -317,7 +314,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   SUNAssert(PI_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
   SUNAssert(PI_CONTENT(DEE)->q, SUN_ERR_ARG_CORRUPT);
   SUNAssert((PI_CONTENT(DEE)->max_iters >= 0), SUN_ERR_ARG_CORRUPT);
-  if(PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->complex)
   {
     /* allocate q_prev vector */
     PI_CONTENT(DEE)->q_prev = N_VClone(PI_CONTENT(DEE)->q);
@@ -336,7 +333,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
   for (int i = 0; i < PI_CONTENT(DEE)->num_warmups; i++)
   {
     retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata,
-                                    PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q);
+                                     PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q);
     PI_CONTENT(DEE)->num_ATimes++;
     PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -351,7 +348,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
 
   for (int k = 0; k < PI_CONTENT(DEE)->max_iters; k++)
   {
-    if(PI_CONTENT(DEE)->complex)
+    if (PI_CONTENT(DEE)->complex)
     {
       N_VScale(ONE, PI_CONTENT(DEE)->V, PI_CONTENT(DEE)->q_prev);
       SUNCheckLastErr();
@@ -375,22 +372,21 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     SUNCheckLastErr();
 
     PI_CONTENT(DEE)->res = SUNRabs(newlambdaR - oldlambdaR);
-    if (PI_CONTENT(DEE)->res <= PI_CONTENT(DEE)->rel_tol * SUNRabs(newlambdaR)) 
+    if (PI_CONTENT(DEE)->res <= PI_CONTENT(DEE)->rel_tol * SUNRabs(newlambdaR))
     {
-      break; 
+      break;
     }
 
     oldlambdaR = newlambdaR;
   }
 
-  if(PI_CONTENT(DEE)->complex)
+  if (PI_CONTENT(DEE)->complex)
   {
     retval = sundomeigestimator_complex_dom_eigs_from_PI(DEE, newlambdaR,
-                                           PI_CONTENT(DEE)->q_prev,
-                                           PI_CONTENT(DEE)->V,
-                                           lambdaR, lambdaI);
+                                                         PI_CONTENT(DEE)->q_prev,
+                                                         PI_CONTENT(DEE)->V,
+                                                         lambdaR, lambdaI);
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
-
   }
   else
   {
@@ -470,22 +466,19 @@ SUNErrCode SUNDomEigEstimator_Write_Power(SUNDomEigEstimator DEE, FILE* outfile)
   return SUN_SUCCESS;
 }
 
-SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(SUNDomEigEstimator DEE,
-                                               sunrealtype lambdaR,
-                                               N_Vector v_prev,
-                                               N_Vector v,
-                                               sunrealtype* lambdaR_out,
-                                               sunrealtype* lambdaI_out)
+SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
+  SUNDomEigEstimator DEE, sunrealtype lambdaR, N_Vector v_prev, N_Vector v,
+  sunrealtype* lambdaR_out, sunrealtype* lambdaI_out)
 {
   SUNFunctionBegin(DEE->sunctx);
-  
+
   int retval;
-  sunrealtype cos_qs, det_G_inv, h11, h12,h21, h22, p11, p12, p21, p22;
+  sunrealtype cos_qs, det_G_inv, h11, h12, h21, h22, p11, p12, p21, p22;
   sunrealtype proj_cond_inv = SUN_RCONST(1e-2);
-  cos_qs = N_VDotProd(v_prev, v);
+  cos_qs                    = N_VDotProd(v_prev, v);
   SUNCheckLastErr();
 
-  if(fabs(fabs(cos_qs) - ONE) < proj_cond_inv)
+  if (fabs(fabs(cos_qs) - ONE) < proj_cond_inv)
   {
     printf("Warning: Projection matrix is ill-conditioned. Returning "
            "dominant eigenvalue as real part only.\n");
@@ -496,13 +489,13 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(SUNDomEigEstimator DEE,
   }
   else
   {
-    det_G_inv = ONE/(ONE - cos_qs * cos_qs);
+    det_G_inv = ONE / (ONE - cos_qs * cos_qs);
 
     /* Solve for G = [v_prev v]' * [v_prev v] and compute 
     projected matrix P = G^{-1} * [v_prev v]' * A * [v_prev v] */
 
-    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata,
-                                     v_prev, PI_CONTENT(DEE)->q);
+    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v_prev,
+                                     PI_CONTENT(DEE)->q);
     PI_CONTENT(DEE)->num_ATimes++;
     PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -510,8 +503,8 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(SUNDomEigEstimator DEE,
     h11 = N_VDotProd(v_prev, PI_CONTENT(DEE)->q);
     h21 = N_VDotProd(v, PI_CONTENT(DEE)->q);
 
-    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata,
-                                     v, PI_CONTENT(DEE)->q);
+    retval = PI_CONTENT(DEE)->ATimes(PI_CONTENT(DEE)->ATdata, v,
+                                     PI_CONTENT(DEE)->q);
     PI_CONTENT(DEE)->num_ATimes++;
     PI_CONTENT(DEE)->num_iters++;
     if (retval != 0) { return SUN_ERR_USER_FCN_FAIL; }
@@ -525,10 +518,10 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(SUNDomEigEstimator DEE,
     p22 = det_G_inv * (h22 - cos_qs * h12);
 
     /* Compute eigenvalues of P */
-    sunrealtype traceP = p11 + p22;
-    sunrealtype detP   = p11 * p22 - p12 * p21;
-    sunrealtype discrim = traceP * traceP - SUN_RCONST(4.0) * detP; 
-    if(discrim >= ZERO)
+    sunrealtype traceP  = p11 + p22;
+    sunrealtype detP    = p11 * p22 - p12 * p21;
+    sunrealtype discrim = traceP * traceP - SUN_RCONST(4.0) * detP;
+    if (discrim >= ZERO)
     {
       /* Dominant eigenvalue is real */
       *lambdaR_out = (traceP + SUNRsqrt(discrim)) / SUN_RCONST(2.0);

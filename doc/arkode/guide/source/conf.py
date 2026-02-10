@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # SUNDIALS Copyright Start
-# Copyright (c) 2025, Lawrence Livermore National Security,
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
 # University of Maryland Baltimore County, and the SUNDIALS contributors.
 # Copyright (c) 2013-2025, Lawrence Livermore National Security
 # and Southern Methodist University.
@@ -20,7 +20,7 @@ from sundials_vars import *
 
 sys.path.append(os.path.dirname(os.path.abspath("../../../shared")))
 
-# Add suntools directory to import python function docstings with autodoc
+# Add suntools directory to import python function docstrings with autodoc
 sys.path.append(os.path.abspath("../../../../tools/suntools"))
 
 # -- General configuration ----------------------------------------------------
@@ -337,3 +337,10 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+# Generate rst files with autofunction directives for sundials4py functions
+# Generate rst files with autofunction directives for sundials4py functions
+from generate_autofunctions import generate_autofunctions_for_submodule
+
+generate_autofunctions_for_submodule("core")
+generate_autofunctions_for_submodule("arkode")

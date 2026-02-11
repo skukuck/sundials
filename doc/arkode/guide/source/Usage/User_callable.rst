@@ -1650,10 +1650,10 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. warning::
+   .. danger::
 
-      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
-      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    .. versionadded:: x.y.z
 
@@ -1672,10 +1672,10 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. warning::
+   .. danger::
 
-      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
-      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
 
 .. c:function:: int ARKodeSetPostprocessStepFailFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
@@ -1692,10 +1692,10 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. warning::
+   .. danger::
 
-      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
-      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    .. versionadded:: x.y.z
 
@@ -1717,10 +1717,10 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. warning::
+   .. danger::
 
-      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
-      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
    .. versionadded:: x.y.z
 
@@ -1739,10 +1739,10 @@ Set stage postprocessing function.                 :c:func:`ARKodeSetPostprocess
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
 
-   .. warning::
+   .. danger::
 
-      IF THE SUPPLIED FUNCTION MODIFIES ANY OF THE ACTIVE STATE DATA, THEN ALL
-      THEORETICAL GUARANTEES OF SOLUTION ACCURACY AND STABILITY ARE LOST.
+      If the supplied function modifies any of the active state data, then all
+      theoretical guarantees of solution accuracy and stability are lost.
 
 
 

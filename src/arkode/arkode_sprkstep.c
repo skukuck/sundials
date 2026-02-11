@@ -500,7 +500,7 @@ int sprkStep_FullRHS(ARKodeMem ark_mem, sunrealtype t, N_Vector y, N_Vector f,
     if (ark_mem->PreProcessRHS != NULL)
     {
       retval = ark_mem->PreProcessRHS(t, y, ark_mem->user_data);
-      if (retval != 0) { return (ARK_POSTPROCESS_STAGE_FAIL); }
+      if (retval != 0) { return (ARK_PREPROCESS_RHS_FAIL); }
     }
 
     /* Since f1 and f2 do not have overlapping outputs and so the f vector is
@@ -586,7 +586,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed preprocess stage, retval = %i", retval);
-          return (ARK_POSTPROCESS_STAGE_FAIL);
+          return (ARK_PREPROCESS_RHS_FAIL);
         }
       }
 
@@ -629,7 +629,7 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         {
           SUNLogInfo(ARK_LOGGER, "end-stages-list",
                      "status = failed preprocess stage, retval = %i", retval);
-          return (ARK_POSTPROCESS_STAGE_FAIL);
+          return (ARK_PREPROCESS_RHS_FAIL);
         }
       }
 
@@ -714,7 +714,7 @@ int sprkStep_TakeStep_Compensated(ARKodeMem ark_mem, sunrealtype* dsmPtr,
   {
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "status = failed stage stage processing, retval = %i",
-               ARK_POSTPROCESS_STAGE_FAIL);
+               ARK_PREPROCESS_RHS_FAIL);
     arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
                     __FILE__,
                     "Compensated summation is not compatible with stage "

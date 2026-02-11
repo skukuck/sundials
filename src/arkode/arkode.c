@@ -915,7 +915,7 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       {
         retval = ark_mem->PreProcessStep(ark_mem->tcur, ark_mem->ycur,
                                          ark_mem->ps_data);
-        if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+        if (retval != 0) { return (ARK_PREPROCESS_STEP_FAIL); }
       }
       skip_preprocess = SUNFALSE;
 
@@ -1016,12 +1016,13 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
       ark_mem->h *= ark_mem->eta;
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
 
-      /* since the previous step attempt failed, call the user-supplied step failure postprocessing function (if it exists) */
+      /* since the previous step attempt failed, call the user-supplied
+         step failure postprocessing function (if it exists) */
       if (ark_mem->PostProcessStepFail != NULL)
       {
         retval = ark_mem->PostProcessStepFail(ark_mem->tcur, ark_mem->ycur,
                                               ark_mem->ps_data);
-        if (retval != 0) { return (ARK_POSTPROCESS_STEP_FAIL); }
+        if (retval != 0) { return (ARK_POSTPROCESS_FAILED_STEP_FAIL); }
         skip_preprocess = SUNTRUE;
       }
 
@@ -2901,6 +2902,19 @@ int arkHandleFailure(ARKodeMem ark_mem, int flag)
   case ARK_POSTPROCESS_STAGE_FAIL:
     arkProcessError(ark_mem, ARK_POSTPROCESS_STAGE_FAIL, __LINE__, __func__,
                     __FILE__, MSG_ARK_POSTPROCESS_STAGE_FAIL, ark_mem->tcur);
+    break;
+  case ARK_POSTPROCESS_FAILED_STEP_FAIL:
+    arkProcessError(ark_mem, ARK_POSTPROCESS_FAILED_STEP_FAIL, __LINE__,
+                    __func__, __FILE__, MSG_ARK_POSTPROCESS_FAILED_STEP_FAIL,
+                    ark_mem->tcur);
+    break;
+  case ARK_PREPROCESS_STEP_FAIL:
+    arkProcessError(ark_mem, ARK_PREPROCESS_STEP_FAIL, __LINE__, __func__,
+                    __FILE__, MSG_ARK_PREPROCESS_STEP_FAIL, ark_mem->tcur);
+    break;
+  case ARK_PREPROCESS_RHS_FAIL:
+    arkProcessError(ark_mem, ARK_PREPROCESS_RHS_FAIL, __LINE__, __func__,
+                    __FILE__, MSG_ARK_PREPROCESS_RHS_FAIL, ark_mem->tcur);
     break;
   case ARK_INTERP_FAIL:
     arkProcessError(ark_mem, ARK_INTERP_FAIL, __LINE__, __func__, __FILE__,

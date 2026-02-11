@@ -1946,7 +1946,6 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the second stage, and accumulate embedding into tempv1 */
-  step_mem->istage = 1;
   ark_mem->tcur = ark_mem->tn + hp5;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 1, ark_mem->tcur);
@@ -1968,6 +1967,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
+
+  /* update stage index */
+  step_mem->istage = 1;
 
   /* apply user-supplied stage preprocessing function (if supplied) */
   if (ark_mem->PreProcessRHS != NULL)
@@ -1997,7 +1999,6 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the third stage */
-  step_mem->istage = 2;
   ark_mem->tcur = ark_mem->tn + ark_mem->h;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 2, ark_mem->tcur);
@@ -2019,6 +2020,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
+
+  /* update stage index */
+  step_mem->istage = 2;
 
   /* Evaluate stage RHS */
 
@@ -2049,7 +2053,6 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
   SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
   /* Perform the fourth stage */
-  step_mem->istage = 3;
   ark_mem->tcur = ark_mem->tn + hp5;
   SUNLogInfo(ARK_LOGGER, "begin-stages-list",
              "stage = %i, tcur = " SUN_FORMAT_G, 3, ark_mem->tcur);
@@ -2083,6 +2086,9 @@ int lsrkStep_TakeStepSSP43(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr
       return ARK_POSTPROCESS_STAGE_FAIL;
     }
   }
+
+  /* update stage index */
+  step_mem->istage = 3;
 
   /* Evaluate stage RHS */
 

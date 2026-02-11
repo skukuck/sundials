@@ -841,9 +841,6 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      the first stage RHS is just the full RHS from the start of the step */
   for (is = 1; is < step_mem->stages; is++)
   {
-    /* store current stage index */
-    step_mem->istage = is;
-
     /* Set current stage time(s) */
     ark_mem->tcur = ark_mem->tn + step_mem->B->c[is] * ark_mem->h;
 
@@ -895,6 +892,9 @@ int erkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
+
+    /* update current stage index */
+    step_mem->istage = is;
 
     /* apply user-supplied stage preprocessing function (if supplied) */
     if (ark_mem->PreProcessRHS != NULL)

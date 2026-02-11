@@ -664,9 +664,6 @@ int sprkStep_TakeStep(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       }
     }
 
-    /* keep track of the stage number */
-    step_mem->istage++;
-
     prev_stage = curr_stage;
 
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");

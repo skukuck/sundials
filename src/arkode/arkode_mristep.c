@@ -1952,9 +1952,6 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* Loop over remaining internal stages */
   for (is = 1; is < step_mem->stages - 1; is++)
   {
-    /* Set current stage index (0-based) */
-    step_mem->istage = is;
-
     /* Set relevant stage times (including desired stage time for implicit solves) */
     t0 = ark_mem->tn + step_mem->MRIC->c[is - 1] * ark_mem->h;
     tf = ark_mem->tcur = ark_mem->tn + step_mem->MRIC->c[is] * ark_mem->h;
@@ -2019,6 +2016,9 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return (ARK_POSTPROCESS_STAGE_FAIL);
       }
     }
+
+    /* Update current stage index */
+    step_mem->istage = is;
 
     /* conditionally reset the inner integrator with the modified stage solution */
     if (step_mem->stagetypes[is] != MRISTAGE_STIFF_ACC)

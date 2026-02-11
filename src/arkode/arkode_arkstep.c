@@ -2230,6 +2230,19 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (*nflagPtr < 0) { return (*nflagPtr); }
   if (*nflagPtr > 0) { return (TRY_AGAIN); }
 
+  /* apply user-supplied stage postprocessing function (if supplied) */
+  if (ark_mem->PostProcessStage != NULL)
+  {
+    retval = ark_mem->PostProcessStage(ark_mem->tcur, ark_mem->ycur,
+                                       ark_mem->user_data);
+    if (retval != 0)
+    {
+      SUNLogInfo(ARK_LOGGER, "end-stages-list",
+                 "status = failed postprocess stage, retval = %i", retval);
+      return (ARK_POSTPROCESS_STAGE_FAIL);
+    }
+  }
+
   if (ark_mem->checkpoint_scheme)
   {
     sunbooleantype do_save;

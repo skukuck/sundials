@@ -2245,7 +2245,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
       }
       else
       {
-        retval = ark_mem->PostProcessStage(ark_mem->tn + SUN_RCONST(2.0)* onesixth * ark_mem->h,
+        retval = ark_mem->PostProcessStage(ark_mem->tn + SUN_RCONST(2.0) *
+                                                           onesixth * ark_mem->h,
                                            ark_mem->ycur, ark_mem->user_data);
       }
       if (retval != 0)

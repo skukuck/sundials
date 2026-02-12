@@ -2303,14 +2303,8 @@ int lsrkStep_TakeStepSSP104(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     SUNLogInfo(ARK_LOGGER, "end-stages-list", "status = success");
 
     /* Begin the j-th stage by updating the state and embedding */
-    if (j == 5)
-    {
-      ark_mem->tcur = ark_mem->tn + 2 * hsixth;
-    }
-    else
-    {
-      ark_mem->tcur = ark_mem->tn + j * hsixth;
-    }
+    if (j == 5) { ark_mem->tcur = ark_mem->tn + 2 * hsixth; }
+    else { ark_mem->tcur = ark_mem->tn + j * hsixth; }
     SUNLogInfo(ARK_LOGGER, "begin-stages-list",
                "stage = %i, tcur = " SUN_FORMAT_G, j, ark_mem->tcur);
     N_VLinearSum(ONE, ark_mem->ycur, hsixth, ark_mem->tempv3, ark_mem->ycur);

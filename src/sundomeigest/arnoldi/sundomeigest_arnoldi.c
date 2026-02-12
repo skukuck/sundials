@@ -38,7 +38,8 @@
 #error Incompatible sunrealtype for LAPACK; disable LAPACK and rebuild
 #endif
 
-#define ONE SUN_RCONST(1.0)
+#define ZERO SUN_RCONST(0.0)
+#define ONE  SUN_RCONST(1.0)
 
 /* Default estimator parameters */
 #define DEE_NUM_OF_WARMUPS_ARNOLDI_DEFAULT 100

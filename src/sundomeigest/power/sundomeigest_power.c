@@ -478,7 +478,7 @@ SUNErrCode sundomeigestimator_complex_dom_eigs_from_PI(
   cos_qs                    = N_VDotProd(v_prev, v);
   SUNCheckLastErr();
 
-  if (fabs(fabs(cos_qs) - ONE) < proj_cond_inv)
+  if (SUNRabs(SUNRabs(cos_qs) - ONE) < proj_cond_inv)
   {
     printf("Warning: Projection matrix is ill-conditioned. Returning "
            "dominant eigenvalue as real part only.\n");

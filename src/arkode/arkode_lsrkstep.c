@@ -937,7 +937,7 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* Compute number of stages based on current step size and
      dominant eigenvalue using Eq. 21 in Meyer et al. (2014) */
   sunrealtype zRabs = SUNRabs(ark_mem->h * step_mem->lambdaR);
-  sunrealtype ss    =
+  sunrealtype ss =
     SUNRceil((SUNRsqrt(SUN_RCONST(9.0) + SUN_RCONST(8.0) * zRabs) - ONE) / TWO);
 
   ss = SUNMAX(ss, SUN_RCONST(2.0));

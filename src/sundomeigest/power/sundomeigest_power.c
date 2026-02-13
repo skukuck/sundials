@@ -554,6 +554,11 @@ SUNErrCode SUNDomEigEstimator_Destroy_Power(SUNDomEigEstimator* DEEptr)
       N_VDestroy(PI_CONTENT(DEE)->q);
       PI_CONTENT(DEE)->q = NULL;
     }
+    if (PI_CONTENT(DEE)->q_prev)
+    {
+      N_VDestroy(PI_CONTENT(DEE)->q_prev);
+      PI_CONTENT(DEE)->q_prev = NULL;
+    }
     if (PI_CONTENT(DEE)->V)
     {
       N_VDestroy(PI_CONTENT(DEE)->V);

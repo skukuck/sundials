@@ -54,8 +54,6 @@
 
 /* Accessor macros */
 
-
-
 /* Problem Constants */
 #define NEQ 3 /* number of equations                  */
 #define NP  2 /* number of sensitivities              */
@@ -127,7 +125,8 @@ int main(int argc, char* argv[])
   UserData data;
   sunrealtype time, ti, tf;
   int retval, nckp, indexB1, indexB2, is;
-  sunrealtype G, Gm, Gp, dp1, dp2, grdG_fwd[2], grdG_bck[2], grdG_cntr[2], H11, H22;
+  sunrealtype G, Gm, Gp, dp1, dp2, grdG_fwd[2], grdG_bck[2], grdG_cntr[2], H11,
+    H22;
   sunrealtype rtolFD, atolFD;
   sunrealtype* yy_data;
   sunrealtype* yp_data;
@@ -157,8 +156,8 @@ int main(int argc, char* argv[])
   /* Consistent IC */
   yy         = N_VNew_Serial(NEQ, ctx);
   yp         = N_VClone(yy);
-  yy_data = N_VGetArrayPointer(yy);
-  yp_data = N_VGetArrayPointer(yp);
+  yy_data    = N_VGetArrayPointer(yy);
+  yp_data    = N_VGetArrayPointer(yp);
   yy_data[0] = ONE;
   yy_data[1] = ZERO;
   yy_data[2] = ZERO;
@@ -166,7 +165,7 @@ int main(int argc, char* argv[])
   yp_data[1] = P1;
   yp_data[2] = 0;
 
-  q = N_VNew_Serial(1, ctx);
+  q                   = N_VNew_Serial(1, ctx);
   sunrealtype* q_data = N_VGetArrayPointer(q);
   N_VConst(ZERO, q);
 
@@ -241,8 +240,8 @@ int main(int argc, char* argv[])
   IDAGetSensDky(ida_mem, tf, 1, ypS);
 
   IDAGetQuadSens(ida_mem, &time, qS);
-  sunrealtype* qS0_data = N_VGetArrayPointer(qS[0]);
-  sunrealtype* qS1_data = N_VGetArrayPointer(qS[1]);
+  sunrealtype* qS0_data  = N_VGetArrayPointer(qS[0]);
+  sunrealtype* qS1_data  = N_VGetArrayPointer(qS[1]);
   sunrealtype* yyS0_data = N_VGetArrayPointer(yyS[0]);
 #if defined(SUNDIALS_EXTENDED_PRECISION)
   printf("   dG/dp:  %12.4Le %12.4Le\n", qS0_data[0], qS1_data[0]);
@@ -255,9 +254,9 @@ int main(int argc, char* argv[])
   *******************************/
 
   /* Consistent IC. */
-  yyB1 = N_VNew_Serial(2 * NEQ, ctx);
+  yyB1                   = N_VNew_Serial(2 * NEQ, ctx);
   sunrealtype* yyB1_data = N_VGetArrayPointer(yyB1);
-  ypB1 = N_VClone(yyB1);
+  ypB1                   = N_VClone(yyB1);
   sunrealtype* ypB1_data = N_VGetArrayPointer(ypB1);
 
   N_VConst(ZERO, yyB1);
@@ -270,7 +269,7 @@ int main(int argc, char* argv[])
   ypB1_data[3] = yyS0_data[2] - yyS0_data[0];
   ypB1_data[4] = yyS0_data[2] - yyS0_data[1];
 
-  qB1 = N_VNew_Serial(2 * NP, ctx);
+  qB1                   = N_VNew_Serial(2 * NP, ctx);
   sunrealtype* qB1_data = N_VGetArrayPointer(qB1);
   N_VConst(ZERO, qB1);
 
@@ -299,9 +298,9 @@ int main(int argc, char* argv[])
   *******************************/
 
   /* Consistent IC. */
-  yyB2 = N_VNew_Serial(2 * NEQ, ctx);
+  yyB2                   = N_VNew_Serial(2 * NEQ, ctx);
   sunrealtype* yyB2_data = N_VGetArrayPointer(yyB2);
-  ypB2 = N_VNew_Serial(2 * NEQ, ctx);
+  ypB2                   = N_VNew_Serial(2 * NEQ, ctx);
   sunrealtype* ypB2_data = N_VGetArrayPointer(ypB2);
   sunrealtype* yyS1_data = N_VGetArrayPointer(yyS[1]);
 
@@ -315,7 +314,7 @@ int main(int argc, char* argv[])
   ypB2_data[3] = yyS1_data[2] - yyS1_data[0];
   ypB2_data[4] = yyS1_data[2] - yyS1_data[1];
 
-  qB2 = N_VNew_Serial(2 * NP, ctx);
+  qB2                   = N_VNew_Serial(2 * NP, ctx);
   sunrealtype* qB2_data = N_VGetArrayPointer(qB2);
   N_VConst(ZERO, qB2);
 
@@ -620,8 +619,8 @@ static int resS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
 
   for (is = 0; is < NP; is++)
   {
-    sunrealtype* yySis_data = N_VGetArrayPointer(yyS[is]);
-    sunrealtype* ypSis_data = N_VGetArrayPointer(ypS[is]);
+    sunrealtype* yySis_data     = N_VGetArrayPointer(yyS[is]);
+    sunrealtype* ypSis_data     = N_VGetArrayPointer(ypS[is]);
     sunrealtype* resvalSis_data = N_VGetArrayPointer(resvalS[is]);
 
     s1 = yySis_data[0];
@@ -659,7 +658,7 @@ static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
                 void* user_data)
 {
   sunrealtype y1, y2, y3;
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
   sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
 
   y1           = yy_data[0];
@@ -676,9 +675,9 @@ static int rhsQS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp, N_Vector* yyS,
 {
   sunrealtype y1, y2, y3;
   sunrealtype s1, s2, s3;
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* yyS0_data = N_VGetArrayPointer(yyS[0]);
-  sunrealtype* yyS1_data = N_VGetArrayPointer(yyS[1]);
+  sunrealtype* yy_data        = N_VGetArrayPointer(yy);
+  sunrealtype* yyS0_data      = N_VGetArrayPointer(yyS[0]);
+  sunrealtype* yyS1_data      = N_VGetArrayPointer(yyS[1]);
   sunrealtype* rhsvalQS0_data = N_VGetArrayPointer(rhsvalQS[0]);
   sunrealtype* rhsvalQS1_data = N_VGetArrayPointer(rhsvalQS[1]);
 
@@ -687,15 +686,15 @@ static int rhsQS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp, N_Vector* yyS,
   y3 = yy_data[2];
 
   /* 1st sensitivity RHS */
-  s1                  = yyS0_data[0];
-  s2                  = yyS0_data[1];
-  s3                  = yyS0_data[2];
+  s1                = yyS0_data[0];
+  s2                = yyS0_data[1];
+  s3                = yyS0_data[2];
   rhsvalQS0_data[0] = y1 * s1 + y2 * s2 + y3 * s3;
 
   /* 2nd sensitivity RHS */
-  s1                  = yyS1_data[0];
-  s2                  = yyS1_data[1];
-  s3                  = yyS1_data[2];
+  s1                = yyS1_data[0];
+  s2                = yyS1_data[1];
+  s3                = yyS1_data[2];
   rhsvalQS1_data[0] = y1 * s1 + y2 * s2 + y3 * s3;
 
   return (0);
@@ -714,9 +713,9 @@ static int resBS1(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
   sunrealtype lp1, lp2, mp1, mp2;
   sunrealtype s1, s2, s3;
   sunrealtype l21;
-  sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* ypB_data = N_VGetArrayPointer(ypB);
+  sunrealtype* yyB_data  = N_VGetArrayPointer(yyB);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
+  sunrealtype* ypB_data  = N_VGetArrayPointer(ypB);
   sunrealtype* rrBS_data = N_VGetArrayPointer(rrBS);
 
   data = (UserData)user_dataB;
@@ -749,9 +748,9 @@ static int resBS1(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
 
   /* The sensitivity with respect to p1 */
   sunrealtype* yyS0_data = N_VGetArrayPointer(yyS[0]);
-  s1 = yyS0_data[0];
-  s2 = yyS0_data[1];
-  s3 = yyS0_data[2];
+  s1                     = yyS0_data[0];
+  s2                     = yyS0_data[1];
+  s3                     = yyS0_data[2];
 
   /* Temporary variables */
   l21 = l2 - l1;
@@ -776,8 +775,8 @@ static int rhsQBS1(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
   sunrealtype l1, l2, m1, m2;
   sunrealtype s1, s2, s3;
   sunrealtype l21;
-  sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yyB_data    = N_VGetArrayPointer(yyB);
+  sunrealtype* yy_data     = N_VGetArrayPointer(yy);
   sunrealtype* rhsBQS_data = N_VGetArrayPointer(rhsBQS);
 
   /* The y vector */
@@ -795,9 +794,9 @@ static int rhsQBS1(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
 
   /* The sensitivity with respect to p1 */
   sunrealtype* yyS0_data = N_VGetArrayPointer(yyS[0]);
-  s1 = yyS0_data[0];
-  s2 = yyS0_data[1];
-  s3 = yyS0_data[2];
+  s1                     = yyS0_data[0];
+  s2                     = yyS0_data[1];
+  s3                     = yyS0_data[2];
 
   /* Temporary variables */
   l21 = l2 - l1;
@@ -823,9 +822,9 @@ static int resBS2(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
   sunrealtype lp1, lp2, mp1, mp2;
   sunrealtype s1, s2, s3;
   sunrealtype l21;
-  sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* ypB_data = N_VGetArrayPointer(ypB);
+  sunrealtype* yyB_data  = N_VGetArrayPointer(yyB);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
+  sunrealtype* ypB_data  = N_VGetArrayPointer(ypB);
   sunrealtype* rrBS_data = N_VGetArrayPointer(rrBS);
 
   data = (UserData)user_dataB;
@@ -859,9 +858,9 @@ static int resBS2(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
 
   /* The sensitivity with respect to p2 */
   sunrealtype* yyS1_data = N_VGetArrayPointer(yyS[1]);
-  s1 = yyS1_data[0];
-  s2 = yyS1_data[1];
-  s3 = yyS1_data[2];
+  s1                     = yyS1_data[0];
+  s2                     = yyS1_data[1];
+  s3                     = yyS1_data[2];
 
   /* Temporary variables */
   l21 = l2 - l1;
@@ -886,8 +885,8 @@ static int rhsQBS2(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
   sunrealtype l1, l2, m1, m2;
   sunrealtype s1, s2, s3;
   sunrealtype l21;
-  sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yyB_data    = N_VGetArrayPointer(yyB);
+  sunrealtype* yy_data     = N_VGetArrayPointer(yy);
   sunrealtype* rhsBQS_data = N_VGetArrayPointer(rhsBQS);
 
   /* The y vector */
@@ -905,9 +904,9 @@ static int rhsQBS2(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector* yyS,
 
   /* The sensitivity with respect to p2 */
   sunrealtype* yyS1_data = N_VGetArrayPointer(yyS[1]);
-  s1 = yyS1_data[0];
-  s2 = yyS1_data[1];
-  s3 = yyS1_data[2];
+  s1                     = yyS1_data[0];
+  s2                     = yyS1_data[1];
+  s3                     = yyS1_data[2];
 
   /* Temporary variables */
   l21 = l2 - l1;

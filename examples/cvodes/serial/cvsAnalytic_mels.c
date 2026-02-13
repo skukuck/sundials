@@ -208,14 +208,14 @@ int main(int argc, char* argv[])
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype lambda = rdata[0]; /* set shortcut for stiffness parameter */
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u      = y_data[0]; /* access current solution value */
+  sunrealtype lambda     = rdata[0]; /* set shortcut for stiffness parameter */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access current solution value */
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function: "NV_Ith_S" accesses the 0th entry of ydot */
   ydot_data[0] = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
-                      lambda * atan(t);
+                 lambda * atan(t);
 
   return 0; /* return with success */
 }

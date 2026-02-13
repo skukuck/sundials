@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
   y0_data[2] = SUN_RCONST(0.0);
 
   /* Set integration tolerances */
-  reltol              = SUN_RCONST(1e-6);
+  reltol         = SUN_RCONST(1e-6);
   abstol_data[0] = SUN_RCONST(1e-8);
   abstol_data[1] = SUN_RCONST(1e-14);
   abstol_data[2] = SUN_RCONST(1e-6);
@@ -369,7 +369,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* udata)
   UserData data;
   sunrealtype p1, p2, p3;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   y1   = y_data[0];
   y2   = y_data[1];
@@ -430,8 +430,8 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
   sunrealtype s1, s2, s3;
   sunrealtype sd1, sd2, sd3;
   sunrealtype* ySdot_data = N_VGetArrayPointer(ySdot);
-  sunrealtype* yS_data = N_VGetArrayPointer(yS);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yS_data    = N_VGetArrayPointer(yS);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
 
   data = (UserData)udata;
   p1   = data->p[0];

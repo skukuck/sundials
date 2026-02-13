@@ -67,7 +67,7 @@ int main(void)
   if (check_retval(&retval, "SUNContext_Create", 1)) { return (1); }
 
   /* Allocate the vector of initial conditions */
-  y = N_VNew_Serial(NEQ, sunctx);
+  y                   = N_VNew_Serial(NEQ, sunctx);
   sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* Set initial condition */
@@ -340,7 +340,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* f_data)
 {
   int* flag;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   flag = (int*)f_data;
 

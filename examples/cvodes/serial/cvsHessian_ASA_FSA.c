@@ -259,20 +259,21 @@ int main(int argc, char* argv[])
   retval = CVodeGetQuadSens(cvode_mem, &time, yQS);
   if (check_retval(&retval, "CVodeGetQuadSens", 1)) { return (1); }
 
-  sunrealtype* yS0_data = N_VGetArrayPointer(yS[0]);
-  sunrealtype* yS1_data = N_VGetArrayPointer(yS[1]);
+  sunrealtype* yS0_data  = N_VGetArrayPointer(yS[0]);
+  sunrealtype* yS1_data  = N_VGetArrayPointer(yS[1]);
   sunrealtype* yQS0_data = N_VGetArrayPointer(yQS[0]);
   sunrealtype* yQS1_data = N_VGetArrayPointer(yQS[1]);
 
   printf("ncheck = %d\n", ncheck);
   printf("\n");
-  printf("     y:    %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0], y_data[1], y_data[2]);
+  printf("     y:    %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0],
+         y_data[1], y_data[2]);
   printf("     G:    %12.4" ESYM "\n", yQ_data[0]);
   printf("\n");
-  printf("     yS1:  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yS0_data[0], yS0_data[1],
-         yS0_data[2]);
-  printf("     yS2:  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yS1_data[0], yS1_data[1],
-         yS1_data[2]);
+  printf("     yS1:  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yS0_data[0],
+         yS0_data[1], yS0_data[2]);
+  printf("     yS2:  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yS1_data[0],
+         yS1_data[1], yS1_data[2]);
   printf("\n");
   printf("   dG/dp:  %12.4" ESYM " %12.4" ESYM "\n", yQS0_data[0], yQS1_data[0]);
   printf("\n");
@@ -399,10 +400,10 @@ int main(int argc, char* argv[])
   retval = CVodeGetQuadB(cvode_mem, indexB2, &time, yQB2);
   if (check_retval(&retval, "CVodeGetQuadB", 1)) { return (1); }
 
-  printf("   dG/dp:  %12.4" ESYM " %12.4" ESYM "   (from backward pb. 1)\n", -yQB1_data[0],
-         -yQB1_data[1]);
-  printf("           %12.4" ESYM " %12.4" ESYM "   (from backward pb. 2)\n", -yQB2_data[0],
-         -yQB2_data[1]);
+  printf("   dG/dp:  %12.4" ESYM " %12.4" ESYM "   (from backward pb. 1)\n",
+         -yQB1_data[0], -yQB1_data[1]);
+  printf("           %12.4" ESYM " %12.4" ESYM "   (from backward pb. 2)\n",
+         -yQB2_data[0], -yQB2_data[1]);
   printf("\n");
   printf("   H = d2G/dp2:\n");
   printf("        (1)            (2)\n");
@@ -485,7 +486,8 @@ int main(int argc, char* argv[])
 
   Gp = yQ_data[0];
 
-  printf("p1+  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0], y_data[1], y_data[2]);
+  printf("p1+  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0],
+         y_data[1], y_data[2]);
   printf("     G:   %12.4" ESYM "\n", yQ_data[0]);
   data->p1 -= 2.0 * dp;
 
@@ -502,7 +504,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gm = yQ_data[0];
-  printf("p1-  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0], y_data[1], y_data[2]);
+  printf("p1-  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0],
+         y_data[1], y_data[2]);
   printf("     G:   %12.4" ESYM "\n", yQ_data[0]);
   data->p1 += dp;
 
@@ -526,7 +529,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gp = yQ_data[0];
-  printf("p2+  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0], y_data[1], y_data[2]);
+  printf("p2+  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0],
+         y_data[1], y_data[2]);
   printf("     G:   %12.4" ESYM "\n", yQ_data[0]);
   data->p2 -= 2.0 * dp;
 
@@ -543,7 +547,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
 
   Gm = yQ_data[0];
-  printf("p2-  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0], y_data[1], y_data[2]);
+  printf("p2-  y:   %12.4" ESYM " %12.4" ESYM " %12.4" ESYM, y_data[0],
+         y_data[1], y_data[2]);
   printf("     G:   %12.4" ESYM "\n", yQ_data[0]);
   data->p2 += dp;
 
@@ -554,9 +559,12 @@ int main(int argc, char* argv[])
 
   printf("\n");
 
-  printf("   dG/dp:  %12.4" ESYM " %12.4" ESYM "   (fwd FD)\n", grdG_fwd[0], grdG_fwd[1]);
-  printf("           %12.4" ESYM " %12.4" ESYM "   (bck FD)\n", grdG_bck[0], grdG_bck[1]);
-  printf("           %12.4" ESYM " %12.4" ESYM "   (cntr FD)\n", grdG_cntr[0], grdG_cntr[1]);
+  printf("   dG/dp:  %12.4" ESYM " %12.4" ESYM "   (fwd FD)\n", grdG_fwd[0],
+         grdG_fwd[1]);
+  printf("           %12.4" ESYM " %12.4" ESYM "   (bck FD)\n", grdG_bck[0],
+         grdG_bck[1]);
+  printf("           %12.4" ESYM " %12.4" ESYM "   (cntr FD)\n", grdG_cntr[0],
+         grdG_cntr[1]);
   printf("\n");
   printf("  H(1,1):  %12.4" ESYM "\n", H11);
   printf("  H(2,2):  %12.4" ESYM "\n", H22);
@@ -597,7 +605,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   UserData data;
   sunrealtype p1, p2;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   data = (UserData)user_data;
   p1   = data->p1;
@@ -617,7 +625,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fQ(sunrealtype t, N_Vector y, N_Vector qdot, void* user_data)
 {
   sunrealtype y0, y1, y2;
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
   sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
 
   y0 = y_data[0];
@@ -647,7 +655,7 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, N_Vector* yS,
   y1 = y_data[1];
   y2 = y_data[2];
 
-  sunrealtype* yS0_data = N_VGetArrayPointer(yS[0]);
+  sunrealtype* yS0_data    = N_VGetArrayPointer(yS[0]);
   sunrealtype* ySdot0_data = N_VGetArrayPointer(ySdot[0]);
   sunrealtype* ySdot1_data = N_VGetArrayPointer(ySdot[1]);
 
@@ -668,9 +676,9 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, N_Vector* yS,
   /* 2nd sensitivity RHS */
 
   sunrealtype* yS1_data = N_VGetArrayPointer(yS[1]);
-  s0 = yS1_data[0];
-  s1 = yS1_data[1];
-  s2 = yS1_data[2];
+  s0                    = yS1_data[0];
+  s1                    = yS1_data[1];
+  s2                    = yS1_data[2];
 
   fys0 = -2.0 * p1 * y0 * s0 - s2;
   fys1 = -s1;
@@ -694,7 +702,7 @@ static int fQS(int Ns, sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yQdot,
   y1 = y_data[1];
   y2 = y_data[2];
 
-  sunrealtype* yS0_data = N_VGetArrayPointer(yS[0]);
+  sunrealtype* yS0_data     = N_VGetArrayPointer(yS[0]);
   sunrealtype* yQSdot0_data = N_VGetArrayPointer(yQSdot[0]);
   sunrealtype* yQSdot1_data = N_VGetArrayPointer(yQSdot[1]);
 
@@ -709,9 +717,9 @@ static int fQS(int Ns, sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yQdot,
   /* 2nd sensitivity RHS */
 
   sunrealtype* yS1_data = N_VGetArrayPointer(yS[1]);
-  s0 = yS1_data[0];
-  s1 = yS1_data[1];
-  s2 = yS1_data[2];
+  s0                    = yS1_data[0];
+  s1                    = yS1_data[1];
+  s2                    = yS1_data[2];
 
   yQSdot1_data[0] = y0 * s0 + y1 * s1 + y2 * s2;
 
@@ -728,8 +736,8 @@ static int fB1(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   sunrealtype l0, l1, l2; /* lambda */
   sunrealtype m0, m1, m2; /* mu */
   sunrealtype* yBdot_data = N_VGetArrayPointer(yBdot);
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
 
   data = (UserData)user_dataB;
   p1   = data->p1;
@@ -740,9 +748,9 @@ static int fB1(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   y2 = y_data[2];
 
   sunrealtype* yS0_data = N_VGetArrayPointer(yS[0]);
-  s0 = yS0_data[0];
-  s1 = yS0_data[1];
-  s2 = yS0_data[2];
+  s0                    = yS0_data[0];
+  s1                    = yS0_data[1];
+  s2                    = yS0_data[2];
 
   l0 = yB_data[0];
   l1 = yB_data[1];
@@ -772,8 +780,8 @@ static int fQB1(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   sunrealtype s0, s1, s2; /* sensitivity 1 */
   sunrealtype l0, l2;     /* lambda */
   sunrealtype m0, m2;     /* mu */
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
   sunrealtype* qBdot_data = N_VGetArrayPointer(qBdot);
 
   data = (UserData)user_dataB;
@@ -785,9 +793,9 @@ static int fQB1(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   y2 = y_data[2];
 
   sunrealtype* yS0_data = N_VGetArrayPointer(yS[0]);
-  s0 = yS0_data[0];
-  s1 = yS0_data[1];
-  s2 = yS0_data[2];
+  s0                    = yS0_data[0];
+  s1                    = yS0_data[1];
+  s2                    = yS0_data[2];
 
   l0 = yB_data[0];
   l2 = yB_data[2];
@@ -815,8 +823,8 @@ static int fB2(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   sunrealtype l0, l1, l2; /* lambda */
   sunrealtype m0, m1, m2; /* mu */
   sunrealtype* yBdot_data = N_VGetArrayPointer(yBdot);
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
 
   data = (UserData)user_dataB;
   p1   = data->p1;
@@ -827,9 +835,9 @@ static int fB2(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   y2 = y_data[2];
 
   sunrealtype* yS1_data = N_VGetArrayPointer(yS[1]);
-  s0 = yS1_data[0];
-  s1 = yS1_data[1];
-  s2 = yS1_data[2];
+  s0                    = yS1_data[0];
+  s1                    = yS1_data[1];
+  s2                    = yS1_data[2];
 
   l0 = yB_data[0];
   l1 = yB_data[1];
@@ -861,8 +869,8 @@ static int fQB2(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   sunrealtype s0, s1, s2; /* sensitivity 2 */
   sunrealtype l0, l2;     /* lambda */
   sunrealtype m0, m2;     /* mu */
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
   sunrealtype* qBdot_data = N_VGetArrayPointer(qBdot);
 
   data = (UserData)user_dataB;
@@ -874,9 +882,9 @@ static int fQB2(sunrealtype t, N_Vector y, N_Vector* yS, N_Vector yB,
   y2 = y_data[2];
 
   sunrealtype* yS1_data = N_VGetArrayPointer(yS[1]);
-  s0 = yS1_data[0];
-  s1 = yS1_data[1];
-  s2 = yS1_data[2];
+  s0                    = yS1_data[0];
+  s1                    = yS1_data[1];
+  s2                    = yS1_data[2];
 
   l0 = yB_data[0];
   l2 = yB_data[2];

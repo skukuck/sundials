@@ -362,10 +362,10 @@ static int fe(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)] * [rdot(t)/(2u)]
   //     [-sin(t) cos(t)]   [sdot(t)/(2v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
-  tmp1 = rdot(t) / (TWO * u);
-  tmp2 = sdot(t) / (TWO * v);
+  gcos         = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
+  gsin         = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  tmp1         = rdot(t) / (TWO * u);
+  tmp2         = sdot(t) / (TWO * v);
   ydot_data[0] = gcos * tmp1 + gsin * tmp2;
   ydot_data[1] = -gsin * tmp1 + gcos * tmp2;
 
@@ -386,12 +386,12 @@ static int fi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)]*[G  e]*[(-1+u^2-r(t))/(2*u)]
   //     [-sin(t) cos(t)] [e -1] [(-2+v^2-s(t))/(2*v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
-  tmp1 = (-ONE + u * u - r(t)) / (TWO * u);
-  tmp2 = (-TWO + v * v - s(t)) / (TWO * v);
-  tmp3 = udata->G * tmp1 + udata->e * tmp2;
-  tmp4 = udata->e * tmp1 - tmp2;
+  gcos         = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
+  gsin         = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  tmp1         = (-ONE + u * u - r(t)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t)) / (TWO * v);
+  tmp3         = udata->G * tmp1 + udata->e * tmp2;
+  tmp4         = udata->e * tmp1 - tmp2;
   ydot_data[0] = gcos * tmp3 + gsin * tmp4;
   ydot_data[1] = -gsin * tmp3 + gcos * tmp4;
 
@@ -411,12 +411,12 @@ static int fn(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   // fill in the RHS function:
   //   g*[ cos(t) sin(t)]*( [G  e]*[(-1+u^2-r(t))/(2*u)] + [rdot(t)/(2u)]
   //     [-sin(t) cos(t)] ( [e -1] [(-2+v^2-s(t))/(2*v)]   [sdot(t)/(2v)]
-  gcos = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
-  gsin = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
-  tmp1 = (-ONE + u * u - r(t)) / (TWO * u);
-  tmp2 = (-TWO + v * v - s(t)) / (TWO * v);
-  tmp3 = udata->G * tmp1 + udata->e * tmp2 + rdot(t) / (TWO * u);
-  tmp4 = udata->e * tmp1 - tmp2 + sdot(t) / (TWO * v);
+  gcos         = (udata->M_timedep) ? udata->g * cos(t) : udata->g * cos(PI4);
+  gsin         = (udata->M_timedep) ? udata->g * sin(t) : udata->g * sin(PI4);
+  tmp1         = (-ONE + u * u - r(t)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t)) / (TWO * v);
+  tmp3         = udata->G * tmp1 + udata->e * tmp2 + rdot(t) / (TWO * u);
+  tmp4         = udata->e * tmp1 - tmp2 + sdot(t) / (TWO * v);
   ydot_data[0] = gcos * tmp3 + gsin * tmp4;
   ydot_data[1] = -gsin * tmp3 + gcos * tmp4;
 
@@ -771,8 +771,8 @@ static sunrealtype vtrue(sunrealtype t) { return (SUNRsqrt(TWO + s(t))); }
 static int Ytrue(sunrealtype t, N_Vector y)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = utrue(t);
-  y_data[1] = vtrue(t);
+  y_data[0]           = utrue(t);
+  y_data[1]           = vtrue(t);
   return (0);
 }
 

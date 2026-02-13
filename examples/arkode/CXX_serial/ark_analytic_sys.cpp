@@ -154,7 +154,7 @@ int main()
   }
 
   // Initialize vector data structure and specify initial condition
-  y = N_VNew_Serial(NEQ, sunctx);
+  y                   = N_VNew_Serial(NEQ, sunctx);
   sunrealtype* y_data = N_VGetArrayPointer(y);
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
   y_data[0] = 1.0;
@@ -291,24 +291,24 @@ int main()
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; // cast user_data to sunrealtype
-  sunrealtype lam    = rdata[0];       // set shortcut for stiffness parameter
+  sunrealtype lam    = rdata[0]; // set shortcut for stiffness parameter
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype y0     = y_data[0]; // access current solution values
-  sunrealtype y1     = y_data[1];
-  sunrealtype y2     = y_data[2];
+  sunrealtype y0      = y_data[0]; // access current solution values
+  sunrealtype y1      = y_data[1];
+  sunrealtype y2      = y_data[2];
   sunrealtype yd0, yd1, yd2;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   // fill in the RHS function: f(t,y) = V*D*Vi*y
-  yd0               = 0.25 * (5.0 * y0 + 1.0 * y1 - 3.0 * y2); // yd = Vi*y
-  yd1               = 0.25 * (2.0 * y0 + 2.0 * y1 - 2.0 * y2);
-  yd2               = 0.25 * (1.0 * y0 + 1.0 * y1 + 1.0 * y2);
-  y0                = -0.5 * yd0; //  y = D*yd
-  y1                = -0.1 * yd1;
-  y2                = lam * yd2;
-  yd0               = 1.0 * y0 - 1.0 * y1 + 1.0 * y2; // yd = V*y
-  yd1               = -1.0 * y0 + 2.0 * y1 + 1.0 * y2;
-  yd2               = 0.0 * y0 - 1.0 * y1 + 2.0 * y2;
+  yd0          = 0.25 * (5.0 * y0 + 1.0 * y1 - 3.0 * y2); // yd = Vi*y
+  yd1          = 0.25 * (2.0 * y0 + 2.0 * y1 - 2.0 * y2);
+  yd2          = 0.25 * (1.0 * y0 + 1.0 * y1 + 1.0 * y2);
+  y0           = -0.5 * yd0; //  y = D*yd
+  y1           = -0.1 * yd1;
+  y2           = lam * yd2;
+  yd0          = 1.0 * y0 - 1.0 * y1 + 1.0 * y2; // yd = V*y
+  yd1          = -1.0 * y0 + 2.0 * y1 + 1.0 * y2;
+  yd2          = 0.0 * y0 - 1.0 * y1 + 2.0 * y2;
   ydot_data[0] = yd0;
   ydot_data[1] = yd1;
   ydot_data[2] = yd2;

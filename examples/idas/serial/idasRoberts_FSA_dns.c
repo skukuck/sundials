@@ -58,7 +58,6 @@
 
 /* Accessor macros */
 
-
 /* Problem Constants */
 
 #define NEQ   3                /* number of equations  */
@@ -184,22 +183,22 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "IDAInit", 1)) { return (1); }
 
   /* Specify scalar relative tol. and vector absolute tol. */
-  reltol                = SUN_RCONST(1.0e-6);
-  abstol                = N_VClone(y);
+  reltol                   = SUN_RCONST(1.0e-6);
+  abstol                   = N_VClone(y);
   sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
-  abstol_data[0]        = SUN_RCONST(1.0e-8);
-  abstol_data[1]        = SUN_RCONST(1.0e-14);
-  abstol_data[2]        = SUN_RCONST(1.0e-6);
-  retval                = IDASVtolerances(ida_mem, reltol, abstol);
+  abstol_data[0]           = SUN_RCONST(1.0e-8);
+  abstol_data[1]           = SUN_RCONST(1.0e-14);
+  abstol_data[2]           = SUN_RCONST(1.0e-6);
+  retval                   = IDASVtolerances(ida_mem, reltol, abstol);
   if (check_retval(&retval, "IDASVtolerances", 1)) { return (1); }
 
   /* Set ID vector */
-  id                 = N_VClone(y);
+  id                   = N_VClone(y);
   sunrealtype* id_data = N_VGetArrayPointer(id);
-  id_data[0]         = 1.0;
-  id_data[1]         = 1.0;
-  id_data[2]         = 0.0;
-  retval             = IDASetId(ida_mem, id);
+  id_data[0]           = 1.0;
+  id_data[1]           = 1.0;
+  id_data[2]           = 0.0;
+  retval               = IDASetId(ida_mem, id);
   if (check_retval(&retval, "IDASetId", 1)) { return (1); }
 
   /* Attach user data */
@@ -266,7 +265,7 @@ int main(int argc, char* argv[])
   /*----------------------------------------------------------
    *               Q U A D R A T U R E S
    * ---------------------------------------------------------*/
-  yQ = N_VNew_Serial(2, ctx);
+  yQ                   = N_VNew_Serial(2, ctx);
   sunrealtype* yQ_data = N_VGetArrayPointer(yQ);
 
   yQ_data[0] = 0;
@@ -409,8 +408,8 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector resval,
   sunrealtype p1, p2, p3;
   sunrealtype y1, y2, y3;
   sunrealtype yp1, yp2;
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* yp_data = N_VGetArrayPointer(yp);
+  sunrealtype* yy_data     = N_VGetArrayPointer(yy);
+  sunrealtype* yp_data     = N_VGetArrayPointer(yp);
   sunrealtype* resval_data = N_VGetArrayPointer(resval);
 
   data = (UserData)user_data;
@@ -460,8 +459,8 @@ static int resS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
 
   for (is = 0; is < NS; is++)
   {
-    sunrealtype* yySis_data = N_VGetArrayPointer(yyS[is]);
-    sunrealtype* ypSis_data = N_VGetArrayPointer(ypS[is]);
+    sunrealtype* yySis_data     = N_VGetArrayPointer(yyS[is]);
+    sunrealtype* ypSis_data     = N_VGetArrayPointer(ypS[is]);
     sunrealtype* resvalSis_data = N_VGetArrayPointer(resvalS[is]);
 
     s1 = yySis_data[0];
@@ -501,7 +500,7 @@ static int rhsQ(sunrealtype t, N_Vector y, N_Vector yp, N_Vector ypQ,
 {
   UserData data;
   sunrealtype* ypQ_data = N_VGetArrayPointer(ypQ);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data   = N_VGetArrayPointer(y);
 
   data = (UserData)user_data;
 

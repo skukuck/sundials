@@ -63,8 +63,6 @@
 
 /* Accessor macros */
 
-
-
 /* Problem Constants */
 
 #define NEQ 3 /* number of equations                  */
@@ -195,23 +193,23 @@ int main(int argc, char* argv[])
   yy = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)yy, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  yy_data[0] = ONE;
-  yy_data[1] = ZERO;
-  yy_data[2] = ZERO;
+  yy_data[0]           = ONE;
+  yy_data[1]           = ZERO;
+  yy_data[2]           = ZERO;
 
   /* Initialize yprime */
   yp = N_VClone(yy);
   if (check_retval((void*)yp, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* yp_data = N_VGetArrayPointer(yp);
-  yp_data[0] = SUN_RCONST(-0.04);
-  yp_data[1] = SUN_RCONST(0.04);
-  yp_data[2] = ZERO;
+  yp_data[0]           = SUN_RCONST(-0.04);
+  yp_data[1]           = SUN_RCONST(0.04);
+  yp_data[2]           = ZERO;
 
   /* Initialize q */
   q = N_VNew_Serial(1, ctx);
   if (check_retval((void*)q, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* q_data = N_VGetArrayPointer(q);
-  q_data[0] = ZERO;
+  q_data[0]           = ZERO;
 
   /* Set the scalar relative and absolute tolerances reltolQ and abstolQ */
   reltolQ = RTOL;
@@ -622,9 +620,9 @@ static int Jac(sunrealtype t, sunrealtype cj, N_Vector yy, N_Vector yp,
 static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
                 void* user_data)
 {
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
   sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
-  qdot_data[0] = yy_data[2];
+  qdot_data[0]           = yy_data[2];
   return (0);
 }
 
@@ -669,7 +667,7 @@ static int resB(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
   sunrealtype lp1, lp2;
   sunrealtype l21;
   sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yy_data  = N_VGetArrayPointer(yy);
   sunrealtype* ypB_data = N_VGetArrayPointer(ypB);
   sunrealtype* rrB_data = N_VGetArrayPointer(rrB);
 
@@ -764,8 +762,8 @@ static int rhsQB(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
   sunrealtype y1, y2, y3;
   sunrealtype l1, l2;
   sunrealtype l21;
-  sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yyB_data  = N_VGetArrayPointer(yyB);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
   sunrealtype* rrQB_data = N_VGetArrayPointer(rrQB);
 
   /* The y vector */

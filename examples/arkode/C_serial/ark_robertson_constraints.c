@@ -260,10 +260,10 @@ int main(void)
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u = y_data[0]; /* access current solution */
-  sunrealtype v = y_data[1];
-  sunrealtype w = y_data[2];
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access current solution */
+  sunrealtype v          = y_data[1];
+  sunrealtype w          = y_data[2];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* Fill in ODE RHS function */
@@ -279,8 +279,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype v = y_data[1]; /* access current solution */
-  sunrealtype w = y_data[2];
+  sunrealtype v       = y_data[1]; /* access current solution */
+  sunrealtype w       = y_data[2];
   SUNMatZero(J); /* initialize Jacobian to zero */
 
   /* Fill in the Jacobian of the ODE RHS function */
@@ -356,9 +356,9 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype at
   sunrealtype ONE  = SUN_RCONST(1.0);
 
   /* create reference solution and error weight vectors */
-  ref = N_VClone(y);
+  ref                   = N_VClone(y);
   sunrealtype* ref_data = N_VGetArrayPointer(ref);
-  ewt = N_VClone(y);
+  ewt                   = N_VClone(y);
 
   /* set the reference solution data */
   ref_data[0] = SUN_RCONST(2.0833403356917897e-08);

@@ -49,7 +49,6 @@
 
 /* Accessor macros */
 
-
 /* Problem Constants */
 #define NEQ 6
 #define T0  SUN_RCONST(0.0)
@@ -142,7 +141,7 @@ int main(void)
   yy = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)yy, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  yp = N_VClone(yy);
+  yp                   = N_VClone(yy);
   if (check_retval((void*)yp, "N_VNew_Serial", 0)) { return (1); }
 
   /* Set IC */
@@ -165,7 +164,7 @@ int main(void)
   q = N_VNew_Serial(1, ctx);
   if (check_retval((void*)q, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* q_data = N_VGetArrayPointer(q);
-  q_data[0] = ZERO;
+  q_data[0]           = ZERO;
 
   /* Call IDACreate and IDAInit to initialize IDA memory */
   mem = IDACreate(ctx);
@@ -304,8 +303,8 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
   sunrealtype yd0, yd1, yd2, yd3, yd4;
 
   sunrealtype r1, r2, r3, r4, r5, Fin;
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* yd_data = N_VGetArrayPointer(yd);
+  sunrealtype* yy_data     = N_VGetArrayPointer(yy);
+  sunrealtype* yd_data     = N_VGetArrayPointer(yd);
   sunrealtype* resval_data = N_VGetArrayPointer(resval);
 
   data = (UserData)userdata;
@@ -356,9 +355,9 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
 static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
                 void* user_data)
 {
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
   sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
-  qdot_data[0] = yy_data[0];
+  qdot_data[0]           = yy_data[0];
 
   return (0);
 }
@@ -385,7 +384,7 @@ static int resB(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector yyB,
 
   sunrealtype y2tohalf, y1to3, k2overK, tmp1, tmp2;
   sunrealtype* yyB_data = N_VGetArrayPointer(yyB);
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yy_data  = N_VGetArrayPointer(yy);
   sunrealtype* ypB_data = N_VGetArrayPointer(ypB);
   sunrealtype* rrB_data = N_VGetArrayPointer(rrB);
 

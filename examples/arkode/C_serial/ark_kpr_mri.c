@@ -725,8 +725,7 @@ int main(int argc, char* argv[])
   /* output initial condition to disk */
   fprintf(UFID,
           " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n",
-          T0, y_data[0], y_data[1],
-          FABS(y_data[0] - utrue(T0, rpar)),
+          T0, y_data[0], y_data[1], FABS(y_data[0] - utrue(T0, rpar)),
           FABS(y_data[1] - vtrue(T0, rpar)));
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the
@@ -865,8 +864,8 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* fill in the RHS function:
      [0  0]*[(-1+u^2-r(t))/(2*u)] + [         0          ]
      [e -1] [(-2+v^2-s(t))/(2*v)]   [sdot(t)/(2*vtrue(t))] */
-  tmp1              = (-ONE + u * u - r(t, rpar)) / (TWO * u);
-  tmp2              = (-TWO + v * v - s(t, rpar)) / (TWO * v);
+  tmp1         = (-ONE + u * u - r(t, rpar)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t, rpar)) / (TWO * v);
   ydot_data[0] = ZERO;
   ydot_data[1] = e * tmp1 - tmp2 + sdot(t, rpar) / (TWO * vtrue(t, rpar));
 
@@ -889,8 +888,8 @@ static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* fill in the RHS function:
      [G e]*[(-1+u^2-r(t))/(2*u))] + [rdot(t)/(2*u)]
      [0 0] [(-2+v^2-s(t))/(2*v)]    [      0      ] */
-  tmp1              = (-ONE + u * u - r(t, rpar)) / (TWO * u);
-  tmp2              = (-TWO + v * v - s(t, rpar)) / (TWO * v);
+  tmp1         = (-ONE + u * u - r(t, rpar)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t, rpar)) / (TWO * v);
   ydot_data[0] = G * tmp1 + e * tmp2 + rdot(t, rpar) / (TWO * u);
   ydot_data[1] = ZERO;
 
@@ -901,9 +900,9 @@ static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* fse routine to compute the slow portion of the ODE RHS. */
 static int fse(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* rpar   = (sunrealtype*)user_data;
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  const sunrealtype u = y_data[0];
+  sunrealtype* rpar      = (sunrealtype*)user_data;
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  const sunrealtype u    = y_data[0];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the slow explicit RHS function:
@@ -931,8 +930,8 @@ static int fsi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* fill in the slow implicit RHS function:
      [G e]*[(-1+u^2-r(t))/(2*u))]
      [0 0] [(-2+v^2-s(t))/(2*v)]  */
-  tmp1              = (-ONE + u * u - r(t, rpar)) / (TWO * u);
-  tmp2              = (-TWO + v * v - s(t, rpar)) / (TWO * v);
+  tmp1         = (-ONE + u * u - r(t, rpar)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t, rpar)) / (TWO * v);
   ydot_data[0] = G * tmp1 + e * tmp2;
   ydot_data[1] = ZERO;
 
@@ -954,8 +953,8 @@ static int fn(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   /* fill in the RHS function:
      [G e]*[(-1+u^2-r(t))/(2*u))] + [rdot(t)/(2*u)]
      [e -1] [(-2+v^2-s(t))/(2*v)]   [sdot(t)/(2*vtrue(t))] */
-  tmp1              = (-ONE + u * u - r(t, rpar)) / (TWO * u);
-  tmp2              = (-TWO + v * v - s(t, rpar)) / (TWO * v);
+  tmp1         = (-ONE + u * u - r(t, rpar)) / (TWO * u);
+  tmp2         = (-TWO + v * v - s(t, rpar)) / (TWO * v);
   ydot_data[0] = G * tmp1 + e * tmp2 + rdot(t, rpar) / (TWO * u);
   ydot_data[1] = e * tmp1 - tmp2 + sdot(t, rpar) / (TWO * vtrue(t, rpar));
 
@@ -1097,8 +1096,8 @@ static sunrealtype vtrue(sunrealtype t, void* user_data)
 static int Ytrue(sunrealtype t, N_Vector y, void* user_data)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = utrue(t, user_data);
-  y_data[1] = vtrue(t, user_data);
+  y_data[0]           = utrue(t, user_data);
+  y_data[1]           = vtrue(t, user_data);
   return (0);
 }
 

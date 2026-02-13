@@ -108,9 +108,9 @@ int main(void)
   y = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return 1; }
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = u0;
-  y_data[1] = v0;
-  y_data[2] = w0;
+  y_data[0]           = u0;
+  y_data[1]           = v0;
+  y_data[2]           = w0;
 
   /*
    * Create the fast integrator and set options
@@ -227,10 +227,10 @@ int main(void)
 /* ff routine to compute the fast portion of the ODE RHS. */
 static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype c1 = SUN_RCONST(100.0); /* problem constant */
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u  = y_data[0];    /* access solution values */
-  sunrealtype v  = y_data[1];
+  sunrealtype c1         = SUN_RCONST(100.0); /* problem constant */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access solution values */
+  sunrealtype v          = y_data[1];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
@@ -245,8 +245,8 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* fs routine to compute the slow portion of the ODE RHS. */
 static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype w = y_data[2]; /* access solution values */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype w          = y_data[2]; /* access solution values */
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */

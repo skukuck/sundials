@@ -138,8 +138,8 @@ int main(int argc, char* argv[])
   {
     retval = IDASolve(ida_mem, tout, &t, yy, yp, IDA_NORMAL); /* call integrator */
     if (check_retval(&retval, "IDASolve", 1)) { return (1); }
-    printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           yy_data[0], yy_data[1]); /* access/print solution */
+    printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t, yy_data[0],
+           yy_data[1]); /* access/print solution */
     if (retval >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -198,18 +198,18 @@ int main(int argc, char* argv[])
 int fres(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector rr, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype alpha = rdata[0]; /* set shortcut for stiffness parameter */
+  sunrealtype alpha    = rdata[0]; /* set shortcut for stiffness parameter */
   sunrealtype* yy_data = N_VGetArrayPointer(yy);
   sunrealtype* yp_data = N_VGetArrayPointer(yp);
   sunrealtype* rr_data = N_VGetArrayPointer(rr);
-  sunrealtype x1    = yy_data[0]; /* access current solution values */
-  sunrealtype x2    = yy_data[1];
-  sunrealtype x1p   = yp_data[0]; /* access current derivative values */
-  sunrealtype ONE   = SUN_RCONST(1.0);
-  sunrealtype TWO   = SUN_RCONST(2.0);
+  sunrealtype x1       = yy_data[0]; /* access current solution values */
+  sunrealtype x2       = yy_data[1];
+  sunrealtype x1p      = yp_data[0]; /* access current derivative values */
+  sunrealtype ONE      = SUN_RCONST(1.0);
+  sunrealtype TWO      = SUN_RCONST(2.0);
 
   rr_data[0] = (ONE - alpha) / (t - TWO) * x1 - x1 + (alpha - ONE) * x2 +
-                    TWO * exp(t) - x1p;
+               TWO * exp(t) - x1p;
   rr_data[1] = (t + TWO) * x1 - (t + TWO) * SUNRexp(t);
 
   return (0);
@@ -256,8 +256,8 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
   sunrealtype* rdata;
   sunrealtype alpha;
   sunrealtype a11, a12, a21, b1, b2;
-  sunrealtype ONE = SUN_RCONST(1.0);
-  sunrealtype TWO = SUN_RCONST(2.0);
+  sunrealtype ONE     = SUN_RCONST(1.0);
+  sunrealtype TWO     = SUN_RCONST(2.0);
   sunrealtype* x_data = N_VGetArrayPointer(x);
   sunrealtype* b_data = N_VGetArrayPointer(b);
 
@@ -280,11 +280,11 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
              [                          t + 2,         0]
 
    */
-  a11            = -cj - (alpha - ONE) / (tcur - TWO) - ONE;
-  a12            = alpha - ONE;
-  a21            = tcur + TWO;
-  b1             = b_data[0];
-  b2             = b_data[1];
+  a11       = -cj - (alpha - ONE) / (tcur - TWO) - ONE;
+  a12       = alpha - ONE;
+  a21       = tcur + TWO;
+  b1        = b_data[0];
+  b2        = b_data[1];
   x_data[0] = b2 / a21;
   x_data[1] = -(a11 * b2 - a21 * b1) / (a12 * a21);
 
@@ -353,12 +353,12 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
 static void analytical_solution(sunrealtype t, N_Vector y, N_Vector yp)
 {
   sunrealtype* yp_data = N_VGetArrayPointer(yp);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0]  = SUNRexp(t);
-  y_data[1]  = SUNRexp(t) / (t - SUN_RCONST(2.0));
-  yp_data[0] = SUNRexp(t);
-  yp_data[1] = SUNRexp(t) / (t - SUN_RCONST(2.0)) -
-                    SUNRexp(t) / (t - SUN_RCONST(2.0)) / (t - SUN_RCONST(2.0));
+  sunrealtype* y_data  = N_VGetArrayPointer(y);
+  y_data[0]            = SUNRexp(t);
+  y_data[1]            = SUNRexp(t) / (t - SUN_RCONST(2.0));
+  yp_data[0]           = SUNRexp(t);
+  yp_data[1]           = SUNRexp(t) / (t - SUN_RCONST(2.0)) -
+               SUNRexp(t) / (t - SUN_RCONST(2.0)) / (t - SUN_RCONST(2.0));
 }
 
 /* check the computed solution */

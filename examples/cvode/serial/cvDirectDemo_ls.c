@@ -222,7 +222,7 @@ static int Problem1(void)
 
   for (miter = FUNC; miter <= DIAG; miter++)
   {
-    ero            = ZERO;
+    ero       = ZERO;
     y_data[0] = TWO;
     y_data[1] = ZERO;
 
@@ -290,7 +290,7 @@ static int Problem1(void)
 
   for (miter = FUNC; miter <= DIAG; miter++)
   {
-    ero            = ZERO;
+    ero       = ZERO;
     y_data[0] = TWO;
     y_data[1] = ZERO;
 
@@ -361,7 +361,8 @@ static void PrintIntro1(void)
   printf("\n\n");
   printf("Problem 1: Van der Pol oscillator\n");
   printf(" xdotdot - 3*(1 - x^2)*xdot + x = 0, x(0) = 2, xdot(0) = 0\n");
-  printf(" neq = %d,  reltol = %.2" GSYM ",  abstol = %.2" GSYM, P1_NEQ, RTOL, ATOL);
+  printf(" neq = %d,  reltol = %.2" GSYM ",  abstol = %.2" GSYM, P1_NEQ, RTOL,
+         ATOL);
 }
 
 static void PrintHeader1(void)
@@ -374,7 +375,8 @@ static void PrintHeader1(void)
 static void PrintOutput1(sunrealtype t, sunrealtype y0, sunrealtype y1, int qu,
                          sunrealtype hu)
 {
-  printf("%10.5" FSYM "    %12.5" ESYM "   %12.5" ESYM "   %2d    %6.4" ESYM "\n", t, y0, y1, qu, hu);
+  printf("%10.5" FSYM "    %12.5" ESYM "   %12.5" ESYM "   %2d    %6.4" ESYM "\n",
+         t, y0, y1, qu, hu);
 
   return;
 }
@@ -382,7 +384,7 @@ static void PrintOutput1(sunrealtype t, sunrealtype y0, sunrealtype y1, int qu,
 static int f1(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype y0, y1;
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   y0 = y_data[0];
@@ -587,7 +589,8 @@ static void PrintIntro2(void)
   printf("\n\nProblem 2: ydot = A * y, where A is a banded lower\n");
   printf("triangular matrix derived from 2-D advection PDE\n\n");
   printf(" neq = %d, ml = %d, mu = %d\n", P2_NEQ, P2_ML, P2_MU);
-  printf(" itol = %s, reltol = %.2" GSYM ", abstol = %.2" GSYM, "CV_SS", RTOL, ATOL);
+  printf(" itol = %s, reltol = %.2" GSYM ", abstol = %.2" GSYM, "CV_SS", RTOL,
+         ATOL);
 }
 
 static void PrintHeader2(void)

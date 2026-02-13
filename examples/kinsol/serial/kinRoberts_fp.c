@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
   N_VConst(ZERO, y);
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = ONE;
+  y_data[0]           = ONE;
 
   /* ----------------------------
    * Call KINSol to solve problem
@@ -215,7 +215,8 @@ static int funcRoberts(N_Vector y, N_Vector g, void* user_data)
   const sunrealtype y2 = y_data[1];
   const sunrealtype y3 = y_data[2];
 
-  const sunrealtype yd1 = DSTEP * (SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3);
+  const sunrealtype yd1 = DSTEP *
+                          (SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3);
   const sunrealtype yd3 = DSTEP * SUN_RCONST(3.0e2) * y2 * y2;
 
   g_data[0] = yd1 + Y10;

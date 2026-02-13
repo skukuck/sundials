@@ -745,12 +745,13 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
   printf("Linear solver is SPGMR with maxl = %d, maxlrst = %d\n", maxl, maxlrst);
   printf("Preconditioning uses interaction-only block-diagonal matrix\n");
   printf("Positivity constraints imposed on all components \n");
-  printf("Tolerance parameters:  fnormtol = %" GSYM "   scsteptol = %" GSYM "\n", fnormtol,
-         scsteptol);
+  printf("Tolerance parameters:  fnormtol = %" GSYM "   scsteptol = %" GSYM "\n",
+         fnormtol, scsteptol);
 
   printf("\nInitial profile of concentration\n");
-  printf("At all mesh points:  %" GSYM " %" GSYM " %" GSYM "   %" GSYM " %" GSYM " %" GSYM "\n", PREYIN, PREYIN,
-         PREYIN, PREDIN, PREDIN, PREDIN);
+  printf("At all mesh points:  %" GSYM " %" GSYM " %" GSYM "   %" GSYM " %" GSYM
+         " %" GSYM "\n",
+         PREYIN, PREYIN, PREYIN, PREDIN, PREDIN, PREDIN);
 }
 
 /*

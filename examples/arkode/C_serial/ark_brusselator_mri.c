@@ -124,9 +124,9 @@ int main(void)
   y = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return 1; }
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = u0;
-  y_data[1] = v0;
-  y_data[2] = w0;
+  y_data[0]           = u0;
+  y_data[1]           = v0;
+  y_data[2]           = w0;
 
   /*
    * Create the fast integrator and set options
@@ -252,10 +252,10 @@ int main(void)
 static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype b  = rdata[1];                    /* access data entries */
-  sunrealtype ep = rdata[2];
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype w  = y_data[2]; /* access solution values */
+  sunrealtype b          = rdata[1];            /* access data entries */
+  sunrealtype ep         = rdata[2];
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype w          = y_data[2]; /* access solution values */
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
@@ -271,11 +271,11 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype a = rdata[0];                     /* access data entries */
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u = y_data[0];               /* access solution values */
-  sunrealtype v = y_data[1];
-  sunrealtype w = y_data[2];
+  sunrealtype a          = rdata[0];            /* access data entries */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access solution values */
+  sunrealtype v          = y_data[1];
+  sunrealtype w          = y_data[2];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */

@@ -74,7 +74,6 @@
 
 /* Accessor macros */
 
-
 #define IJth(A, i, j) \
   SM_ELEMENT_D(A, i - 1, j - 1) /* (i,j)-th matrix el., i,j=1..NEQ */
 
@@ -203,9 +202,9 @@ int main(int argc, char* argv[])
   y = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = SUN_RCONST(1.0);
-  y_data[1] = ZERO;
-  y_data[2] = ZERO;
+  y_data[0]           = SUN_RCONST(1.0);
+  y_data[1]           = ZERO;
+  y_data[2]           = ZERO;
 
   /* Set constraints to all 1's for nonnegative solution values. */
   constraints = N_VNew_Serial(NEQ, sunctx);
@@ -216,7 +215,7 @@ int main(int argc, char* argv[])
   q = N_VNew_Serial(1, sunctx);
   if (check_retval((void*)q, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* q_data = N_VGetArrayPointer(q);
-  q_data[0] = ZERO;
+  q_data[0]           = ZERO;
 
   /* Set the scalar relative and absolute tolerances reltolQ and abstolQ */
   reltolQ = RTOL;
@@ -341,17 +340,17 @@ int main(int argc, char* argv[])
   yB = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)yB, "N_VNew_Serial", 0)) { return (1); }
   sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  yB_data[0] = ZERO;
-  yB_data[1] = ZERO;
-  yB_data[2] = ZERO;
+  yB_data[0]           = ZERO;
+  yB_data[1]           = ZERO;
+  yB_data[2]           = ZERO;
 
   /* Initialize qB */
   qB = N_VNew_Serial(NP, sunctx);
   if (check_retval((void*)qB, "N_VNew", 0)) { return (1); }
   sunrealtype* qB_data = N_VGetArrayPointer(qB);
-  qB_data[0] = ZERO;
-  qB_data[1] = ZERO;
-  qB_data[2] = ZERO;
+  qB_data[0]           = ZERO;
+  qB_data[1]           = ZERO;
+  qB_data[2]           = ZERO;
 
   /* Set the scalar relative tolerance reltolB */
   reltolB = RTOL;
@@ -554,7 +553,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   UserData data;
   sunrealtype p1, p2, p3;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   y0   = y_data[0];
   y1   = y_data[1];
@@ -609,9 +608,9 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
 static int fQ(sunrealtype t, N_Vector y, N_Vector qdot, void* user_data)
 {
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
   sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
-  qdot_data[0] = y_data[2];
+  qdot_data[0]           = y_data[2];
 
   return (0);
 }
@@ -656,8 +655,8 @@ static int fB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector yBdot,
   sunrealtype l0, l1, l2;
   sunrealtype l10, l21;
   sunrealtype* yBdot_data = N_VGetArrayPointer(yBdot);
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
 
   data = (UserData)user_dataB;
 
@@ -735,8 +734,8 @@ static int fQB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector qBdot,
   sunrealtype y0, y1, y2;
   sunrealtype l0, l1, l2;
   sunrealtype l10, l21, y12;
-  sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yB_data    = N_VGetArrayPointer(yB);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
   sunrealtype* qBdot_data = N_VGetArrayPointer(qBdot);
 
   /* The y vector */
@@ -783,14 +782,14 @@ static void PrintHead(sunrealtype tB0)
 static void PrintOutput1(sunrealtype time, sunrealtype t, N_Vector y, N_Vector yB)
 {
   sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data  = N_VGetArrayPointer(y);
   printf("--------------------------------------------------------\n");
   printf("returned t: %12.4" ESYM "\n", time);
   printf("tout:       %12.4" ESYM "\n", t);
-  printf("lambda(t):  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yB_data[0], yB_data[1],
-         yB_data[2]);
-  printf("y(t):       %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", y_data[0], y_data[1],
-         y_data[2]);
+  printf("lambda(t):  %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yB_data[0],
+         yB_data[1], yB_data[2]);
+  printf("y(t):       %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", y_data[0],
+         y_data[1], y_data[2]);
   printf("--------------------------------------------------------\n\n");
 }
 
@@ -801,16 +800,16 @@ static void PrintOutput1(sunrealtype time, sunrealtype t, N_Vector y, N_Vector y
 static void PrintOutput(sunrealtype tfinal, N_Vector y, N_Vector yB, N_Vector qB)
 {
   sunrealtype* yB_data = N_VGetArrayPointer(yB);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data  = N_VGetArrayPointer(y);
   sunrealtype* qB_data = N_VGetArrayPointer(qB);
   printf("--------------------------------------------------------\n");
   printf("returned t: %12.4" ESYM "\n", tfinal);
-  printf("lambda(t0): %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yB_data[0], yB_data[1],
-         yB_data[2]);
-  printf("y(t0):      %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", y_data[0], y_data[1],
-         y_data[2]);
-  printf("dG/dp:      %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", -qB_data[0], -qB_data[1],
-         -qB_data[2]);
+  printf("lambda(t0): %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", yB_data[0],
+         yB_data[1], yB_data[2]);
+  printf("y(t0):      %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", y_data[0],
+         y_data[1], y_data[2]);
+  printf("dG/dp:      %12.4" ESYM " %12.4" ESYM " %12.4" ESYM "\n", -qB_data[0],
+         -qB_data[1], -qB_data[2]);
   printf("--------------------------------------------------------\n\n");
 }
 

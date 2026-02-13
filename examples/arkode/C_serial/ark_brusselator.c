@@ -112,7 +112,7 @@ int main(void)
   /* Create the SUNDIALS context object for this simulation */
   SUNContext ctx;
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  flag = SUNContext_Create(SUN_COMM_NULL, &ctx);
+  flag                = SUNContext_Create(SUN_COMM_NULL, &ctx);
   if (check_flag(&flag, "SUNContext_Create", 1)) { return 1; }
 
   /* set up the test problem according to the desired test */
@@ -302,13 +302,13 @@ int main(void)
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype a  = rdata[0];                    /* access data entries */
-  sunrealtype b  = rdata[1];
-  sunrealtype ep = rdata[2];
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u  = y_data[0]; /* access solution values */
-  sunrealtype v  = y_data[1];
-  sunrealtype w  = y_data[2];
+  sunrealtype a          = rdata[0];            /* access data entries */
+  sunrealtype b          = rdata[1];
+  sunrealtype ep         = rdata[2];
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access solution values */
+  sunrealtype v          = y_data[1];
+  sunrealtype w          = y_data[2];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
@@ -324,11 +324,11 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
-  sunrealtype ep = rdata[2];                    /* access data entries */
+  sunrealtype ep      = rdata[2];               /* access data entries */
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u  = y_data[0];              /* access solution values */
-  sunrealtype v  = y_data[1];
-  sunrealtype w  = y_data[2];
+  sunrealtype u       = y_data[0]; /* access solution values */
+  sunrealtype v       = y_data[1];
+  sunrealtype w       = y_data[2];
 
   /* fill in the Jacobian via SUNDenseMatrix macro, SM_ELEMENT_D (see sunmatrix_dense.h) */
   SM_ELEMENT_D(J, 0, 0) = -(w + 1.0) + 2.0 * u * v;

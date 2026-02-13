@@ -1536,9 +1536,9 @@ static sunrealtype wtrue(sunrealtype t, const Options& opts)
 static int Ytrue(sunrealtype t, N_Vector y, const Options& opts)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  y_data[0] = utrue(t, opts);
-  y_data[1] = vtrue(t, opts);
-  y_data[2] = wtrue(t, opts);
+  y_data[0]           = utrue(t, opts);
+  y_data[1]           = vtrue(t, opts);
+  y_data[2]           = wtrue(t, opts);
   return (0);
 }
 

@@ -83,8 +83,6 @@
    using the N_VIth macro in nvector.h. N_VIth numbers the components of
    a vector starting from 0. */
 
-
-
 /* Problem Constants */
 
 #define NEQ   3               /* number of equations  */
@@ -342,7 +340,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   UserData data;
   sunrealtype p1, p2, p3;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   y0   = y_data[0];
   y1   = y_data[1];
@@ -432,8 +430,8 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
   sunrealtype s0, s1, s2;
   sunrealtype sd0, sd1, sd2;
   sunrealtype* ySdot_data = N_VGetArrayPointer(ySdot);
-  sunrealtype* yS_data = N_VGetArrayPointer(yS);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* yS_data    = N_VGetArrayPointer(yS);
+  sunrealtype* y_data     = N_VGetArrayPointer(y);
 
   data = (UserData)user_data;
   p1   = data->p[0];

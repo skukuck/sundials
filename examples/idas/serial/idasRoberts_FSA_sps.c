@@ -62,8 +62,6 @@
 
 /* Accessor macros */
 
-
-
 /* Problem Constants */
 
 #define NEQ   3                /* number of equations  */
@@ -141,7 +139,7 @@ int main(int argc, char* argv[])
   int sensi_meth;
 
   N_Vector yQ, *yQS;
-  sunrealtype* id_data = N_VGetArrayPointer(id);
+  sunrealtype* id_data     = N_VGetArrayPointer(id);
   sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
 
   ida_mem = NULL;
@@ -280,7 +278,7 @@ int main(int argc, char* argv[])
   /*----------------------------------------------------------
    *               Q U A D R A T U R E S
    * ---------------------------------------------------------*/
-  yQ = N_VNew_Serial(2, ctx);
+  yQ                   = N_VNew_Serial(2, ctx);
   sunrealtype* yQ_data = N_VGetArrayPointer(yQ);
 
   yQ_data[0] = 0;
@@ -351,14 +349,14 @@ int main(int argc, char* argv[])
     IDAGetQuadSens(ida_mem, &t, yQS);
 #if defined(SUNDIALS_EXTENDED_PRECISION)
     printf("\nSensitivities at t=%Lg:\n", t);
-    printf("dG/dp1: %11.4Le\n", yQS[0]_data[0]);
-    printf("dG/dp1: %11.4Le\n", yQS[1]_data[0]);
-    printf("dG/dp1: %11.4Le\n", yQS[2]_data[0]);
+    printf("dG/dp1: %11.4Le\n", yQS[0] _data[0]);
+    printf("dG/dp1: %11.4Le\n", yQS[1] _data[0]);
+    printf("dG/dp1: %11.4Le\n", yQS[2] _data[0]);
 #else
     printf("\nSensitivities at t=%g:\n", t);
-    printf("dG/dp1: %11.4e\n", yQS[0]_data[0]);
-    printf("dG/dp1: %11.4e\n", yQS[1]_data[0]);
-    printf("dG/dp1: %11.4e\n", yQS[2]_data[0]);
+    printf("dG/dp1: %11.4e\n", yQS[0] _data[0]);
+    printf("dG/dp1: %11.4e\n", yQS[1] _data[0]);
+    printf("dG/dp1: %11.4e\n", yQS[2] _data[0]);
 #endif
   }
 
@@ -402,8 +400,8 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector resval,
   sunrealtype p1, p2, p3;
   sunrealtype y1, y2, y3;
   sunrealtype yp1, yp2;
-  sunrealtype* yy_data = N_VGetArrayPointer(yy);
-  sunrealtype* yp_data = N_VGetArrayPointer(yp);
+  sunrealtype* yy_data     = N_VGetArrayPointer(yy);
+  sunrealtype* yp_data     = N_VGetArrayPointer(yp);
   sunrealtype* resval_data = N_VGetArrayPointer(resval);
 
   data = (UserData)user_data;
@@ -507,12 +505,12 @@ static int resS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
 
   for (is = 0; is < NS; is++)
   {
-    s1 = yyS[is]_data[0];
-    s2 = yyS[is]_data[1];
-    s3 = yyS[is]_data[2];
+    s1 = yyS[is] _data[0];
+    s2 = yyS[is] _data[1];
+    s3 = yyS[is] _data[2];
 
-    sd1 = ypS[is]_data[0];
-    sd2 = ypS[is]_data[1];
+    sd1 = ypS[is] _data[0];
+    sd2 = ypS[is] _data[1];
 
     rs1 = sd1 + p1 * s1 - p2 * y3 * s2 - p2 * y2 * s3;
     rs2 = sd2 - p1 * s1 + p2 * y3 * s2 + p2 * y2 * s3 + 2 * p3 * y2 * s2;
@@ -531,9 +529,9 @@ static int resS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
     case 2: rs2 += y2 * y2; break;
     }
 
-    resvalS[is]_data[0] = rs1;
-    resvalS[is]_data[1] = rs2;
-    resvalS[is]_data[2] = rs3;
+    resvalS[is] _data[0] = rs1;
+    resvalS[is] _data[1] = rs2;
+    resvalS[is] _data[2] = rs3;
   }
 
   return (0);
@@ -544,7 +542,7 @@ static int rhsQ(sunrealtype t, N_Vector y, N_Vector yp, N_Vector ypQ,
 {
   UserData data;
   sunrealtype* ypQ_data = N_VGetArrayPointer(ypQ);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data   = N_VGetArrayPointer(y);
 
   data = (UserData)user_data;
 

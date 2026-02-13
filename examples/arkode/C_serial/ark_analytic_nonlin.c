@@ -153,8 +153,8 @@ int main(void)
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  ydot_data[0] = (t + 1.0) * SUNRexp(-y_data[0]);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  ydot_data[0]           = (t + 1.0) * SUNRexp(-y_data[0]);
   return 0;
 }
 

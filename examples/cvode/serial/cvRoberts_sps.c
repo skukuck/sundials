@@ -50,9 +50,6 @@
 #define GSYM "g"
 #endif
 
-
-
-
 /* Problem Constants */
 
 #define NEQ   3               /* number of equations  */
@@ -232,7 +229,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype y0, y1, y2, yd0, yd2;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   y0 = y_data[0];
   y1 = y_data[1];
@@ -326,7 +323,9 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
                         sunrealtype y2)
 {
-  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", t, y0, y1, y2);
+  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM
+         "\n",
+         t, y0, y1, y2);
 
   return;
 }

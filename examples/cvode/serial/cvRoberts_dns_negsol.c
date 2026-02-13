@@ -181,7 +181,7 @@ int main(void)
   y_data[0] = Y0;
   y_data[1] = Y1;
   y_data[2] = Y2;
-  retval         = CVodeReInit(cvode_mem, T0, y);
+  retval    = CVodeReInit(cvode_mem, T0, y);
   /* In loop, call CVode in CV_NORMAL mode */
   iout = 0;
   tout = T1;
@@ -222,7 +222,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype y0, y1, y2, yd0, yd2;
   sunbooleantype* check_negative;
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
 
   check_negative = (sunbooleantype*)user_data;
 
@@ -248,7 +248,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
                         sunrealtype y2)
 {
-  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", t, y0, y1, y2);
+  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM
+         "\n",
+         t, y0, y1, y2);
 
   return;
 }

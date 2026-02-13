@@ -113,9 +113,9 @@ int main(void)
   data->F  = 1.0; /* external constant force */
 
   /* Create N_Vectors */
-  yy = N_VNew_Serial(NEQ, ctx);
-  yp = N_VClone(yy);
-  id = N_VClone(yy);
+  yy                   = N_VNew_Serial(NEQ, ctx);
+  yp                   = N_VClone(yy);
+  id                   = N_VClone(yy);
   sunrealtype* id_data = N_VGetArrayPointer(id);
 
   /* Consistent IC */
@@ -332,7 +332,8 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, N_Vector y)
 {
   printf("\nidaSlCrank_dns: Slider-Crank DAE serial example problem for IDA\n");
   printf("Linear solver: DENSE, Jacobian is computed by IDA.\n");
-  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM "\n", rtol, atol);
+  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM "\n", rtol,
+         atol);
   printf("---------------------------------------------------------------------"
          "--\n");
   printf("  t            y1          y2           y3");
@@ -354,8 +355,9 @@ static int PrintOutput(void* mem, sunrealtype t, N_Vector y)
   retval = IDAGetNumSteps(mem, &nst);
   retval = IDAGetLastStep(mem, &hused);
 
-  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM " %3ld  %1d %12.4" ESYM "\n", t, yval[0],
-         yval[1], yval[2], nst, kused, hused);
+  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM
+         " %3ld  %1d %12.4" ESYM "\n",
+         t, yval[0], yval[1], yval[2], nst, kused, hused);
 
   return (retval);
 }

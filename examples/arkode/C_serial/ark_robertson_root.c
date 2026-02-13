@@ -268,10 +268,10 @@ int main(void)
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u = y_data[0]; /* access current solution */
-  sunrealtype v = y_data[1];
-  sunrealtype w = y_data[2];
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access current solution */
+  sunrealtype v          = y_data[1];
+  sunrealtype w          = y_data[2];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* Fill in ODE RHS function */
@@ -287,8 +287,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype v = y_data[1]; /* access current solution */
-  sunrealtype w = y_data[2];
+  sunrealtype v       = y_data[1]; /* access current solution */
+  sunrealtype w       = y_data[2];
   SUNMatZero(J); /* initialize Jacobian to zero */
 
   /* Fill in the Jacobian of the ODE RHS function */
@@ -309,8 +309,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 static int g(sunrealtype t, N_Vector y, sunrealtype* gout, void* user_data)
 {
   sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u = y_data[0]; /* access current solution */
-  sunrealtype w = y_data[2];
+  sunrealtype u       = y_data[0]; /* access current solution */
+  sunrealtype w       = y_data[2];
 
   gout[0] = u - SUN_RCONST(0.0001); /* check for u == 1e-4 */
   gout[1] = w - SUN_RCONST(0.01);   /* check for w == 1e-2 */

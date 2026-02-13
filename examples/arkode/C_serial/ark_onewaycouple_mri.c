@@ -261,8 +261,8 @@ int main(void)
 /* ff routine to compute the fast portion of the ODE RHS. */
 static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype w = y_data[2]; /* access solution values */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype w          = y_data[2]; /* access solution values */
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
@@ -277,10 +277,10 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* fs routine to compute the slow portion of the ODE RHS. */
 static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype c1 = SUN_RCONST(50.0); /* problem constant */
-  sunrealtype* y_data = N_VGetArrayPointer(y);
-  sunrealtype u  = y_data[0];   /* access solution values */
-  sunrealtype v  = y_data[1];
+  sunrealtype c1         = SUN_RCONST(50.0); /* problem constant */
+  sunrealtype* y_data    = N_VGetArrayPointer(y);
+  sunrealtype u          = y_data[0]; /* access solution values */
+  sunrealtype v          = y_data[1];
   sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
@@ -299,10 +299,10 @@ static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* function to compute the analytic solution of the ODE */
 static int ans(sunrealtype t, N_Vector ytrue, void* user_data)
 {
-  sunrealtype c1 = SUN_RCONST(50.0);
-  sunrealtype c2 = SUN_RCONST(5051.0) / SUN_RCONST(2501.0);
-  sunrealtype c3 = SUN_RCONST(49.0) / SUN_RCONST(2501.0);
-  sunrealtype c4 = SUN_RCONST(51.0) / SUN_RCONST(2501.0);
+  sunrealtype c1          = SUN_RCONST(50.0);
+  sunrealtype c2          = SUN_RCONST(5051.0) / SUN_RCONST(2501.0);
+  sunrealtype c3          = SUN_RCONST(49.0) / SUN_RCONST(2501.0);
+  sunrealtype c4          = SUN_RCONST(51.0) / SUN_RCONST(2501.0);
   sunrealtype* ytrue_data = N_VGetArrayPointer(ytrue);
 
   /* fill in the solution vector */

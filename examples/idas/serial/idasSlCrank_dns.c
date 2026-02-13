@@ -40,7 +40,6 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
-
 /* Problem Constants */
 
 #define NEQ 10

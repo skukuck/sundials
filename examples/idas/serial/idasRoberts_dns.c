@@ -333,9 +333,11 @@ static void PrintHeader(sunrealtype rtol, N_Vector avtol, N_Vector y)
          "IDA.\n");
   printf("               Three equation chemical kinetics problem.\n\n");
   printf("Linear solver: DENSE, with user-supplied Jacobian.\n");
-  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM " %" GSYM " %" GSYM " \n", rtol,
-         atval[0], atval[1], atval[2]);
-  printf("Initial conditions y0 = (%" GSYM " %" GSYM " %" GSYM ")\n", yval[0], yval[1], yval[2]);
+  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM " %" GSYM
+         " %" GSYM " \n",
+         rtol, atval[0], atval[1], atval[2]);
+  printf("Initial conditions y0 = (%" GSYM " %" GSYM " %" GSYM ")\n", yval[0],
+         yval[1], yval[2]);
   printf("Constraints and id not used.\n\n");
   printf("---------------------------------------------------------------------"
          "--\n");
@@ -364,8 +366,9 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector y)
   check_retval(&retval, "IDAGetNumSteps", 1);
   retval = IDAGetLastStep(mem, &hused);
   check_retval(&retval, "IDAGetLastStep", 1);
-  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM " | %3ld  %1d %12.4" ESYM "\n", t, yval[0],
-         yval[1], yval[2], nst, kused, hused);
+  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM
+         " | %3ld  %1d %12.4" ESYM "\n",
+         t, yval[0], yval[1], yval[2], nst, kused, hused);
 }
 
 static void PrintRootInfo(int root_f1, int root_f2)

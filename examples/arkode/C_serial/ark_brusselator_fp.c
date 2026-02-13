@@ -111,6 +111,7 @@ int main(int argc, char* argv[])
   sunrealtype t, tout;
   int iout;
   long int nst, nst_a, nfe, nfi, nni, ncfn, netf;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* read inputs */
   if (argc == 2) { monitor = atoi(argv[1]); }
@@ -178,9 +179,9 @@ int main(int argc, char* argv[])
   rdata[2] = ep;
   y        = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = u0; /* Set initial conditions */
-  NV_Ith_S(y, 1) = v0;
-  NV_Ith_S(y, 2) = w0;
+  y_data[0] = u0; /* Set initial conditions */
+  y_data[1] = v0;
+  y_data[2] = w0;
 
   /* Call ARKStepCreate to initialize the ARK timestepper module and
      specify the right-hand side functions in y'=fe(t,y)+fi(t,y),
@@ -216,7 +217,7 @@ int main(int argc, char* argv[])
 
   /* output initial condition to disk */
   fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+          y_data[0], y_data[1], y_data[2]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -230,9 +231,9 @@ int main(int argc, char* argv[])
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM
            "\n", /* access/print solution */
-           t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+           t, y_data[0], y_data[1], y_data[2]);
     fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+            y_data[0], y_data[1], y_data[2]);
     if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -291,12 +292,14 @@ static int fi(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype b  = rdata[1];                    /* access data entries */
   sunrealtype ep = rdata[2];
-  sunrealtype w  = NV_Ith_S(y, 2); /* access solution values */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype w  = y_data[2]; /* access solution values */
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
-  NV_Ith_S(ydot, 0) = 0.0;
-  NV_Ith_S(ydot, 1) = 0.0;
-  NV_Ith_S(ydot, 2) = (b - w) / ep;
+  ydot_data[0] = 0.0;
+  ydot_data[1] = 0.0;
+  ydot_data[2] = (b - w) / ep;
 
   return 0; /* Return with success */
 }
@@ -306,14 +309,16 @@ static int fe(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype a = rdata[0];                     /* access data entries */
-  sunrealtype u = NV_Ith_S(y, 0);               /* access solution values */
-  sunrealtype v = NV_Ith_S(y, 1);
-  sunrealtype w = NV_Ith_S(y, 2);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u = y_data[0];               /* access solution values */
+  sunrealtype v = y_data[1];
+  sunrealtype w = y_data[2];
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
-  NV_Ith_S(ydot, 0) = a - (w + 1.0) * u + v * u * u;
-  NV_Ith_S(ydot, 1) = w * u - v * u * u;
-  NV_Ith_S(ydot, 2) = -w * u;
+  ydot_data[0] = a - (w + 1.0) * u + v * u * u;
+  ydot_data[1] = w * u - v * u * u;
+  ydot_data[2] = -w * u;
 
   return 0; /* Return with success */
 }

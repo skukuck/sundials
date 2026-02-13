@@ -40,7 +40,6 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component i= 1..NEQ */
 
 /* Problem Constants */
 
@@ -187,11 +186,14 @@ int main(void)
   if (check_retval(&retval, "PrintFinalStats", 1)) { return (1); }
 
   IDAGetQuad(mem, &tret, q);
+
+  sunrealtype* q_data = N_VGetArrayPointer(q);
+
   printf("--------------------------------------------\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("  G = %24.16Lf\n", Ith(q, 1));
+  printf("  G = %24.16Lf\n", q_data[0]);
 #else
-  printf("  G = %24.16f\n", Ith(q, 1));
+  printf("  G = %24.16f\n", q_data[0]);
 #endif
   printf("--------------------------------------------\n\n");
 
@@ -354,17 +356,19 @@ static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
   sunrealtype v1, v2, v3;
   sunrealtype J1, m2, J2;
   UserData data;
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
+  sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
 
   data = (UserData)user_data;
   J1   = data->J1;
   m2   = data->m2;
   J2   = data->J2;
 
-  v1 = Ith(yy, 4);
-  v2 = Ith(yy, 5);
-  v3 = Ith(yy, 6);
+  v1 = yy_data[3];
+  v2 = yy_data[4];
+  v3 = yy_data[5];
 
-  Ith(qdot, 1) = HALF * (J1 * v1 * v1 + m2 * v2 * v2 + J2 * v3 * v3);
+  qdot_data[0] = HALF * (J1 * v1 * v1 + m2 * v2 * v2 + J2 * v3 * v3);
 
   return (0);
 }

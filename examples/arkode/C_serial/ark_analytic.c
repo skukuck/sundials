@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
 
   /* Initialize data structures */
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
   N_VConst(SUN_RCONST(0.0), y); /* Specify initial condition */
 
@@ -144,7 +145,7 @@ int main(int argc, char* argv[])
   fprintf(UFID, "# t u\n");
 
   /* output initial condition to disk */
-  fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", T0, NV_Ith_S(y, 0));
+  fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", T0, y_data[0]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -157,8 +158,8 @@ int main(int argc, char* argv[])
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           NV_Ith_S(y, 0)); /* access/print solution */
-    fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", t, NV_Ith_S(y, 0));
+           y_data[0]); /* access/print solution */
+    fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", t, y_data[0]);
     if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -227,10 +228,12 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype lambda = rdata[0]; /* set shortcut for stiffness parameter */
-  sunrealtype u      = NV_Ith_S(y, 0); /* access current solution value */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u      = y_data[0]; /* access current solution value */
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function: "NV_Ith_S" accesses the 0th entry of ydot */
-  NV_Ith_S(ydot, 0) = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
+  ydot_data[0] = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
                       lambda * atan(t);
 
   return 0; /* return with success */
@@ -302,11 +305,12 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype at
 {
   int passfail = 0;          /* answer pass (0) or fail (1) flag     */
   sunrealtype ans, err, ewt; /* answer data, error, and error weight */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* compute solution error */
   ans = atan(t);
   ewt = SUN_RCONST(1.0) / (rtol * SUNRabs(ans) + atol);
-  err = ewt * SUNRabs(NV_Ith_S(y, 0) - ans);
+  err = ewt * SUNRabs(y_data[0] - ans);
 
   /* The local errors accumulate from step to step so that the global error is
    * not quite within the local error tolerances. This factor accounts for

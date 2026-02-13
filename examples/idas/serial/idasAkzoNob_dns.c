@@ -34,7 +34,7 @@
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
 /* Accessor macros */
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component */
+
 
 /* Problem Constants */
 #define NEQ 6
@@ -117,16 +117,17 @@ int main(void)
   /* Allocate N-vectors. */
   yy = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)yy, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
   yp = N_VClone(yy);
   if (check_retval((void*)yp, "N_VNew_Serial", 0)) { return (1); }
 
   /* Set IC */
-  Ith(yy, 1) = y01;
-  Ith(yy, 2) = y02;
-  Ith(yy, 3) = y03;
-  Ith(yy, 4) = y04;
-  Ith(yy, 5) = y05;
-  Ith(yy, 6) = data->Ks * y01 * y04;
+  yy_data[0] = y01;
+  yy_data[1] = y02;
+  yy_data[2] = y03;
+  yy_data[3] = y04;
+  yy_data[4] = y05;
+  yy_data[5] = data->Ks * y01 * y04;
 
   /* Get y' = - res(t0, y, 0) */
   N_VConst(ZERO, yp);
@@ -139,7 +140,8 @@ int main(void)
   /* Create and initialize q0 for quadratures. */
   q = N_VNew_Serial(1, ctx);
   if (check_retval((void*)q, "N_VNew_Serial", 0)) { return (1); }
-  Ith(q, 1) = ZERO;
+  sunrealtype* q_data = N_VGetArrayPointer(q);
+  q_data[0] = ZERO;
 
   /* Call IDACreate and IDAInit to initialize IDA memory */
   mem = IDACreate(ctx);
@@ -206,9 +208,9 @@ int main(void)
 
   printf("\n--------------------------------------------------------\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("G:          %24.16Lf \n", Ith(q, 1));
+  printf("G:          %24.16Lf \n", q_data[0]);
 #else
-  printf("G:          %24.16f \n", Ith(q, 1));
+  printf("G:          %24.16f \n", q_data[0]);
 #endif
   printf("--------------------------------------------------------\n\n");
 
@@ -238,6 +240,9 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
   sunrealtype yd1, yd2, yd3, yd4, yd5;
 
   sunrealtype r1, r2, r3, r4, r5, Fin;
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yd_data = N_VGetArrayPointer(yd);
+  sunrealtype* resval_data = N_VGetArrayPointer(resval);
 
   data = (UserData)userdata;
   k1   = data->k1;
@@ -250,18 +255,18 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
   pCO2 = data->pCO2;
   H    = data->H;
 
-  y1 = Ith(yy, 1);
-  y2 = Ith(yy, 2);
-  y3 = Ith(yy, 3);
-  y4 = Ith(yy, 4);
-  y5 = Ith(yy, 5);
-  y6 = Ith(yy, 6);
+  y1 = yy_data[0];
+  y2 = yy_data[1];
+  y3 = yy_data[2];
+  y4 = yy_data[3];
+  y5 = yy_data[4];
+  y6 = yy_data[5];
 
-  yd1 = Ith(yd, 1);
-  yd2 = Ith(yd, 2);
-  yd3 = Ith(yd, 3);
-  yd4 = Ith(yd, 4);
-  yd5 = Ith(yd, 5);
+  yd1 = yd_data[0];
+  yd2 = yd_data[1];
+  yd3 = yd_data[2];
+  yd4 = yd_data[3];
+  yd5 = yd_data[4];
 
   r1  = k1 * SUNRpowerI(y1, 4) * SUNRsqrt(y2);
   r2  = k2 * y3 * y4;
@@ -270,12 +275,12 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
   r5  = k4 * y6 * y6 * SUNRsqrt(y2);
   Fin = klA * (pCO2 / H - y2);
 
-  Ith(resval, 1) = yd1 + TWO * r1 - r2 + r3 + r4;
-  Ith(resval, 2) = yd2 + HALF * r1 + r4 + HALF * r5 - Fin;
-  Ith(resval, 3) = yd3 - r1 + r2 - r3;
-  Ith(resval, 4) = yd4 + r2 - r3 + TWO * r4;
-  Ith(resval, 5) = yd5 - r2 + r3 - r5;
-  Ith(resval, 6) = Ks * y1 * y4 - y6;
+  resval_data[0] = yd1 + TWO * r1 - r2 + r3 + r4;
+  resval_data[1] = yd2 + HALF * r1 + r4 + HALF * r5 - Fin;
+  resval_data[2] = yd3 - r1 + r2 - r3;
+  resval_data[3] = yd4 + r2 - r3 + TWO * r4;
+  resval_data[4] = yd5 - r2 + r3 - r5;
+  resval_data[5] = Ks * y1 * y4 - y6;
 
   return (0);
 }
@@ -287,7 +292,9 @@ static int res(sunrealtype t, N_Vector yy, N_Vector yd, N_Vector resval,
 static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
                 void* user_data)
 {
-  Ith(qdot, 1) = Ith(yy, 1);
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
+  qdot_data[0] = yy_data[0];
 
   return (0);
 }

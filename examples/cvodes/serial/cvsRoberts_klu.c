@@ -42,6 +42,14 @@
 #include <sunlinsol/sunlinsol_klu.h> /* access to KLU sparse direct solver   */
 #include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix           */
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#define GSYM "Lg"
+#else
+#define ESYM "e"
+#define GSYM "g"
+#endif
+
 /* User-defined vector accessor macro: Ith */
 
 /* These macros are defined in order to write code which exactly matches
@@ -52,19 +60,19 @@
    using the N_VIth macro in nvector.h. N_VIth numbers the components of
    a vector starting from 0. */
 
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component, i=1..NEQ */
+
 
 /* Problem Constants */
 
 #define NEQ   3               /* number of equations  */
 #define NNZ   7               /* number of non-zero entries in the Jacobian */
-#define Y1    SUN_RCONST(1.0) /* initial y components */
+#define Y0    SUN_RCONST(1.0) /* initial y components */
+#define Y1    SUN_RCONST(0.0)
 #define Y2    SUN_RCONST(0.0)
-#define Y3    SUN_RCONST(0.0)
 #define RTOL  SUN_RCONST(1.0e-4) /* scalar relative tolerance            */
-#define ATOL1 SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
-#define ATOL2 SUN_RCONST(1.0e-14)
-#define ATOL3 SUN_RCONST(1.0e-6)
+#define ATOL0 SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
+#define ATOL1 SUN_RCONST(1.0e-14)
+#define ATOL2 SUN_RCONST(1.0e-6)
 #define T0    SUN_RCONST(0.0)  /* initial time           */
 #define T1    SUN_RCONST(0.4)  /* first output time      */
 #define TMULT SUN_RCONST(10.0) /* output time factor     */
@@ -81,8 +89,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
 /* Private functions to output results */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3);
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2);
 static void PrintRootInfo(int root_f1, int root_f2);
 
 /* Private function to print final statistics */
@@ -125,19 +133,21 @@ int main(void)
   /* Initial conditions */
   y = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* Initialize y */
-  Ith(y, 1) = Y1;
-  Ith(y, 2) = Y2;
-  Ith(y, 3) = Y3;
+  y_data[0] = Y0;
+  y_data[1] = Y1;
+  y_data[2] = Y2;
 
   /* Set the vector absolute tolerance */
   abstol = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)abstol, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
 
-  Ith(abstol, 1) = ATOL1;
-  Ith(abstol, 2) = ATOL2;
-  Ith(abstol, 3) = ATOL3;
+  abstol_data[0] = ATOL0;
+  abstol_data[1] = ATOL1;
+  abstol_data[2] = ATOL2;
 
   /* Call CVodeCreate to create the solver memory and specify the
    * Backward Differentiation Formula */
@@ -184,7 +194,7 @@ int main(void)
   while (1)
   {
     retval = CVode(cvode_mem, tout, y, &t, CV_NORMAL);
-    PrintOutput(t, Ith(y, 1), Ith(y, 2), Ith(y, 3));
+    PrintOutput(t, y_data[0], y_data[1], y_data[2]);
 
     if (retval == CV_ROOT_RETURN)
     {
@@ -229,15 +239,17 @@ int main(void)
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype y1, y2, y3, yd1, yd3;
+  sunrealtype y0, y1, y2, yd0, yd2;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y1 = Ith(y, 1);
-  y2 = Ith(y, 2);
-  y3 = Ith(y, 3);
+  y0 = y_data[0];
+  y1 = y_data[1];
+  y2 = y_data[2];
 
-  yd1 = Ith(ydot, 1) = SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3;
-  yd3 = Ith(ydot, 3) = SUN_RCONST(3.0e7) * y2 * y2;
-  Ith(ydot, 2)       = -yd1 - yd3;
+  yd0 = ydot_data[0] = SUN_RCONST(-0.04) * y0 + SUN_RCONST(1.0e4) * y1 * y2;
+  yd2 = ydot_data[2] = SUN_RCONST(3.0e7) * y1 * y1;
+  ydot_data[1]       = -yd0 - yd2;
 
   return (0);
 }
@@ -248,12 +260,13 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
 static int g(sunrealtype t, N_Vector y, sunrealtype* gout, void* user_data)
 {
-  sunrealtype y1, y3;
+  sunrealtype y0, y2;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y1      = Ith(y, 1);
-  y3      = Ith(y, 3);
-  gout[0] = y1 - SUN_RCONST(0.0001);
-  gout[1] = y3 - SUN_RCONST(0.01);
+  y0      = y_data[0];
+  y2      = y_data[2];
+  gout[0] = y0 - SUN_RCONST(0.0001);
+  gout[1] = y2 - SUN_RCONST(0.01);
 
   return (0);
 }
@@ -319,16 +332,10 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
  *-------------------------------
  */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3)
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("At t = %0.4Le      y =%14.6Le  %14.6Le  %14.6Le\n", t, y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#else
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#endif
+  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", t, y0, y1, y2);
 
   return;
 }

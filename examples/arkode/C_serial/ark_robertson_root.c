@@ -109,18 +109,20 @@ int main(void)
 
   /* Initialize data structures */
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = u0; /* Set initial conditions into y */
-  NV_Ith_S(y, 1) = v0;
-  NV_Ith_S(y, 2) = w0;
+  y_data[0] = u0; /* Set initial conditions into y */
+  y_data[1] = v0;
+  y_data[2] = w0;
 
   atols = N_VClone(y); /* Create serial vector absolute tolerances */
+  sunrealtype* atols_data = N_VGetArrayPointer(atols);
   if (check_flag((void*)atols, "N_VNew_Serial", 0)) { return 1; }
 
   /* Set absolute tolerances */
-  NV_Ith_S(atols, 0) = SUN_RCONST(1.0e-8);
-  NV_Ith_S(atols, 1) = SUN_RCONST(1.0e-11);
-  NV_Ith_S(atols, 2) = SUN_RCONST(1.0e-8);
+  atols_data[0] = SUN_RCONST(1.0e-8);
+  atols_data[1] = SUN_RCONST(1.0e-11);
+  atols_data[2] = SUN_RCONST(1.0e-8);
 
   /* Call ARKStepCreate to initialize the ARK timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
@@ -169,7 +171,7 @@ int main(void)
 
   /* output initial condition to disk */
   fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+          y_data[0], y_data[1], y_data[2]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -177,7 +179,7 @@ int main(void)
   printf("        t             u             v             w\n");
   printf("   -----------------------------------------------------\n");
   printf("  %12.5" ESYM "  %12.5" ESYM "  %12.5" ESYM "  %12.5" ESYM "\n", t,
-         NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+         y_data[0], y_data[1], y_data[2]);
   tout = T1;
   iout = 0;
   while (1)
@@ -186,9 +188,9 @@ int main(void)
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     printf("  %12.5" ESYM "  %12.5" ESYM "  %12.5" ESYM "  %12.5" ESYM
            "\n", /* access/print solution */
-           t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+           t, y_data[0], y_data[1], y_data[2]);
     fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+            y_data[0], y_data[1], y_data[2]);
     if (flag == ARK_ROOT_RETURN)
     { /* check if a root was found */
       rtflag = ARKodeGetRootInfo(arkode_mem, rootsfound);
@@ -266,14 +268,16 @@ int main(void)
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype u = NV_Ith_S(y, 0); /* access current solution */
-  sunrealtype v = NV_Ith_S(y, 1);
-  sunrealtype w = NV_Ith_S(y, 2);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u = y_data[0]; /* access current solution */
+  sunrealtype v = y_data[1];
+  sunrealtype w = y_data[2];
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* Fill in ODE RHS function */
-  NV_Ith_S(ydot, 0) = -0.04 * u + 1.e4 * v * w;
-  NV_Ith_S(ydot, 1) = 0.04 * u - 1.e4 * v * w - 3.e7 * v * v;
-  NV_Ith_S(ydot, 2) = 3.e7 * v * v;
+  ydot_data[0] = -0.04 * u + 1.e4 * v * w;
+  ydot_data[1] = 0.04 * u - 1.e4 * v * w - 3.e7 * v * v;
+  ydot_data[2] = 3.e7 * v * v;
 
   return 0; /* Return with success */
 }
@@ -282,8 +286,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  sunrealtype v = NV_Ith_S(y, 1); /* access current solution */
-  sunrealtype w = NV_Ith_S(y, 2);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype v = y_data[1]; /* access current solution */
+  sunrealtype w = y_data[2];
   SUNMatZero(J); /* initialize Jacobian to zero */
 
   /* Fill in the Jacobian of the ODE RHS function */
@@ -303,8 +308,9 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 /* g routine to compute the root-finding function g(t,y). */
 static int g(sunrealtype t, N_Vector y, sunrealtype* gout, void* user_data)
 {
-  sunrealtype u = NV_Ith_S(y, 0); /* access current solution */
-  sunrealtype w = NV_Ith_S(y, 2);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u = y_data[0]; /* access current solution */
+  sunrealtype w = y_data[2];
 
   gout[0] = u - SUN_RCONST(0.0001); /* check for u == 1e-4 */
   gout[1] = w - SUN_RCONST(0.01);   /* check for w == 1e-2 */

@@ -155,10 +155,11 @@ int main()
 
   // Initialize vector data structure and specify initial condition
   y = N_VNew_Serial(NEQ, sunctx);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = 1.0;
-  NV_Ith_S(y, 1) = 1.0;
-  NV_Ith_S(y, 2) = 1.0;
+  y_data[0] = 1.0;
+  y_data[1] = 1.0;
+  y_data[2] = 1.0;
 
   // Initialize dense matrix data structure and solver
   A = SUNDenseMatrix(NEQ, NEQ, sunctx);
@@ -203,7 +204,7 @@ int main()
 
   // output initial condition to disk
   fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+          y_data[0], y_data[1], y_data[2]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -217,9 +218,9 @@ int main()
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     printf("  %8.4" FSYM "  %8.5" FSYM "  %8.5" FSYM "  %8.5" FSYM
            "\n", // access/print solution
-           t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+           t, y_data[0], y_data[1], y_data[2]);
     fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+            y_data[0], y_data[1], y_data[2]);
     if (flag >= 0)
     { // successful solve: update time
       tout += dTout;
@@ -291,10 +292,12 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; // cast user_data to sunrealtype
   sunrealtype lam    = rdata[0];       // set shortcut for stiffness parameter
-  sunrealtype y0     = NV_Ith_S(y, 0); // access current solution values
-  sunrealtype y1     = NV_Ith_S(y, 1);
-  sunrealtype y2     = NV_Ith_S(y, 2);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype y0     = y_data[0]; // access current solution values
+  sunrealtype y1     = y_data[1];
+  sunrealtype y2     = y_data[2];
   sunrealtype yd0, yd1, yd2;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   // fill in the RHS function: f(t,y) = V*D*Vi*y
   yd0               = 0.25 * (5.0 * y0 + 1.0 * y1 - 3.0 * y2); // yd = Vi*y
@@ -306,9 +309,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   yd0               = 1.0 * y0 - 1.0 * y1 + 1.0 * y2; // yd = V*y
   yd1               = -1.0 * y0 + 2.0 * y1 + 1.0 * y2;
   yd2               = 0.0 * y0 - 1.0 * y1 + 2.0 * y2;
-  NV_Ith_S(ydot, 0) = yd0;
-  NV_Ith_S(ydot, 1) = yd1;
-  NV_Ith_S(ydot, 2) = yd2;
+  ydot_data[0] = yd0;
+  ydot_data[1] = yd1;
+  ydot_data[2] = yd2;
 
   return 0; // Return with success
 }

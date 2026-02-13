@@ -101,6 +101,7 @@ int main(void)
   /* Initialize data structures */
   y = N_VNew_Serial(NEQ, sunctx); /* Create serial vector for solution */
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return 1; }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   N_VConst(SUN_RCONST(0.0), y); /* Specify initial condition */
 
   /* Call CVodeCreate to create the solver memory and specify the
@@ -141,7 +142,7 @@ int main(void)
     retval = CVode(cvode_mem, tout, y, &t, CV_NORMAL); /* call integrator */
     if (check_retval(&retval, "CVode", 1)) { break; }
     printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           NV_Ith_S(y, 0)); /* access/print solution */
+           y_data[0]); /* access/print solution */
     if (retval >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -204,10 +205,12 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype lambda = rdata[0]; /* set shortcut for stiffness parameter */
-  sunrealtype u      = NV_Ith_S(y, 0); /* access current solution value */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u      = y_data[0]; /* access current solution value */
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function: "NV_Ith_S" accesses the 0th entry of ydot */
-  NV_Ith_S(ydot, 0) = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
+  ydot_data[0] = lambda * u + SUN_RCONST(1.0) / (SUN_RCONST(1.0) + t * t) -
                       lambda * atan(t);
 
   return 0; /* return with success */
@@ -253,6 +256,8 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
   void* user_data;
   sunrealtype* rdata;
   sunrealtype lambda;
+  sunrealtype* x_data = N_VGetArrayPointer(x);
+  sunrealtype* b_data = N_VGetArrayPointer(b);
 
   /* retrieve implicit system data from CVode */
   retval = CVodeGetNonlinearSystemData(LS->content, &tcur, &ypred, &y, &fn,
@@ -267,7 +272,7 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
   lambda = rdata[0];
 
   /* perform linear solve: (1-gamma*lambda)*x = b */
-  NV_Ith_S(x, 0) = NV_Ith_S(b, 0) / (1 - gamma * lambda);
+  x_data[0] = b_data[0] / (1 - gamma * lambda);
 
   /* return with success */
   return (SUN_SUCCESS);
@@ -334,11 +339,12 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, sunrealtype at
 {
   int passfail = 0;          /* answer pass (0) or fail (1) flag     */
   sunrealtype ans, err, ewt; /* answer data, error, and error weight */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* compute solution error */
   ans = atan(t);
   ewt = SUN_RCONST(1.0) / (rtol * SUNRabs(ans) + atol);
-  err = ewt * SUNRabs(NV_Ith_S(y, 0) - ans);
+  err = ewt * SUNRabs(y_data[0] - ans);
 
   /* is the solution within the tolerances? */
   passfail = (err < SUN_RCONST(1.0)) ? 0 : 1;

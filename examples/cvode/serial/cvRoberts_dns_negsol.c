@@ -40,16 +40,22 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#else
+#define ESYM "e"
+#endif
+
 /* Problem Constants */
 
 #define NEQ   3               /* number of equations  */
-#define Y1    SUN_RCONST(1.0) /* initial y components */
+#define Y0    SUN_RCONST(1.0) /* initial y components */
+#define Y1    SUN_RCONST(0.0)
 #define Y2    SUN_RCONST(0.0)
-#define Y3    SUN_RCONST(0.0)
 #define RTOL  SUN_RCONST(1.0e-4) /* scalar relative tolerance            */
-#define ATOL1 SUN_RCONST(1.0e-7) /* vector absolute tolerance components */
-#define ATOL2 SUN_RCONST(1.0e-13)
-#define ATOL3 SUN_RCONST(1.0e-5)
+#define ATOL0 SUN_RCONST(1.0e-7) /* vector absolute tolerance components */
+#define ATOL1 SUN_RCONST(1.0e-13)
+#define ATOL2 SUN_RCONST(1.0e-5)
 #define T0    SUN_RCONST(0.0)  /* initial time           */
 #define T1    SUN_RCONST(0.4)  /* first output time      */
 #define TMULT SUN_RCONST(10.0) /* output time factor     */
@@ -61,8 +67,8 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data);
 
 /* Private functions to output results */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3);
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2);
 
 /* Private function to print final statistics */
 
@@ -103,19 +109,21 @@ int main(void)
   /* Initial conditions */
   y = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* Initialize y */
-  NV_Ith_S(y, 0) = Y1;
-  NV_Ith_S(y, 1) = Y2;
-  NV_Ith_S(y, 2) = Y3;
+  y_data[0] = Y0;
+  y_data[1] = Y1;
+  y_data[2] = Y2;
 
   /* Set the vector absolute tolerance */
   abstol = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)abstol, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
 
-  NV_Ith_S(abstol, 0) = ATOL1;
-  NV_Ith_S(abstol, 1) = ATOL2;
-  NV_Ith_S(abstol, 2) = ATOL3;
+  abstol_data[0] = ATOL0;
+  abstol_data[1] = ATOL1;
+  abstol_data[2] = ATOL2;
 
   /* Call CVodeCreate to create the solver memory and specify the
    * Backward Differentiation Formula */
@@ -158,7 +166,7 @@ int main(void)
   while (1)
   {
     retval = CVode(cvode_mem, tout, y, &t, CV_NORMAL);
-    PrintOutput(t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+    PrintOutput(t, y_data[0], y_data[1], y_data[2]);
     iout++;
     tout *= TMULT;
     if (iout == NOUT) { break; }
@@ -170,9 +178,9 @@ int main(void)
   printf("Intercept negative solution components\n\n");
   check_negative = SUNTRUE;
   /* Reinitialize solver */
-  NV_Ith_S(y, 0) = Y1;
-  NV_Ith_S(y, 1) = Y2;
-  NV_Ith_S(y, 2) = Y3;
+  y_data[0] = Y0;
+  y_data[1] = Y1;
+  y_data[2] = Y2;
   retval         = CVodeReInit(cvode_mem, T0, y);
   /* In loop, call CVode in CV_NORMAL mode */
   iout = 0;
@@ -180,7 +188,7 @@ int main(void)
   while (1)
   {
     CVode(cvode_mem, tout, y, &t, CV_NORMAL);
-    PrintOutput(t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+    PrintOutput(t, y_data[0], y_data[1], y_data[2]);
     iout++;
     tout *= TMULT;
     if (iout == NOUT) { break; }
@@ -211,20 +219,22 @@ int main(void)
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype y1, y2, y3, yd1, yd3;
+  sunrealtype y0, y1, y2, yd0, yd2;
   sunbooleantype* check_negative;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   check_negative = (sunbooleantype*)user_data;
 
-  y1 = NV_Ith_S(y, 0);
-  y2 = NV_Ith_S(y, 1);
-  y3 = NV_Ith_S(y, 2);
+  y0 = y_data[0];
+  y1 = y_data[1];
+  y2 = y_data[2];
 
-  if (*check_negative && (y1 < 0 || y2 < 0 || y3 < 0)) { return (1); }
+  if (*check_negative && (y0 < 0 || y1 < 0 || y2 < 0)) { return (1); }
 
-  yd1 = NV_Ith_S(ydot, 0) = SUN_RCONST(-0.04) * y1 + SUN_RCONST(1.0e4) * y2 * y3;
-  yd3 = NV_Ith_S(ydot, 2) = SUN_RCONST(3.0e7) * y2 * y2;
-  NV_Ith_S(ydot, 1)       = -yd1 - yd3;
+  yd0 = ydot_data[0] = SUN_RCONST(-0.04) * y0 + SUN_RCONST(1.0e4) * y1 * y2;
+  yd2 = ydot_data[2] = SUN_RCONST(3.0e7) * y1 * y1;
+  ydot_data[1]       = -yd0 - yd2;
 
   return (0);
 }
@@ -235,16 +245,10 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
  *-------------------------------
  */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3)
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("At t = %0.4Le      y =%14.6Le  %14.6Le  %14.6Le\n", t, y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#else
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#endif
+  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", t, y0, y1, y2);
 
   return;
 }

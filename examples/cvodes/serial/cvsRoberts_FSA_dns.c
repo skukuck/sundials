@@ -62,6 +62,12 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#else
+#define ESYM "e"
+#endif
+
 /* User-defined vector and matrix accessor macros: Ith, IJth */
 
 /* These macros are defined in order to write code which exactly matches
@@ -77,7 +83,7 @@
    SM_ELEMENT_D macro. SM_ELEMENT_D numbers rows and columns of
    a dense matrix starting from 0. */
 
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component i=1..NEQ */
+
 #define IJth(A, i, j) \
   SM_ELEMENT_D(A, i - 1, j - 1) /* (i,j)-th matrix component i,j=1..NEQ */
 
@@ -94,13 +100,13 @@
 /* Problem Constants */
 
 #define NEQ   3               /* number of equations  */
-#define Y1    SUN_RCONST(1.0) /* initial y components */
+#define Y0    SUN_RCONST(1.0) /* initial y components */
+#define Y1    SUN_RCONST(0.0)
 #define Y2    SUN_RCONST(0.0)
-#define Y3    SUN_RCONST(0.0)
 #define RTOL  SUN_RCONST(1.0e-4) /* scalar relative tolerance            */
-#define ATOL1 SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
-#define ATOL2 SUN_RCONST(1.0e-14)
-#define ATOL3 SUN_RCONST(1.0e-6)
+#define ATOL0 SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
+#define ATOL1 SUN_RCONST(1.0e-14)
+#define ATOL2 SUN_RCONST(1.0e-6)
 #define T0    SUN_RCONST(0.0)  /* initial time           */
 #define T1    SUN_RCONST(0.4)  /* first output time      */
 #define TMULT SUN_RCONST(10.0) /* output time factor     */
@@ -197,11 +203,12 @@ int main(int argc, char* argv[])
   /* Initial conditions */
   y = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* Initialize y */
-  Ith(y, 1) = Y1;
-  Ith(y, 2) = Y2;
-  Ith(y, 3) = Y3;
+  y_data[0] = Y0;
+  y_data[1] = Y1;
+  y_data[2] = Y2;
 
   /* Call CVodeCreate to create the solver memory and specify the
    * Backward Differentiation Formula */
@@ -360,21 +367,23 @@ int main(int argc, char* argv[])
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype y1, y2, y3, yd1, yd3;
+  sunrealtype y0, y1, y2, yd0, yd2;
   UserData data;
   sunrealtype p1, p2, p3;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y1   = Ith(y, 1);
-  y2   = Ith(y, 2);
-  y3   = Ith(y, 3);
+  y0   = y_data[0];
+  y1   = y_data[1];
+  y2   = y_data[2];
   data = (UserData)user_data;
   p1   = data->p[0];
   p2   = data->p[1];
   p3   = data->p[2];
 
-  yd1 = Ith(ydot, 1) = -p1 * y1 + p2 * y2 * y3;
-  yd3 = Ith(ydot, 3) = p3 * y2 * y2;
-  Ith(ydot, 2)       = -yd1 - yd3;
+  yd0 = ydot_data[0] = -p1 * y0 + p2 * y1 * y2;
+  yd2 = ydot_data[2] = p3 * y1 * y1;
+  ydot_data[1]       = -yd0 - yd2;
 
   return (0);
 }
@@ -386,24 +395,25 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  sunrealtype y2, y3;
+  sunrealtype y1, y2;
   UserData data;
   sunrealtype p1, p2, p3;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y2   = Ith(y, 2);
-  y3   = Ith(y, 3);
+  y1   = y_data[1];
+  y2   = y_data[2];
   data = (UserData)user_data;
   p1   = data->p[0];
   p2   = data->p[1];
   p3   = data->p[2];
 
   IJth(J, 1, 1) = -p1;
-  IJth(J, 1, 2) = p2 * y3;
-  IJth(J, 1, 3) = p2 * y2;
+  IJth(J, 1, 2) = p2 * y2;
+  IJth(J, 1, 3) = p2 * y1;
   IJth(J, 2, 1) = p1;
-  IJth(J, 2, 2) = -p2 * y3 - 2 * p3 * y2;
-  IJth(J, 2, 3) = -p2 * y2;
-  IJth(J, 3, 2) = 2 * p3 * y2;
+  IJth(J, 2, 2) = -p2 * y2 - 2 * p3 * y1;
+  IJth(J, 2, 3) = -p2 * y1;
+  IJth(J, 3, 2) = 2 * p3 * y1;
 
   return (0);
 }
@@ -418,45 +428,48 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
 {
   UserData data;
   sunrealtype p1, p2, p3;
-  sunrealtype y1, y2, y3;
-  sunrealtype s1, s2, s3;
-  sunrealtype sd1, sd2, sd3;
+  sunrealtype y0, y1, y2;
+  sunrealtype s0, s1, s2;
+  sunrealtype sd0, sd1, sd2;
+  sunrealtype* ySdot_data = N_VGetArrayPointer(ySdot);
+  sunrealtype* yS_data = N_VGetArrayPointer(yS);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   data = (UserData)user_data;
   p1   = data->p[0];
   p2   = data->p[1];
   p3   = data->p[2];
 
-  y1 = Ith(y, 1);
-  y2 = Ith(y, 2);
-  y3 = Ith(y, 3);
-  s1 = Ith(yS, 1);
-  s2 = Ith(yS, 2);
-  s3 = Ith(yS, 3);
+  y0 = y_data[0];
+  y1 = y_data[1];
+  y2 = y_data[2];
+  s0 = yS_data[0];
+  s1 = yS_data[1];
+  s2 = yS_data[2];
 
-  sd1 = -p1 * s1 + p2 * y3 * s2 + p2 * y2 * s3;
-  sd3 = 2 * p3 * y2 * s2;
-  sd2 = -sd1 - sd3;
+  sd0 = -p1 * s0 + p2 * y2 * s1 + p2 * y1 * s2;
+  sd2 = 2 * p3 * y1 * s1;
+  sd1 = -sd0 - sd2;
 
   switch (iS)
   {
   case 0:
-    sd1 += -y1;
-    sd2 += y1;
+    sd0 += -y0;
+    sd1 += y0;
     break;
   case 1:
-    sd1 += y2 * y3;
-    sd2 += -y2 * y3;
+    sd0 += y1 * y2;
+    sd1 += -y1 * y2;
     break;
   case 2:
-    sd2 += -y2 * y2;
-    sd3 += y2 * y2;
+    sd1 += -y1 * y1;
+    sd2 += y1 * y1;
     break;
   }
 
-  Ith(ySdot, 1) = sd1;
-  Ith(ySdot, 2) = sd2;
-  Ith(ySdot, 3) = sd3;
+  ySdot_data[0] = sd0;
+  ySdot_data[1] = sd1;
+  ySdot_data[2] = sd2;
 
   return (0);
 }
@@ -469,18 +482,20 @@ static int ewt(N_Vector y, N_Vector w, void* user_data)
 {
   int i;
   sunrealtype yy, ww, rtol, atol[3];
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* w_data = N_VGetArrayPointer(w);
 
   rtol    = RTOL;
-  atol[0] = ATOL1;
-  atol[1] = ATOL2;
-  atol[2] = ATOL3;
+  atol[0] = ATOL0;
+  atol[1] = ATOL1;
+  atol[2] = ATOL2;
 
-  for (i = 1; i <= 3; i++)
+  for (i = 0; i < 3; i++)
   {
-    yy = Ith(y, i);
-    ww = rtol * ABS(yy) + atol[i - 1];
+    yy = y_data[i];
+    ww = rtol * ABS(yy) + atol[i];
     if (ww <= 0.0) { return (-1); }
-    Ith(w, i) = 1.0 / ww;
+    w_data[i] = 1.0 / ww;
   }
 
   return (0);
@@ -552,23 +567,11 @@ static void PrintOutput(void* cvode_mem, sunrealtype t, N_Vector u)
   retval = CVodeGetLastStep(cvode_mem, &hu);
   check_retval(&retval, "CVodeGetLastStep", 1);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%8.3Le %2d  %8.3Le %5ld\n", t, qu, hu, nst);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
-#else
-  printf("%8.3e %2d  %8.3e %5ld\n", t, qu, hu, nst);
-#endif
+  printf("%8.3" ESYM " %2d  %8.3" ESYM " %5ld\n", t, qu, hu, nst);
 
   printf("                  Solution       ");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le %12.4Le \n", udata[0], udata[1], udata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", udata[0], udata[1], udata[2]);
-#else
-  printf("%12.4e %12.4e %12.4e \n", udata[0], udata[1], udata[2]);
-#endif
+  printf("%12.4" ESYM " %12.4" ESYM " %12.4" ESYM " \n", udata[0], udata[1], udata[2]);
 }
 
 /*
@@ -582,35 +585,17 @@ static void PrintOutputS(N_Vector* uS)
   sdata = N_VGetArrayPointer(uS[0]);
   printf("                  Sensitivity 1  ");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#else
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#endif
+  printf("%12.4" ESYM " %12.4" ESYM " %12.4" ESYM " \n", sdata[0], sdata[1], sdata[2]);
 
   sdata = N_VGetArrayPointer(uS[1]);
   printf("                  Sensitivity 2  ");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#else
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#endif
+  printf("%12.4" ESYM " %12.4" ESYM " %12.4" ESYM " \n", sdata[0], sdata[1], sdata[2]);
 
   sdata = N_VGetArrayPointer(uS[2]);
   printf("                  Sensitivity 3  ");
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%12.4Le %12.4Le %12.4Le \n", sdata[0], sdata[1], sdata[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#else
-  printf("%12.4e %12.4e %12.4e \n", sdata[0], sdata[1], sdata[2]);
-#endif
+  printf("%12.4" ESYM " %12.4" ESYM " %12.4" ESYM " \n", sdata[0], sdata[1], sdata[2]);
 }
 
 /*

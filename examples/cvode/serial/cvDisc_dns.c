@@ -68,9 +68,10 @@ int main(void)
 
   /* Allocate the vector of initial conditions */
   y = N_VNew_Serial(NEQ, sunctx);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   /* Set initial condition */
-  NV_Ith_S(y, 0) = SUN_RCONST(1.0);
+  y_data[0] = SUN_RCONST(1.0);
 
   /*
    * ------------------------------------------------------------
@@ -130,13 +131,13 @@ int main(void)
   flag = RHS1; /* use -y for RHS */
   t    = t0;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   while (t < t1)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t1, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
   /* Get the number of steps the solver took to get to the discont. */
   retval = CVodeGetNumSteps(cvode_mem, &nst1);
@@ -145,7 +146,7 @@ int main(void)
   /* ---- Integrate from the discontinuity */
 
   /* Include discontinuity */
-  NV_Ith_S(y, 0) = SUN_RCONST(1.0);
+  y_data[0] = SUN_RCONST(1.0);
 
   /* Reinitialize the solver */
   retval = CVodeReInit(cvode_mem, t1, y);
@@ -158,14 +159,14 @@ int main(void)
   flag = RHS1; /* use -y for RHS */
   t    = t1;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
 
   while (t < t2)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t2, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
 
   /* Get the number of steps the solver took after the discont. */
@@ -187,7 +188,7 @@ int main(void)
   printf("\nDiscontinuity in RHS: Case 1 - explicit treatment\n\n");
 
   /* Set initial condition */
-  NV_Ith_S(y, 0) = SUN_RCONST(1.0);
+  y_data[0] = SUN_RCONST(1.0);
 
   /* Reinitialize the solver. CVodeReInit does not reallocate memory
    * so it can only be used when the new problem size is the same as
@@ -204,13 +205,13 @@ int main(void)
   flag = RHS1; /* use -y for RHS */
   t    = t0;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   while (t < t1)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t1, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
 
   /* Get the number of steps the solver took to get to the discont. */
@@ -232,14 +233,14 @@ int main(void)
   flag = RHS2; /* use -5y for RHS */
   t    = t1;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
 
   while (t < t2)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t2, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
 
   /* Get the number of steps the solver took after the discont. */
@@ -261,7 +262,7 @@ int main(void)
   printf("\nDiscontinuity in RHS: Case 2 - let CVODE deal with it\n\n");
 
   /* Set initial condition */
-  NV_Ith_S(y, 0) = SUN_RCONST(1.0);
+  y_data[0] = SUN_RCONST(1.0);
 
   /* Reinitialize the solver. CVodeReInit does not reallocate memory
    * so it can only be used when the new problem size is the same as
@@ -278,13 +279,13 @@ int main(void)
   flag = RHS1; /* use -y for RHS */
   t    = t0;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   while (t < t1)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t1, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
 
   /* Get the number of steps the solver took to get to the discont. */
@@ -300,14 +301,14 @@ int main(void)
   flag = RHS2; /* use -5y for RHS */
   t    = t1;   /* set the integrator start time */
 
-  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+  printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
 
   while (t < t2)
   {
     /* advance solver just one internal step */
     retval = CVode(cvode_mem, t2, y, &t, CV_ONE_STEP);
     if (check_retval((void*)&retval, "CVode", 1)) { return (1); }
-    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, NV_Ith_S(y, 0));
+    printf("%12.8" ESYM "  %12.8" ESYM "\n", t, y_data[0]);
   }
 
   /* Get the number of steps the solver took after the discont. */
@@ -338,13 +339,15 @@ int main(void)
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* f_data)
 {
   int* flag;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   flag = (int*)f_data;
 
   switch (*flag)
   {
-  case RHS1: NV_Ith_S(ydot, 0) = -NV_Ith_S(y, 0); break;
-  case RHS2: NV_Ith_S(ydot, 0) = -5.0 * NV_Ith_S(y, 0); break;
+  case RHS1: ydot_data[0] = -y_data[0]; break;
+  case RHS2: ydot_data[0] = -5.0 * y_data[0]; break;
   }
 
   return (0);

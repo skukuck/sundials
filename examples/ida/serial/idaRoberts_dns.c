@@ -47,8 +47,10 @@
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
 #define GSYM "Lg"
+#define ESYM "Le"
 #else
 #define GSYM "g"
+#define ESYM "e"
 #endif
 
 /* Problem Constants */
@@ -59,9 +61,9 @@
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
 
-/* Macro to define dense matrix elements, indexed from 1. */
+/* Macro to define dense matrix elements, indexed from 0. */
 
-#define IJth(A, i, j) SM_ELEMENT_D(A, i - 1, j - 1)
+#define IJth(A, i, j) SM_ELEMENT_D(A, i, j)
 
 /* Prototypes of functions called by IDA */
 
@@ -273,13 +275,13 @@ int resrob(sunrealtype tres, N_Vector yy, N_Vector yp, N_Vector rr,
 static int grob(sunrealtype t, N_Vector yy, N_Vector yp, sunrealtype* gout,
                 void* user_data)
 {
-  sunrealtype *yval, y1, y3;
+  sunrealtype *yval, y0, y2;
 
   yval    = N_VGetArrayPointer(yy);
-  y1      = yval[0];
-  y3      = yval[2];
-  gout[0] = y1 - SUN_RCONST(0.0001);
-  gout[1] = y3 - SUN_RCONST(0.01);
+  y0      = yval[0];
+  y2      = yval[2];
+  gout[0] = y0 - SUN_RCONST(0.0001);
+  gout[1] = y2 - SUN_RCONST(0.01);
 
   return (0);
 }
@@ -296,16 +298,16 @@ int jacrob(sunrealtype tt, sunrealtype cj, N_Vector yy, N_Vector yp,
 
   yval = N_VGetArrayPointer(yy);
 
-  IJth(JJ, 1, 1) = SUN_RCONST(-0.04) - cj;
-  IJth(JJ, 2, 1) = SUN_RCONST(0.04);
-  IJth(JJ, 3, 1) = ONE;
-  IJth(JJ, 1, 2) = SUN_RCONST(1.0e4) * yval[2];
-  IJth(JJ, 2, 2) = SUN_RCONST(-1.0e4) * yval[2] - SUN_RCONST(6.0e7) * yval[1] -
+  IJth(JJ, 0, 0) = SUN_RCONST(-0.04) - cj;
+  IJth(JJ, 1, 0) = SUN_RCONST(0.04);
+  IJth(JJ, 2, 0) = ONE;
+  IJth(JJ, 0, 1) = SUN_RCONST(1.0e4) * yval[2];
+  IJth(JJ, 1, 1) = SUN_RCONST(-1.0e4) * yval[2] - SUN_RCONST(6.0e7) * yval[1] -
                    cj;
-  IJth(JJ, 3, 2) = ONE;
-  IJth(JJ, 1, 3) = SUN_RCONST(1.0e4) * yval[1];
-  IJth(JJ, 2, 3) = SUN_RCONST(-1.0e4) * yval[1];
-  IJth(JJ, 3, 3) = ONE;
+  IJth(JJ, 2, 1) = ONE;
+  IJth(JJ, 0, 2) = SUN_RCONST(1.0e4) * yval[1];
+  IJth(JJ, 1, 2) = SUN_RCONST(-1.0e4) * yval[1];
+  IJth(JJ, 2, 2) = ONE;
 
   return (0);
 }
@@ -331,19 +333,9 @@ static void PrintHeader(sunrealtype rtol, N_Vector avtol, N_Vector y)
          "IDA\n");
   printf("         Three equation chemical kinetics problem.\n\n");
   printf("Linear solver: DENSE, with user-supplied Jacobian.\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("Tolerance parameters:  rtol = %Lg   atol = %Lg %Lg %Lg \n", rtol,
+  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM " %" GSYM " %" GSYM " \n", rtol,
          atval[0], atval[1], atval[2]);
-  printf("Initial conditions y0 = (%Lg %Lg %Lg)\n", yval[0], yval[1], yval[2]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g %g %g \n", rtol,
-         atval[0], atval[1], atval[2]);
-  printf("Initial conditions y0 = (%g %g %g)\n", yval[0], yval[1], yval[2]);
-#else
-  printf("Tolerance parameters:  rtol = %g   atol = %g %g %g \n", rtol,
-         atval[0], atval[1], atval[2]);
-  printf("Initial conditions y0 = (%g %g %g)\n", yval[0], yval[1], yval[2]);
-#endif
+  printf("Initial conditions y0 = (%" GSYM " %" GSYM " %" GSYM ")\n", yval[0], yval[1], yval[2]);
   printf("Constraints and id not used.\n\n");
   printf("---------------------------------------------------------------------"
          "--\n");
@@ -372,16 +364,8 @@ static void PrintOutput(void* mem, sunrealtype t, N_Vector y)
   check_retval(&retval, "IDAGetNumSteps", 1);
   retval = IDAGetLastStep(mem, &hused);
   check_retval(&retval, "IDAGetLastStep", 1);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%10.4Le %12.4Le %12.4Le %12.4Le | %3ld  %1d %12.4Le\n", t, yval[0],
+  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM " | %3ld  %1d %12.4" ESYM "\n", t, yval[0],
          yval[1], yval[2], nst, kused, hused);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%10.4e %12.4e %12.4e %12.4e | %3ld  %1d %12.4e\n", t, yval[0],
-         yval[1], yval[2], nst, kused, hused);
-#else
-  printf("%10.4e %12.4e %12.4e %12.4e | %3ld  %1d %12.4e\n", t, yval[0],
-         yval[1], yval[2], nst, kused, hused);
-#endif
 }
 
 static void PrintRootInfo(int root_f1, int root_f2)
@@ -443,12 +427,13 @@ static int check_ans(N_Vector y, sunrealtype t, sunrealtype rtol, N_Vector atol)
 
   /* create reference solution and error weight vectors */
   ref = N_VClone(y);
+  sunrealtype* ref_data = N_VGetArrayPointer(ref);
   ewt = N_VClone(y);
 
   /* set the reference solution data */
-  NV_Ith_S(ref, 0) = SUN_RCONST(5.2083474251394888e-08);
-  NV_Ith_S(ref, 1) = SUN_RCONST(2.0833390772616859e-13);
-  NV_Ith_S(ref, 2) = SUN_RCONST(9.9999994791631752e-01);
+  ref_data[0] = SUN_RCONST(5.2083474251394888e-08);
+  ref_data[1] = SUN_RCONST(2.0833390772616859e-13);
+  ref_data[2] = SUN_RCONST(9.9999994791631752e-01);
 
   /* compute the error weight vector, loosen atol */
   N_VAbs(ref, ewt);

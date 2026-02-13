@@ -107,9 +107,10 @@ int main(void)
   /* Create and initialize serial vector for the solution */
   y = N_VNew_Serial(NEQ, ctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = u0;
-  NV_Ith_S(y, 1) = v0;
-  NV_Ith_S(y, 2) = w0;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  y_data[0] = u0;
+  y_data[1] = v0;
+  y_data[2] = w0;
 
   /*
    * Create the fast integrator and set options
@@ -157,7 +158,7 @@ int main(void)
 
   /* output initial condition to disk */
   fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", T0,
-          NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+          y_data[0], y_data[1], y_data[2]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the
      integration, then prints results. Stops when the final time
@@ -167,7 +168,7 @@ int main(void)
   printf("        t           u           v           w\n");
   printf("   -----------------------------------------------\n");
   printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
-         NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+         y_data[0], y_data[1], y_data[2]);
 
   for (iout = 0; iout < Nt; iout++)
   {
@@ -177,9 +178,9 @@ int main(void)
 
     /* access/print solution and error */
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+           y_data[0], y_data[1], y_data[2]);
     fprintf(UFID, " %.16" ESYM " %.16" ESYM " %.16" ESYM " %.16" ESYM "\n", t,
-            NV_Ith_S(y, 0), NV_Ith_S(y, 1), NV_Ith_S(y, 2));
+            y_data[0], y_data[1], y_data[2]);
 
     /* successful solve: update time */
     tout += dTout;
@@ -227,13 +228,15 @@ int main(void)
 static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype c1 = SUN_RCONST(100.0); /* problem constant */
-  sunrealtype u  = NV_Ith_S(y, 0);    /* access solution values */
-  sunrealtype v  = NV_Ith_S(y, 1);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype u  = y_data[0];    /* access solution values */
+  sunrealtype v  = y_data[1];
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
-  NV_Ith_S(ydot, 0) = c1 * v;
-  NV_Ith_S(ydot, 1) = -c1 * u;
-  NV_Ith_S(ydot, 2) = u;
+  ydot_data[0] = c1 * v;
+  ydot_data[1] = -c1 * u;
+  ydot_data[2] = u;
 
   /* Return with success */
   return 0;
@@ -242,12 +245,14 @@ static int ff(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 /* fs routine to compute the slow portion of the ODE RHS. */
 static int fs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  sunrealtype w = NV_Ith_S(y, 2); /* access solution values */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype w = y_data[2]; /* access solution values */
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
   /* fill in the RHS function */
-  NV_Ith_S(ydot, 0) = w;
-  NV_Ith_S(ydot, 1) = SUN_RCONST(0.0);
-  NV_Ith_S(ydot, 2) = -w;
+  ydot_data[0] = w;
+  ydot_data[1] = SUN_RCONST(0.0);
+  ydot_data[2] = -w;
 
   /* Return with success */
   return 0;

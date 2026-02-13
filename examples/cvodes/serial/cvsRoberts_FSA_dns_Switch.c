@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
   /* Allocate initial condition vector and set context */
   y0 = N_VNew_Serial(NEQ, sunctx);
   if (check_retval((void*)y0, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y0_data = N_VGetArrayPointer(y0);
 
   /* Create solution and absolute tolerance vectors */
   y = N_VClone(y0);
@@ -126,17 +127,18 @@ int main(int argc, char* argv[])
 
   abstol = N_VClone(y0);
   if (check_retval((void*)abstol, "N_VClone", 0)) { return (1); }
+  sunrealtype* abstol_data = N_VGetArrayPointer(abstol);
 
   /* Set initial conditions */
-  NV_Ith_S(y0, 0) = SUN_RCONST(1.0);
-  NV_Ith_S(y0, 1) = SUN_RCONST(0.0);
-  NV_Ith_S(y0, 2) = SUN_RCONST(0.0);
+  y0_data[0] = SUN_RCONST(1.0);
+  y0_data[1] = SUN_RCONST(0.0);
+  y0_data[2] = SUN_RCONST(0.0);
 
   /* Set integration tolerances */
   reltol              = SUN_RCONST(1e-6);
-  NV_Ith_S(abstol, 0) = SUN_RCONST(1e-8);
-  NV_Ith_S(abstol, 1) = SUN_RCONST(1e-14);
-  NV_Ith_S(abstol, 2) = SUN_RCONST(1e-6);
+  abstol_data[0] = SUN_RCONST(1e-8);
+  abstol_data[1] = SUN_RCONST(1e-14);
+  abstol_data[2] = SUN_RCONST(1e-6);
 
   /* Call CVodeCreate to create the solver memory and specify the
    * Backward Differentiation Formula */
@@ -366,18 +368,20 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* udata)
   sunrealtype y1, y2, y3, yd1, yd3;
   UserData data;
   sunrealtype p1, p2, p3;
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y1   = NV_Ith_S(y, 0);
-  y2   = NV_Ith_S(y, 1);
-  y3   = NV_Ith_S(y, 2);
+  y1   = y_data[0];
+  y2   = y_data[1];
+  y3   = y_data[2];
   data = (UserData)udata;
   p1   = data->p[0];
   p2   = data->p[1];
   p3   = data->p[2];
 
-  yd1 = NV_Ith_S(ydot, 0) = -p1 * y1 + p2 * y2 * y3;
-  yd3 = NV_Ith_S(ydot, 2) = p3 * y2 * y2;
-  NV_Ith_S(ydot, 1)       = -yd1 - yd3;
+  yd1 = ydot_data[0] = -p1 * y1 + p2 * y2 * y3;
+  yd3 = ydot_data[2] = p3 * y2 * y2;
+  ydot_data[1]       = -yd1 - yd3;
 
   return (0);
 }
@@ -392,9 +396,10 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* udata,
   sunrealtype y2, y3;
   UserData data;
   sunrealtype p1, p2, p3;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y2   = NV_Ith_S(y, 1);
-  y3   = NV_Ith_S(y, 2);
+  y2   = y_data[1];
+  y3   = y_data[2];
   data = (UserData)udata;
   p1   = data->p[0];
   p2   = data->p[1];
@@ -424,18 +429,21 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
   sunrealtype y1, y2, y3;
   sunrealtype s1, s2, s3;
   sunrealtype sd1, sd2, sd3;
+  sunrealtype* ySdot_data = N_VGetArrayPointer(ySdot);
+  sunrealtype* yS_data = N_VGetArrayPointer(yS);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   data = (UserData)udata;
   p1   = data->p[0];
   p2   = data->p[1];
   p3   = data->p[2];
 
-  y1 = NV_Ith_S(y, 0);
-  y2 = NV_Ith_S(y, 1);
-  y3 = NV_Ith_S(y, 2);
-  s1 = NV_Ith_S(yS, 0);
-  s2 = NV_Ith_S(yS, 1);
-  s3 = NV_Ith_S(yS, 2);
+  y1 = y_data[0];
+  y2 = y_data[1];
+  y3 = y_data[2];
+  s1 = yS_data[0];
+  s2 = yS_data[1];
+  s3 = yS_data[2];
 
   sd1 = -p1 * s1 + p2 * y3 * s2 + p2 * y2 * s3;
   sd3 = 2 * p3 * y2 * s2;
@@ -457,9 +465,9 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
     break;
   }
 
-  NV_Ith_S(ySdot, 0) = sd1;
-  NV_Ith_S(ySdot, 1) = sd2;
-  NV_Ith_S(ySdot, 2) = sd3;
+  ySdot_data[0] = sd1;
+  ySdot_data[1] = sd2;
+  ySdot_data[2] = sd3;
 
   return (0);
 }

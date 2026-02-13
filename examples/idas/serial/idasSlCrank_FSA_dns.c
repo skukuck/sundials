@@ -41,7 +41,6 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component i= 1..NEQ */
 
 /* Problem Constants */
 
@@ -207,20 +206,25 @@ int main(void)
   if (check_retval(&retval, "PrintFinalStats", 1)) { return (1); }
 
   IDAGetQuad(mem, &tret, q);
+
+  sunrealtype* q_data   = N_VGetArrayPointer(q);
+  sunrealtype* qS0_data = N_VGetArrayPointer(qS[0]);
+  sunrealtype* qS1_data = N_VGetArrayPointer(qS[1]);
+
   printf("--------------------------------------------\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("  G = %24.16Lf\n", Ith(q, 1));
+  printf("  G = %24.16Lf\n", q_data[0]);
 #else
-  printf("  G = %24.16f\n", Ith(q, 1));
+  printf("  G = %24.16f\n", q_data[0]);
 #endif
   printf("--------------------------------------------\n\n");
 
   IDAGetQuadSens(mem, &tret, qS);
   printf("-------------F O R W A R D------------------\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("   dG/dp:  %12.4Le %12.4Le\n", Ith(qS[0], 1), Ith(qS[1], 1));
+  printf("   dG/dp:  %12.4Le %12.4Le\n", qS0_data[0], qS1_data[0]);
 #else
-  printf("   dG/dp:  %12.4e %12.4e\n", Ith(qS[0], 1), Ith(qS[1], 1));
+  printf("   dG/dp:  %12.4e %12.4e\n", qS0_data[0], qS1_data[0]);
 #endif
   printf("--------------------------------------------\n\n");
 
@@ -262,8 +266,8 @@ int main(void)
   IDASolve(mem, TEND, &tret, yy, yp, IDA_NORMAL);
 
   IDAGetQuad(mem, &tret, q);
-  G = Ith(q, 1);
-  /*printf("  G  =%12.6e\n", Ith(q,1));*/
+  G = q_data[0];
+  /*printf("  G  =%12.6e\n", q_data[0]);*/
 
   /******************************
   * BACKWARD for k
@@ -278,8 +282,8 @@ int main(void)
 
   IDASolve(mem, TEND, &tret, yy, yp, IDA_NORMAL);
   IDAGetQuad(mem, &tret, q);
-  Gm[0] = Ith(q, 1);
-  /*printf("Gm[0]=%12.6e\n", Ith(q,1));*/
+  Gm[0] = q_data[0];
+  /*printf("Gm[0]=%12.6e\n", q_data[0]);*/
 
   /****************************
   * FORWARD for k *
@@ -293,8 +297,8 @@ int main(void)
 
   IDASolve(mem, TEND, &tret, yy, yp, IDA_NORMAL);
   IDAGetQuad(mem, &tret, q);
-  Gp[0] = Ith(q, 1);
-  /*printf("Gp[0]=%12.6e\n", Ith(q,1));*/
+  Gp[0] = q_data[0];
+  /*printf("Gp[0]=%12.6e\n", q_data[0]);*/
 
   /* Backward for c */
   data->params[0] = ONE;
@@ -307,7 +311,7 @@ int main(void)
 
   IDASolve(mem, TEND, &tret, yy, yp, IDA_NORMAL);
   IDAGetQuad(mem, &tret, q);
-  Gm[1] = Ith(q, 1);
+  Gm[1] = q_data[0];
 
   /* Forward for c */
   data->params[1] += (TWO * dp);
@@ -319,7 +323,7 @@ int main(void)
 
   IDASolve(mem, TEND, &tret, yy, yp, IDA_NORMAL);
   IDAGetQuad(mem, &tret, q);
-  Gp[1] = Ith(q, 1);
+  Gp[1] = q_data[0];
 
   IDAFree(&mem);
   SUNLinSolFree(LS);
@@ -513,17 +517,19 @@ static int rhsQ(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector qdot,
   sunrealtype v1, v2, v3;
   sunrealtype J1, m2, J2;
   UserData data;
+  sunrealtype* yy_data   = N_VGetArrayPointer(yy);
+  sunrealtype* qdot_data = N_VGetArrayPointer(qdot);
 
   data = (UserData)user_data;
   J1   = data->J1;
   m2   = data->m2;
   J2   = data->J2;
 
-  v1 = Ith(yy, 4);
-  v2 = Ith(yy, 5);
-  v3 = Ith(yy, 6);
+  v1 = yy_data[3];
+  v2 = yy_data[4];
+  v3 = yy_data[5];
 
-  Ith(qdot, 1) = HALF * (J1 * v1 * v1 + m2 * v2 * v2 + J2 * v3 * v3);
+  qdot_data[0] = HALF * (J1 * v1 * v1 + m2 * v2 * v2 + J2 * v3 * v3);
 
   return (0);
 }
@@ -536,6 +542,11 @@ static int rhsQS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp, N_Vector* yyS,
   sunrealtype J1, m2, J2;
   UserData data;
   sunrealtype s1, s2, s3;
+  sunrealtype* yy_data        = N_VGetArrayPointer(yy);
+  sunrealtype* yyS0_data      = N_VGetArrayPointer(yyS[0]);
+  sunrealtype* yyS1_data      = N_VGetArrayPointer(yyS[1]);
+  sunrealtype* rhsvalQS0_data = N_VGetArrayPointer(rhsvalQS[0]);
+  sunrealtype* rhsvalQS1_data = N_VGetArrayPointer(rhsvalQS[1]);
 
   data = (UserData)user_data;
 
@@ -543,22 +554,22 @@ static int rhsQS(int Ns, sunrealtype t, N_Vector yy, N_Vector yp, N_Vector* yyS,
   m2 = data->m2;
   J2 = data->J2;
 
-  v1 = Ith(yy, 4);
-  v2 = Ith(yy, 5);
-  v3 = Ith(yy, 6);
+  v1 = yy_data[3];
+  v2 = yy_data[4];
+  v3 = yy_data[5];
 
   /* Sensitivities of v. */
-  s1 = Ith(yyS[0], 4);
-  s2 = Ith(yyS[0], 5);
-  s3 = Ith(yyS[0], 6);
+  s1 = yyS0_data[3];
+  s2 = yyS0_data[4];
+  s3 = yyS0_data[5];
 
-  Ith(rhsvalQS[0], 1) = J1 * v1 * s1 + m2 * v2 * s2 + J2 * v3 * s3;
+  rhsvalQS0_data[0] = J1 * v1 * s1 + m2 * v2 * s2 + J2 * v3 * s3;
 
-  s1 = Ith(yyS[1], 4);
-  s2 = Ith(yyS[1], 5);
-  s3 = Ith(yyS[1], 6);
+  s1 = yyS1_data[3];
+  s2 = yyS1_data[4];
+  s3 = yyS1_data[5];
 
-  Ith(rhsvalQS[1], 1) = J1 * v1 * s1 + m2 * v2 * s2 + J2 * v3 * s3;
+  rhsvalQS1_data[0] = J1 * v1 * s1 + m2 * v2 * s2 + J2 * v3 * s3;
 
   return (0);
 }

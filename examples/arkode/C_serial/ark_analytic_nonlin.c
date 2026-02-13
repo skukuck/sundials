@@ -80,8 +80,9 @@ int main(void)
 
   /* Initialize data structures */
   y = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   if (check_flag((void*)y, "N_VNew_Serial", 0)) { return 1; }
-  NV_Ith_S(y, 0) = 0.0; /* Specify initial condition */
+  y_data[0] = 0.0; /* Specify initial condition */
 
   /* Call ERKStepCreate to initialize the ERK timestepper module and
      specify the right-hand side function in y'=f(t,y), the initial time
@@ -98,7 +99,7 @@ int main(void)
   fprintf(UFID, "# t u\n");
 
   /* output initial condition to disk */
-  fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", T0, NV_Ith_S(y, 0));
+  fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", T0, y_data[0]);
 
   /* Main time-stepping loop: calls ARKodeEvolve to perform the integration, then
      prints results.  Stops when the final time has been reached */
@@ -111,8 +112,8 @@ int main(void)
     flag = ARKodeEvolve(arkode_mem, tout, y, &t, ARK_NORMAL); /* call integrator */
     if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
     printf("  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           NV_Ith_S(y, 0)); /* access/print solution */
-    fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", t, NV_Ith_S(y, 0));
+           y_data[0]); /* access/print solution */
+    fprintf(UFID, " %.16" ESYM " %.16" ESYM "\n", t, y_data[0]);
     if (flag >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -151,7 +152,9 @@ int main(void)
 /* f routine to compute the ODE RHS function f(t,y). */
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
-  NV_Ith_S(ydot, 0) = (t + 1.0) * SUNRexp(-NV_Ith_S(y, 0));
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  ydot_data[0] = (t + 1.0) * SUNRexp(-y_data[0]);
   return 0;
 }
 

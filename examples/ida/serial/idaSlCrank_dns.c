@@ -33,6 +33,14 @@
 #include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
 #include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#define GSYM "Lg"
+#else
+#define ESYM "e"
+#define GSYM "g"
+#endif
+
 /* Problem Constants */
 
 #define NEQ 10
@@ -108,16 +116,17 @@ int main(void)
   yy = N_VNew_Serial(NEQ, ctx);
   yp = N_VClone(yy);
   id = N_VClone(yy);
+  sunrealtype* id_data = N_VGetArrayPointer(id);
 
   /* Consistent IC */
   setIC(yy, yp, data);
 
   /* ID array */
   N_VConst(ONE, id);
-  NV_Ith_S(id, 6) = ZERO;
-  NV_Ith_S(id, 7) = ZERO;
-  NV_Ith_S(id, 8) = ZERO;
-  NV_Ith_S(id, 9) = ZERO;
+  id_data[6] = ZERO;
+  id_data[7] = ZERO;
+  id_data[8] = ZERO;
+  id_data[9] = ZERO;
 
   /* Tolerances */
   rtol = SUN_RCONST(1.0e-6);
@@ -186,6 +195,8 @@ void setIC(N_Vector yy, N_Vector yp, UserData data)
   sunrealtype a, J1, m2, J2;
   sunrealtype q, p, x;
   sunrealtype Q[3];
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yp_data = N_VGetArrayPointer(yp);
 
   N_VConst(ZERO, yy);
   N_VConst(ZERO, yp);
@@ -201,15 +212,15 @@ void setIC(N_Vector yy, N_Vector yp, UserData data)
   p = asin(-a);
   x = cos(p);
 
-  NV_Ith_S(yy, 0) = q;
-  NV_Ith_S(yy, 1) = x;
-  NV_Ith_S(yy, 2) = p;
+  yy_data[0] = q;
+  yy_data[1] = x;
+  yy_data[2] = p;
 
   force(yy, Q, data);
 
-  NV_Ith_S(yp, 3) = Q[0] / J1;
-  NV_Ith_S(yp, 4) = Q[1] / m2;
-  NV_Ith_S(yp, 5) = Q[2] / J2;
+  yp_data[3] = Q[0] / J1;
+  yp_data[4] = Q[1] / m2;
+  yp_data[5] = Q[2] / J2;
 }
 
 void force(N_Vector yy, sunrealtype* Q, UserData data)
@@ -220,6 +231,7 @@ void force(N_Vector yy, sunrealtype* Q, UserData data)
   sunrealtype s1, c1, s2, c2, s21, c21;
   sunrealtype l2, l, ld;
   sunrealtype f, fl;
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
 
   a  = data->a;
   k  = data->k;
@@ -227,13 +239,13 @@ void force(N_Vector yy, sunrealtype* Q, UserData data)
   l0 = data->l0;
   F  = data->F;
 
-  q = NV_Ith_S(yy, 0);
-  x = NV_Ith_S(yy, 1);
-  p = NV_Ith_S(yy, 2);
+  q = yy_data[0];
+  x = yy_data[1];
+  p = yy_data[2];
 
-  qd = NV_Ith_S(yy, 3);
-  xd = NV_Ith_S(yy, 4);
-  pd = NV_Ith_S(yy, 5);
+  qd = yy_data[3];
+  xd = yy_data[4];
+  pd = yy_data[5];
 
   s1  = sin(q);
   c1  = cos(q);
@@ -320,13 +332,7 @@ static void PrintHeader(sunrealtype rtol, sunrealtype atol, N_Vector y)
 {
   printf("\nidaSlCrank_dns: Slider-Crank DAE serial example problem for IDA\n");
   printf("Linear solver: DENSE, Jacobian is computed by IDA.\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
-#else
-  printf("Tolerance parameters:  rtol = %g   atol = %g\n", rtol, atol);
-#endif
+  printf("Tolerance parameters:  rtol = %" GSYM "   atol = %" GSYM "\n", rtol, atol);
   printf("---------------------------------------------------------------------"
          "--\n");
   printf("  t            y1          y2           y3");
@@ -348,13 +354,8 @@ static int PrintOutput(void* mem, sunrealtype t, N_Vector y)
   retval = IDAGetNumSteps(mem, &nst);
   retval = IDAGetLastStep(mem, &hused);
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%10.4Le %12.4Le %12.4Le %12.4Le %3ld  %1d %12.4Le\n", t, yval[0],
+  printf("%10.4" ESYM " %12.4" ESYM " %12.4" ESYM " %12.4" ESYM " %3ld  %1d %12.4" ESYM "\n", t, yval[0],
          yval[1], yval[2], nst, kused, hused);
-#else
-  printf("%10.4e %12.4e %12.4e %12.4e %3ld  %1d %12.4e\n", t, yval[0], yval[1],
-         yval[2], nst, kused, hused);
-#endif
 
   return (retval);
 }

@@ -84,6 +84,16 @@
 #define SQR(A) ((A) * (A))
 #endif
 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#define FSYM "Lf"
+#define GSYM "Lg"
+#else
+#define ESYM "e"
+#define FSYM "f"
+#define GSYM "g"
+#endif
+
 /* Shared Problem Constants */
 
 #define ATOL SUN_RCONST(1.0e-6)
@@ -203,6 +213,7 @@ static int Problem1(void)
 
   y = N_VNew_Serial(P1_NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
   PrintIntro1();
 
   cvode_mem = CVodeCreate(CV_ADAMS, sunctx);
@@ -211,8 +222,8 @@ static int Problem1(void)
   for (miter = FUNC; miter <= DIAG; miter++)
   {
     ero            = ZERO;
-    NV_Ith_S(y, 0) = TWO;
-    NV_Ith_S(y, 1) = ZERO;
+    y_data[0] = TWO;
+    y_data[1] = ZERO;
 
     firstrun = (miter == FUNC);
     if (firstrun)
@@ -246,7 +257,7 @@ static int Problem1(void)
       if (check_retval(&temp_retval, "CVodeGetLastOrder", 1)) { ++nerr; }
       temp_retval = CVodeGetLastStep(cvode_mem, &hu);
       if (check_retval(&temp_retval, "CVodeGetLastStep", 1)) { ++nerr; }
-      PrintOutput1(t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), qu, hu);
+      PrintOutput1(t, y_data[0], y_data[1], qu, hu);
       if (retval != CV_SUCCESS)
       {
         nerr++;
@@ -254,7 +265,7 @@ static int Problem1(void)
       }
       if (iout % 2 == 0)
       {
-        er = SUNRabs(NV_Ith_S(y, 0)) / abstol;
+        er = SUNRabs(y_data[0]) / abstol;
         if (er > ero) { ero = er; }
         if (er > P1_TOL_FACTOR)
         {
@@ -279,8 +290,8 @@ static int Problem1(void)
   for (miter = FUNC; miter <= DIAG; miter++)
   {
     ero            = ZERO;
-    NV_Ith_S(y, 0) = TWO;
-    NV_Ith_S(y, 1) = ZERO;
+    y_data[0] = TWO;
+    y_data[1] = ZERO;
 
     firstrun = (miter == FUNC);
     if (firstrun)
@@ -314,7 +325,7 @@ static int Problem1(void)
       if (check_retval(&temp_retval, "CVodeGetLastOrder", 1)) { ++nerr; }
       temp_retval = CVodeGetLastStep(cvode_mem, &hu);
       if (check_retval(&temp_retval, "CVodeGetLastStep", 1)) { ++nerr; }
-      PrintOutput1(t, NV_Ith_S(y, 0), NV_Ith_S(y, 1), qu, hu);
+      PrintOutput1(t, y_data[0], y_data[1], qu, hu);
       if (retval != CV_SUCCESS)
       {
         nerr++;
@@ -322,7 +333,7 @@ static int Problem1(void)
       }
       if (iout % 2 == 0)
       {
-        er = SUNRabs(NV_Ith_S(y, 0)) / abstol;
+        er = SUNRabs(y_data[0]) / abstol;
         if (er > ero) { ero = er; }
         if (er > P1_TOL_FACTOR)
         {
@@ -349,13 +360,7 @@ static void PrintIntro1(void)
   printf("\n\n");
   printf("Problem 1: Van der Pol oscillator\n");
   printf(" xdotdot - 3*(1 - x^2)*xdot + x = 0, x(0) = 2, xdot(0) = 0\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf(" neq = %d,  reltol = %.2Lg,  abstol = %.2Lg", P1_NEQ, RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" neq = %d,  reltol = %.2g,  abstol = %.2g", P1_NEQ, RTOL, ATOL);
-#else
-  printf(" neq = %d,  reltol = %.2g,  abstol = %.2g", P1_NEQ, RTOL, ATOL);
-#endif
+  printf(" neq = %d,  reltol = %.2" GSYM ",  abstol = %.2" GSYM, P1_NEQ, RTOL, ATOL);
 }
 
 static void PrintHeader1(void)
@@ -368,13 +373,7 @@ static void PrintHeader1(void)
 static void PrintOutput1(sunrealtype t, sunrealtype y0, sunrealtype y1, int qu,
                          sunrealtype hu)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%10.5Lf    %12.5Le   %12.5Le   %2d    %6.4Le\n", t, y0, y1, qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%10.5f    %12.5e   %12.5e   %2d    %6.4e\n", t, y0, y1, qu, hu);
-#else
-  printf("%10.5f    %12.5e   %12.5e   %2d    %6.4e\n", t, y0, y1, qu, hu);
-#endif
+  printf("%10.5" FSYM "    %12.5" ESYM "   %12.5" ESYM "   %2d    %6.4" ESYM "\n", t, y0, y1, qu, hu);
 
   return;
 }
@@ -382,12 +381,14 @@ static void PrintOutput1(sunrealtype t, sunrealtype y0, sunrealtype y1, int qu,
 static int f1(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   sunrealtype y0, y1;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
 
-  y0 = NV_Ith_S(y, 0);
-  y1 = NV_Ith_S(y, 1);
+  y0 = y_data[0];
+  y1 = y_data[1];
 
-  NV_Ith_S(ydot, 0) = y1;
-  NV_Ith_S(ydot, 1) = (ONE - SQR(y0)) * P1_ETA * y1 - y0;
+  ydot_data[0] = y1;
+  ydot_data[1] = (ONE - SQR(y0)) * P1_ETA * y1 - y0;
 
   return (0);
 }
@@ -396,9 +397,10 @@ static int Jac1(sunrealtype tn, N_Vector y, N_Vector fy, SUNMatrix J,
                 void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   sunrealtype y0, y1;
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
-  y0 = NV_Ith_S(y, 0);
-  y1 = NV_Ith_S(y, 1);
+  y0 = y_data[0];
+  y1 = y_data[1];
 
   SM_ELEMENT_D(J, 0, 1) = ONE;
   SM_ELEMENT_D(J, 1, 0) = -TWO * P1_ETA * y0 * y1 - ONE;
@@ -432,6 +434,7 @@ static int Problem2(void)
 
   y = N_VNew_Serial(P2_NEQ, sunctx);
   if (check_retval((void*)y, "N_VNew_Serial", 0)) { return (1); }
+  sunrealtype* y_data = N_VGetArrayPointer(y);
 
   PrintIntro2();
 
@@ -443,7 +446,7 @@ static int Problem2(void)
     if ((miter == DENSE_USER) || (miter == DENSE_DQ)) { continue; }
     ero = ZERO;
     N_VConst(ZERO, y);
-    NV_Ith_S(y, 0) = ONE;
+    y_data[0] = ONE;
 
     firstrun = (miter == FUNC);
     if (firstrun)
@@ -512,7 +515,7 @@ static int Problem2(void)
     if ((miter == DENSE_USER) || (miter == DENSE_DQ)) { continue; }
     ero = ZERO;
     N_VConst(ZERO, y);
-    NV_Ith_S(y, 0) = ONE;
+    y_data[0] = ONE;
 
     firstrun = (miter == FUNC);
     if (firstrun)
@@ -582,13 +585,7 @@ static void PrintIntro2(void)
   printf("\n\nProblem 2: ydot = A * y, where A is a banded lower\n");
   printf("triangular matrix derived from 2-D advection PDE\n\n");
   printf(" neq = %d, ml = %d, mu = %d\n", P2_NEQ, P2_ML, P2_MU);
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf(" itol = %s, reltol = %.2Lg, abstol = %.2Lg", "CV_SS", RTOL, ATOL);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf(" itol = %s, reltol = %.2g, abstol = %.2g", "CV_SS", RTOL, ATOL);
-#else
-  printf(" itol = %s, reltol = %.2g, abstol = %.2g", "CV_SS", RTOL, ATOL);
-#endif
+  printf(" itol = %s, reltol = %.2" GSYM ", abstol = %.2" GSYM, "CV_SS", RTOL, ATOL);
   printf("\n      t        max.err      qu     hu \n");
 }
 
@@ -601,13 +598,7 @@ static void PrintHeader2(void)
 
 static void PrintOutput2(sunrealtype t, sunrealtype erm, int qu, sunrealtype hu)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("%10.3Lf  %12.4Le   %2d   %12.4Le\n", t, erm, qu, hu);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("%10.3f  %12.4e   %2d   %12.4e\n", t, erm, qu, hu);
-#else
-  printf("%10.3f  %12.4e   %2d   %12.4e\n", t, erm, qu, hu);
-#endif
+  printf("%10.3" FSYM "  %12.4" ESYM "   %2d   %12.4" ESYM "\n", t, erm, qu, hu);
 
   return;
 }
@@ -853,13 +844,7 @@ static int PrepareNextRun(SUNContext sunctx, void* cvode_mem, int lmm,
 
 static void PrintErrOutput(sunrealtype tol_factor)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("\n\n Error exceeds %Lg * tolerance \n\n", tol_factor);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("\n\n Error exceeds %g * tolerance \n\n", tol_factor);
-#else
-  printf("\n\n Error exceeds %g * tolerance \n\n", tol_factor);
-#endif
+  printf("\n\n Error exceeds %" GSYM " * tolerance \n\n", tol_factor);
 
   return;
 }
@@ -920,11 +905,7 @@ static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
     printf(" Number of f evals. in linear solver      = %4ld \n\n", nfeLS);
   }
 
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf(" Error overrun = %.3Lf \n", ero);
-#else
-  printf(" Error overrun = %.3f \n", ero);
-#endif
+  printf(" Error overrun = %.3" FSYM " \n", ero);
 }
 
 static void PrintErrInfo(int nerr)

@@ -47,28 +47,27 @@
 #include <sunlinsol/sunlinsol_klu.h> /* access to KLU sparse direct solver   */
 #include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix           */
 
-/* User-defined vector and matrix accessor macro: Ith */
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+#define ESYM "Le"
+#define GSYM "Lg"
+#else
+#define ESYM "e"
+#define GSYM "g"
+#endif
 
-/* These macros are defined in order to write code which exactly matches
-   the mathematical problem description given above.
 
-   Ith(v,i) references the ith component of the vector v, where i is in
-   the range [1..neq] and neq is defined below. The Ith macro is defined
-   using the N_VIth macro in nvector.h. N_VIth numbers the components of
-   a vector starting from 0. */
 
-#define Ith(v, i) NV_Ith_S(v, i - 1) /* Ith numbers components 1..neq */
 
 /* Problem Constants */
 
 #define GROUPSIZE 3               /* number of equations per group */
-#define Y1        SUN_RCONST(1.0) /* initial y components */
+#define Y0        SUN_RCONST(1.0) /* initial y components */
+#define Y1        SUN_RCONST(0.0)
 #define Y2        SUN_RCONST(0.0)
-#define Y3        SUN_RCONST(0.0)
 #define RTOL      SUN_RCONST(1.0e-4) /* scalar relative tolerance            */
-#define ATOL1     SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
-#define ATOL2     SUN_RCONST(1.0e-14)
-#define ATOL3     SUN_RCONST(1.0e-6)
+#define ATOL0     SUN_RCONST(1.0e-8) /* vector absolute tolerance components */
+#define ATOL1     SUN_RCONST(1.0e-14)
+#define ATOL2     SUN_RCONST(1.0e-6)
 #define T0        SUN_RCONST(0.0)  /* initial time           */
 #define T1        SUN_RCONST(0.4)  /* first output time      */
 #define TMULT     SUN_RCONST(10.0) /* output time factor     */
@@ -85,8 +84,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
 /* Private functions to output results */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3);
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2);
 
 /* Private function to print final statistics */
 
@@ -146,9 +145,9 @@ int main(int argc, char* argv[])
   /* Initialize y */
   for (groupj = 0; groupj < neq; groupj += GROUPSIZE)
   {
-    Ith(y, 1 + groupj) = Y1;
-    Ith(y, 2 + groupj) = Y2;
-    Ith(y, 3 + groupj) = Y3;
+    Ith(y, 1 + groupj) = Y0;
+    Ith(y, 2 + groupj) = Y1;
+    Ith(y, 3 + groupj) = Y2;
   }
 
   /* Set the scalar relative tolerance */
@@ -157,9 +156,9 @@ int main(int argc, char* argv[])
   /* Set the vector absolute tolerance */
   for (groupj = 0; groupj < neq; groupj += GROUPSIZE)
   {
-    Ith(abstol, 1 + groupj) = ATOL1;
-    Ith(abstol, 2 + groupj) = ATOL2;
-    Ith(abstol, 3 + groupj) = ATOL3;
+    Ith(abstol, 1 + groupj) = ATOL0;
+    Ith(abstol, 2 + groupj) = ATOL1;
+    Ith(abstol, 3 + groupj) = ATOL2;
   }
 
   /* Call CVodeCreate to create the solver memory and specify the
@@ -258,20 +257,20 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   UserData* udata;
   sunindextype groupj;
-  sunrealtype y1, y2, y3, yd1, yd3;
+  sunrealtype y0, y1, y2, yd0, yd2;
 
   udata = (UserData*)user_data;
 
   for (groupj = 0; groupj < udata->neq; groupj += GROUPSIZE)
   {
-    y1 = Ith(y, 1 + groupj);
-    y2 = Ith(y, 2 + groupj);
-    y3 = Ith(y, 3 + groupj);
+    y0 = Ith(y, 1 + groupj);
+    y1 = Ith(y, 2 + groupj);
+    y2 = Ith(y, 3 + groupj);
 
-    yd1 = Ith(ydot, 1 + groupj) = SUN_RCONST(-0.04) * y1 +
-                                  SUN_RCONST(1.0e4) * y2 * y3;
-    yd3 = Ith(ydot, 3 + groupj) = SUN_RCONST(3.0e7) * y2 * y2;
-    Ith(ydot, 2 + groupj)       = -yd1 - yd3;
+    yd0 = Ith(ydot, 1 + groupj) = SUN_RCONST(-0.04) * y0 +
+                                  SUN_RCONST(1.0e4) * y1 * y2;
+    yd2 = Ith(ydot, 3 + groupj) = SUN_RCONST(3.0e7) * y1 * y1;
+    Ith(ydot, 2 + groupj)       = -yd0 - yd2;
   }
 
   return (0);
@@ -289,7 +288,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   sunindextype* colvals = SUNSparseMatrix_IndexValues(J);
   sunrealtype* data     = SUNSparseMatrix_Data(J);
   sunrealtype* ydata;
-  sunrealtype y2, y3;
+  sunrealtype y1, y2;
   sunindextype groupj, nnzper;
 
   ydata  = N_VGetArrayPointer(y);
@@ -302,8 +301,8 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   for (groupj = 0; groupj < udata->ngroups; groupj++)
   {
     /* get y values */
-    y2 = ydata[GROUPSIZE * groupj + 1];
-    y3 = ydata[GROUPSIZE * groupj + 2];
+    y1 = ydata[GROUPSIZE * groupj + 1];
+    y2 = ydata[GROUPSIZE * groupj + 2];
 
     /* there are 3 entries per row */
     rowptrs[GROUPSIZE * groupj]     = 3 + nnzper * groupj;
@@ -312,24 +311,24 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
     /* first row of block */
     data[nnzper * groupj]        = SUN_RCONST(-0.04);
-    data[nnzper * groupj + 1]    = SUN_RCONST(1.0e4) * y3;
-    data[nnzper * groupj + 2]    = SUN_RCONST(1.0e4) * y2;
+    data[nnzper * groupj + 1]    = SUN_RCONST(1.0e4) * y2;
+    data[nnzper * groupj + 2]    = SUN_RCONST(1.0e4) * y1;
     colvals[nnzper * groupj]     = GROUPSIZE * groupj;
     colvals[nnzper * groupj + 1] = GROUPSIZE * groupj + 1;
     colvals[nnzper * groupj + 2] = GROUPSIZE * groupj + 2;
 
     /* second row of block */
     data[nnzper * groupj + 3] = SUN_RCONST(0.04);
-    data[nnzper * groupj + 4] = (SUN_RCONST(-1.0e4) * y3) -
-                                (SUN_RCONST(6.0e7) * y2);
-    data[nnzper * groupj + 5]    = SUN_RCONST(-1.0e4) * y2;
+    data[nnzper * groupj + 4] = (SUN_RCONST(-1.0e4) * y2) -
+                                (SUN_RCONST(6.0e7) * y1);
+    data[nnzper * groupj + 5]    = SUN_RCONST(-1.0e4) * y1;
     colvals[nnzper * groupj + 3] = GROUPSIZE * groupj;
     colvals[nnzper * groupj + 4] = GROUPSIZE * groupj + 1;
     colvals[nnzper * groupj + 5] = GROUPSIZE * groupj + 2;
 
     /* third row of block */
     data[nnzper * groupj + 6]    = ZERO;
-    data[nnzper * groupj + 7]    = SUN_RCONST(6.0e7) * y2;
+    data[nnzper * groupj + 7]    = SUN_RCONST(6.0e7) * y1;
     data[nnzper * groupj + 8]    = ZERO;
     colvals[nnzper * groupj + 6] = GROUPSIZE * groupj;
     colvals[nnzper * groupj + 7] = GROUPSIZE * groupj + 1;
@@ -345,16 +344,10 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
  *-------------------------------
  */
 
-static void PrintOutput(sunrealtype t, sunrealtype y1, sunrealtype y2,
-                        sunrealtype y3)
+static void PrintOutput(sunrealtype t, sunrealtype y0, sunrealtype y1,
+                        sunrealtype y2)
 {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-  printf("At t = %0.4Le      y =%14.6Le  %14.6Le  %14.6Le\n", t, y1, y2, y3);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#else
-  printf("At t = %0.4e      y =%14.6e  %14.6e  %14.6e\n", t, y1, y2, y3);
-#endif
+  printf("At t = %0.4" ESYM "      y =%14.6" ESYM "  %14.6" ESYM "  %14.6" ESYM "\n", t, y0, y1, y2);
 
   return;
 }

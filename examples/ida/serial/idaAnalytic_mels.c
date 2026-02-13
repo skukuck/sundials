@@ -99,6 +99,7 @@ int main(int argc, char* argv[])
   /* Initialize data structures */
   yy = N_VNew_Serial(NEQ, ctx); /* Create serial vector for solution */
   if (check_retval((void*)yy, "N_VNew_Serial", 0)) { return 1; }
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
   yp = N_VClone(yy); /* Create serial vector for solution derivative */
   if (check_retval((void*)yp, "N_VClone", 0)) { return 1; }
   analytical_solution(T0, yy, yp); /* Specify initial conditions */
@@ -138,7 +139,7 @@ int main(int argc, char* argv[])
     retval = IDASolve(ida_mem, tout, &t, yy, yp, IDA_NORMAL); /* call integrator */
     if (check_retval(&retval, "IDASolve", 1)) { return (1); }
     printf("  %10.6" FSYM "  %10.6" FSYM "  %10.6" FSYM "\n", t,
-           NV_Ith_S(yy, 0), NV_Ith_S(yy, 1)); /* access/print solution */
+           yy_data[0], yy_data[1]); /* access/print solution */
     if (retval >= 0)
     { /* successful solve: update time */
       tout += dTout;
@@ -198,15 +199,18 @@ int fres(sunrealtype t, N_Vector yy, N_Vector yp, N_Vector rr, void* user_data)
 {
   sunrealtype* rdata = (sunrealtype*)user_data; /* cast user_data to sunrealtype */
   sunrealtype alpha = rdata[0]; /* set shortcut for stiffness parameter */
-  sunrealtype x1    = NV_Ith_S(yy, 0); /* access current solution values */
-  sunrealtype x2    = NV_Ith_S(yy, 1);
-  sunrealtype x1p   = NV_Ith_S(yp, 0); /* access current derivative values */
+  sunrealtype* yy_data = N_VGetArrayPointer(yy);
+  sunrealtype* yp_data = N_VGetArrayPointer(yp);
+  sunrealtype* rr_data = N_VGetArrayPointer(rr);
+  sunrealtype x1    = yy_data[0]; /* access current solution values */
+  sunrealtype x2    = yy_data[1];
+  sunrealtype x1p   = yp_data[0]; /* access current derivative values */
   sunrealtype ONE   = SUN_RCONST(1.0);
   sunrealtype TWO   = SUN_RCONST(2.0);
 
-  NV_Ith_S(rr, 0) = (ONE - alpha) / (t - TWO) * x1 - x1 + (alpha - ONE) * x2 +
+  rr_data[0] = (ONE - alpha) / (t - TWO) * x1 - x1 + (alpha - ONE) * x2 +
                     TWO * exp(t) - x1p;
-  NV_Ith_S(rr, 1) = (t + TWO) * x1 - (t + TWO) * SUNRexp(t);
+  rr_data[1] = (t + TWO) * x1 - (t + TWO) * SUNRexp(t);
 
   return (0);
 }
@@ -254,6 +258,8 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
   sunrealtype a11, a12, a21, b1, b2;
   sunrealtype ONE = SUN_RCONST(1.0);
   sunrealtype TWO = SUN_RCONST(2.0);
+  sunrealtype* x_data = N_VGetArrayPointer(x);
+  sunrealtype* b_data = N_VGetArrayPointer(b);
 
   /* retrieve implicit system data from IDA */
   retval = IDAGetNonlinearSystemData(LS->content, &tcur, &yypred, &yppred, &yyn,
@@ -277,10 +283,10 @@ static int MatrixEmbeddedLSSolve(SUNLinearSolver LS, SUNMatrix A, N_Vector x,
   a11            = -cj - (alpha - ONE) / (tcur - TWO) - ONE;
   a12            = alpha - ONE;
   a21            = tcur + TWO;
-  b1             = NV_Ith_S(b, 0);
-  b2             = NV_Ith_S(b, 1);
-  NV_Ith_S(x, 0) = b2 / a21;
-  NV_Ith_S(x, 1) = -(a11 * b2 - a21 * b1) / (a12 * a21);
+  b1             = b_data[0];
+  b2             = b_data[1];
+  x_data[0] = b2 / a21;
+  x_data[1] = -(a11 * b2 - a21 * b1) / (a12 * a21);
 
   /* return with success */
   return (SUN_SUCCESS);
@@ -346,10 +352,12 @@ static int check_retval(void* returnvalue, const char* funcname, int opt)
 /* routine to fill analytical solution and its derivative */
 static void analytical_solution(sunrealtype t, N_Vector y, N_Vector yp)
 {
-  NV_Ith_S(y, 0)  = SUNRexp(t);
-  NV_Ith_S(y, 1)  = SUNRexp(t) / (t - SUN_RCONST(2.0));
-  NV_Ith_S(yp, 0) = SUNRexp(t);
-  NV_Ith_S(yp, 1) = SUNRexp(t) / (t - SUN_RCONST(2.0)) -
+  sunrealtype* yp_data = N_VGetArrayPointer(yp);
+  sunrealtype* y_data = N_VGetArrayPointer(y);
+  y_data[0]  = SUNRexp(t);
+  y_data[1]  = SUNRexp(t) / (t - SUN_RCONST(2.0));
+  yp_data[0] = SUNRexp(t);
+  yp_data[1] = SUNRexp(t) / (t - SUN_RCONST(2.0)) -
                     SUNRexp(t) / (t - SUN_RCONST(2.0)) / (t - SUN_RCONST(2.0));
 }
 
